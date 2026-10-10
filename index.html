@@ -513,19 +513,20 @@ input, select {
     var dd = String(d.getDate()).padStart(2, "0");
     return d.getFullYear() + "-" + m + "-" + dd;
   }
-  function num(n) {
-    return n.toLocaleString("es-VE", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  function num(n, d) {
+    var k = d === undefined ? 2 : d;
+    return n.toLocaleString("es-VE", { minimumFractionDigits: k, maximumFractionDigits: k });
   }
-  function money(n, cur) {
+  function money(n, cur, d) {
     var sign = n < 0 ? "-" : "";
-    var v = num(Math.abs(n));
+    var v = num(Math.abs(n), d);
     return (cur === "USD" ? sign + "$" : cur === "EUR" ? sign + "€" : sign + "Bs ") + v;
   }
-  function moneyH(n, cur) {
-    var s = money(n, cur);
+  function moneyH(n, cur, d) {
+    var s = money(n, cur, d);
     if (cur === "VES" || cur === "EUR") {
       var u = conv(n, cur, "USD");
-      if (u !== null) s += ' <small class="usd">≈ ' + money(u, "USD") + "</small>";
+      if (u !== null) s += ' <small class="usd">≈ ' + money(u, "USD", d) + "</small>";
     }
     return s;
   }
@@ -803,7 +804,7 @@ input, select {
       if (Math.abs(v) > 0.004) rows.push([a.nombre, v, a.moneda]);
     });
     $("sav-buckets").innerHTML = rows.length ? rows.map(function (r) {
-      return '<div class="bk"><div class="l">Ahorros en ' + esc(r[0]) + '</div><div class="v fit">' + mask(moneyH(r[1], r[2])) + "</div></div>";
+      return '<div class="bk"><div class="l">Ahorros en ' + esc(r[0]) + '</div><div class="v fit">' + mask(moneyH(r[1], r[2], 1)) + "</div></div>";
     }).join("") : '<p class="empty" style="grid-column:1/-1">Aún no tienes ahorros. Actívalos al registrar un ingreso.</p>';
     $("sav-hint").textContent = "Al registrar un ingreso decides si ahorrar y cuánto. El ahorro queda en la cuenta del ingreso.";
     renderEye();
