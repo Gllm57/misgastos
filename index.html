@@ -240,6 +240,18 @@ input, select {
   .controls { width: 100%; }
   .controls > div { flex: 1 1 140px; }
 }
+.top { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 10px 12px; align-items: end; }
+.top .controls, .top .rates, .top .rate-fields { display: contents; }
+.top h1 { grid-column: 1; grid-row: 1; }
+.top .rate-note { grid-column: 2; grid-row: 1; margin: 0; font-size: 0.85rem; }
+.top .field-month { grid-column: 1; grid-row: 2; width: 100%; }
+.top .field-rate { grid-column: 2; grid-row: 2; width: 100%; }
+.fit { white-space: nowrap; }
+.fit .usd { font-size: 0.62em; }
+.balance-amount.fit .usd { font-size: 0.4em; }
+.bk, .flow, .acc > div:first-child { min-width: 0; }
+.balance-head > div:first-child { flex: 1 1 0; min-width: 0; }
+.balance-head .seg { flex: none; }
 @media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
 </style>
 </head>
@@ -269,7 +281,7 @@ input, select {
     <div class="balance-head">
       <div>
         <div class="balance-label" id="h-bal">Disponible del mes</div>
-        <div class="balance-amount" id="balance">$0,00</div>
+        <div class="balance-amount fit" id="balance">$0,00</div>
       </div>
       <div class="seg" role="group" aria-label="Moneda para mostrar">
         <button type="button" data-disp="USD" aria-pressed="true">USD</button>
@@ -277,9 +289,9 @@ input, select {
       </div>
     </div>
     <div class="flows">
-      <div class="flow in"><div class="v" id="tin">$0,00</div><div class="l">Ingresos</div></div>
-      <div class="flow out"><div class="v" id="tout">$0,00</div><div class="l">Gastos</div></div>
-      <div class="flow sv"><div class="v" id="tsv">$0,00</div><div class="l">Ahorrado <button type="button" class="eye eye-btn" aria-pressed="false"></button></div></div>
+      <div class="flow in"><div class="v fit" id="tin">$0,00</div><div class="l">Ingresos</div></div>
+      <div class="flow out"><div class="v fit" id="tout">$0,00</div><div class="l">Gastos</div></div>
+      <div class="flow sv"><div class="v fit" id="tsv">$0,00</div><div class="l">Ahorrado <button type="button" class="eye eye-btn" aria-pressed="false"></button></div></div>
     </div>
   </section>
 
@@ -600,6 +612,24 @@ input, select {
     });
   }
 
+  var fitPending = false;
+  function fitAll() {
+    var els = document.querySelectorAll(".fit");
+    els.forEach(function (el) { el.style.fontSize = ""; });
+    els.forEach(function (el) {
+      var size = parseFloat(getComputedStyle(el).fontSize), min = size * 0.5, n = 0;
+      while (el.scrollWidth > el.clientWidth + 1 && size > min && n++ < 40) {
+        size -= 0.5;
+        el.style.fontSize = size + "px";
+      }
+    });
+  }
+  function scheduleFit() {
+    if (fitPending) return;
+    fitPending = true;
+    requestAnimationFrame(function () { fitPending = false; fitAll(); });
+  }
+
   function monthItems() {
     return state.items
       .filter(function (it) { return it.fecha.slice(0, 7) === state.month; })
@@ -653,7 +683,7 @@ input, select {
     var cVal = sel ? data[sel] : total;
     var cPct = sel ? Math.round(data[sel] / total * 100) + "%" : "";
     split.innerHTML = '<svg viewBox="0 0 42 42" aria-hidden="true"><circle cx="21" cy="21" r="15.9155" fill="none" stroke="var(--line)" stroke-width="6"></circle>' + arcs +
-      '</svg><div class="donut-center"><div class="dc-l">' + esc(cLabel) + '</div><div class="dc-v">' + moneyH(cVal, o.D) +
+      '</svg><div class="donut-center"><div class="dc-l">' + esc(cLabel) + '</div><div class="dc-v fit">' + moneyH(cVal, o.D) +
       '</div><div class="dc-p">' + cPct + '</div></div>';
     legend.innerHTML = cats.map(function (c) {
       return '<li data-cat="' + esc(c) + '" tabindex="0" role="button" aria-pressed="' + (sel === c ? "true" : "false") +
@@ -666,6 +696,7 @@ input, select {
   function render() {
     var items = monthItems();
     $("mes-label").textContent = monthLabel(state.month);
+    scheduleFit();
     var D = state.disp;
     var tin = 0, tout = 0, tsv = 0, missing = false, byCat = {}, byIn = {};
 
@@ -691,7 +722,7 @@ input, select {
     var bal = tin - tout - tsv;
     var b = $("balance");
     b.innerHTML = moneyH(bal, D);
-    b.className = "balance-amount" + (bal < 0 ? " neg" : "");
+    b.className = "balance-amount fit" + (bal < 0 ? " neg" : "");
     $("tin").innerHTML = moneyH(tin, D);
     $("tout").innerHTML = moneyH(tout, D);
     $("tsv").innerHTML = mask(moneyH(tsv, D));
@@ -757,7 +788,7 @@ input, select {
     list.innerHTML = state.accounts.map(function (a) {
       var bal = accBalance(a), sv = m["a" + a.id] || 0;
       return '<li class="acc"><div><div class="acc-name">' + esc(a.nombre) + '<span class="badge">' + esc(a.moneda === "VES" ? "Bs" : a.moneda) +
-        '</span></div><div class="acc-bal' + (bal < 0 ? " neg" : "") + '">' + moneyH(bal, a.moneda) + '</div>' +
+        '</span></div><div class="acc-bal fit' + (bal < 0 ? " neg" : "") + '">' + moneyH(bal, a.moneda) + '</div>' +
         (sv > 0.004 ? '<div class="acc-sv">En ahorro: ' + mask(moneyH(sv, a.moneda)) + '</div>' : "") + '</div>' +
         '<div class="menu-wrap"><button class="dots" type="button" aria-haspopup="menu" aria-expanded="false" aria-label="Opciones de la cuenta">⋮</button>' +
         '<div class="menu" role="menu" hidden><button type="button" role="menuitem" data-acc-edit="' + a.id + '">Editar cuenta</button>' +
@@ -772,7 +803,7 @@ input, select {
       if (Math.abs(v) > 0.004) rows.push([a.nombre, v, a.moneda]);
     });
     $("sav-buckets").innerHTML = rows.length ? rows.map(function (r) {
-      return '<div class="bk"><div class="l">Ahorros en ' + esc(r[0]) + '</div><div class="v">' + mask(moneyH(r[1], r[2])) + "</div></div>";
+      return '<div class="bk"><div class="l">Ahorros en ' + esc(r[0]) + '</div><div class="v fit">' + mask(moneyH(r[1], r[2])) + "</div></div>";
     }).join("") : '<p class="empty" style="grid-column:1/-1">Aún no tienes ahorros. Actívalos al registrar un ingreso.</p>';
     $("sav-hint").textContent = "Al registrar un ingreso decides si ahorrar y cuánto. El ahorro queda en la cuenta del ingreso.";
     renderEye();
@@ -1193,6 +1224,8 @@ input, select {
     }
     $("fecha-btn").addEventListener("click", function () { openCal("fecha"); });
     $("mes-btn").addEventListener("click", function () { openCal("mes"); });
+    window.addEventListener("resize", scheduleFit);
+    if (document.fonts && document.fonts.ready) document.fonts.ready.then(scheduleFit);
     $("cal-cancel").addEventListener("click", closeCal);
     $("cal-backdrop").addEventListener("click", function (e) { if (e.target === $("cal-backdrop")) closeCal(); });
     $("cal-prev").addEventListener("click", function () { calStep(-1); });
