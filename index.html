@@ -433,13 +433,13 @@ body.dial-open .ai-fab { opacity: 0; pointer-events: none; transform: scale(0.7)
 @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) { --glass-line: rgba(255, 255, 255, 0.14); --glass-hi: rgba(255, 255, 255, 0.18); --glass-shadow: rgba(0, 0, 0, 0.5); } }
 :root[data-theme="dark"] { --glass-line: rgba(255, 255, 255, 0.14); --glass-hi: rgba(255, 255, 255, 0.18); --glass-shadow: rgba(0, 0, 0, 0.5); }
 
-.tabbar { position: fixed; left: 16px; right: calc(16px + 58px + 12px); bottom: calc(12px + env(safe-area-inset-bottom, 0px)); height: 58px; padding: 5px; display: flex; z-index: 17; border-radius: 29px;
+.tabbar { position: fixed; left: 16px; right: 16px; bottom: calc(12px + env(safe-area-inset-bottom, 0px)); height: 58px; padding: 5px; display: flex; z-index: 17; border-radius: 29px;
   background: color-mix(in srgb, var(--surface) 58%, transparent);
   -webkit-backdrop-filter: blur(22px) saturate(180%); backdrop-filter: blur(22px) saturate(180%);
   border: 1px solid var(--glass-line);
   box-shadow: 0 10px 30px var(--glass-shadow), inset 0 1px 0 var(--glass-hi), inset 0 -1px 0 rgba(255, 255, 255, 0.08); }
 .tabbar::before { content: ""; position: absolute; inset: 0; border-radius: inherit; background: linear-gradient(180deg, rgba(255, 255, 255, 0.28), rgba(255, 255, 255, 0) 50%); pointer-events: none; }
-.tab-lens { position: absolute; top: 5px; bottom: 5px; left: 5px; width: calc((100% - 10px) / 3); border-radius: 24px;
+.tab-lens { position: absolute; top: 5px; bottom: 5px; left: 5px; width: calc((100% - 10px) / 4); border-radius: 24px;
   background: color-mix(in srgb, var(--accent) 16%, rgba(255, 255, 255, 0.35));
   box-shadow: inset 0 1px 0 var(--glass-hi), 0 2px 10px rgba(0, 0, 0, 0.1);
   transform: translateX(calc(var(--i, 0) * 100%)); transition: transform 0.5s cubic-bezier(0.3, 1.35, 0.5, 1); }
@@ -447,17 +447,66 @@ body.dial-open .ai-fab { opacity: 0; pointer-events: none; transform: scale(0.7)
 .tab svg { width: 22px; height: 22px; }
 .tab[aria-current="true"] { color: var(--accent); }
 
-.fab { right: 16px; bottom: calc(12px + env(safe-area-inset-bottom, 0px)); width: 58px; height: 58px; font-size: 2.1rem;
+.fab { right: 16px; bottom: calc(12px + 58px + 12px + env(safe-area-inset-bottom, 0px)); width: 58px; height: 58px; font-size: 2.1rem;
   background: linear-gradient(180deg, color-mix(in srgb, var(--accent) 82%, #fff), var(--accent));
   box-shadow: 0 10px 24px color-mix(in srgb, var(--accent) 40%, transparent), inset 0 1px 0 rgba(255, 255, 255, 0.5); }
-.ai-fab { right: 22px; bottom: calc(12px + 58px + 12px + env(safe-area-inset-bottom, 0px)); }
-.dial-menu { bottom: calc(12px + 58px + 14px + env(safe-area-inset-bottom, 0px)); }
+.ai-fab { right: 22px; bottom: calc(12px + 58px + 12px + 58px + 12px + env(safe-area-inset-bottom, 0px)); }
+.dial-menu { bottom: calc(12px + 58px + 12px + 58px + 14px + env(safe-area-inset-bottom, 0px)); }
 .dial-item { background: color-mix(in srgb, var(--surface) 72%, transparent); -webkit-backdrop-filter: blur(18px) saturate(170%); backdrop-filter: blur(18px) saturate(170%); border-color: var(--glass-line); box-shadow: 0 10px 26px var(--glass-shadow), inset 0 1px 0 var(--glass-hi); }
-.toast { right: 16px; bottom: calc(12px + 58px + 12px + env(safe-area-inset-bottom, 0px)); }
-main { padding-bottom: 132px; }
+.toast { right: 86px; bottom: calc(12px + 58px + 12px + env(safe-area-inset-bottom, 0px)); }
+main { padding-bottom: 156px; }
 main > .panel, main > .top { scroll-margin-top: 12px; }
 @supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) { .tabbar, .dial-item { background: var(--surface); } }
 @media (prefers-reduced-transparency: reduce) { .tabbar, .dial-item { background: var(--surface); -webkit-backdrop-filter: none; backdrop-filter: none; } }
+.top { grid-template-columns: repeat(6, minmax(0, 1fr)); }
+.top h1 { grid-column: 1 / 4; grid-row: 1; }
+.top .rate-note { grid-column: 4 / 7; grid-row: 1; }
+.top .field-month { grid-column: 1 / 7; grid-row: 2; }
+.top .field-rate:nth-child(1) { grid-column: 1 / 3; grid-row: 3; }
+.top .field-rate:nth-child(2) { grid-column: 3 / 5; grid-row: 3; }
+.top .field-rate:nth-child(3) { grid-column: 5 / 7; grid-row: 3; }
+.rate-chips { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 6px; }
+.rate-chips:empty { display: none; }
+.rate-chip { font: inherit; font-size: 0.78rem; font-weight: 600; padding: 6px 10px; min-height: 32px; border-radius: 999px; border: 1px solid var(--line); background: var(--bg); color: var(--ink); cursor: pointer; }
+.rate-chip:hover { border-color: var(--accent); color: var(--accent); }
+.goal-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 12px; }
+.goal { display: grid; grid-template-columns: auto 1fr; gap: 12px 14px; align-items: center; padding: 14px; border-radius: 18px; background: var(--bg); }
+.ring { position: relative; width: 64px; height: 64px; }
+.ring svg { display: block; width: 100%; height: 100%; }
+.ring .trk { fill: none; stroke: var(--line); stroke-width: 4; }
+.ring .bar { fill: none; stroke: var(--accent); stroke-width: 4; stroke-linecap: round; stroke-dashoffset: 25; stroke-dasharray: var(--p) calc(100 - var(--p)); animation: ringFill 0.9s cubic-bezier(0.2, 0.8, 0.2, 1) backwards; }
+.goal.done .ring .bar { stroke: var(--in); }
+.ring .pct { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; font-family: var(--display); font-weight: 700; font-size: 0.9rem; }
+.goal.done .ring .pct { color: var(--in); }
+@keyframes ringFill { from { stroke-dasharray: 0 100; } to { stroke-dasharray: var(--p) calc(100 - var(--p)); } }
+.goal-main { min-width: 0; }
+.goal-name { font-weight: 600; font-size: 1.02rem; }
+.goal-amt { color: var(--muted); font-size: 0.92rem; }
+.goal-sub { color: var(--muted); font-size: 0.8rem; margin-top: 1px; }
+.goal.done .goal-sub { color: var(--in); font-weight: 600; }
+.goal-act { grid-column: 1 / -1; display: flex; gap: 8px; align-items: center; }
+.goal-act > .secondary { flex: 1; }
+.trend-chart .area { stroke: none; transition: opacity 0.3s ease; }
+.trend-chart .area.flat { opacity: 0; }
+.rsrc { font-weight: 400; font-size: 0.72rem; opacity: 0.8; }
+.goals-view { position: fixed; inset: 0; z-index: 15; background: var(--bg); overflow-y: auto; overscroll-behavior: contain;
+  padding: calc(12px + env(safe-area-inset-top, 0px)) 16px calc(58px + 12px + env(safe-area-inset-bottom, 0px) + 40px);
+  transform: translateX(100%); visibility: hidden; transition: transform 0.4s cubic-bezier(0.2, 0.8, 0.2, 1), visibility 0s linear 0.4s; }
+body.view-goals .goals-view { transform: none; visibility: visible; transition: transform 0.4s cubic-bezier(0.2, 0.8, 0.2, 1), visibility 0s linear 0s; }
+.goals-view > * { max-width: 760px; margin-left: auto; margin-right: auto; }
+.gv-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.gv-back { display: inline-flex; align-items: center; font: inherit; font-weight: 600; color: var(--accent); background: transparent; border: 0; min-height: 44px; padding: 0 8px 0 0; cursor: pointer; }
+.gv-back svg { width: 22px; height: 22px; }
+.gv-actions { display: flex; align-items: center; gap: 8px; }
+.gv-add { width: 44px; height: 44px; border-radius: 50%; border: 1px solid var(--glass-line); background: color-mix(in srgb, var(--surface) 62%, transparent); -webkit-backdrop-filter: blur(16px) saturate(170%); backdrop-filter: blur(16px) saturate(170%); box-shadow: 0 6px 18px var(--glass-shadow), inset 0 1px 0 var(--glass-hi); color: var(--accent); font-size: 1.7rem; line-height: 1; padding: 0 0 3px; cursor: pointer; }
+.gv-title { font-family: var(--display); font-size: 2.3rem; margin: 6px 0 2px; letter-spacing: -0.02em; }
+.gv-sub { color: var(--muted); margin: 0 auto 18px; min-height: 1.3em; }
+.gv-empty { display: flex; flex-direction: column; align-items: center; text-align: center; gap: 12px; padding: 44px 12px; color: var(--muted); }
+.gv-empty svg { width: 60px; height: 60px; color: var(--accent); opacity: 0.85; }
+.gv-empty p { margin: 0; max-width: 30ch; }
+main { transition: transform 0.4s cubic-bezier(0.2, 0.8, 0.2, 1), opacity 0.4s ease; }
+body.view-goals main { transform: translateX(-22%); opacity: 0.35; }
+body.view-goals .fab, body.view-goals .ai-fab { opacity: 0; pointer-events: none; transform: scale(0.8); visibility: hidden; transition: opacity 0.2s ease, transform 0.2s ease, visibility 0s linear 0.2s; }
 @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation: none !important; transition: none !important; scroll-behavior: auto !important; } }
 </style>
 </head>
@@ -475,8 +524,16 @@ main > .panel, main > .top { scroll-margin-top: 12px; }
         <div class="rate-note" id="rate-note"></div>
         <div class="rate-fields">
           <div class="field-rate">
-            <label for="tasa">Dólar BCV (Bs)</label>
-            <input type="text" id="tasa" inputmode="decimal" autocomplete="off" placeholder="Ej: 875,67">
+            <label for="tasa">Dólar BCV</label>
+            <input type="text" id="tasa" inputmode="decimal" autocomplete="off" placeholder="875,67">
+          </div>
+          <div class="field-rate">
+            <label for="tasa-eur">Euro BCV</label>
+            <input type="text" id="tasa-eur" inputmode="decimal" autocomplete="off" placeholder="985,84">
+          </div>
+          <div class="field-rate">
+            <label for="tasa-usdt">USDT <span class="rsrc" id="usdt-src"></span></label>
+            <input type="text" id="tasa-usdt" inputmode="decimal" autocomplete="off" placeholder="984,00">
           </div>
         </div>
       </div>
@@ -492,6 +549,7 @@ main > .panel, main > .top { scroll-margin-top: 12px; }
       <div class="seg" role="group" aria-label="Moneda para mostrar">
         <button type="button" data-disp="USD" aria-pressed="true">USD</button>
         <button type="button" data-disp="VES" aria-pressed="false">Bs</button>
+        <button type="button" data-disp="EUR" aria-pressed="false">EUR</button>
       </div>
     </div>
     <div class="trend" id="trend">
@@ -553,11 +611,29 @@ main > .panel, main > .top { scroll-margin-top: 12px; }
   </section>
 
   <button class="fab" id="fab" type="button" aria-label="Abrir menú de acciones" aria-haspopup="menu" aria-expanded="false">+</button>
+  <div class="goals-view" id="goals-view" role="region" aria-label="Metas" aria-hidden="true">
+    <div class="gv-head">
+      <button type="button" class="gv-back" id="gv-back" aria-label="Volver al inicio"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 5l-7 7 7 7"></path></svg>Inicio</button>
+      <div class="gv-actions">
+        <button type="button" class="eye eye-btn" aria-pressed="false"></button>
+        <button type="button" class="gv-add" id="goal-new" aria-label="Crear meta">+</button>
+      </div>
+    </div>
+    <h1 class="gv-title">Metas</h1>
+    <p class="gv-sub" id="goals-sub"></p>
+    <ul class="goal-list" id="goal-list"></ul>
+    <div class="gv-empty" id="goal-empty">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 21V4M5 4h11l-2 4 2 4H5"></path></svg>
+      <p>Crea tu primera meta de ahorro: un viaje, un celular o un fondo de emergencia.</p>
+      <button type="button" class="primary" id="goal-new2" style="width:auto;padding:0 28px">Crear meta</button>
+    </div>
+  </div>
   <nav class="tabbar" id="tabbar" aria-label="Navegación" style="--i:0">
     <span class="tab-lens" aria-hidden="true"></span>
     <button type="button" class="tab" data-tab="0" aria-current="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 11l8-7 8 7v8a2 2 0 0 1-2 2h-3.5v-6h-5v6H6a2 2 0 0 1-2-2z"></path></svg><span>Inicio</span></button>
     <button type="button" class="tab" data-tab="1" aria-current="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="6" width="18" height="13" rx="3"></rect><path d="M3 10.5h18M16 15h2"></path></svg><span>Cuentas</span></button>
-    <button type="button" class="tab" data-tab="2" aria-current="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6h11M9 12h11M9 18h11M4.5 6h.01M4.5 12h.01M4.5 18h.01"></path></svg><span>Movimientos</span></button>
+    <button type="button" class="tab" data-tab="2" aria-current="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 21V4M5 4h11l-2 4 2 4H5"></path></svg><span>Metas</span></button>
+    <button type="button" class="tab" data-tab="3" aria-current="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6h11M9 12h11M9 18h11M4.5 6h.01M4.5 12h.01M4.5 18h.01"></path></svg><span>Movimientos</span></button>
   </nav>
   <div class="dial" id="dial" hidden>
     <div class="dial-menu" role="menu">
@@ -568,6 +644,56 @@ main > .panel, main > .top { scroll-margin-top: 12px; }
     </div>
   </div>
   <div class="toast" id="toast" role="status"></div>
+  <div class="sheet-backdrop" id="ge-sheet" hidden>
+    <section class="panel sheet" role="dialog" aria-modal="true" aria-labelledby="h-ge">
+      <div class="sheet-head"><h2 id="h-ge">Nueva meta</h2><button type="button" class="del" id="ge-close" aria-label="Cerrar">✕</button></div>
+      <div class="grid">
+        <div class="wide">
+          <label for="ge-nombre">¿Para qué estás ahorrando?</label>
+          <input type="text" id="ge-nombre" maxlength="30" placeholder="Ej: Viaje, celular nuevo">
+        </div>
+        <div>
+          <label for="ge-meta">Monto de la meta</label>
+          <input type="text" id="ge-meta" inputmode="decimal" autocomplete="off" placeholder="0,00">
+        </div>
+        <div>
+          <label for="ge-moneda">Divisa</label>
+          <select id="ge-moneda"><option value="USD">Dólares ($)</option><option value="VES">Bolívares (Bs)</option></select>
+        </div>
+      </div>
+      <p class="error" id="ge-err" role="alert"></p>
+      <button type="button" class="primary" id="ge-save">Crear meta</button>
+    </section>
+  </div>
+  <div class="sheet-backdrop" id="gm-sheet" hidden>
+    <section class="panel sheet" role="dialog" aria-modal="true" aria-labelledby="h-gm">
+      <div class="sheet-head"><h2 id="h-gm">Meta</h2><button type="button" class="del" id="gm-close" aria-label="Cerrar">✕</button></div>
+      <p class="hint" id="gm-sub" style="margin-bottom:12px"></p>
+      <div class="seg mv-seg" role="group" aria-label="Operación">
+        <button type="button" data-gm="dep" aria-pressed="true">Depositar</button>
+        <button type="button" data-gm="ret" aria-pressed="false">Retirar</button>
+      </div>
+      <div class="grid">
+        <div class="wide">
+          <label for="gm-acc" id="gm-acc-label">Desde</label>
+          <select id="gm-acc"></select>
+        </div>
+        <div>
+          <label for="gm-monto" id="gm-monto-label">Monto</label>
+          <input type="text" id="gm-monto" inputmode="decimal" autocomplete="off" placeholder="0,00">
+        </div>
+        <div id="gm-rate-wrap">
+          <label for="gm-rate">Tasa (Bs por $1)</label>
+          <input type="text" id="gm-rate" inputmode="decimal" autocomplete="off" placeholder="Ej: 984,00">
+          <div class="rate-chips" data-for="gm-rate"></div>
+        </div>
+        <p class="hint wide" id="gm-rate-hint">Viene con la tasa del BCV. Cámbiala por la tasa a la que hiciste el cambio.</p>
+      </div>
+      <div class="sav-preview" id="gm-prev" aria-live="polite"></div>
+      <p class="error" id="gm-err" role="alert"></p>
+      <button type="button" class="primary" id="gm-go">Depositar</button>
+    </section>
+  </div>
   <button class="ai-fab" id="ai-btn" type="button" aria-label="Asistente financiero con IA" aria-haspopup="dialog"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2l1.8 5.2L19 9l-5.2 1.8L12 16l-1.8-5.2L5 9l5.2-1.8z"></path><path d="M19 14l.9 2.6 2.6.9-2.6.9L19 21l-.9-2.6-2.6-.9 2.6-.9z"></path></svg></button>
   <div class="sheet-backdrop" id="ai-sheet" hidden>
     <section class="panel sheet" role="dialog" aria-modal="true" aria-labelledby="h-ai">
@@ -610,6 +736,7 @@ main > .panel, main > .top { scroll-margin-top: 12px; }
         <div id="sv-rate-wrap">
           <label for="sv-rate">Tasa (Bs por $1)</label>
           <input type="text" id="sv-rate" inputmode="decimal" autocomplete="off" placeholder="Ej: 984,00">
+          <div class="rate-chips" data-for="sv-rate"></div>
         </div>
         <p class="hint wide" id="sv-rate-hint">Viene con la tasa del BCV. Cámbiala por la tasa a la que hiciste el cambio.</p>
       </div>
@@ -691,6 +818,7 @@ main > .panel, main > .top { scroll-margin-top: 12px; }
         <div id="tr-rate-wrap">
           <label for="tr-rate">Tasa (Bs por $1)</label>
           <input type="text" id="tr-rate" inputmode="decimal" autocomplete="off" placeholder="Ej: 984,00">
+          <div class="rate-chips" data-for="tr-rate"></div>
         </div>
         <p class="hint wide" id="tr-rate-hint">Viene con la tasa del BCV. Cámbiala por la tasa a la que te hicieron el cambio.</p>
       </div>
@@ -720,6 +848,7 @@ main > .panel, main > .top { scroll-margin-top: 12px; }
         <input type="text" id="calc-rate" inputmode="decimal" autocomplete="off" placeholder="Ej: 875,67">
         <button type="button" class="secondary" id="calc-bcv">Usar la del BCV</button>
       </div>
+      <div class="rate-chips" data-for="calc-rate"></div>
       <p class="hint" id="calc-note"></p>
     </section>
   </div>
@@ -746,6 +875,7 @@ main > .panel, main > .top { scroll-margin-top: 12px; }
         <div id="mv-rate-wrap">
           <label for="mv-rate">Tasa (Bs por $1)</label>
           <input type="text" id="mv-rate" inputmode="decimal" autocomplete="off" placeholder="Ej: 984,00">
+          <div class="rate-chips" data-for="mv-rate"></div>
         </div>
         <p class="hint wide" id="mv-rate-hint">Puedes poner la tasa que te dieron (por ejemplo la de Binance), no solo la del BCV.</p>
       </div>
@@ -868,7 +998,7 @@ main > .panel, main > .top { scroll-margin-top: 12px; }
   };
   var COLORS = ["#2447d6", "#e08a00", "#0e9aa7", "#8a3ffc", "#c2255c", "#3b8f3b", "#6b7b86", "#d6502b", "#9a7b00"];
 
-  var state = { items: [], rate: 0, disp: "USD", type: "gasto", month: "", sel: null, selIn: null, collapsed: {}, templates: [], showAll: false, hideSav: false, rateManual: "", rateAutoAt: 0, rateLoading: false, rateFail: false, rateErr: "", accounts: [], rateEur: 0, rateEurDate: "", lastAcc: null, rateDate: "", fsav: { on: false, pct: 10 }, sav: { on: false, pct: 10 } };
+  var state = { items: [], rate: 0, disp: "USD", type: "gasto", month: "", sel: null, selIn: null, collapsed: {}, templates: [], showAll: false, hideSav: false, rateManual: "", rateAutoAt: 0, rateLoading: false, rateFail: false, rateErr: "", accounts: [], rateEur: 0, rateEurDate: "", rateEurManual: "", rateUsdt: 0, rateUsdtDate: "", rateUsdtManual: "", rateUsdtSrc: "", goals: [], lastAcc: null, rateDate: "", fsav: { on: false, pct: 10 }, sav: { on: false, pct: 10 } };
 
   function load() {
     try {
@@ -883,15 +1013,23 @@ main > .panel, main > .top { scroll-margin-top: 12px; }
         if (d && typeof d.rateAutoAt === "number") state.rateAutoAt = d.rateAutoAt;
         if (d && Array.isArray(d.accounts)) state.accounts = d.accounts;
         if (d && Array.isArray(d.templates)) state.templates = d.templates;
+        if (d && Array.isArray(d.goals)) state.goals = d.goals;
+        if (d && typeof d.rateEur === "number") state.rateEur = d.rateEur;
+        if (d && typeof d.rateEurDate === "string") state.rateEurDate = d.rateEurDate;
+        if (d && typeof d.rateEurManual === "string") state.rateEurManual = d.rateEurManual;
+        if (d && typeof d.rateUsdt === "number") state.rateUsdt = d.rateUsdt;
+        if (d && typeof d.rateUsdtDate === "string") state.rateUsdtDate = d.rateUsdtDate;
+        if (d && typeof d.rateUsdtManual === "string") state.rateUsdtManual = d.rateUsdtManual;
+        if (d && typeof d.rateUsdtSrc === "string") state.rateUsdtSrc = d.rateUsdtSrc;
         if (d && d.collapsed && typeof d.collapsed === "object") state.collapsed = d.collapsed;
-        if (d && (d.disp === "USD" || d.disp === "VES")) state.disp = d.disp;
+        if (d && (d.disp === "USD" || d.disp === "VES" || d.disp === "EUR")) state.disp = d.disp;
         if (d && d.sav && typeof d.sav.pct === "number") state.sav = { on: !!d.sav.on, pct: d.sav.pct };
       }
     } catch (e) {}
   }
   function save() {
     try {
-      localStorage.setItem(KEY, JSON.stringify({ items: state.items, rate: state.rate, rateDate: state.rateDate, hideSav: state.hideSav, rateManual: state.rateManual, rateAutoAt: state.rateAutoAt, accounts: state.accounts, templates: state.templates, collapsed: state.collapsed, disp: state.disp, sav: state.sav }));
+      localStorage.setItem(KEY, JSON.stringify({ items: state.items, rate: state.rate, rateDate: state.rateDate, hideSav: state.hideSav, rateManual: state.rateManual, rateAutoAt: state.rateAutoAt, accounts: state.accounts, templates: state.templates, goals: state.goals, rateEur: state.rateEur, rateEurDate: state.rateEurDate, rateEurManual: state.rateEurManual, rateUsdt: state.rateUsdt, rateUsdtDate: state.rateUsdtDate, rateUsdtManual: state.rateUsdtManual, rateUsdtSrc: state.rateUsdtSrc, collapsed: state.collapsed, disp: state.disp, sav: state.sav }));
     } catch (e) {}
   }
 
@@ -977,7 +1115,7 @@ main > .panel, main > .top { scroll-margin-top: 12px; }
   }
   function accUsed(a) {
     return state.items.some(function (it) {
-      return it.cuenta === a.id || (it.tipo === "traspaso" && ((it.hacia && it.hacia.id === a.id) || (it.desde && it.desde.id === a.id)));
+      return it.cuenta === a.id || (it.tipo === "traspaso" && ((it.hacia && it.hacia.k !== "meta" && it.hacia.id === a.id) || (it.desde && it.desde.k !== "meta" && it.desde.id === a.id)));
     });
   }
 
@@ -1087,6 +1225,9 @@ main > .panel, main > .top { scroll-margin-top: 12px; }
       }
       return dstr;
     }
+    function areaFromYs(ys) {
+      return pathFromYs(ys) + " L" + X(6).toFixed(1) + " " + base + " L" + X(0).toFixed(1) + " " + base + " Z";
+    }
     function targetYs(key, max) {
       return days.map(function (d) { return max > 0 ? base - (d[key] / max) * (h - 2 * pad) : base; });
     }
@@ -1098,10 +1239,14 @@ main > .panel, main > .top { scroll-margin-top: 12px; }
       if (wrap._raf) { cancelAnimationFrame(wrap._raf); wrap._raf = 0; }
       wrap.innerHTML = '<svg viewBox="0 0 ' + w + " " + h + '" role="img" aria-label="Ingresos y gastos de los últimos 7 días">' +
         '<line class="base" x1="' + pad + '" y1="' + base + '" x2="' + (w - pad) + '" y2="' + base + '"></line>' +
+        '<defs><linearGradient id="trg-exp" x1="0" y1="0" x2="0" y2="1"><stop offset="0" style="stop-color:var(--out);stop-opacity:0.34"></stop><stop offset="1" style="stop-color:var(--out);stop-opacity:0"></stop></linearGradient>' +
+        '<linearGradient id="trg-inc" x1="0" y1="0" x2="0" y2="1"><stop offset="0" style="stop-color:var(--in);stop-opacity:0.34"></stop><stop offset="1" style="stop-color:var(--in);stop-opacity:0"></stop></linearGradient></defs>' +
+        '<path class="area" data-s="exp" fill="url(#trg-exp)"></path><path class="area" data-s="inc" fill="url(#trg-inc)"></path>' +
         '<path class="ln" data-s="exp" stroke="var(--out)"></path><path class="ln" data-s="inc" stroke="var(--in)"></path>' +
         '<circle class="dot" data-s="exp" r="4" fill="var(--out)"></circle><circle class="dot" data-s="inc" r="4" fill="var(--in)"></circle></svg>';
       wrap._els = {
-        pe: wrap.querySelector('path[data-s="exp"]'), pi: wrap.querySelector('path[data-s="inc"]'),
+        pe: wrap.querySelector('path.ln[data-s="exp"]'), pi: wrap.querySelector('path.ln[data-s="inc"]'),
+        ae: wrap.querySelector('path.area[data-s="exp"]'), ai: wrap.querySelector('path.area[data-s="inc"]'),
         de: wrap.querySelector('circle[data-s="exp"]'), di: wrap.querySelector('circle[data-s="inc"]')
       };
       wrap._w = w;
@@ -1110,10 +1255,14 @@ main > .panel, main > .top { scroll-margin-top: 12px; }
     function apply(ye, yi) {
       els.pe.setAttribute("d", pathFromYs(ye));
       els.pi.setAttribute("d", pathFromYs(yi));
+      els.ae.setAttribute("d", areaFromYs(ye));
+      els.ai.setAttribute("d", areaFromYs(yi));
       els.de.setAttribute("cx", X(6).toFixed(1)); els.de.setAttribute("cy", ye[6].toFixed(1));
       els.di.setAttribute("cx", X(6).toFixed(1)); els.di.setAttribute("cy", yi[6].toFixed(1));
       wrap._cur = { exp: ye, inc: yi };
     }
+    els.ae.classList.toggle("flat", !(maxE > 0));
+    els.ai.classList.toggle("flat", !(maxI > 0));
     els.pe.classList.toggle("flat", !(maxE > 0));
     els.de.classList.toggle("flat", !(maxE > 0));
     els.pi.classList.toggle("flat", !(maxI > 0));
@@ -1169,8 +1318,8 @@ main > .panel, main > .top { scroll-margin-top: 12px; }
     state.items.forEach(function (it) {
       if (!it.fecha || it.fecha.slice(0, 7) !== mstr) return;
       if (it.tipo === "traspaso") {
-        if (it.desde.k === "ahorro") { var dv = conv(it.desde.monto, it.desde.moneda, D); if (dv === null) r.miss = true; else r.sav -= dv; }
-        if (it.hacia.k === "ahorro") { var hv = conv(it.hacia.monto, it.hacia.moneda, D); if (hv === null) r.miss = true; else r.sav += hv; }
+        if (isSavK(it.desde.k)) { var dv = conv(it.desde.monto, it.desde.moneda, D); if (dv === null) r.miss = true; else r.sav -= dv; }
+        if (isSavK(it.hacia.k)) { var hv = conv(it.hacia.monto, it.hacia.moneda, D); if (hv === null) r.miss = true; else r.sav += hv; }
         return;
       }
       var v = conv(it.monto, it.moneda, D);
@@ -1258,7 +1407,7 @@ main > .panel, main > .top { scroll-margin-top: 12px; }
     var names = {};
     Object.keys(cur.cat).concat(Object.keys(prev.cat)).forEach(function (c) { names[c] = 1; });
     var lines = [];
-    lines.push("Mes analizado: " + monthLabel(mstr) + ". Cifras en " + (D === "USD" ? "dólares (USD)" : "bolívares (Bs)") + ".");
+    lines.push("Mes analizado: " + monthLabel(mstr) + ". Cifras en " + (D === "USD" ? "dólares (USD)" : D === "EUR" ? "euros (EUR)" : "bolívares (Bs)") + ".");
     lines.push("Ingresos: " + f(cur.inc) + " | Gastos: " + f(cur.exp) + " | Ahorrado: " + f(cur.sav) + " | Cantidad de gastos: " + cur.nExp + ".");
     lines.push("Mes anterior: ingresos " + f(prev.inc) + ", gastos " + f(prev.exp) + ".");
     lines.push("Gastos por categoría (este mes / mes anterior):");
@@ -1273,6 +1422,48 @@ main > .panel, main > .top { scroll-margin-top: 12px; }
   var AI_MODEL = "claude-sonnet-5-5";
   function aiKey() { try { return localStorage.getItem("gastos-ai-key") || ""; } catch (e) { return ""; } }
   function setAiKey(v) { try { if (v) localStorage.setItem("gastos-ai-key", v); else localStorage.removeItem("gastos-ai-key"); } catch (e) {} }
+
+  function isSavK(k) { return k === "ahorro" || k === "meta"; }
+  function goalMap() {
+    var m = {};
+    state.items.forEach(function (it) {
+      if (it.tipo !== "traspaso") return;
+      if (it.hacia.k === "meta") m[it.hacia.id] = (m[it.hacia.id] || 0) + it.hacia.monto;
+      if (it.desde.k === "meta") m[it.desde.id] = (m[it.desde.id] || 0) - it.desde.monto;
+    });
+    Object.keys(m).forEach(function (k) { m[k] = Math.round(m[k] * 100) / 100; });
+    return m;
+  }
+  function goalById(id) {
+    return state.goals.filter(function (g) { return String(g.id) === String(id); })[0] || null;
+  }
+  function renderGoals() {
+    var list = $("goal-list");
+    $("goal-empty").style.display = state.goals.length ? "none" : "";
+    var bals = goalMap(), tot = 0;
+    state.goals.forEach(function (g) {
+      var v = conv(Math.max(0, bals[g.id] || 0), g.moneda, state.disp);
+      if (v !== null) tot += v;
+    });
+    $("goals-sub").innerHTML = state.goals.length
+      ? state.goals.length + (state.goals.length === 1 ? " meta" : " metas") + " · " + mask(money(tot, state.disp)) + " ahorrados"
+      : "";
+    var html = state.goals.map(function (g) {
+      var bal = Math.max(0, bals[g.id] || 0), pct = g.meta > 0 ? Math.min(100, bal / g.meta * 100) : 0;
+      var done = g.meta > 0 && bal >= g.meta - 0.005;
+      return '<li class="goal' + (done ? " done" : "") + '"><div class="ring"><svg viewBox="0 0 42 42" aria-hidden="true">' +
+        '<circle class="trk" cx="21" cy="21" r="15.9155"></circle><circle class="bar" cx="21" cy="21" r="15.9155" style="--p:' + pct.toFixed(2) + '"></circle></svg>' +
+        '<span class="pct">' + (done ? "✓" : Math.floor(pct) + "%") + "</span></div>" +
+        '<div class="goal-main"><div class="goal-name">' + esc(g.nombre) + '</div><div class="goal-amt">' + mask(money(bal, g.moneda) + " de " + money(g.meta, g.moneda)) +
+        '</div><div class="goal-sub">' + (done ? "¡Meta lograda!" : "Te faltan " + mask(money(Math.max(0, g.meta - bal), g.moneda))) + "</div></div>" +
+        '<div class="goal-act"><button type="button" class="secondary" data-goal-dep="' + g.id + '">Depositar</button>' +
+        '<div class="menu-wrap"><button class="dots" type="button" aria-haspopup="menu" aria-expanded="false" aria-label="Opciones de la meta">⋮</button>' +
+        '<div class="menu" role="menu" hidden><button type="button" role="menuitem" data-goal-ret="' + g.id + '">Retirar fondos</button>' +
+        '<button type="button" role="menuitem" data-goal-edit="' + g.id + '">Editar meta</button>' +
+        '<button type="button" role="menuitem" class="danger" data-goal-del="' + g.id + '">Eliminar meta</button></div></div></div></li>';
+    }).join("");
+    if (list._h !== html) { list.innerHTML = html; list._h = html; }
+  }
 
   function monthItems() {
     return state.items
@@ -1359,11 +1550,11 @@ main > .panel, main > .top { scroll-margin-top: 12px; }
 
     items.forEach(function (it) {
       if (it.tipo === "traspaso") {
-        if (it.desde.k === "ahorro") {
+        if (isSavK(it.desde.k)) {
           var dv = conv(it.desde.monto, it.desde.moneda, D);
           if (dv === null) missing = true; else tsv -= dv;
         }
-        if (it.hacia.k === "ahorro") {
+        if (isSavK(it.hacia.k)) {
           var hv = conv(it.hacia.monto, it.hacia.moneda, D);
           if (hv === null) missing = true; else tsv += hv;
         }
@@ -1392,7 +1583,10 @@ main > .panel, main > .top { scroll-margin-top: 12px; }
     drawDonut({ key: "in", data: byIn, total: tin, colorFn: colorForIn, label: "Ingresos", selKey: "selIn", D: D });
 
     renderAccounts();
+    renderGoals();
     drawTrend();
+    renderRateChips();
+    renderUsdtSrc();
     renderRateNote();
     renderSavings();
     var list = $("list");
@@ -1416,7 +1610,7 @@ main > .panel, main > .top { scroll-margin-top: 12px; }
     var listHtml = shown.map(function (it, idx) {
       if (it.tipo === "traspaso") {
         var dd = it.fecha.split("-");
-        var svInv = it.desde.k === "ahorro" || it.hacia.k === "ahorro";
+        var svInv = isSavK(it.desde.k) || isSavK(it.hacia.k);
         var txt = (state.hideSav && svInv) ? '<span class="masked">••••</span>' : money(it.desde.monto, it.desde.moneda) + " → " + money(it.hacia.monto, it.hacia.moneda);
         if (svInv) txt = '<span class="sv-val">' + txt + "</span>";
         return '<li class="item' + (fresh(it, idx) ? "@@F@@" : "") + '"><div><div class="t"><span class="dot" style="background:var(--accent)"></span>' + esc(it.cat) +
@@ -1453,20 +1647,36 @@ main > .panel, main > .top { scroll-margin-top: 12px; }
     }
   }
 
+  var RATE_KEYS = ["usd", "eur", "usdt"];
+  var RATE_FIELDS = {
+    usd: { v: "rate", d: "rateDate", m: "rateManual", input: "tasa", name: "dólar" },
+    eur: { v: "rateEur", d: "rateEurDate", m: "rateEurManual", input: "tasa-eur", name: "euro" },
+    usdt: { v: "rateUsdt", d: "rateUsdtDate", m: "rateUsdtManual", input: "tasa-usdt", name: "USDT" }
+  };
   function renderRateNote() {
     var n = $("rate-note"), t = today();
     function again(txt) { return ' <a href="#" id="rate-refresh">' + txt + "</a>"; }
-    if (state.rateLoading) { n.className = "rate-note"; n.innerHTML = "Actualizando la tasa del BCV…"; return; }
+    if (state.rateLoading) { n.className = "rate-note"; n.innerHTML = "Actualizando las tasas…"; return; }
     if (!state.rate) {
       n.className = "rate-note old";
-      n.innerHTML = (state.rateFail ? "No pude traer la tasa (" + rateReason() + ")." : "Escribe la tasa del día.") + again("Reintentar");
+      n.innerHTML = (state.rateFail ? "No pude traer las tasas (" + rateReason() + ")." : "Escribe la tasa del día.") + again("Reintentar");
       return;
     }
-    if (state.rateManual === t) { n.className = "rate-note"; n.innerHTML = "Tasa escrita por ti." + again("Usar la del BCV"); return; }
-    if (state.rateDate === t) { n.className = "rate-note"; n.innerHTML = "Tasa de hoy (BCV)." + again("Actualizar"); return; }
-    var p = state.rateDate ? state.rateDate.split("-") : null;
+    var miss = RATE_KEYS.filter(function (k) { return !(state[RATE_FIELDS[k].v] > 0); });
+    var stale = RATE_KEYS.filter(function (k) { return state[RATE_FIELDS[k].v] > 0 && state[RATE_FIELDS[k].d] !== t; });
+    if (!miss.length && !stale.length) {
+      var manual = RATE_KEYS.some(function (k) { return state[RATE_FIELDS[k].m] === t; });
+      n.className = "rate-note";
+      n.innerHTML = (manual ? "Tasas de hoy (alguna escrita por ti)." : "Tasas de hoy.") + again(manual ? "Usar las oficiales" : "Actualizar");
+      return;
+    }
+    var dates = RATE_KEYS.map(function (k) { return state[RATE_FIELDS[k].d]; }).filter(Boolean).sort();
+    var p = dates.length ? dates[0].split("-") : null;
+    var txt = state.rateFail ? "No pude actualizar todo (" + rateReason() + "). " : "";
+    if (stale.length && p) txt += "Tasa del " + p[2] + "/" + p[1] + ". ";
+    else if (miss.length) txt += "Faltan: " + miss.map(function (k) { return RATE_FIELDS[k].name; }).join(", ") + ". ";
     n.className = "rate-note old";
-    n.innerHTML = (state.rateFail ? "No pude actualizar (" + rateReason() + "). " : "") + (p ? "Tasa del " + p[2] + "/" + p[1] + "." : "Verifica la tasa.") + again("Actualizar");
+    n.innerHTML = txt + again("Actualizar");
   }
 
   function rateReason() {
@@ -1497,48 +1707,115 @@ main > .panel, main > .top { scroll-margin-top: 12px; }
   }
   function rateFromLocal() {
     return getJSON("tasa.json?ts=" + Date.now(), 8000).then(function (j) {
-      var v = Number(j && j.usd), f = String((j && j.fecha) || "");
-      if (!(v > 0) || !/^\d{4}-\d{2}-\d{2}$/.test(f)) throw rateError("dato");
+      var f = String((j && j.fecha) || "");
+      if (!/^\d{4}-\d{2}-\d{2}$/.test(f) || !(Number(j.usd) > 0)) throw rateError("dato");
       if ((Date.parse(today()) - Date.parse(f)) / 86400000 > 3) throw rateError("viejo");
-      return v;
+      return j;
     });
   }
-  function rateFromApi() {
-    return getJSON("https://ve.dolarapi.com/v1/dolares/oficial", 15000).then(function (j) {
-      var v = Number(j && j.promedio);
-      if (!(v > 0)) throw rateError("dato");
-      return v;
+  var RATE_URLS = {
+    usd: "https://ve.dolarapi.com/v1/dolares/oficial",
+    eur: "https://ve.dolarapi.com/v1/euros/oficial",
+    usdt: "https://ve.dolarapi.com/v1/dolares/paralelo"
+  };
+  var USDT_URL = "https://pydolarve.org/api/v1/dollar?page=criptodolar&monitor=binance";
+  function pickPrice(j) {
+    if (j === null || j === undefined) return 0;
+    if (typeof j === "number") return j;
+    if (Array.isArray(j)) {
+      var b = j.filter(function (x) { return x && /binance/i.test(String(x.key || "") + " " + String(x.title || "")); })[0];
+      return pickPrice(b || j[0]);
+    }
+    if (typeof j === "object") {
+      if (typeof j.price === "number") return j.price;
+      if (typeof j.promedio === "number") return j.promedio;
+      if (j.binance) return pickPrice(j.binance);
+      if (j.monitors) {
+        var ms = j.monitors;
+        if (Array.isArray(ms)) return pickPrice(ms);
+        return pickPrice(ms.binance || ms[Object.keys(ms)[0]]);
+      }
+    }
+    return 0;
+  }
+  function okUsdt(v) { return v > 0 && (!(state.rate > 0) || (v >= state.rate * 0.5 && v <= state.rate * 3)); }
+  function rateFromApi(k) {
+    if (k !== "usdt") {
+      return getJSON(RATE_URLS[k], 15000).then(function (j) {
+        var v = Number(j && j.promedio);
+        if (!(v > 0)) throw rateError("dato");
+        return { v: v, src: "bcv" };
+      });
+    }
+    return getJSON(USDT_URL, 12000).then(function (j) {
+      var v = pickPrice(j);
+      if (!okUsdt(v)) throw rateError("dato");
+      return { v: v, src: "binance" };
+    }).catch(function () {
+      return getJSON(RATE_URLS.usdt, 15000).then(function (j) {
+        var v = Number(j && j.promedio);
+        if (!okUsdt(v)) throw rateError("dato");
+        return { v: v, src: "paralelo" };
+      });
     });
+  }
+  function renderUsdtSrc() {
+    var el = $("usdt-src");
+    if (!el) return;
+    var names = { binance: "Binance", paralelo: "paralelo", manual: "manual", p2p: "P2P" };
+    el.textContent = state.rateUsdt > 0 && state.rateUsdtSrc ? "· " + (names[state.rateUsdtSrc] || state.rateUsdtSrc) : "";
   }
   function fetchRate(force) {
-    if (typeof fetch !== "function") return;
-    if (state.rateLoading) return;
+    if (typeof fetch !== "function" || state.rateLoading) return;
     var t = today();
+    var keys = RATE_KEYS.filter(function (k) { return force || state[RATE_FIELDS[k].m] !== t; });
+    if (!keys.length) return;
     if (!force) {
-      if (state.rateManual === t) return;
-      if (state.rateDate === t && Date.now() - state.rateAutoAt < 2 * 3600 * 1000) return;
+      var fresh = keys.every(function (k) { return state[RATE_FIELDS[k].d] === t && state[RATE_FIELDS[k].v] > 0; });
+      if (fresh && Date.now() - state.rateAutoAt < 2 * 3600 * 1000) return;
     }
     state.rateLoading = true;
     renderRateNote();
-    rateFromLocal()
-      .catch(function () { return rateFromApi(); })
-      .then(function (v) {
-        state.rate = Math.round(v * 10000) / 10000;
-        state.rateDate = today();
-        state.rateManual = "";
+    rateFromLocal().then(function (j) { return j; }, function () { return null; })
+      .then(function (loc) {
+        return Promise.all(keys.map(function (k) {
+          var lv = loc ? Number(loc[k]) : 0;
+          if (lv > 0 && (k !== "usdt" || okUsdt(lv))) return Promise.resolve({ k: k, v: lv, src: k === "usdt" ? (loc.usdtSrc || "p2p") : "bcv" });
+          return rateFromApi(k).then(
+            function (r) { return { k: k, v: r.v, src: r.src }; },
+            function (e) { return { k: k, err: (e && e.code) || "red" }; }
+          );
+        }));
+      })
+      .then(function (res) {
+        var fail = false;
+        res.forEach(function (o) {
+          if (o.err) { fail = true; state.rateErr = o.err; return; }
+          var f = RATE_FIELDS[o.k];
+          state[f.v] = Math.round(o.v * 10000) / 10000;
+          state[f.d] = t;
+          state[f.m] = "";
+          if (o.k === "usdt") state.rateUsdtSrc = o.src;
+          $(f.input).value = fmtIn(state[f.v]);
+        });
+        state.rateFail = fail;
+        if (!fail) state.rateErr = "";
         state.rateAutoAt = Date.now();
-        state.rateFail = false;
-        state.rateErr = "";
-        $("tasa").value = fmtIn(state.rate);
         save();
-      }, function (e) {
-        state.rateFail = true;
-        state.rateErr = (e && e.code) || "red";
       })
       .then(function () {
         state.rateLoading = false;
         render();
       });
+  }
+  function renderRateChips() {
+    var items = [];
+    if (state.rate > 0) items.push(["BCV", state.rate]);
+    if (state.rateUsdt > 0) items.push(["USDT", state.rateUsdt]);
+    var html = items.map(function (it) { return '<button type="button" class="rate-chip" data-rate="' + it[1] + '">' + it[0] + " " + num(it[1]) + "</button>"; }).join("");
+    document.querySelectorAll(".rate-chips").forEach(function (c) {
+      if (c._h !== html) { c.innerHTML = html; c._h = html; }
+    });
   }
 
   function renderAccounts() {
@@ -1580,18 +1857,33 @@ main > .panel, main > .top { scroll-margin-top: 12px; }
     state.month = today().slice(0, 7);
     $("mes").value = state.month;
     setFecha(today());
+    if (!state.rateEur) { state.rateEur = 985.84; state.rateEurDate = "2026-10-08"; save(); }
     if (state.rate) $("tasa").value = fmtIn(state.rate);
+    if (state.rateEur) $("tasa-eur").value = fmtIn(state.rateEur);
+    if (state.rateUsdt) $("tasa-usdt").value = fmtIn(state.rateUsdt);
     setPressed("[data-disp]", "data-disp", state.disp);
     fillCats();
     render();
 
-    $("tasa").addEventListener("input", function (e) {
-      var v = parseNum(e.target.value);
-      state.rate = v > 0 ? v : 0;
-      state.rateDate = state.rate ? today() : "";
-      state.rateManual = state.rate ? today() : "";
-      $("err").textContent = "";
-      save(); render();
+    RATE_KEYS.forEach(function (k) {
+      var f = RATE_FIELDS[k];
+      $(f.input).addEventListener("input", function (e) {
+        var v = parseNum(e.target.value);
+        state[f.v] = v > 0 ? v : 0;
+        state[f.d] = state[f.v] ? today() : "";
+        state[f.m] = state[f.v] ? today() : "";
+        if (k === "usdt") state.rateUsdtSrc = "manual";
+        $("err").textContent = "";
+        save(); render();
+      });
+    });
+    document.addEventListener("click", function (e) {
+      var b = e.target.closest(".rate-chip");
+      if (!b) return;
+      var inp = $(b.closest(".rate-chips").getAttribute("data-for"));
+      if (!inp) return;
+      inp.value = fmtIn(Number(b.getAttribute("data-rate")));
+      inp.dispatchEvent(new Event("input", { bubbles: true }));
     });
     document.querySelectorAll("[data-disp]").forEach(function (btn) {
       btn.addEventListener("click", function () {
@@ -1901,6 +2193,8 @@ main > .panel, main > .top { scroll-margin-top: 12px; }
       if (e.key !== "Escape") return;
       closeMenus();
       if (!$("dial").hidden) closeDial();
+      else if (!$("gm-sheet").hidden) closeGm();
+      else if (!$("ge-sheet").hidden) closeGe();
       else if (!$("ai-sheet").hidden) closeAi();
       else if (!$("tu-sheet").hidden) closeTu();
       else if (!$("te-sheet").hidden) closeTe();
@@ -1912,6 +2206,7 @@ main > .panel, main > .top { scroll-margin-top: 12px; }
       else if (!$("tr-sheet").hidden) closeTr();
       else if (!$("acc-sheet").hidden) closeAccSheet();
       else if (!$("sheet").hidden) closeSheet();
+      else if (document.body.classList.contains("view-goals")) { hideGoals(); setTab(currentTab()); }
     });
     $("acc-add").addEventListener("click", function () { openAccSheet(null); });
     $("acc-close").addEventListener("click", closeAccSheet);
@@ -1981,7 +2276,7 @@ main > .panel, main > .top { scroll-margin-top: 12px; }
     function dayRowHtml(it) {
       var acc = accById(it.cuenta), amt, cls, sub = "";
       if (it.tipo === "traspaso") {
-        var hid = state.hideSav && (it.desde.k === "ahorro" || it.hacia.k === "ahorro");
+        var hid = state.hideSav && (isSavK(it.desde.k) || isSavK(it.hacia.k));
         amt = hid ? '<span class="masked">••••</span>' : money(it.desde.monto, it.desde.moneda) + " → " + money(it.hacia.monto, it.hacia.moneda);
         cls = "sv";
         sub = it.nota || "";
@@ -2378,7 +2673,7 @@ main > .panel, main > .top { scroll-margin-top: 12px; }
     }
     function renderAi() {
       var mstr = state.month, D = state.disp, res = buildInsights(mstr), c = res.cur;
-      $("ai-sub").textContent = "Análisis de " + monthLabel(mstr) + " · cifras en " + (D === "USD" ? "$" : "Bs") + ". Se calcula en tu teléfono.";
+      $("ai-sub").textContent = "Análisis de " + monthLabel(mstr) + " · cifras en " + curLabel(D) + ". Se calcula en tu teléfono.";
       var sr = c.inc > 0 ? Math.round(c.sav / c.inc * 100) + "%" : "—";
       $("ai-stats").innerHTML =
         '<div class="ai-stat"><div class="l">Ingresos</div><div class="v fit">' + money(c.inc, D) + '</div></div>' +
@@ -2509,12 +2804,204 @@ main > .panel, main > .top { scroll-margin-top: 12px; }
     });
     applyCollapsed();
 
+    /* ---------- Metas ---------- */
+    var geId = null, gm = { id: null, mode: "dep" };
+    function goalUsed(g) {
+      return state.items.some(function (it) {
+        return it.tipo === "traspaso" && ((it.hacia.k === "meta" && it.hacia.id === g.id) || (it.desde.k === "meta" && it.desde.id === g.id));
+      });
+    }
+    function openGe(g) {
+      geId = g ? g.id : null;
+      $("h-ge").textContent = g ? "Editar meta" : "Nueva meta";
+      $("ge-save").textContent = g ? "Guardar cambios" : "Crear meta";
+      $("ge-nombre").value = g ? g.nombre : "";
+      $("ge-meta").value = g ? fmtIn(g.meta) : "";
+      $("ge-moneda").value = g ? g.moneda : (state.disp === "VES" ? "VES" : "USD");
+      $("ge-moneda").disabled = !!(g && goalUsed(g));
+      $("ge-err").textContent = "";
+      $("ge-sheet").hidden = false;
+      $("ge-nombre").focus();
+    }
+    function closeGe() { $("ge-sheet").hidden = true; geId = null; }
+    $("goal-new").addEventListener("click", function () { openGe(null); });
+    $("ge-close").addEventListener("click", closeGe);
+    $("ge-sheet").addEventListener("click", function (e) { if (e.target === $("ge-sheet")) closeGe(); });
+    $("ge-save").addEventListener("click", function () {
+      var nombre = $("ge-nombre").value.trim(), meta = parseNum($("ge-meta").value), err = $("ge-err");
+      if (!nombre) { err.textContent = "Ponle un nombre a tu meta."; $("ge-nombre").focus(); return; }
+      if (!(meta > 0)) { err.textContent = "Escribe el monto que quieres juntar."; $("ge-meta").focus(); return; }
+      if (geId) {
+        var g = goalById(geId);
+        if (g) { g.nombre = nombre; g.meta = meta; if (!goalUsed(g)) g.moneda = $("ge-moneda").value; }
+      } else {
+        state.goals.push({ id: Date.now(), nombre: nombre, meta: meta, moneda: $("ge-moneda").value });
+      }
+      save(); render();
+      closeGe();
+      showToast(geId ? "Meta actualizada." : "Meta creada.");
+    });
+
+    function gmOptions(g) {
+      var m = savMap(), opts = [];
+      state.accounts.forEach(function (a) {
+        if (g.moneda === "EUR" ? a.moneda !== "EUR" : a.moneda === "EUR") return;
+        var v = m["a" + a.id] || 0;
+        if (gm.mode === "ret" || v > 0.004) opts.push({ value: "s:" + a.id, acc: a, kind: "s", label: "Ahorros de " + a.nombre + (gm.mode === "dep" && !state.hideSav ? " · " + money(v, a.moneda) : "") });
+      });
+      state.accounts.forEach(function (a) {
+        if (g.moneda === "EUR" ? a.moneda !== "EUR" : a.moneda === "EUR") return;
+        opts.push({ value: "c:" + a.id, acc: a, kind: "c", label: "Saldo de " + a.nombre + (gm.mode === "dep" ? " · " + money(accBalance(a), a.moneda) : "") });
+      });
+      return opts;
+    }
+    function gmSel(g) {
+      var v = $("gm-acc").value, o = gmOptions(g).filter(function (x) { return x.value === v; })[0];
+      return o || null;
+    }
+    function fillGm() {
+      var g = goalById(gm.id);
+      if (!g) return;
+      var bal = Math.max(0, goalMap()[g.id] || 0), prev = $("gm-acc").value, opts = gmOptions(g);
+      $("gm-sub").textContent = g.nombre + " · " + (state.hideSav ? "••••" : money(bal, g.moneda) + " de " + money(g.meta, g.moneda));
+      $("gm-acc-label").textContent = gm.mode === "dep" ? "Desde" : "Hacia";
+      $("gm-go").textContent = gm.mode === "dep" ? "Depositar" : "Retirar";
+      $("gm-acc").innerHTML = opts.length ? opts.map(function (o) { return '<option value="' + o.value + '">' + esc(o.label) + "</option>"; }).join("") : '<option value="">No hay una cuenta disponible</option>';
+      for (var i = 0; i < $("gm-acc").options.length; i++) if ($("gm-acc").options[i].value === prev) $("gm-acc").value = prev;
+      syncGm();
+    }
+    function gmCurs() {
+      var g = goalById(gm.id), o = g && gmSel(g);
+      if (!g || !o) return null;
+      return gm.mode === "dep" ? { from: o.acc.moneda, to: g.moneda, g: g, o: o } : { from: g.moneda, to: o.acc.moneda, g: g, o: o };
+    }
+    function syncGm() {
+      var c = gmCurs(), rate = !!c && c.from !== c.to;
+      $("gm-rate-wrap").style.display = rate ? "" : "none";
+      $("gm-rate-hint").style.display = rate ? "" : "none";
+      $("gm-monto-label").textContent = "Monto" + (c ? " (" + curLabel(c.from) + ")" : "");
+      renderGmPrev();
+    }
+    function renderGmPrev() {
+      var p = $("gm-prev"), c = gmCurs(), v = parseNum($("gm-monto").value);
+      if (!c || !(v > 0)) { p.innerHTML = ""; return; }
+      var r = parseNum($("gm-rate").value);
+      if (c.from !== c.to && !(r > 0)) { p.innerHTML = '<span class="hint">Escribe la tasa para ver cuánto llega.</span>'; return; }
+      var out = mvOut(v, c.from, c.to, r);
+      var left = gm.mode === "dep" ? "Sale de " + c.o.label.split(" · ")[0] : "Sale de la meta";
+      var right = gm.mode === "dep" ? "Entra a la meta" : "Llega a " + c.o.label;
+      p.innerHTML = '<div class="pv"><span>' + esc(left) + "</span><strong>" + money(v, c.from) + "</strong></div>" +
+        '<div class="pv"><span>' + esc(right) + "</span><strong>" + money(out, c.to) + "</strong></div>" +
+        (c.from !== c.to ? '<span class="hint">Tasa usada: Bs ' + num(r) + " por $1.</span>" : "");
+    }
+    function openGm(g, mode) {
+      if (!g) return;
+      if (!state.accounts.length) { showToast("Primero agrega una cuenta."); openAccSheet(null); return; }
+      gm.id = g.id; gm.mode = mode;
+      setPressed("[data-gm]", "data-gm", mode);
+      $("h-gm").textContent = "Meta";
+      $("gm-monto").value = "";
+      $("gm-rate").value = state.rate > 0 ? fmtIn(state.rate) : "";
+      $("gm-err").textContent = "";
+      fillGm();
+      $("gm-sheet").hidden = false;
+      $("gm-monto").focus();
+    }
+    function closeGm() { $("gm-sheet").hidden = true; gm.id = null; }
+    $("gm-close").addEventListener("click", closeGm);
+    $("gm-sheet").addEventListener("click", function (e) { if (e.target === $("gm-sheet")) closeGm(); });
+    document.querySelectorAll("[data-gm]").forEach(function (b) {
+      b.addEventListener("click", function () {
+        gm.mode = b.getAttribute("data-gm");
+        setPressed("[data-gm]", "data-gm", gm.mode);
+        $("gm-err").textContent = "";
+        fillGm();
+      });
+    });
+    $("gm-acc").addEventListener("change", syncGm);
+    $("gm-monto").addEventListener("input", renderGmPrev);
+    $("gm-rate").addEventListener("input", renderGmPrev);
+    $("gm-go").addEventListener("click", function () {
+      var err = $("gm-err"), c = gmCurs(), v = parseNum($("gm-monto").value);
+      if (!c) { err.textContent = "Elige una cuenta."; return; }
+      if (!(v > 0)) { err.textContent = "Escribe un monto mayor a cero."; $("gm-monto").focus(); return; }
+      var r = parseNum($("gm-rate").value), diff = c.from !== c.to;
+      if (diff && !(r > 0)) { err.textContent = "Escribe la tasa a la que hiciste el cambio."; $("gm-rate").focus(); return; }
+      var g = c.g, a = c.o.acc, out = mvOut(v, c.from, c.to, r), bal = Math.max(0, goalMap()[g.id] || 0), item;
+      if (gm.mode === "dep") {
+        if (c.o.kind === "s" && v > (savMap()["a" + a.id] || 0) + 0.005) { err.textContent = "No puedes mover más de lo que tienes ahorrado en esa cuenta."; return; }
+        item = { id: Date.now(), tipo: "traspaso", fecha: today(), cat: "Meta", moneda: c.from, monto: v,
+          nota: (c.o.kind === "s" ? "Ahorros de " : "") + a.nombre + " → meta " + g.nombre + (diff ? " · tasa " + num(r) : ""),
+          desde: { k: c.o.kind === "s" ? "ahorro" : "cuenta", id: a.id, moneda: c.from, monto: v },
+          hacia: { k: "meta", id: g.id, moneda: g.moneda, monto: out } };
+      } else {
+        if (v > bal + 0.005) { err.textContent = "No puedes retirar más de lo que hay en la meta."; return; }
+        item = { id: Date.now(), tipo: "traspaso", fecha: today(), cat: "Meta", moneda: c.from, monto: v,
+          nota: "Meta " + g.nombre + " → " + (c.o.kind === "s" ? "ahorros de " : "") + a.nombre + (diff ? " · tasa " + num(r) : ""),
+          desde: { k: "meta", id: g.id, moneda: g.moneda, monto: v },
+          hacia: { k: c.o.kind === "s" ? "ahorro" : "cuenta", id: a.id, moneda: c.to, monto: out } };
+      }
+      if (diff) item.tasa = r;
+      state.items.push(item);
+      state.month = today().slice(0, 7);
+      $("mes").value = state.month;
+      var wasDep = gm.mode === "dep", reached = wasDep && bal < g.meta - 0.005 && bal + out >= g.meta - 0.005;
+      save(); render();
+      closeGm();
+      showToast(reached ? "¡Meta lograda!" : (wasDep ? "Depósito listo." : "Retiro listo."));
+    });
+    $("goal-list").addEventListener("click", function (e) {
+      var dots = e.target.closest(".dots");
+      if (dots) {
+        var menu = dots.parentNode.querySelector(".menu"), willOpen = menu.hidden;
+        closeMenus();
+        if (willOpen) { menu.hidden = false; dots.setAttribute("aria-expanded", "true"); }
+        return;
+      }
+      var b;
+      if ((b = e.target.closest("[data-goal-dep]"))) { openGm(goalById(b.getAttribute("data-goal-dep")), "dep"); return; }
+      if ((b = e.target.closest("[data-goal-ret]"))) { closeMenus(); openGm(goalById(b.getAttribute("data-goal-ret")), "ret"); return; }
+      if ((b = e.target.closest("[data-goal-edit]"))) { closeMenus(); openGe(goalById(b.getAttribute("data-goal-edit"))); return; }
+      if ((b = e.target.closest("[data-goal-del]"))) {
+        closeMenus();
+        var g = goalById(b.getAttribute("data-goal-del"));
+        if (!g) return;
+        if ((goalMap()[g.id] || 0) > 0.004) { showToast("Retira los fondos de la meta antes de eliminarla."); return; }
+        state.goals = state.goals.filter(function (x) { return x.id !== g.id; });
+        save(); render();
+        showToast("Meta eliminada.");
+      }
+    });
+
+    /* ---------- Pantalla de metas ---------- */
+    function showGoals() {
+      closeDial();
+      document.body.classList.add("view-goals");
+      var m = document.querySelector("main");
+      m.inert = true;
+      m.setAttribute("aria-hidden", "true");
+      var v = $("goals-view");
+      v.setAttribute("aria-hidden", "false");
+      v.scrollTop = 0;
+      setTab(2);
+    }
+    function hideGoals() {
+      document.body.classList.remove("view-goals");
+      var m = document.querySelector("main");
+      m.inert = false;
+      m.removeAttribute("aria-hidden");
+      $("goals-view").setAttribute("aria-hidden", "true");
+    }
+    $("gv-back").addEventListener("click", function () { hideGoals(); setTab(currentTab()); });
+    $("goal-new2").addEventListener("click", function () { openGe(null); });
+
     /* ---------- Barra inferior ---------- */
     var tabbar = $("tabbar"), tabBtns = tabbar.querySelectorAll(".tab"), spyPending = false, spyLock = 0;
     function tabTargets() {
       return [
         document.querySelector('[aria-labelledby="h-bal"]'),
         document.querySelector('[data-panel="acc"]'),
+        null,
         document.querySelector('[data-panel="list"]')
       ];
     }
@@ -2533,14 +3020,17 @@ main > .panel, main > .top { scroll-margin-top: 12px; }
       spyPending = true;
       requestAnimationFrame(function () {
         spyPending = false;
-        if (Date.now() >= spyLock) setTab(currentTab());
+        if (Date.now() >= spyLock && !document.body.classList.contains("view-goals")) setTab(currentTab());
       });
     }
     window.addEventListener("scroll", spy, { passive: true });
     window.addEventListener("resize", spy);
     tabBtns.forEach(function (b) {
       b.addEventListener("click", function () {
-        var i = Number(b.getAttribute("data-tab")), el = tabTargets()[i];
+        var i = Number(b.getAttribute("data-tab"));
+        if (i === 2) { showGoals(); return; }
+        if (document.body.classList.contains("view-goals")) hideGoals();
+        var el = tabTargets()[i];
         setTab(i);
         spyLock = Date.now() + 800;
         var key = el && el.getAttribute("data-panel");
