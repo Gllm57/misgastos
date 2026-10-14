@@ -503,7 +503,7 @@ main > .panel, main > .top { scroll-margin-top: 12px; }
 .rsrc { font-weight: 400; font-size: 0.72rem; opacity: 0.8; }
 .goals-view { display: none; max-width: 760px; margin: 0 auto; padding: 20px 16px 160px; }
 body.view-goals .goals-view { display: block; animation: viewIn 0.4s cubic-bezier(0.2, 0.8, 0.2, 1); }
-body.view-goals main, body.view-pay main, body.view-hist main { display: none; }
+body.view-goals main, body.view-pay main, body.view-hist main, body.view-bn main { display: none; }
 @keyframes viewIn { from { opacity: 0; transform: translateX(26px); } to { opacity: 1; transform: none; } }
 .gv-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
 .gv-back { display: inline-flex; align-items: center; font: inherit; font-weight: 600; color: var(--accent); background: transparent; border: 0; min-height: 44px; padding: 0 8px 0 0; cursor: pointer; }
@@ -515,7 +515,7 @@ body.view-goals main, body.view-pay main, body.view-hist main { display: none; }
 .gv-empty { display: flex; flex-direction: column; align-items: center; text-align: center; gap: 12px; padding: 44px 12px; color: var(--muted); }
 .gv-empty svg { width: 60px; height: 60px; color: var(--accent); opacity: 0.85; }
 .gv-empty p { margin: 0; max-width: 30ch; }
-body.view-goals .fab, body.view-goals .ai-fab, body.view-pay .fab, body.view-pay .ai-fab, body.view-hist .fab, body.view-hist .ai-fab { opacity: 0; pointer-events: none; transform: scale(0.8); visibility: hidden; transition: opacity 0.2s ease, transform 0.2s ease, visibility 0s linear 0.2s; }
+body.view-goals .fab, body.view-goals .ai-fab, body.view-pay .fab, body.view-pay .ai-fab, body.view-hist .fab, body.view-hist .ai-fab, body.view-bn .fab, body.view-bn .ai-fab { opacity: 0; pointer-events: none; transform: scale(0.8); visibility: hidden; transition: opacity 0.2s ease, transform 0.2s ease, visibility 0s linear 0.2s; }
 .ring .bar { stroke: var(--gc, var(--accent)); }
 .goal.done .ring .bar { stroke: var(--in); }
 .goal-spark svg { display: block; width: 100%; height: 46px; overflow: visible; animation: wipeIn 1s cubic-bezier(0.2, 0.7, 0.2, 1) backwards; }
@@ -751,6 +751,46 @@ body.view-hist .hist-view { display: block; animation: viewIn 0.4s cubic-bezier(
 .pg-rep button { flex: 1; }
 .pay-rep { display: inline-flex; align-items: center; gap: 3px; color: var(--accent); font-weight: 600; }
 .pay-rep svg { width: 12px; height: 12px; }
+/* Ahorro en Binance: guía paso a paso */
+.bn-view { display: none; max-width: 760px; margin: 0 auto; padding: 20px 16px 160px; }
+body.view-bn .bn-view { display: block; animation: viewIn 0.4s cubic-bezier(0.2, 0.8, 0.2, 1); }
+.bn-entry { --g: #e8a300; position: relative; display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 12px; width: 100%; font: inherit; color: var(--ink); text-align: left; cursor: pointer; background: linear-gradient(135deg, color-mix(in srgb, var(--g) 20%, var(--surface)), var(--surface) 70%); border: 1px solid color-mix(in srgb, var(--g) 40%, var(--line)); border-radius: 18px; padding: 14px 44px 14px 14px; margin-bottom: 16px; }
+.bn-entry[hidden] { display: none; }
+.bn-entry .bn-ic { width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-family: var(--display); font-weight: 700; font-size: 1.15rem; color: var(--g); background: color-mix(in srgb, var(--g) 18%, transparent); }
+.bn-entry b { display: block; font-family: var(--display); font-size: 1rem; line-height: 1.25; }
+.bn-entry small { display: block; color: var(--muted); font-size: 0.8rem; margin-top: 2px; }
+.bn-entry .bn-go { color: var(--muted); font-size: 1.4rem; line-height: 1; }
+.bn-x { position: absolute; top: 4px; right: 4px; width: 36px; height: 36px; border-radius: 50%; border: 0; background: transparent; color: var(--muted); font-size: 1rem; cursor: pointer; }
+.bn-prog { background: var(--surface); border: 1px solid var(--line); border-radius: 18px; padding: 14px 16px; display: grid; gap: 10px; margin-bottom: 12px; }
+.bn-prog .row { display: flex; justify-content: space-between; align-items: center; gap: 10px; }
+.bn-prog b { font-family: var(--display); font-size: 1.02rem; }
+.bn-pct { font-size: 0.78rem; font-weight: 700; padding: 3px 10px; border-radius: 999px; background: color-mix(in srgb, var(--accent) 14%, transparent); color: var(--accent); }
+.bn-track { height: 8px; border-radius: 999px; background: var(--line); overflow: hidden; }
+.bn-track i { display: block; height: 100%; border-radius: inherit; background: var(--accent); transition: width 0.5s cubic-bezier(0.2, 0.8, 0.2, 1); }
+.bn-steps { list-style: none; margin: 0; padding: 6px 0; background: var(--surface); border: 1px solid var(--line); border-radius: 20px; }
+.bn-step { display: grid; grid-template-columns: 44px 1fr; gap: 4px 10px; padding: 12px 16px 12px 10px; }
+.bn-step + .bn-step { border-top: 1px solid var(--line); }
+.bn-dot { width: 32px; height: 32px; margin: 0 auto; border-radius: 50%; border: 2px solid var(--line); background: transparent; color: var(--muted); font: inherit; font-weight: 700; font-size: 0.85rem; display: flex; align-items: center; justify-content: center; cursor: pointer; padding: 0; }
+.bn-dot svg { width: 16px; height: 16px; }
+.bn-step.ok .bn-dot { background: var(--in); border-color: var(--in); color: #fff; }
+.bn-step.now .bn-dot { border-color: var(--accent); color: var(--accent); }
+.bn-step h3 { font-family: var(--display); font-size: 1.02rem; margin: 5px 0 0; }
+.bn-step.ok h3 { color: var(--muted); text-decoration: line-through; text-decoration-thickness: 1px; }
+.bn-step p { margin: 2px 0 0; color: var(--muted); font-size: 0.88rem; }
+.bn-body { grid-column: 2; display: grid; gap: 10px; margin-top: 8px; }
+.bn-body[hidden] { display: none; }
+.bn-btns { display: flex; flex-wrap: wrap; gap: 8px; }
+.bn-btn { display: inline-flex; align-items: center; justify-content: center; gap: 6px; font: inherit; font-weight: 700; font-size: 0.9rem; min-height: 44px; padding: 0 16px; border-radius: 12px; border: 1px solid var(--line); background: var(--surface); color: var(--ink); text-decoration: none; cursor: pointer; }
+.bn-btn.pri { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); }
+.bn-btn.gold { background: #f0b90b; border-color: #f0b90b; color: #1a1400; }
+.bn-btn svg { width: 16px; height: 16px; }
+.bn-est { background: var(--bg); border-radius: 14px; padding: 12px; display: grid; gap: 8px; }
+.bn-est .cols { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.bn-est .v { font-family: var(--display); font-weight: 700; font-size: 1.3rem; color: var(--in); font-variant-numeric: tabular-nums; }
+.bn-est .l { color: var(--muted); font-size: 0.78rem; }
+.bn-rate { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; font-size: 0.85rem; color: var(--muted); }
+.bn-rate input { width: 84px; min-height: 38px; padding: 6px 10px; text-align: right; font-weight: 700; }
+.bn-disc { font-size: 0.76rem; color: var(--muted); line-height: 1.4; margin: 14px 4px 0; }
 @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation: none !important; transition: none !important; scroll-behavior: auto !important; } }
 </style>
 </head>
@@ -807,6 +847,13 @@ body.view-hist .hist-view { display: block; animation: viewIn 0.4s cubic-bezier(
       <div class="flow sv"><div class="v fit" id="tsv">$0,00</div><div class="l">Ahorrado <button type="button" class="eye eye-btn" aria-pressed="false"></button></div></div>
     </div>
   </section>
+
+  <div class="bn-entry" id="bn-entry" role="button" tabindex="0" aria-label="Abrir la guía para ahorrar en Binance" hidden>
+    <span class="bn-ic" aria-hidden="true">₮</span>
+    <span><b id="bn-entry-t">Pon tu ahorro a trabajar</b><small id="bn-entry-s"></small></span>
+    <span class="bn-go" aria-hidden="true">›</span>
+    <button type="button" class="bn-x" id="bn-hide" aria-label="Ocultar esta sugerencia">✕</button>
+  </div>
 
   <section class="panel collapsible" data-panel="acc" aria-labelledby="h-acc">
     <div class="phead"><h2 id="h-acc">Mis cuentas</h2><button type="button" class="chev" aria-expanded="true" aria-controls="b-acc" aria-label="Minimizar Mis cuentas"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 15l6-6 6 6"></path></svg></button></div>
@@ -902,6 +949,19 @@ body.view-hist .hist-view { display: block; animation: viewIn 0.4s cubic-bezier(
       <button type="button" class="primary" id="goal-new2" style="width:auto;padding:0 28px">Crear meta</button>
     </div>
   </div>
+  <div class="bn-view" id="bn-view" role="region" aria-label="Ahorro en Binance" aria-hidden="true">
+    <div class="gv-head">
+      <button type="button" class="gv-back" id="bv-back" aria-label="Volver al inicio"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 5l-7 7 7 7"></path></svg>Inicio</button>
+    </div>
+    <h1 class="gv-title">Tu ahorro en Binance</h1>
+    <p class="gv-sub">Pasa tu ahorro a USDT y ponlo a generar rendimiento, como un plazo fijo. Marca cada paso cuando lo termines.</p>
+    <div class="bn-prog">
+      <div class="row"><b id="bn-prog-t"></b><span class="bn-pct" id="bn-pct"></span></div>
+      <div class="bn-track"><i id="bn-bar"></i></div>
+    </div>
+    <ol class="bn-steps" id="bn-steps"></ol>
+    <p class="bn-disc">El botón «Crear mi cuenta» usa un enlace de referido de Mis gastos: si abres tu cuenta con él, Mis gastos puede recibir una comisión de Binance y a ti no te cuesta nada. Mis gastos no es parte de Binance y esto no es asesoría financiera. Binance Earn no es un plazo fijo bancario: el rendimiento cambia, no está garantizado y no tiene garantía de depósito. Mis gastos nunca te pedirá tu contraseña ni tus códigos.</p>
+  </div>
   <div class="pay-view" id="pay-view" role="region" aria-label="Pagos" aria-hidden="true">
     <div class="gv-head">
       <button type="button" class="gv-back" id="pv-back" aria-label="Volver al inicio"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 5l-7 7 7 7"></path></svg>Inicio</button>
@@ -964,6 +1024,7 @@ body.view-hist .hist-view { display: block; animation: viewIn 0.4s cubic-bezier(
     <div class="dial-menu" role="menu">
       <button type="button" class="dial-item" role="menuitem" data-dial="mov"><span>Nuevo movimiento</span><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5v14M5 12h14"></path></svg></span></button>
       <button type="button" class="dial-item" role="menuitem" data-dial="ahorro"><span>Agregar ahorro</span><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12M7 10l5 5 5-5M4 21h16"></path></svg></span></button>
+      <button type="button" class="dial-item" role="menuitem" data-dial="bn"><span>Ahorrar en Binance</span><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 17l6-6 4 4 8-8"></path><path d="M15 7h6v6"></path></svg></span></button>
       <button type="button" class="dial-item" role="menuitem" data-dial="calc"><span>Calculadora</span><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="2" width="14" height="20" rx="2"></rect><path d="M8 6h8M8 11h.01M12 11h.01M16 11h.01M8 15h.01M12 15h.01M16 15h.01M8 19h.01M12 19h.01M16 19h.01"></path></svg></span></button>
       <button type="button" class="dial-item" role="menuitem" data-dial="plantilla"><span>Plantilla</span><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13 2L4 14h7l-1 8 9-12h-7z"></path></svg></span></button>
     </div>
@@ -1353,7 +1414,7 @@ body.view-hist .hist-view { display: block; animation: viewIn 0.4s cubic-bezier(
   };
   var COLORS = ["#1f4fff", "#e08a00", "#0e9aa7", "#8a3ffc", "#e5133f", "#00a651", "#6b7b86", "#d6502b", "#9a7b00"];
 
-  var state = { items: [], rate: 0, disp: "USD", type: "gasto", month: "", sel: null, selIn: null, collapsed: {}, paySeries: [], templates: [], showAll: false, hideSav: false, rateManual: "", rateAutoAt: 0, rateLoading: false, rateFail: false, rateErr: "", accounts: [], rateEur: 0, rateEurDate: "", rateEurManual: "", rateUsdt: 0, rateUsdtDate: "", rateUsdtManual: "", rateUsdtSrc: "", goals: [], payments: [], lastAcc: null, rateDate: "", fsav: { on: false, pct: 10 }, sav: { on: false, pct: 10 } };
+  var state = { items: [], rate: 0, disp: "USD", type: "gasto", month: "", sel: null, selIn: null, collapsed: {}, paySeries: [], bn: { done: {}, apr: 5, hide: false, opened: {} }, templates: [], showAll: false, hideSav: false, rateManual: "", rateAutoAt: 0, rateLoading: false, rateFail: false, rateErr: "", accounts: [], rateEur: 0, rateEurDate: "", rateEurManual: "", rateUsdt: 0, rateUsdtDate: "", rateUsdtManual: "", rateUsdtSrc: "", goals: [], payments: [], lastAcc: null, rateDate: "", fsav: { on: false, pct: 10 }, sav: { on: false, pct: 10 } };
 
   function load() {
     try {
@@ -1371,6 +1432,7 @@ body.view-hist .hist-view { display: block; animation: viewIn 0.4s cubic-bezier(
         if (d && Array.isArray(d.goals)) state.goals = d.goals;
         if (d && Array.isArray(d.payments)) state.payments = d.payments;
         if (d && Array.isArray(d.paySeries)) state.paySeries = d.paySeries;
+        if (d && d.bn && typeof d.bn === "object") state.bn = { done: d.bn.done || {}, apr: typeof d.bn.apr === "number" ? d.bn.apr : BN_APR, hide: !!d.bn.hide, opened: d.bn.opened || {} };
         if (d && typeof d.btcUsd === "number") { state.btcUsd = d.btcUsd; state.btcAt = d.btcAt || 0; }
         if (d && typeof d.rateEur === "number") state.rateEur = d.rateEur;
         if (d && typeof d.rateEurDate === "string") state.rateEurDate = d.rateEurDate;
@@ -1387,7 +1449,7 @@ body.view-hist .hist-view { display: block; animation: viewIn 0.4s cubic-bezier(
   }
   function save() {
     try {
-      localStorage.setItem(KEY, JSON.stringify({ items: state.items, rate: state.rate, rateDate: state.rateDate, hideSav: state.hideSav, rateManual: state.rateManual, rateAutoAt: state.rateAutoAt, accounts: state.accounts, templates: state.templates, goals: state.goals, payments: state.payments, paySeries: state.paySeries, btcUsd: state.btcUsd, btcAt: state.btcAt, rateEur: state.rateEur, rateEurDate: state.rateEurDate, rateEurManual: state.rateEurManual, rateUsdt: state.rateUsdt, rateUsdtDate: state.rateUsdtDate, rateUsdtManual: state.rateUsdtManual, rateUsdtSrc: state.rateUsdtSrc, collapsed: state.collapsed, disp: state.disp, sav: state.sav }));
+      localStorage.setItem(KEY, JSON.stringify({ items: state.items, rate: state.rate, rateDate: state.rateDate, hideSav: state.hideSav, rateManual: state.rateManual, rateAutoAt: state.rateAutoAt, accounts: state.accounts, templates: state.templates, goals: state.goals, payments: state.payments, paySeries: state.paySeries, bn: state.bn, btcUsd: state.btcUsd, btcAt: state.btcAt, rateEur: state.rateEur, rateEurDate: state.rateEurDate, rateEurManual: state.rateEurManual, rateUsdt: state.rateUsdt, rateUsdtDate: state.rateUsdtDate, rateUsdtManual: state.rateUsdtManual, rateUsdtSrc: state.rateUsdtSrc, collapsed: state.collapsed, disp: state.disp, sav: state.sav }));
     } catch (e) {}
   }
 
@@ -2005,6 +2067,84 @@ body.view-hist .hist-view { display: block; animation: viewIn 0.4s cubic-bezier(
     document.querySelectorAll(".gc-ranges button").forEach(function (b) { b.setAttribute("aria-pressed", Number(b.getAttribute("data-r")) === gcRange ? "true" : "false"); });
   }
 
+
+  /* ---------- Ahorro en Binance ---------- */
+  var BN_REF = "https://www.binance.com/referral/earn-together/refer2earn-usdc/claim?hl=es&ref=GRO_28502_GHCK1&utm_source=referral_entrance";
+  var BN_APR = 5; // tasa promedio de referencia (% anual) para USDT en Simple Earn; la persona puede cambiarla
+  var BN_LINKS = {
+    home: "https://www.binance.com/es",
+    p2p: "https://p2p.binance.com/es/trade/all-payments/USDT?fiat=VES",
+    earn: "https://www.binance.com/es/simple-earn"
+  };
+  var BN_EXT = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 4h6v6"></path><path d="M20 4l-9 9"></path><path d="M18 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h5"></path></svg>';
+  var BN_STEPS = [
+    { t: "Crear tu cuenta", d: "Es gratis y toma unos minutos." },
+    { t: "Verificar tu identidad", d: "Binance te pide tu cédula o pasaporte y una selfie. Sin esto no puedes comprar." },
+    { t: "Comprar USDT", d: "En P2P le compras a otra persona y pagas en bolívares por pago móvil o transferencia." },
+    { t: "Mover a Earn", d: "En Simple Earn eliges Flexible (lo sacas cuando quieras) o Bloqueado (a plazo fijo, suele rendir más)." },
+    { t: "Anotarlo aquí", d: "Registra tu cuenta de Binance y tu ahorro para seguir viendo cuánto llevas." }
+  ];
+  function bnAccount() { return state.accounts.filter(function (a) { return /binance/i.test(a.nombre); })[0] || null; }
+  function bnSavedUsd() {
+    var m = savMap(), t = 0;
+    state.accounts.forEach(function (a) { var v = m["a" + a.id] || 0; if (v > 0) { var u = conv(v, a.moneda, "USD"); if (u !== null) t += u; } });
+    return t;
+  }
+  function bnDoneCount() { var n = 0; for (var i = 1; i <= BN_STEPS.length; i++) if (state.bn.done[i]) n++; return n; }
+  function bnLink(href, label, cls, step) {
+    return '<a class="bn-btn ' + (cls || "") + '" href="' + href + '" target="_blank" rel="noopener" data-bn-step="' + step + '">' + label + BN_EXT + "</a>";
+  }
+  function renderBnEst() {
+    var el = $("bn-est-vals");
+    if (!el) return;
+    var base = bnSavedUsd(), apr = state.bn.apr, amt = base > 0 ? base : 100;
+    var month = amt * (Math.pow(1 + apr / 100 / 365, 30.42) - 1), year = amt * (Math.pow(1 + apr / 100 / 365, 365) - 1);
+    el.innerHTML = '<div><div class="l">Al mes</div><div class="v">+' + money(month, "USD") + '</div></div><div><div class="l">En un año</div><div class="v">+' + money(year, "USD") + "</div></div>";
+    $("bn-est-h").textContent = base > 0 ? "Con tus " + money(base, "USD") + " ahorrados podrías ganar" : "Con $100 en USDT podrías ganar";
+  }
+  function renderBn() {
+    var done = bnDoneCount(), total = BN_STEPS.length, now = 0;
+    for (var i = 1; i <= total; i++) if (!state.bn.done[i]) { now = i; break; }
+    $("bn-prog-t").textContent = now ? "Vas por el paso " + now + " de " + total : "¡Listo! Tu ahorro ya está trabajando";
+    $("bn-pct").textContent = Math.round(done / total * 100) + "%";
+    $("bn-bar").style.width = (done / total * 100) + "%";
+    var check = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"></path></svg>';
+    var acc = bnAccount();
+    var bodies = {
+      1: '<div class="bn-btns">' + bnLink(BN_REF, "Crear mi cuenta", "gold", 1) + '<button type="button" class="bn-btn" data-bn-have>Ya tengo cuenta</button></div>',
+      2: '<div class="bn-btns">' + bnLink(BN_LINKS.home, "Abrir Binance", "pri", 2) + "</div>",
+      3: '<div class="bn-btns">' + bnLink(BN_LINKS.p2p, "Abrir P2P", "pri", 3) + "</div>",
+      4: '<div class="bn-est"><div class="l" id="bn-est-h"></div><div class="cols" id="bn-est-vals"></div>' +
+         '<label class="bn-rate" for="bn-apr">Tasa anual: <input type="text" id="bn-apr" inputmode="decimal" autocomplete="off" value="' + fmtIn(state.bn.apr) + '"> %</label>' +
+         '<div class="l">Viene con una tasa promedio de referencia. Cámbiala por la que veas en Binance: la real cambia seguido y no está garantizada.</div></div>' +
+         '<div class="bn-btns">' + bnLink(BN_LINKS.earn, "Abrir Simple Earn", "pri", 4) + "</div>",
+      5: '<div class="bn-btns"><button type="button" class="bn-btn pri" data-bn-acc>' + (acc ? "Agregar ahorro en " + esc(acc.nombre) : "Agregar cuenta Binance") + "</button></div>"
+    };
+    var keepApr = document.activeElement && document.activeElement.id === "bn-apr";
+    var h = BN_STEPS.map(function (s, k) {
+      var n = k + 1, ok = !!state.bn.done[n], cur = n === now;
+      return '<li class="bn-step' + (ok ? " ok" : "") + (cur ? " now" : "") + '">' +
+        '<button type="button" class="bn-dot" data-bn-toggle="' + n + '" aria-pressed="' + (ok ? "true" : "false") + '" aria-label="' + (ok ? "Marcar como pendiente: " : "Marcar como hecho: ") + s.t + '">' + (ok ? check : n) + "</button>" +
+        "<div><h3>" + s.t + "</h3><p>" + s.d + "</p></div>" +
+        '<div class="bn-body"' + (cur || (n === 4 && !ok && now > 4) ? "" : " hidden") + ">" + bodies[n] + "</div></li>";
+    }).join("");
+    if (!keepApr) { $("bn-steps").innerHTML = h; }
+    renderBnEst();
+  }
+  function renderBnEntry() {
+    var el = $("bn-entry"), done = bnDoneCount(), total = BN_STEPS.length;
+    var show = !state.bn.hide && done < total;
+    el.hidden = !show;
+    if (!show) return;
+    var base = bnSavedUsd();
+    $("bn-entry-t").textContent = done ? "Sigue con tu ahorro en Binance" : "Pon tu ahorro a trabajar";
+    $("bn-entry-s").textContent = done
+      ? "Vas por el paso " + (done + 1) + " de " + total + "."
+      : base > 0
+        ? "Tus " + money(base, "USD") + " ahorrados podrían ganar ~" + money(base * (Math.pow(1 + state.bn.apr / 100 / 365, 365) - 1), "USD") + " al año en USDT."
+        : "Pásalo a USDT en Binance y gana rendimiento, como un plazo fijo.";
+  }
+
   var pay = { y: new Date().getFullYear(), m: new Date().getMonth(), sel: null };
   if (!Array.isArray(state.paySeries)) state.paySeries = [];
   function seriesById(id) { return state.paySeries.filter(function (s) { return String(s.id) === String(id); })[0] || null; }
@@ -2373,6 +2513,8 @@ body.view-hist .hist-view { display: block; animation: viewIn 0.4s cubic-bezier(
     renderAccounts();
     renderGoals();
     renderPay();
+    renderBnEntry();
+    if (document.body.classList.contains("view-bn")) renderBn();
     drawTrend();
     renderRateChips();
     renderUsdtSrc();
@@ -2907,6 +3049,7 @@ body.view-hist .hist-view { display: block; animation: viewIn 0.4s cubic-bezier(
       if (a === "mov") openSheet(null);
       else if (a === "ahorro") openSv();
       else if (a === "calc") openCalc();
+      else if (a === "bn") openView("bn");
       else if (a === "plantilla") openTpl();
     });
     $("f-sav-toggle").addEventListener("click", function () { state.fsav.on = !state.fsav.on; renderFormSav(); });
@@ -3942,11 +4085,12 @@ body.view-hist .hist-view { display: block; animation: viewIn 0.4s cubic-bezier(
     }
     function activeView() {
       var c = document.body.classList;
-      return c.contains("view-goals") ? "goals" : c.contains("view-pay") ? "pay" : c.contains("view-hist") ? "hist" : null;
+      return c.contains("view-goals") ? "goals" : c.contains("view-pay") ? "pay" : c.contains("view-hist") ? "hist" : c.contains("view-bn") ? "bn" : null;
     }
     function closeViews() {
-      document.body.classList.remove("view-goals", "view-pay", "view-hist");
+      document.body.classList.remove("view-goals", "view-pay", "view-hist", "view-bn");
       $("goals-view").setAttribute("aria-hidden", "true");
+      $("bn-view").setAttribute("aria-hidden", "true");
       $("pay-view").setAttribute("aria-hidden", "true");
       $("hist-view").setAttribute("aria-hidden", "true");
       instantScroll(viewReturnY);
@@ -3957,13 +4101,15 @@ body.view-hist .hist-view { display: block; animation: viewIn 0.4s cubic-bezier(
       try {
         closeDial();
         if (!activeView()) viewReturnY = window.scrollY || 0;
-        document.body.classList.remove("view-goals", "view-pay", "view-hist");
+        document.body.classList.remove("view-goals", "view-pay", "view-hist", "view-bn");
         document.body.classList.add("view-" + name);
+        $("bn-view").setAttribute("aria-hidden", name === "bn" ? "false" : "true");
         $("goals-view").setAttribute("aria-hidden", name === "goals" ? "false" : "true");
         $("pay-view").setAttribute("aria-hidden", name === "pay" ? "false" : "true");
         $("hist-view").setAttribute("aria-hidden", name === "hist" ? "false" : "true");
         instantScroll(0);
-        setTab(name === "goals" ? 1 : name === "pay" ? 2 : 3);
+        setTab(name === "goals" ? 1 : name === "pay" ? 2 : name === "hist" ? 3 : 0);
+        if (name === "bn") renderBn();
         if (name === "pay") renderPay();
         if (name === "hist") renderHistory();
         if (name === "goals") drawGoalsChart();
@@ -3980,6 +4126,30 @@ body.view-hist .hist-view { display: block; animation: viewIn 0.4s cubic-bezier(
     $("goal-new2").addEventListener("click", function () { openGe(null); });
     $("pv-back").addEventListener("click", function () { closeViews(); setTab(currentTab()); });
     $("hv-back").addEventListener("click", function () { closeViews(); setTab(currentTab()); });
+    $("bv-back").addEventListener("click", function () { closeViews(); setTab(currentTab()); });
+    $("bn-entry").addEventListener("click", function (e) { if (e.target.closest("#bn-hide")) return; openView("bn"); });
+    $("bn-entry").addEventListener("keydown", function (e) { if ((e.key === "Enter" || e.key === " ") && e.target === $("bn-entry")) { e.preventDefault(); openView("bn"); } });
+    $("bn-hide").addEventListener("click", function () { state.bn.hide = true; save(); renderBnEntry(); showToast("Listo. La guía sigue en el botón + › Ahorrar en Binance."); });
+    $("bn-steps").addEventListener("click", function (e) {
+      var b = e.target.closest("[data-bn-toggle]");
+      if (b) { var k = b.getAttribute("data-bn-toggle"); state.bn.done[k] = !state.bn.done[k]; save(); renderBn(); renderBnEntry(); return; }
+      if (e.target.closest("[data-bn-have]")) { state.bn.done[1] = true; state.bn.done[2] = true; save(); renderBn(); renderBnEntry(); showToast("Perfecto, sigue con el paso 3."); return; }
+      if (e.target.closest("[data-bn-acc]")) {
+        var ex = bnAccount();
+        if (ex) { openSv(); return; }
+        openAccSheet(null);
+        $("acc-nombre").value = "Binance"; $("acc-moneda").value = "USD";
+        return;
+      }
+      var a = e.target.closest("a[data-bn-step]");
+      if (a) { var st = a.getAttribute("data-bn-step"); state.bn.opened = state.bn.opened || {}; state.bn.opened[st] = Date.now(); save(); }
+    });
+    $("bn-steps").addEventListener("input", function (e) {
+      if (e.target.id !== "bn-apr") return;
+      var v = parseNum(e.target.value);
+      state.bn.apr = v >= 0 && v <= 100 ? v : BN_APR;
+      save(); renderBnEst();
+    });
 
     /* ---------- Barra inferior ---------- */
     var tabbar = $("tabbar"), tabBtns = tabbar.querySelectorAll(".tab"), spyPending = false, spyLock = 0;
