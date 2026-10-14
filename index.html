@@ -660,6 +660,19 @@ body.view-hist .hist-view { display: block; animation: viewIn 0.4s cubic-bezier(
 .hist-search input { width: 100%; border-radius: 14px; padding-left: 14px; margin-bottom: 10px; -webkit-appearance: none; appearance: none; }
 .hist-chips { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 6px; margin-bottom: 8px; scrollbar-width: none; -webkit-overflow-scrolling: touch; }
 .hist-chips::-webkit-scrollbar { display: none; }
+.hist-cats[hidden], .hist-cat-sum[hidden] { display: none; }
+.hist-cats button { display: inline-flex; align-items: center; gap: 7px; }
+.hist-cats button i { width: 9px; height: 9px; border-radius: 3px; background: var(--c); flex: none; }
+.hist-cats button.none { opacity: 0.55; }
+.hist-cats button[aria-pressed="true"] { background: var(--c); border-color: var(--c); color: #fff; opacity: 1; }
+.hist-cats button[aria-pressed="true"] i { background: #fff; }
+.hist-cat-sum { --c: var(--accent); background: var(--surface); border: 1px solid var(--line); border-left: 4px solid var(--c); border-radius: 16px; padding: 14px 16px; margin: 4px 0 14px; animation: fadeUp 0.35s cubic-bezier(0.2, 0.8, 0.2, 1) backwards; }
+.hist-cat-sum .l { color: var(--muted); font-size: 0.85rem; }
+.hist-cat-sum .v { font-family: var(--display); font-weight: 700; font-size: 1.6rem; line-height: 1.2; color: var(--c); }
+.hist-cat-sum .v .usd { color: var(--muted); }
+.hist-cat-sum .s { color: var(--muted); font-size: 0.85rem; margin-top: 2px; }
+.hist-cat-sum .bar { height: 6px; border-radius: 999px; background: color-mix(in srgb, var(--line) 70%, transparent); overflow: hidden; margin-top: 10px; }
+.hist-cat-sum .bar i { display: block; height: 100%; border-radius: inherit; background: var(--c); }
 .hist-chips button { flex: none; font: inherit; font-size: 0.85rem; font-weight: 600; padding: 8px 14px; min-height: 38px; border-radius: 999px; border: 1px solid var(--line); background: var(--surface); color: var(--muted); cursor: pointer; }
 .hist-chips button[aria-pressed="true"] { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); }
 .hday { margin-top: 16px; }
@@ -929,7 +942,10 @@ body.view-hist .hist-view { display: block; animation: viewIn 0.4s cubic-bezier(
       <button type="button" data-hf="out" aria-pressed="false">Gastos</button>
       <button type="button" data-hf="sv" aria-pressed="false">Ahorro</button>
       <button type="button" data-hf="tr" aria-pressed="false">Transferencias</button>
+      <button type="button" data-hf="cat" aria-pressed="false">Por categoría</button>
     </div>
+    <div class="hist-chips hist-cats" id="hist-cats" role="group" aria-label="Elegir categoría" hidden></div>
+    <div class="hist-cat-sum" id="hist-cat-sum" hidden></div>
     <div id="hist-list"></div>
     <button type="button" class="secondary" id="hist-more" style="display:none;width:100%;margin-top:12px">Ver más</button>
     <div class="gv-empty" id="hist-empty">
@@ -2089,7 +2105,7 @@ body.view-hist .hist-view { display: block; animation: viewIn 0.4s cubic-bezier(
     scheduleFit();
   }
 
-  var hist = { f: "all", q: "", n: 30 };
+  var hist = { f: "all", q: "", n: 30, c: null };
   var DIAS = ["domingo", "lunes", "martes", "miércoles", "jueves", "viernes", "sábado"];
   function histKind(it) {
     if (it.tipo === "ingreso") return "in";
@@ -2167,9 +2183,48 @@ body.view-hist .hist-view { display: block; animation: viewIn 0.4s cubic-bezier(
     if (st._h !== statsHtml) { st.innerHTML = statsHtml; st._h = statsHtml; }
     // filtros
     document.querySelectorAll("#hist-chips button").forEach(function (b) { b.setAttribute("aria-pressed", b.getAttribute("data-hf") === hist.f ? "true" : "false"); });
+    // por categoría
+    var isCat = hist.f === "cat", catsEl = $("hist-cats"), sumEl = $("hist-cat-sum");
+    catsEl.hidden = !isCat; sumEl.hidden = !isCat;
+    if (isCat) {
+      var byC = {}, cnt = {}, totT = { gasto: 0, ingreso: 0 };
+      all.forEach(function (it) {
+        if (it.tipo !== "ingreso" && it.tipo !== "gasto") return;
+        cnt[it.cat] = (cnt[it.cat] || 0) + 1;
+        var v = conv(it.monto, it.moneda, D);
+        if (v === null) return;
+        byC[it.cat] = (byC[it.cat] || 0) + v;
+        totT[it.tipo] += v;
+      });
+      var list = CATS.gasto.concat(CATS.ingreso);
+      all.forEach(function (it) { if ((it.tipo === "gasto" || it.tipo === "ingreso") && list.indexOf(it.cat) < 0) list.push(it.cat); });
+      if (!hist.c || list.indexOf(hist.c) < 0) {
+        hist.c = list.filter(function (c) { return cnt[c] && CATS.ingreso.indexOf(c) < 0; })[0] || list.filter(function (c) { return cnt[c]; })[0] || list[0];
+      }
+      var isIn = CATS.ingreso.indexOf(hist.c) >= 0;
+      var colOf = function (c) { return CATS.ingreso.indexOf(c) >= 0 ? colorForIn(c) : colorFor(c); };
+      var ch = list.map(function (c) {
+        return '<button type="button" data-hc="' + esc(c) + '" aria-pressed="' + (c === hist.c ? "true" : "false") + '" class="' + (cnt[c] ? "" : "none") +
+          '" style="--c:' + colOf(c) + '"><i></i>' + esc(c) + (cnt[c] ? " · " + cnt[c] : "") + "</button>";
+      }).join("");
+      if (catsEl._h !== ch) {
+        catsEl.innerHTML = ch; catsEl._h = ch;
+        var on = catsEl.querySelector('[aria-pressed="true"]');
+        if (on && on.scrollIntoView) on.scrollIntoView({ block: "nearest", inline: "center" });
+      }
+      var tv = byC[hist.c] || 0, n = cnt[hist.c] || 0, base = totT[isIn ? "ingreso" : "gasto"];
+      var pct = base > 0 ? Math.round(tv / base * 100) : 0;
+      var sh = '<div class="l">' + (isIn ? "Recibiste en " : "Gastaste en ") + esc(hist.c) + " en " + MESES[Number(mp[1]) - 1].toLowerCase() + '</div>' +
+        '<div class="v fit">' + moneyH(tv, D) + '</div>' +
+        '<div class="s">' + (n ? n + (n === 1 ? " movimiento" : " movimientos") + " · " + pct + "% de tus " + (isIn ? "ingresos" : "gastos") + " del mes" : "Sin movimientos en esta categoría este mes") + "</div>" +
+        '<div class="bar"><i style="width:' + pct + '%"></i></div>';
+      sumEl.style.setProperty("--c", colOf(hist.c));
+      if (sumEl._h !== sh) { sumEl.innerHTML = sh; sumEl._h = sh; }
+    }
     var q = hist.q.trim().toLowerCase();
     var rows = all.filter(function (it) {
-      if (hist.f !== "all" && histKind(it) !== hist.f) return false;
+      if (isCat) { if ((it.tipo !== "gasto" && it.tipo !== "ingreso") || it.cat !== hist.c) return false; }
+      else if (hist.f !== "all" && histKind(it) !== hist.f) return false;
       if (!q) return true;
       return (histTitle(it) + " " + histSub(it) + " " + (it.nota || "")).toLowerCase().indexOf(q) >= 0;
     }).sort(function (a, b) { return a.fecha < b.fecha ? 1 : a.fecha > b.fecha ? -1 : b.id - a.id; });
@@ -2200,7 +2255,7 @@ body.view-hist .hist-view { display: block; animation: viewIn 0.4s cubic-bezier(
     if (listEl._core !== core) { listEl.innerHTML = html.replace(/@@F@@/g, " flash"); listEl._core = core; }
     var empty = !rows.length;
     $("hist-empty").style.display = empty ? "" : "none";
-    $("hist-empty-t").textContent = all.length ? "Ningún movimiento coincide con tu búsqueda." : "No hay movimientos en este mes.";
+    $("hist-empty-t").textContent = isCat && !q ? "No hay movimientos de " + hist.c + " en este mes." : all.length ? "Ningún movimiento coincide con tu búsqueda." : "No hay movimientos en este mes.";
     scheduleFit();
   }
 
@@ -3847,6 +3902,11 @@ body.view-hist .hist-view { display: block; animation: viewIn 0.4s cubic-bezier(
     $("hist-q").addEventListener("input", function (e) { hist.q = e.target.value; hist.n = 30; renderHistory(); });
     document.querySelectorAll("#hist-chips button").forEach(function (b) {
       b.addEventListener("click", function () { hist.f = b.getAttribute("data-hf"); hist.n = 30; renderHistory(); });
+    });
+    $("hist-cats").addEventListener("click", function (e) {
+      var b = e.target.closest("[data-hc]");
+      if (!b) return;
+      hist.c = b.getAttribute("data-hc"); hist.n = 30; renderHistory();
     });
     $("hist-more").addEventListener("click", function () { hist.n += 30; renderHistory(); });
     $("hist-list").addEventListener("click", function (e) {
