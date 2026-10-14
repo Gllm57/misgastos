@@ -1421,7 +1421,7 @@ body.view-bn .bn-view { display: block; animation: viewIn 0.4s cubic-bezier(0.2,
   };
   var COLORS = ["#1f4fff", "#e08a00", "#0e9aa7", "#8a3ffc", "#e5133f", "#00a651", "#6b7b86", "#d6502b", "#9a7b00"];
 
-  var state = { items: [], rate: 0, disp: "USD", type: "gasto", month: "", sel: null, selIn: null, collapsed: {}, paySeries: [], bn: { done: {}, apr: 5, hide: false, opened: {} }, templates: [], showAll: false, hideSav: false, rateManual: "", rateAutoAt: 0, rateLoading: false, rateFail: false, rateErr: "", accounts: [], rateEur: 0, rateEurDate: "", rateEurManual: "", rateUsdt: 0, rateUsdtDate: "", rateUsdtManual: "", rateUsdtSrc: "", goals: [], payments: [], lastAcc: null, rateDate: "", fsav: { on: false, pct: 10 }, sav: { on: false, pct: 10 } };
+  var state = { items: [], rate: 0, disp: "USD", type: "gasto", month: "", sel: null, selIn: null, collapsed: {}, paySeries: [], bn: { done: {}, apr: 5, hide: false, opened: {}, v: 2 }, templates: [], showAll: false, hideSav: false, rateManual: "", rateAutoAt: 0, rateLoading: false, rateFail: false, rateErr: "", accounts: [], rateEur: 0, rateEurDate: "", rateEurManual: "", rateUsdt: 0, rateUsdtDate: "", rateUsdtManual: "", rateUsdtSrc: "", goals: [], payments: [], lastAcc: null, rateDate: "", fsav: { on: false, pct: 10 }, sav: { on: false, pct: 10 } };
 
   function load() {
     try {
@@ -1439,7 +1439,7 @@ body.view-bn .bn-view { display: block; animation: viewIn 0.4s cubic-bezier(0.2,
         if (d && Array.isArray(d.goals)) state.goals = d.goals;
         if (d && Array.isArray(d.payments)) state.payments = d.payments;
         if (d && Array.isArray(d.paySeries)) state.paySeries = d.paySeries;
-        if (d && d.bn && typeof d.bn === "object") state.bn = { done: d.bn.done || {}, apr: typeof d.bn.apr === "number" ? d.bn.apr : BN_APR, hide: !!d.bn.hide, opened: d.bn.opened || {} };
+        if (d && d.bn && typeof d.bn === "object") state.bn = { done: d.bn.done || {}, apr: typeof d.bn.apr === "number" ? d.bn.apr : BN_APR, hide: d.bn.v === 2 && !!d.bn.hide, opened: d.bn.opened || {}, v: 2 };
         if (d && typeof d.btcUsd === "number") { state.btcUsd = d.btcUsd; state.btcAt = d.btcAt || 0; }
         if (d && typeof d.rateEur === "number") state.rateEur = d.rateEur;
         if (d && typeof d.rateEurDate === "string") state.rateEurDate = d.rateEurDate;
@@ -2091,6 +2091,7 @@ body.view-bn .bn-view { display: block; animation: viewIn 0.4s cubic-bezier(0.2,
     { t: "Mover a Earn", d: "En Simple Earn eliges Flexible (lo sacas cuando quieras) o Bloqueado (a plazo fijo, suele rendir más)." },
     { t: "Anotarlo aquí", d: "Registra tu cuenta de Binance y tu ahorro para seguir viendo cuánto llevas." }
   ];
+  var bnHideNow = false; // la ✕ solo oculta la tarjeta hasta que se vuelva a abrir la app
   function bnAccount() { return state.accounts.filter(function (a) { return /binance/i.test(a.nombre); })[0] || null; }
   function bnSavedUsd() {
     var m = savMap(), t = 0;
@@ -2141,7 +2142,7 @@ body.view-bn .bn-view { display: block; animation: viewIn 0.4s cubic-bezier(0.2,
   }
   function renderBnEntry() {
     var el = $("bn-entry"), done = bnDoneCount(), total = BN_STEPS.length;
-    var show = !state.bn.hide && done < total;
+    var show = !state.bn.hide && !bnHideNow && done < total;
     el.hidden = !show;
     if (!show) return;
     var base = bnSavedUsd();
@@ -4137,7 +4138,7 @@ body.view-bn .bn-view { display: block; animation: viewIn 0.4s cubic-bezier(0.2,
     $("bv-back").addEventListener("click", function () { closeViews(); setTab(currentTab()); });
     $("bn-entry").addEventListener("click", function (e) { if (e.target.closest("#bn-hide")) return; openView("bn"); });
     $("bn-entry").addEventListener("keydown", function (e) { if ((e.key === "Enter" || e.key === " ") && e.target === $("bn-entry")) { e.preventDefault(); openView("bn"); } });
-    $("bn-hide").addEventListener("click", function () { state.bn.hide = true; save(); renderBnEntry(); showToast("Tarjeta oculta. Para volver a verla: botón + › Ahorrar en Binance."); });
+    $("bn-hide").addEventListener("click", function () { bnHideNow = true; renderBnEntry(); showToast("Tarjeta oculta por ahora. Volverá a salir la próxima vez que abras la app."); });
     $("bn-steps").addEventListener("click", function (e) {
       var b = e.target.closest("[data-bn-toggle]");
       if (b) { var k = b.getAttribute("data-bn-toggle"); state.bn.done[k] = !state.bn.done[k]; save(); renderBn(); renderBnEntry(); return; }
@@ -4153,7 +4154,7 @@ body.view-bn .bn-view { display: block; animation: viewIn 0.4s cubic-bezier(0.2,
       if (a) { var st = a.getAttribute("data-bn-step"); state.bn.opened = state.bn.opened || {}; state.bn.opened[st] = Date.now(); save(); }
     });
     $("bn-pin").addEventListener("click", function () {
-      state.bn.hide = !state.bn.hide; save(); renderBn(); renderBnEntry();
+      state.bn.hide = !state.bn.hide; if (!state.bn.hide) bnHideNow = false; save(); renderBn(); renderBnEntry();
       showToast(state.bn.hide ? "La tarjeta ya no saldrá en el Inicio." : "Listo, la tarjeta vuelve a salir en el Inicio.");
     });
     $("bn-steps").addEventListener("input", function (e) {
