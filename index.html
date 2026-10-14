@@ -275,6 +275,8 @@ input, select {
 .calc-swap svg { width: 24px; height: 24px; }
 .calc-swap:hover { border-color: var(--accent); }
 .calc-rate-row { display: flex; gap: 8px; }
+.calc-seg { display: flex; margin-bottom: 12px; }
+.calc-seg button { flex: 1; }
 .calc-rate-row input { flex: 1; min-width: 0; }
 .acc-title { margin-bottom: 12px; }
 .acc-actions { display: flex; gap: 10px; margin-bottom: 8px; }
@@ -675,6 +677,42 @@ body.view-hist .hist-view { display: block; animation: viewIn 0.4s cubic-bezier(
 .hrow .hnone { width: 44px; }
 .field-rate input[readonly] { background: color-mix(in srgb, var(--bg) 60%, var(--surface)); border-color: var(--line); color: var(--ink); font-weight: 600; cursor: default; pointer-events: none; -webkit-user-select: none; user-select: none; text-overflow: ellipsis; }
 .field-rate input[readonly]::placeholder { color: var(--muted); font-weight: 400; }
+/* Tasas del día: tarjetas */
+.top .rate-card { background: var(--surface); border: 1px solid var(--line); border-radius: 16px; padding: 10px 12px 8px; min-width: 0; display: flex; flex-direction: column; gap: 2px; box-shadow: 0 1px 2px color-mix(in srgb, var(--ink) 6%, transparent); }
+.rate-card { --rc: var(--in); }
+.rate-card.rc-eur { --rc: var(--accent); }
+.rate-card.rc-usdt { --rc: #0e9aa7; }
+.rate-card label { display: flex; align-items: center; gap: 6px; margin: 0; font-size: 0.78rem; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.rate-card .rsrc { text-transform: none; letter-spacing: 0; }
+.rc-ic { flex: none; width: 20px; height: 20px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; font-size: 0.72rem; font-weight: 700; color: var(--rc); background: color-mix(in srgb, var(--rc) 14%, transparent); }
+.top .rate-card input[readonly] { background: none; border: 0; padding: 0; min-height: 0; height: auto; font-family: var(--display); font-weight: 700; font-size: 1.2rem; line-height: 1.3; letter-spacing: -0.01em; font-variant-numeric: tabular-nums; color: var(--ink); }
+@media (max-width: 420px) {
+  .top .rate-card { padding: 9px 10px 7px; }
+  .top .rate-card input[readonly] { font-size: 1.02rem; }
+  .rc-ic { width: 18px; height: 18px; }
+}
+
+/* Ingresos y gastos del mes: barras */
+.split { width: 100%; aspect-ratio: auto; margin: 2px 0 14px; }
+.dtitle { text-align: left; }
+.dcol .empty { text-align: left; }
+.bar-head { display: flex; align-items: baseline; justify-content: space-between; gap: 10px; margin-bottom: 8px; min-width: 0; }
+.bh-l { color: var(--muted); font-size: 0.85rem; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.bh-v { font-family: var(--display); font-weight: 700; font-size: 1.25rem; text-align: right; min-width: 0; }
+.bh-p { color: var(--muted); font-weight: 500; font-size: 0.85rem; margin-left: 6px; }
+.stack { display: flex; gap: 3px; height: 14px; border-radius: 999px; overflow: hidden; background: var(--line); }
+.stack span { display: block; height: 100%; min-width: 3px; cursor: pointer; transition: opacity 0.15s; }
+.stack.draw { animation: barGrow 0.7s cubic-bezier(0.2, 0.8, 0.2, 1) backwards; transform-origin: left center; }
+@keyframes barGrow { from { transform: scaleX(0); } to { transform: none; } }
+.legend { gap: 2px; }
+.legend li { grid-template-columns: 12px minmax(0, 1fr) auto auto; row-gap: 6px; padding: 10px 8px; }
+.legend li .dot { width: 12px; height: 12px; border-radius: 4px; }
+.legend .nm { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.legend .pct { order: 0; min-width: 40px; font-variant-numeric: tabular-nums; }
+.legend .amt { font-variant-numeric: tabular-nums; }
+.legend .track { grid-column: 1 / -1; height: 6px; border-radius: 999px; background: color-mix(in srgb, var(--line) 70%, transparent); overflow: hidden; }
+.legend .track i { display: block; height: 100%; border-radius: inherit; transform-origin: left center; }
+.legend.draw .track i { animation: barGrow 0.7s cubic-bezier(0.2, 0.8, 0.2, 1) 0.1s backwards; }
 @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation: none !important; transition: none !important; scroll-behavior: auto !important; } }
 </style>
 </head>
@@ -691,16 +729,16 @@ body.view-hist .hist-view { display: block; animation: viewIn 0.4s cubic-bezier(
       <div class="rates">
         <div class="rate-note" id="rate-note"></div>
         <div class="rate-fields">
-          <div class="field-rate">
-            <label for="tasa">Dólar BCV</label>
+          <div class="field-rate rate-card rc-usd">
+            <label for="tasa"><span class="rc-ic" aria-hidden="true">$</span>Dólar BCV</label>
             <input type="text" id="tasa" readonly tabindex="-1" inputmode="none" aria-readonly="true" autocomplete="off" placeholder="—">
           </div>
-          <div class="field-rate">
-            <label for="tasa-eur">Euro BCV</label>
+          <div class="field-rate rate-card rc-eur">
+            <label for="tasa-eur"><span class="rc-ic" aria-hidden="true">€</span>Euro BCV</label>
             <input type="text" id="tasa-eur" readonly tabindex="-1" inputmode="none" aria-readonly="true" autocomplete="off" placeholder="—">
           </div>
-          <div class="field-rate">
-            <label for="tasa-usdt">USDT <span class="rsrc" id="usdt-src"></span></label>
+          <div class="field-rate rate-card rc-usdt">
+            <label for="tasa-usdt"><span class="rc-ic" aria-hidden="true">₮</span>USDT <span class="rsrc" id="usdt-src"></span></label>
             <input type="text" id="tasa-usdt" readonly tabindex="-1" inputmode="none" aria-readonly="true" autocomplete="off" placeholder="—">
           </div>
         </div>
@@ -1102,6 +1140,10 @@ body.view-hist .hist-view { display: block; animation: viewIn 0.4s cubic-bezier(
   <div class="sheet-backdrop" id="calc-sheet" hidden>
     <section class="panel sheet" role="dialog" aria-modal="true" aria-labelledby="h-calc">
       <div class="sheet-head"><h2 id="h-calc">Calculadora de cambio</h2><button type="button" class="del" id="calc-close" aria-label="Cerrar">✕</button></div>
+      <div class="seg calc-seg" role="group" aria-label="Moneda de la calculadora">
+        <button type="button" data-calc-cur="USD" aria-pressed="true">Dólar</button>
+        <button type="button" data-calc-cur="EUR" aria-pressed="false">Euro</button>
+      </div>
       <div class="calc-box">
         <label class="calc-lbl" for="calc-amt">Tengo</label>
         <div class="calc-line">
@@ -1115,7 +1157,7 @@ body.view-hist .hist-view { display: block; animation: viewIn 0.4s cubic-bezier(
           <span class="calc-cur" id="calc-to-cur">$</span>
         </div>
       </div>
-      <label for="calc-rate">Tasa (Bs por $1)</label>
+      <label for="calc-rate" id="calc-rate-lbl">Tasa (Bs por $1)</label>
       <div class="calc-rate-row">
         <input type="text" id="calc-rate" inputmode="decimal" autocomplete="off" placeholder="Ej: 875,67">
         <button type="button" class="secondary" id="calc-bcv">Usar la del BCV</button>
@@ -2145,32 +2187,26 @@ body.view-hist .hist-view { display: block; animation: viewIn 0.4s cubic-bezier(
     var sig = o.key + "|" + o.D + "|" + cats.map(function (c) { return c + ":" + Math.round(data[c] * 100); }).join(",");
     var animate = split._sig !== sig;
     split._sig = sig;
-    var off = 0, gap = cats.length > 1 ? 0.6 : 0;
-    var arcs = cats.map(function (c) {
-      var p = data[c] / total * 100;
-      var len = Math.max(p - gap, 0.01);
-      var s = '<circle data-cat="' + esc(c) + '" cx="21" cy="21" r="15.9155" fill="none" stroke="' + o.colorFn(c) +
-        '" stroke-width="6" stroke-dasharray="' + len.toFixed(3) + " " + (100 - len).toFixed(3) +
-        '" stroke-dashoffset="' + (25 - off).toFixed(3) + '" opacity="' + (sel && sel !== c ? 0.3 : 1) +
-        '" style="cursor:pointer"></circle>';
-      off += p;
-      return s;
+    var pctOf = function (c) { var p = data[c] / total * 100; return p > 0 && p < 1 ? "<1%" : Math.round(p) + "%"; };
+    var segs = cats.map(function (c) {
+      return '<span data-cat="' + esc(c) + '" title="' + esc(c) + '" style="flex:' + data[c].toFixed(4) + ' 1 0;background:' + o.colorFn(c) +
+        ';opacity:' + (sel && sel !== c ? 0.3 : 1) + '"></span>';
     }).join("");
     var cLabel = sel || o.label;
     var cVal = sel ? data[sel] : total;
-    var cPct = sel ? Math.round(data[sel] / total * 100) + "%" : "";
-    var inner = '<circle cx="21" cy="21" r="15.9155" fill="none" stroke="var(--line)" stroke-width="6"></circle>' + arcs +
-      '</svg><div class="donut-center"><div class="dc-l">' + esc(cLabel) + '</div><div class="dc-v fit">' + moneyH(cVal, o.D) +
-      '</div><div class="dc-p">' + cPct + '</div></div>';
+    var inner = '<div class="bar-head"><span class="bh-l">' + esc(cLabel) + '</span><span class="bh-v fit">' + moneyH(cVal, o.D) +
+      (sel ? '<span class="bh-p">' + pctOf(sel) + '</span>' : "") + '</span></div>' +
+      '<div class="stack' + (animate ? " draw" : "") + '" aria-hidden="true">' + segs + '</div>';
     if (split._html !== inner) {
-      split.innerHTML = '<svg class="' + (animate ? "draw" : "") + '" viewBox="0 0 42 42" aria-hidden="true">' + inner;
+      split.innerHTML = inner;
       split._html = inner;
     }
     var legHtml = cats.map(function (c) {
+      var w = Math.max(data[c] / total * 100, 0.5).toFixed(2);
       return '<li data-cat="' + esc(c) + '" tabindex="0" role="button" aria-pressed="' + (sel === c ? "true" : "false") +
-        '"><span class="dot" style="background:' + o.colorFn(c) + '"></span><span>' + esc(c) +
-        '</span><span class="amt">' + moneyH(data[c], o.D) + '</span><span class="pct">' +
-        Math.round(data[c] / total * 100) + "%</span></li>";
+        '"><span class="dot" style="background:' + o.colorFn(c) + '"></span><span class="nm">' + esc(c) +
+        '</span><span class="pct">' + pctOf(c) + '</span><span class="amt">' + moneyH(data[c], o.D) +
+        '</span><span class="track" aria-hidden="true"><i style="width:' + w + '%;background:' + o.colorFn(c) + '"></i></span></li>';
     }).join("");
     if (legend._html !== legHtml) {
       legend.className = "legend" + (animate ? " draw" : "");
@@ -2388,7 +2424,7 @@ body.view-hist .hist-view { display: block; animation: viewIn 0.4s cubic-bezier(
           state[f.d] = t;
           state[f.m] = "";
           if (o.k === "usdt") state.rateUsdtSrc = o.src;
-          $(f.input).value = fmtIn(state[f.v]);
+          $(f.input).value = num(state[f.v]);
         });
         state.rateFail = fail;
         if (!fail) state.rateErr = "";
@@ -2451,9 +2487,9 @@ body.view-hist .hist-view { display: block; animation: viewIn 0.4s cubic-bezier(
     $("mes").value = state.month;
     setFecha(today());
     if (!state.rateEur) { state.rateEur = 985.84; state.rateEurDate = "2026-10-08"; save(); }
-    if (state.rate) $("tasa").value = fmtIn(state.rate);
-    if (state.rateEur) $("tasa-eur").value = fmtIn(state.rateEur);
-    if (state.rateUsdt) $("tasa-usdt").value = fmtIn(state.rateUsdt);
+    if (state.rate) $("tasa").value = num(state.rate);
+    if (state.rateEur) $("tasa-eur").value = num(state.rateEur);
+    if (state.rateUsdt) $("tasa-usdt").value = num(state.rateUsdt);
     setPressed("[data-disp]", "data-disp", state.disp);
     fillCats();
     render();
@@ -3826,25 +3862,30 @@ body.view-hist .hist-view { display: block; animation: viewIn 0.4s cubic-bezier(
     spy();
 
     /* ---------- Calculadora de cambio ---------- */
-    var calc = { from: "VES" };
+    var calc = { from: "VES", cur: "USD" };
+    function calcBcv() { return calc.cur === "EUR" ? state.rateEur : state.rate; }
     function calcRate() { var r = parseNum($("calc-rate").value); return r > 0 ? r : 0; }
     function renderCalc() {
-      var from = calc.from, to = from === "VES" ? "USD" : "VES";
+      var from = calc.from, to = from === "VES" ? calc.cur : "VES", sym = curLabel(calc.cur);
       $("calc-from-cur").textContent = curLabel(from);
       $("calc-to-cur").textContent = curLabel(to);
+      $("calc-rate-lbl").textContent = "Tasa (Bs por " + sym + "1)";
+      setPressed("[data-calc-cur]", "data-calc-cur", calc.cur);
+      var chips = document.querySelector('.rate-chips[data-for="calc-rate"]');
+      if (chips) chips.style.display = calc.cur === "EUR" ? "none" : "";
       var a = parseNum($("calc-amt").value), r = calcRate(), out = $("calc-out");
       if (!(r > 0)) out.textContent = "—";
       else if (!(a > 0)) out.textContent = "0,00";
       else out.textContent = num(from === "VES" ? a / r : a * r);
-      var note = $("calc-note"), bcv = state.rate > 0, same = bcv && Math.abs(r - state.rate) < 0.0001;
+      var note = $("calc-note"), base = calcBcv(), bcv = base > 0, same = bcv && Math.abs(r - base) < 0.0001;
       if (!(r > 0)) note.textContent = "Escribe la tasa que quieres usar.";
-      else if (same) note.textContent = "Usando la tasa del día (BCV).";
-      else note.textContent = "Usando una tasa personalizada." + (bcv ? " La del BCV es Bs " + num(state.rate) + "." : "");
+      else if (same) note.textContent = "Usando la tasa del día del " + (calc.cur === "EUR" ? "euro" : "dólar") + " (BCV).";
+      else note.textContent = "Usando una tasa personalizada." + (bcv ? " La del BCV es Bs " + num(base) + "." : "");
       $("calc-bcv").style.display = bcv && !same ? "" : "none";
       scheduleFit();
     }
     function openCalc() {
-      $("calc-rate").value = state.rate > 0 ? fmtIn(state.rate) : "";
+      $("calc-rate").value = calcBcv() > 0 ? fmtIn(calcBcv()) : "";
       $("calc-amt").value = "";
       renderCalc();
       $("calc-sheet").hidden = false;
@@ -3853,10 +3894,20 @@ body.view-hist .hist-view { display: block; animation: viewIn 0.4s cubic-bezier(
     function closeCalc() { $("calc-sheet").hidden = true; $("fab").focus(); }
     $("calc-close").addEventListener("click", closeCalc);
     $("calc-sheet").addEventListener("click", function (e) { if (e.target === $("calc-sheet")) closeCalc(); });
-    $("calc-swap").addEventListener("click", function () { calc.from = calc.from === "VES" ? "USD" : "VES"; renderCalc(); });
+    $("calc-swap").addEventListener("click", function () { calc.from = calc.from === "VES" ? calc.cur : "VES"; renderCalc(); });
+    document.querySelectorAll("[data-calc-cur]").forEach(function (b) {
+      b.addEventListener("click", function () {
+        var c = b.getAttribute("data-calc-cur");
+        if (c === calc.cur) return;
+        calc.cur = c;
+        if (calc.from !== "VES") calc.from = c;
+        $("calc-rate").value = calcBcv() > 0 ? fmtIn(calcBcv()) : "";
+        renderCalc();
+      });
+    });
     $("calc-amt").addEventListener("input", renderCalc);
     $("calc-rate").addEventListener("input", renderCalc);
-    $("calc-bcv").addEventListener("click", function () { $("calc-rate").value = fmtIn(state.rate); renderCalc(); });
+    $("calc-bcv").addEventListener("click", function () { $("calc-rate").value = fmtIn(calcBcv()); renderCalc(); });
     $("cal-cancel").addEventListener("click", closeCal);
     $("cal-backdrop").addEventListener("click", function (e) { if (e.target === $("cal-backdrop")) closeCal(); });
     $("cal-prev").addEventListener("click", function () { calStep(-1); });
