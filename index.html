@@ -12,7 +12,7 @@
   try {
     var d = JSON.parse(localStorage.getItem("gastos-v1") || "{}");
     if (d.theme === "light" || d.theme === "dark") document.documentElement.setAttribute("data-theme", d.theme);
-    if (d.pin && d.pin.h) document.documentElement.classList.add("locked");
+    if ((d.pin && d.pin.h) || !d.onb) document.documentElement.classList.add("locked");
   } catch (e) {}
 })();
 </script>
@@ -840,7 +840,8 @@ button.set-row:active { background: var(--bg); }
 .btn-danger:disabled { opacity: 0.4; cursor: not-allowed; }
 
 /* Bloqueo con código */
-html.locked body > *:not(#lock):not(#cf-sheet):not(#toast) { visibility: hidden; }
+html.locked body > *:not(#lock):not(#cf-sheet):not(#toast):not(#onb):not(#lg-sheet) { visibility: hidden; }
+#lg-sheet { z-index: 95; }
 .lock { position: fixed; inset: 0; z-index: 100; background: var(--bg); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 22px; padding: calc(24px + env(safe-area-inset-top, 0px)) max(16px, env(safe-area-inset-right, 0px)) calc(24px + env(safe-area-inset-bottom, 0px)) max(16px, env(safe-area-inset-left, 0px)); }
 .lock[hidden] { display: none; }
 .lock h2 { font-family: var(--display); font-size: 1.35rem; margin: 0; text-align: center; }
@@ -857,6 +858,40 @@ html.locked body > *:not(#lock):not(#cf-sheet):not(#toast) { visibility: hidden;
 .keypad .kp-x { border: 0; background: none; font-family: var(--body); font-size: 0.95rem; color: var(--muted); }
 .keypad .kp-sp { visibility: hidden; }
 .lock-forgot { font: inherit; font-size: 0.88rem; color: var(--accent); background: none; border: 0; cursor: pointer; min-height: 44px; }
+.lock-kicker { margin: 0 0 -14px; font-size: 0.78rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--accent); }
+.lock .hint { max-width: 32ch; }
+.keypad { grid-template-columns: repeat(3, 68px); }
+.keypad button { width: 68px; height: 68px; }
+.pin-dots { gap: 14px; }
+
+/* Tutorial */
+.onb { position: fixed; inset: 0; z-index: 90; background: var(--bg); display: flex; flex-direction: column; padding: calc(12px + env(safe-area-inset-top, 0px)) max(16px, env(safe-area-inset-right, 0px)) calc(18px + env(safe-area-inset-bottom, 0px)) max(16px, env(safe-area-inset-left, 0px)); }
+.onb[hidden] { display: none; }
+.onb-top { display: flex; justify-content: space-between; align-items: center; min-height: 44px; max-width: 520px; width: 100%; margin: 0 auto; }
+.onb-count { font-size: 0.8rem; font-weight: 600; color: var(--muted); font-variant-numeric: tabular-nums; }
+.onb-skip { font: inherit; font-weight: 600; color: var(--muted); background: none; border: 0; min-height: 44px; padding: 0 4px; cursor: pointer; }
+.onb-skip[hidden] { display: inline-block; visibility: hidden; }
+.onb-track { flex: 1; overflow: hidden; max-width: 520px; width: 100%; margin: 0 auto; }
+.onb-slides { display: flex; height: 100%; transition: transform 0.4s cubic-bezier(0.2, 0.8, 0.2, 1); }
+.onb-slide { flex: 0 0 100%; min-width: 0; display: flex; flex-direction: column; justify-content: center; gap: 14px; padding: 8px 4px; overflow-y: auto; }
+.onb-art { --c: var(--accent); width: 112px; height: 112px; border-radius: 34px; display: flex; align-items: center; justify-content: center; color: var(--c); background: color-mix(in srgb, var(--c) 14%, var(--surface)); border: 1px solid color-mix(in srgb, var(--c) 30%, var(--line)); margin-bottom: 8px; }
+.onb-art svg { width: 54px; height: 54px; }
+.onb-slide h2 { font-family: var(--display); font-size: clamp(1.6rem, 7vw, 2.1rem); line-height: 1.1; letter-spacing: -0.02em; margin: 0; text-wrap: balance; }
+.onb-slide > p { color: var(--muted); font-size: 1.02rem; margin: 0; max-width: 36ch; }
+.onb-tips { list-style: none; margin: 4px 0 0; padding: 0; display: grid; gap: 10px; }
+.onb-tips li { display: grid; grid-template-columns: 28px 1fr; gap: 10px; align-items: start; font-size: 0.94rem; }
+.onb-tips li i { width: 28px; height: 28px; border-radius: 9px; display: flex; align-items: center; justify-content: center; font-style: normal; font-weight: 700; font-size: 0.8rem; color: var(--accent); background: color-mix(in srgb, var(--accent) 12%, transparent); }
+.onb-tips b { font-weight: 600; }
+.onb-legal { font-size: 0.82rem; color: var(--muted); line-height: 1.45; margin: 6px 0 0; }
+.onb-legal button { font: inherit; color: var(--accent); background: none; border: 0; padding: 0; text-decoration: underline; cursor: pointer; }
+.onb-foot { display: grid; gap: 16px; max-width: 520px; width: 100%; margin: 0 auto; }
+.onb-dots { display: flex; justify-content: center; gap: 7px; }
+.onb-dots i { width: 7px; height: 7px; border-radius: 999px; background: var(--line); transition: width 0.3s, background 0.3s; }
+.onb-dots i.on { width: 22px; background: var(--accent); }
+.onb-btns { display: flex; gap: 10px; }
+.onb-btns .secondary { flex: 0 0 auto; min-height: 52px; border-radius: 14px; }
+.onb-btns .primary { margin: 0; min-height: 52px; border-radius: 14px; font-size: 1rem; }
+.onb-btns .secondary[hidden] { display: none; }
 @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation: none !important; transition: none !important; scroll-behavior: auto !important; } }
 </style>
 </head>
@@ -1044,7 +1079,7 @@ html.locked body > *:not(#lock):not(#cf-sheet):not(#toast) { visibility: hidden;
     <div class="set-h">Seguridad</div>
     <div class="set-group">
       <div class="set-row">
-        <div class="tx"><b>Código de bloqueo</b><small id="pin-sub">Pide un código de 4 dígitos al abrir la app.</small></div>
+        <div class="tx"><b>Código de bloqueo</b><small id="pin-sub">Pide un código de 6 dígitos al abrir la app.</small></div>
         <button type="button" class="switch" id="pin-switch" role="switch" aria-checked="false" aria-label="Código de bloqueo"><span></span></button>
       </div>
       <button type="button" class="set-row" id="pin-change" hidden><span class="tx"><b>Cambiar código</b></span><svg class="chev-r" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 5l7 7-7 7"></path></svg></button>
@@ -1066,6 +1101,11 @@ html.locked body > *:not(#lock):not(#cf-sheet):not(#toast) { visibility: hidden;
         <button type="button" class="switch" id="set-bn" role="switch" aria-checked="true" aria-label="Mostrar la tarjeta de Binance en el Inicio"><span></span></button>
       </div>
       <button type="button" class="set-row " id="set-bn-open"><span class="tx"><b>Abrir la guía</b><small>Paso a paso para poner tu ahorro a generar rendimiento.</small></span><svg class="chev-r" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 5l7 7-7 7"></path></svg></button>
+    </div>
+
+    <div class="set-h">Ayuda</div>
+    <div class="set-group">
+      <button type="button" class="set-row" id="onb-replay"><span class="tx"><b>Ver el tutorial</b><small>Un repaso rápido de cómo usar la app.</small></span><svg class="chev-r" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 5l7 7-7 7"></path></svg></button>
     </div>
 
     <div class="set-h">Información legal</div>
@@ -1092,9 +1132,18 @@ html.locked body > *:not(#lock):not(#cf-sheet):not(#toast) { visibility: hidden;
       <button type="button" class="secondary" id="cf-cancel" style="width:100%;margin-top:8px">Cancelar</button>
     </section>
   </div>
+  <div class="onb" id="onb" hidden role="dialog" aria-modal="true" aria-label="Cómo usar Mis gastos">
+    <div class="onb-top"><span class="onb-count" id="onb-count"></span><button type="button" class="onb-skip" id="onb-skip">Saltar</button></div>
+    <div class="onb-track"><div class="onb-slides" id="onb-slides"></div></div>
+    <div class="onb-foot">
+      <div class="onb-dots" id="onb-dots" aria-hidden="true"></div>
+      <div class="onb-btns"><button type="button" class="secondary" id="onb-prev" aria-label="Anterior">‹</button><button type="button" class="primary" id="onb-next">Siguiente</button></div>
+    </div>
+  </div>
   <div class="lock" id="lock" hidden role="dialog" aria-modal="true" aria-labelledby="lock-t">
+    <p class="lock-kicker" id="lock-k" hidden></p>
     <h2 id="lock-t">Escribe tu código</h2>
-    <div class="pin-dots" id="pin-dots" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
+    <div class="pin-dots" id="pin-dots" aria-hidden="true"></div>
     <p class="hint" id="lock-msg" aria-live="polite"></p>
     <div class="keypad" id="keypad">
       <button type="button" data-k="1">1</button><button type="button" data-k="2">2</button><button type="button" data-k="3">3</button>
@@ -1573,7 +1622,7 @@ html.locked body > *:not(#lock):not(#cf-sheet):not(#toast) { visibility: hidden;
   };
   var COLORS = ["#1f4fff", "#e08a00", "#0e9aa7", "#8a3ffc", "#e5133f", "#00a651", "#6b7b86", "#d6502b", "#9a7b00"];
 
-  var state = { items: [], rate: 0, disp: "USD", type: "gasto", month: "", sel: null, selIn: null, collapsed: {}, paySeries: [], theme: "auto", pin: null, backupAt: 0, bn: { done: {}, apr: 5, hide: false, opened: {}, v: 2 }, templates: [], showAll: false, hideSav: false, rateManual: "", rateAutoAt: 0, rateLoading: false, rateFail: false, rateErr: "", accounts: [], rateEur: 0, rateEurDate: "", rateEurManual: "", rateUsdt: 0, rateUsdtDate: "", rateUsdtManual: "", rateUsdtSrc: "", goals: [], payments: [], lastAcc: null, rateDate: "", fsav: { on: false, pct: 10 }, sav: { on: false, pct: 10 } };
+  var state = { items: [], rate: 0, disp: "USD", type: "gasto", month: "", sel: null, selIn: null, collapsed: {}, paySeries: [], theme: "auto", pin: null, backupAt: 0, onb: false, bn: { done: {}, apr: 5, hide: false, opened: {}, v: 2 }, templates: [], showAll: false, hideSav: false, rateManual: "", rateAutoAt: 0, rateLoading: false, rateFail: false, rateErr: "", accounts: [], rateEur: 0, rateEurDate: "", rateEurManual: "", rateUsdt: 0, rateUsdtDate: "", rateUsdtManual: "", rateUsdtSrc: "", goals: [], payments: [], lastAcc: null, rateDate: "", fsav: { on: false, pct: 10 }, sav: { on: false, pct: 10 } };
 
   function load() {
     try {
@@ -1594,6 +1643,7 @@ html.locked body > *:not(#lock):not(#cf-sheet):not(#toast) { visibility: hidden;
         if (d && (d.theme === "light" || d.theme === "dark")) state.theme = d.theme;
         if (d && d.pin && typeof d.pin.h === "string") state.pin = d.pin;
         if (d && typeof d.backupAt === "number") state.backupAt = d.backupAt;
+        if (d && d.onb) state.onb = true;
         if (d && d.bn && typeof d.bn === "object") state.bn = { done: d.bn.done || {}, apr: typeof d.bn.apr === "number" ? d.bn.apr : BN_APR, hide: d.bn.v === 2 && !!d.bn.hide, opened: d.bn.opened || {}, v: 2 };
         if (d && typeof d.btcUsd === "number") { state.btcUsd = d.btcUsd; state.btcAt = d.btcAt || 0; }
         if (d && typeof d.rateEur === "number") state.rateEur = d.rateEur;
@@ -1611,7 +1661,7 @@ html.locked body > *:not(#lock):not(#cf-sheet):not(#toast) { visibility: hidden;
   }
   function save() {
     try {
-      localStorage.setItem(KEY, JSON.stringify({ items: state.items, rate: state.rate, rateDate: state.rateDate, hideSav: state.hideSav, rateManual: state.rateManual, rateAutoAt: state.rateAutoAt, accounts: state.accounts, templates: state.templates, goals: state.goals, payments: state.payments, paySeries: state.paySeries, theme: state.theme, pin: state.pin, backupAt: state.backupAt, bn: state.bn, btcUsd: state.btcUsd, btcAt: state.btcAt, rateEur: state.rateEur, rateEurDate: state.rateEurDate, rateEurManual: state.rateEurManual, rateUsdt: state.rateUsdt, rateUsdtDate: state.rateUsdtDate, rateUsdtManual: state.rateUsdtManual, rateUsdtSrc: state.rateUsdtSrc, collapsed: state.collapsed, disp: state.disp, sav: state.sav }));
+      localStorage.setItem(KEY, JSON.stringify({ items: state.items, rate: state.rate, rateDate: state.rateDate, hideSav: state.hideSav, rateManual: state.rateManual, rateAutoAt: state.rateAutoAt, accounts: state.accounts, templates: state.templates, goals: state.goals, payments: state.payments, paySeries: state.paySeries, theme: state.theme, pin: state.pin, backupAt: state.backupAt, onb: state.onb, bn: state.bn, btcUsd: state.btcUsd, btcAt: state.btcAt, rateEur: state.rateEur, rateEurDate: state.rateEurDate, rateEurManual: state.rateEurManual, rateUsdt: state.rateUsdt, rateUsdtDate: state.rateUsdtDate, rateUsdtManual: state.rateUsdtManual, rateUsdtSrc: state.rateUsdtSrc, collapsed: state.collapsed, disp: state.disp, sav: state.sav }));
     } catch (e) {}
   }
 
@@ -4421,7 +4471,7 @@ html.locked body > *:not(#lock):not(#cf-sheet):not(#toast) { visibility: hidden;
       var on = !!(state.pin && state.pin.h);
       $("pin-switch").setAttribute("aria-checked", on ? "true" : "false");
       $("pin-change").hidden = !on;
-      $("pin-sub").textContent = on ? "Activado. Se pide al abrir la app y al volver después de 1 minuto." : "Pide un código de 4 dígitos al abrir la app.";
+      $("pin-sub").textContent = on ? "Activado. Se pide al abrir la app y al volver después de 1 minuto." : "Pide un código de 6 dígitos al abrir la app.";
       var bs = $("bk-sub");
       if (state.backupAt) {
         var d = new Date(state.backupAt);
@@ -4516,15 +4566,25 @@ html.locked body > *:not(#lock):not(#cf-sheet):not(#toast) { visibility: hidden;
       for (var i = 0; i < 2000; i++) for (var k = 0; k < txt.length; k++) { h ^= txt.charCodeAt(k); h = Math.imul(h, 16777619) >>> 0; }
       return Promise.resolve("f" + h.toString(16));
     }
-    var lk = { mode: "", buf: "", first: "", onDone: null, fails: 0, until: 0 };
-    function lockDots() { document.querySelectorAll("#pin-dots i").forEach(function (d, i) { d.classList.toggle("on", i < lk.buf.length); }); }
+    var PIN_LEN = 6;
+    var lk = { mode: "", buf: "", first: "", onDone: null, fails: 0, until: 0, n: PIN_LEN, onb: false };
+    function lockDots() {
+      var w = $("pin-dots");
+      if (w.children.length !== lk.n) w.innerHTML = new Array(lk.n + 1).join("<i></i>");
+      Array.prototype.forEach.call(w.children, function (d, i) { d.classList.toggle("on", i < lk.buf.length); });
+    }
+    function setTitle() { return lk.onb ? "Crea tu clave de acceso" : "Crea un código de " + PIN_LEN + " dígitos"; }
     function lockMsg(t, err) { var m = $("lock-msg"); m.textContent = t || ""; m.className = "hint" + (err ? " err" : ""); }
     function shake() { var d = $("pin-dots"); d.classList.remove("shake"); void d.offsetWidth; d.classList.add("shake"); }
-    function openLock(mode, onDone) {
-      lk.mode = mode; lk.buf = ""; lk.first = ""; lk.onDone = onDone || null;
-      $("lock-t").textContent = mode === "unlock" ? "Escribe tu código" : mode === "verify" ? "Escribe tu código actual" : "Crea un código de 4 dígitos";
-      lockMsg(mode === "set" ? "Lo pediremos cada vez que abras la app." : "");
-      $("kp-cancel").style.visibility = mode === "unlock" ? "hidden" : "visible";
+    function openLock(mode, onDone, opts) {
+      opts = opts || {};
+      lk.mode = mode; lk.buf = ""; lk.first = ""; lk.onDone = onDone || null; lk.onb = !!opts.onb;
+      lk.n = mode === "set" ? PIN_LEN : (state.pin && state.pin.n) || 4;
+      $("lock-k").hidden = !lk.onb;
+      $("lock-k").textContent = lk.onb ? "Bienvenido a Mis gastos" : "";
+      $("lock-t").textContent = mode === "unlock" ? "Escribe tu código" : mode === "verify" ? "Escribe tu código actual" : setTitle();
+      lockMsg(mode === "set" ? (lk.onb ? "Elige " + PIN_LEN + " números. La pediremos cada vez que abras la app para proteger tus datos." : "Lo pediremos cada vez que abras la app.") : "");
+      $("kp-cancel").style.visibility = mode === "unlock" || lk.onb ? "hidden" : "visible";
       $("lock-forgot").hidden = mode !== "unlock";
       lockDots();
       $("lock").hidden = false;
@@ -4535,17 +4595,19 @@ html.locked body > *:not(#lock):not(#cf-sheet):not(#toast) { visibility: hidden;
       if (!lk.mode) return;
       if (Date.now() < lk.until) { lockMsg("Espera unos segundos e intenta de nuevo.", true); return; }
       if (k === "del") { lk.buf = lk.buf.slice(0, -1); lockDots(); return; }
-      if (lk.buf.length >= 4) return;
+      if (lk.buf.length >= lk.n) return;
       lk.buf += k; lockDots();
-      if (lk.buf.length < 4) return;
+      if (lk.buf.length < lk.n) return;
       var pin = lk.buf;
       if (lk.mode === "set") {
-        if (!lk.first) { lk.first = pin; lk.buf = ""; setTimeout(lockDots, 150); $("lock-t").textContent = "Repite el código"; lockMsg(""); return; }
-        if (lk.first !== pin) { lk.first = ""; lk.buf = ""; shake(); setTimeout(lockDots, 300); $("lock-t").textContent = "Crea un código de 4 dígitos"; lockMsg("No coincidían. Empieza de nuevo.", true); return; }
+        if (!lk.first) { lk.first = pin; lk.buf = ""; setTimeout(lockDots, 150); $("lock-t").textContent = lk.onb ? "Repite tu clave" : "Repite el código"; lockMsg("Para confirmar que la escribiste bien."); return; }
+        if (lk.first !== pin) { lk.first = ""; lk.buf = ""; shake(); setTimeout(lockDots, 300); $("lock-t").textContent = setTitle(); lockMsg("No coincidían. Empieza de nuevo.", true); return; }
         var salt = Math.random().toString(36).slice(2) + Date.now().toString(36);
         pinHash(pin, salt).then(function (h) {
-          state.pin = { h: h, s: salt }; save(); closeLock(); renderSettings();
-          showToast("Código activado. Si lo olvidas, solo podrás entrar borrando los datos.");
+          var cb = lk.onDone, wasOnb = lk.onb;
+          state.pin = { h: h, s: salt, n: PIN_LEN }; save(); closeLock(); renderSettings();
+          if (cb) cb();
+          if (!wasOnb) showToast("Código activado. Si lo olvidas, solo podrás entrar borrando los datos.");
         });
         return;
       }
@@ -4579,6 +4641,87 @@ html.locked body > *:not(#lock):not(#cf-sheet):not(#toast) { visibility: hidden;
       else openLock("set");
     });
     $("pin-change").addEventListener("click", function () { openLock("verify", function () { openLock("set"); }); });
+    /* ---------- Tutorial ---------- */
+    var SVG = function (d) { return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' + d + "</svg>"; };
+    var ONB = [
+      { c: "var(--accent)", ic: SVG('<path d="M12 5v14M5 12h14"></path>'), t: "Anota cada movimiento",
+        p: "Todo empieza con el botón + de abajo a la derecha.",
+        tips: [["+", "<b>Nuevo movimiento:</b> elige ingreso o gasto, el monto, la categoría y la cuenta."], ["⚡", "<b>Plantillas:</b> guarda los gastos que repites para anotarlos con un toque."]] },
+      { c: "var(--in)", ic: SVG('<rect x="3" y="6" width="18" height="13" rx="3"></rect><path d="M3 10h18M7 15h3"></path>'), t: "Tus cuentas y las tasas del día",
+        p: "Agrega tus cuentas en bolívares, dólares o euros y mira cuánto tienes en cada una.",
+        tips: [["$", "<b>Tasas BCV, euro y USDT:</b> se actualizan solas arriba en el Inicio."], ["⇄", "<b>Calculadora:</b> convierte entre Bs, $, €, USDT y bitcoin desde el botón +."]] },
+      { c: "#8a3ffc", ic: SVG('<path d="M4 20V10M10 20V4M16 20v-7M22 20H2"></path>'), t: "Ahorra y cumple tus metas",
+        p: "Aparta una parte de cada ingreso sin pensarlo y ponle nombre a lo que quieres lograr.",
+        tips: [["%", "<b>Ahorro automático:</b> al registrar un ingreso decides qué porcentaje guardar."], ["◎", "<b>Metas:</b> crea una meta y mira cuánto te falta y cuándo llegarías."]] },
+      { c: "#e08a00", ic: SVG('<rect x="3" y="5" width="18" height="16" rx="3"></rect><path d="M8 3v4M16 3v4M3 10h18M9 15l2 2 4-4"></path>'), t: "Que no se te pase ningún pago",
+        p: "En Pagos programas lo que tienes que pagar y lo ves en un calendario.",
+        tips: [["↻", "<b>Una sola vez o todos los meses:</b> el alquiler o el internet se repiten solos."], ["✓", "<b>Márcalo como pagado</b> y la app te avisa de lo que está vencido."]] },
+      { c: "var(--out)", ic: SVG('<path d="M4 6h16M4 12h10M4 18h6"></path><circle cx="18" cy="16" r="3"></circle><path d="M20.5 18.5L22 20"></path>'), t: "Mira en qué se va tu dinero",
+        p: "El Inicio te muestra tus gastos por categoría y el Historial guarda todo.",
+        tips: [["▤", "<b>Historial:</b> busca cualquier movimiento y filtra por ingresos, gastos o ahorro."], ["◐", "<b>Por categoría:</b> mira cuánto gastaste solo en alimentación, transporte o lo que quieras."]] },
+      { c: "var(--in)", ic: SVG('<path d="M12 3l8 3v6c0 4.5-3.4 8.3-8 9-4.6-.7-8-4.5-8-9V6z"></path><path d="M9 12l2 2 4-4"></path>'), t: "Tus datos son solo tuyos",
+        p: "Todo se guarda únicamente en este teléfono. No hay servidores ni cuentas, y nadie más puede verlo.",
+        tips: [["⚙", "<b>Ajustes:</b> el engranaje junto al nombre. Ahí cambias el tema, la moneda y tu clave."], ["⤓", "<b>Guarda una copia</b> de vez en cuando. Si cambias de teléfono o borras el navegador, es la única forma de recuperar tus datos."]],
+        legal: true }
+    ];
+    var onb = { i: 0 };
+    function buildOnb() {
+      $("onb-slides").innerHTML = ONB.map(function (s, k) {
+        return '<section class="onb-slide" aria-hidden="' + (k ? "true" : "false") + '"><div class="onb-art" style="--c:' + s.c + '">' + s.ic + "</div><h2>" + s.t + "</h2><p>" + s.p + '</p><ul class="onb-tips">' +
+          s.tips.map(function (t) { return "<li><i>" + t[0] + "</i><span>" + t[1] + "</span></li>"; }).join("") + "</ul>" +
+          (s.legal ? '<p class="onb-legal">Al continuar aceptas los <button type="button" data-onb-lg="terms">Términos de uso</button> y la <button type="button" data-onb-lg="priv">Política de privacidad</button>. Mis gastos no da asesoría financiera.</p>' : "") + "</section>";
+      }).join("");
+      $("onb-dots").innerHTML = new Array(ONB.length + 1).join("<i></i>");
+    }
+    function goOnb(i) {
+      onb.i = Math.max(0, Math.min(ONB.length - 1, i));
+      $("onb-slides").style.transform = "translateX(" + (-onb.i * 100) + "%)";
+      Array.prototype.forEach.call($("onb-slides").children, function (el, k) { el.setAttribute("aria-hidden", k === onb.i ? "false" : "true"); el.scrollTop = 0; });
+      Array.prototype.forEach.call($("onb-dots").children, function (el, k) { el.classList.toggle("on", k === onb.i); });
+      $("onb-count").textContent = (onb.i + 1) + " de " + ONB.length;
+      var last = onb.i === ONB.length - 1;
+      $("onb-next").textContent = last ? "Empezar a usar Mis gastos" : "Siguiente";
+      $("onb-prev").hidden = onb.i === 0;
+      $("onb-skip").hidden = last;
+    }
+    function showOnb() {
+      if (!$("onb-slides").children.length) buildOnb();
+      $("onb").hidden = false;
+      goOnb(0);
+      $("onb-next").focus();
+    }
+    function endOnb() {
+      $("onb").hidden = true;
+      state.onb = true; save();
+      document.documentElement.classList.remove("locked");
+      scheduleFit();
+      try { drawTrend(); } catch (e) {}
+    }
+    function startOnb() {
+      document.documentElement.classList.add("locked");
+      if (state.pin && state.pin.h) openLock("unlock", showOnb);
+      else openLock("set", showOnb, { onb: true });
+    }
+    $("onb-next").addEventListener("click", function () { if (onb.i >= ONB.length - 1) endOnb(); else goOnb(onb.i + 1); });
+    $("onb-prev").addEventListener("click", function () { goOnb(onb.i - 1); });
+    $("onb-skip").addEventListener("click", function () { goOnb(ONB.length - 1); });
+    $("onb-slides").addEventListener("click", function (e) { var b = e.target.closest("[data-onb-lg]"); if (b) openLg(b.getAttribute("data-onb-lg")); });
+    (function () {
+      var x0 = null, y0 = 0;
+      $("onb-slides").addEventListener("touchstart", function (e) { x0 = e.touches[0].clientX; y0 = e.touches[0].clientY; }, { passive: true });
+      $("onb-slides").addEventListener("touchend", function (e) {
+        if (x0 === null) return;
+        var dx = e.changedTouches[0].clientX - x0, dy = e.changedTouches[0].clientY - y0;
+        x0 = null;
+        if (Math.abs(dx) > 50 && Math.abs(dx) > Math.abs(dy)) goOnb(onb.i + (dx < 0 ? 1 : -1));
+      });
+    })();
+    document.addEventListener("keydown", function (e) {
+      if ($("onb").hidden || !$("lg-sheet").hidden) return;
+      if (e.key === "ArrowRight") goOnb(onb.i + 1);
+      else if (e.key === "ArrowLeft") goOnb(onb.i - 1);
+    });
+    $("onb-replay").addEventListener("click", function () { showOnb(); });
     var hiddenAt = 0;
     document.addEventListener("visibilitychange", function () {
       if (document.hidden) { hiddenAt = Date.now(); return; }
@@ -4586,7 +4729,8 @@ html.locked body > *:not(#lock):not(#cf-sheet):not(#toast) { visibility: hidden;
     });
     applyTheme();
     renderSetDot();
-    if (state.pin && state.pin.h) openLock("unlock");
+    if (!state.onb) startOnb();
+    else if (state.pin && state.pin.h) openLock("unlock");
     else document.documentElement.classList.remove("locked");
     $("bn-steps").addEventListener("input", function (e) {
       if (e.target.id !== "bn-apr") return;
