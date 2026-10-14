@@ -276,7 +276,17 @@ input, select {
 .calc-swap:hover { border-color: var(--accent); }
 .calc-rate-row { display: flex; gap: 8px; }
 .calc-seg { display: flex; margin-bottom: 12px; }
-.calc-seg button { flex: 1; }
+.calc-seg button { flex: 1; display: flex; align-items: center; justify-content: center; padding-top: 6px; padding-bottom: 6px; }
+.cc-ic { --cc: var(--in); width: 32px; height: 32px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; font-family: var(--display); font-weight: 700; font-size: 1rem; line-height: 1; color: var(--cc); background: color-mix(in srgb, var(--cc) 15%, transparent); }
+.cc-ic.cc-eur { --cc: var(--accent); }
+.cc-ic.cc-usdt { --cc: #0e9aa7; }
+.cc-ic.cc-btc { --cc: #e8890c; }
+.cc-ic.cc-ves { --cc: var(--muted); font-size: 0.78rem; letter-spacing: -0.02em; }
+.calc-seg button[aria-pressed="true"] .cc-ic { color: #fff; background: var(--cc); box-shadow: 0 0 0 2px var(--surface); }
+.calc-seg button[aria-pressed="true"] { background: color-mix(in srgb, var(--accent) 10%, var(--surface)); }
+.calc-cur { display: flex; align-items: center; justify-content: center; padding: 6px; min-width: 52px; min-height: 52px; }
+.calc-cur .cc-ic { width: 36px; height: 36px; font-size: 1.1rem; }
+.calc-cur .cc-ic.cc-ves { font-size: 0.85rem; }
 .calc-rate-row input { flex: 1; min-width: 0; }
 .acc-title { margin-bottom: 12px; }
 .acc-actions { display: flex; gap: 10px; margin-bottom: 8px; }
@@ -1164,20 +1174,22 @@ body.view-hist .hist-view { display: block; animation: viewIn 0.4s cubic-bezier(
     <section class="panel sheet" role="dialog" aria-modal="true" aria-labelledby="h-calc">
       <div class="sheet-head"><h2 id="h-calc">Calculadora de cambio</h2><button type="button" class="del" id="calc-close" aria-label="Cerrar">✕</button></div>
       <div class="seg calc-seg" role="group" aria-label="Moneda de la calculadora">
-        <button type="button" data-calc-cur="USD" aria-pressed="true">Dólar</button>
-        <button type="button" data-calc-cur="EUR" aria-pressed="false">Euro</button>
+        <button type="button" data-calc-cur="USD" aria-pressed="true" aria-label="Dólar" title="Dólar"><span class="cc-ic cc-usd" aria-hidden="true">$</span></button>
+        <button type="button" data-calc-cur="EUR" aria-pressed="false" aria-label="Euro" title="Euro"><span class="cc-ic cc-eur" aria-hidden="true">€</span></button>
+        <button type="button" data-calc-cur="USDT" aria-pressed="false" aria-label="USDT" title="USDT"><span class="cc-ic cc-usdt" aria-hidden="true">₮</span></button>
+        <button type="button" data-calc-cur="BTC" aria-pressed="false" aria-label="Bitcoin" title="Bitcoin"><span class="cc-ic cc-btc" aria-hidden="true">₿</span></button>
       </div>
       <div class="calc-box">
         <label class="calc-lbl" for="calc-amt">Tengo</label>
         <div class="calc-line">
           <input type="text" id="calc-amt" inputmode="decimal" autocomplete="off" placeholder="0,00">
-          <span class="calc-cur" id="calc-from-cur">Bs</span>
+          <span class="calc-cur" id="calc-from-cur"></span>
         </div>
         <button type="button" class="calc-swap" id="calc-swap" aria-label="Invertir el cambio"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 20V4M7 4L3 8M7 4l4 4"></path><path d="M17 4v16M17 20l-4-4M17 20l4-4"></path></svg></button>
         <div class="calc-lbl">Recibo</div>
         <div class="calc-line">
           <div class="calc-out fit" id="calc-out" aria-live="polite">0,00</div>
-          <span class="calc-cur" id="calc-to-cur">$</span>
+          <span class="calc-cur" id="calc-to-cur"></span>
         </div>
       </div>
       <label for="calc-rate" id="calc-rate-lbl">Tasa (Bs por $1)</label>
@@ -1185,7 +1197,6 @@ body.view-hist .hist-view { display: block; animation: viewIn 0.4s cubic-bezier(
         <input type="text" id="calc-rate" inputmode="decimal" autocomplete="off" placeholder="Ej: 875,67">
         <button type="button" class="secondary" id="calc-bcv">Usar la del BCV</button>
       </div>
-      <div class="rate-chips" data-for="calc-rate"></div>
       <p class="hint" id="calc-note"></p>
     </section>
   </div>
@@ -1344,6 +1355,7 @@ body.view-hist .hist-view { display: block; animation: viewIn 0.4s cubic-bezier(
         if (d && Array.isArray(d.goals)) state.goals = d.goals;
         if (d && Array.isArray(d.payments)) state.payments = d.payments;
         if (d && Array.isArray(d.paySeries)) state.paySeries = d.paySeries;
+        if (d && typeof d.btcUsd === "number") { state.btcUsd = d.btcUsd; state.btcAt = d.btcAt || 0; }
         if (d && typeof d.rateEur === "number") state.rateEur = d.rateEur;
         if (d && typeof d.rateEurDate === "string") state.rateEurDate = d.rateEurDate;
         if (d && typeof d.rateEurManual === "string") state.rateEurManual = d.rateEurManual;
@@ -1359,7 +1371,7 @@ body.view-hist .hist-view { display: block; animation: viewIn 0.4s cubic-bezier(
   }
   function save() {
     try {
-      localStorage.setItem(KEY, JSON.stringify({ items: state.items, rate: state.rate, rateDate: state.rateDate, hideSav: state.hideSav, rateManual: state.rateManual, rateAutoAt: state.rateAutoAt, accounts: state.accounts, templates: state.templates, goals: state.goals, payments: state.payments, paySeries: state.paySeries, rateEur: state.rateEur, rateEurDate: state.rateEurDate, rateEurManual: state.rateEurManual, rateUsdt: state.rateUsdt, rateUsdtDate: state.rateUsdtDate, rateUsdtManual: state.rateUsdtManual, rateUsdtSrc: state.rateUsdtSrc, collapsed: state.collapsed, disp: state.disp, sav: state.sav }));
+      localStorage.setItem(KEY, JSON.stringify({ items: state.items, rate: state.rate, rateDate: state.rateDate, hideSav: state.hideSav, rateManual: state.rateManual, rateAutoAt: state.rateAutoAt, accounts: state.accounts, templates: state.templates, goals: state.goals, payments: state.payments, paySeries: state.paySeries, btcUsd: state.btcUsd, btcAt: state.btcAt, rateEur: state.rateEur, rateEurDate: state.rateEurDate, rateEurManual: state.rateEurManual, rateUsdt: state.rateUsdt, rateUsdtDate: state.rateUsdtDate, rateUsdtManual: state.rateUsdtManual, rateUsdtSrc: state.rateUsdtSrc, collapsed: state.collapsed, disp: state.disp, sav: state.sav }));
     } catch (e) {}
   }
 
@@ -3961,33 +3973,71 @@ body.view-hist .hist-view { display: block; animation: viewIn 0.4s cubic-bezier(
 
     /* ---------- Calculadora de cambio ---------- */
     var calc = { from: "VES", cur: "USD" };
-    function calcBcv() { return calc.cur === "EUR" ? state.rateEur : state.rate; }
+    var CC = {
+      USD: { ic: "cc-usd", sym: "$", name: "Dólar", unit: "$1" },
+      EUR: { ic: "cc-eur", sym: "€", name: "Euro", unit: "€1" },
+      USDT: { ic: "cc-usdt", sym: "₮", name: "USDT", unit: "1 USDT" },
+      BTC: { ic: "cc-btc", sym: "₿", name: "Bitcoin", unit: "1 BTC" },
+      VES: { ic: "cc-ves", sym: "Bs", name: "Bolívares" }
+    };
+    function ccIcon(c) { return '<span class="cc-ic ' + CC[c].ic + '" role="img" aria-label="' + CC[c].name + '">' + CC[c].sym + "</span>"; }
+    // Precio del bitcoin en Bs: precio en dólares × tasa USDT (o la del BCV si no hay USDT).
+    function btcVes() { var r = state.rateUsdt > 0 ? state.rateUsdt : state.rate; return state.btcUsd > 0 && r > 0 ? state.btcUsd * r : 0; }
+    function calcBcv() {
+      if (calc.cur === "EUR") return state.rateEur;
+      if (calc.cur === "USDT") return state.rateUsdt;
+      if (calc.cur === "BTC") return btcVes();
+      return state.rate;
+    }
+    var btcLoading = false;
+    function fetchBtc() {
+      if (btcLoading || typeof fetch !== "function") return;
+      if (state.btcUsd > 0 && Date.now() - (state.btcAt || 0) < 5 * 60 * 1000) return;
+      btcLoading = true;
+      getJSON("https://api.binance.com/api/v3/ticker/price?symbol=BTCUSDT", 10000)
+        .then(function (j) { var v = Number(j && j.price); if (!(v > 0)) throw rateError("dato"); return v; })
+        .catch(function () {
+          return getJSON("https://api.coingecko.com/api/v3/simple/price?ids=bitcoin&vs_currencies=usd", 10000)
+            .then(function (j) { var v = Number(j && j.bitcoin && j.bitcoin.usd); if (!(v > 0)) throw rateError("dato"); return v; });
+        })
+        .then(function (v) {
+          var wasEmpty = !(calcRate() > 0);
+          state.btcUsd = v; state.btcAt = Date.now(); save();
+          if (!$("calc-sheet").hidden && calc.cur === "BTC" && wasEmpty) $("calc-rate").value = fmtIn(Math.round(btcVes() * 100) / 100);
+          if (!$("calc-sheet").hidden) renderCalc();
+        }, function () {})
+        .then(function () { btcLoading = false; });
+    }
     function calcRate() { var r = parseNum($("calc-rate").value); return r > 0 ? r : 0; }
     function renderCalc() {
-      var from = calc.from, to = from === "VES" ? calc.cur : "VES", sym = curLabel(calc.cur);
-      $("calc-from-cur").textContent = curLabel(from);
-      $("calc-to-cur").textContent = curLabel(to);
-      $("calc-rate-lbl").textContent = "Tasa (Bs por " + sym + "1)";
+      var from = calc.from, to = from === "VES" ? calc.cur : "VES", cc = CC[calc.cur];
+      $("calc-from-cur").innerHTML = ccIcon(from);
+      $("calc-to-cur").innerHTML = ccIcon(to);
+      $("calc-rate-lbl").textContent = "Tasa (Bs por " + cc.unit + ")";
       setPressed("[data-calc-cur]", "data-calc-cur", calc.cur);
-      var chips = document.querySelector('.rate-chips[data-for="calc-rate"]');
-      if (chips) chips.style.display = calc.cur === "EUR" ? "none" : "";
-      var a = parseNum($("calc-amt").value), r = calcRate(), out = $("calc-out");
+      var a = parseNum($("calc-amt").value), r = calcRate(), out = $("calc-out"), dec = to === "BTC" ? 8 : 2;
+      $("calc-amt").placeholder = from === "BTC" ? "0,00000000" : "0,00";
       if (!(r > 0)) out.textContent = "—";
-      else if (!(a > 0)) out.textContent = "0,00";
-      else out.textContent = num(from === "VES" ? a / r : a * r);
-      var note = $("calc-note"), base = calcBcv(), bcv = base > 0, same = bcv && Math.abs(r - base) < 0.0001;
-      if (!(r > 0)) note.textContent = "Escribe la tasa que quieres usar.";
-      else if (same) note.textContent = "Usando la tasa del día del " + (calc.cur === "EUR" ? "euro" : "dólar") + " (BCV).";
-      else note.textContent = "Usando una tasa personalizada." + (bcv ? " La del BCV es Bs " + num(base) + "." : "");
-      $("calc-bcv").style.display = bcv && !same ? "" : "none";
+      else if (!(a > 0)) out.textContent = num(0, dec);
+      else out.textContent = num(from === "VES" ? a / r : a * r, dec);
+      var note = $("calc-note"), base = calcBcv(), has = base > 0, same = has && Math.abs(r - base) < Math.max(0.0001, base * 0.00001);
+      var src = calc.cur === "BTC" ? "el precio actual del bitcoin" + (state.btcUsd > 0 ? " ($" + num(state.btcUsd) + ")" : "")
+        : calc.cur === "USDT" ? "la tasa USDT del día" : "la tasa del día del " + (calc.cur === "EUR" ? "euro" : "dólar") + " (BCV)";
+      if (!(r > 0)) note.textContent = calc.cur === "BTC" && !has ? "Buscando el precio del bitcoin… o escribe la tasa que quieres usar." : "Escribe la tasa que quieres usar.";
+      else if (same) note.textContent = "Usando " + src + ".";
+      else note.textContent = "Usando una tasa personalizada." + (has ? " La del día es Bs " + num(base) + "." : "");
+      $("calc-bcv").textContent = calc.cur === "BTC" ? "Usar el precio actual" : calc.cur === "USDT" ? "Usar la del día" : "Usar la del BCV";
+      $("calc-bcv").style.display = has && !same ? "" : "none";
       scheduleFit();
     }
+    function setCalcRate() { var b = calcBcv(); $("calc-rate").value = b > 0 ? fmtIn(Math.round(b * 100) / 100) : ""; }
     function openCalc() {
-      $("calc-rate").value = calcBcv() > 0 ? fmtIn(calcBcv()) : "";
+      setCalcRate();
       $("calc-amt").value = "";
       renderCalc();
       $("calc-sheet").hidden = false;
       $("calc-amt").focus();
+      fetchBtc();
     }
     function closeCalc() { $("calc-sheet").hidden = true; $("fab").focus(); }
     $("calc-close").addEventListener("click", closeCalc);
@@ -3999,13 +4049,14 @@ body.view-hist .hist-view { display: block; animation: viewIn 0.4s cubic-bezier(
         if (c === calc.cur) return;
         calc.cur = c;
         if (calc.from !== "VES") calc.from = c;
-        $("calc-rate").value = calcBcv() > 0 ? fmtIn(calcBcv()) : "";
+        setCalcRate();
+        if (c === "BTC") fetchBtc();
         renderCalc();
       });
     });
     $("calc-amt").addEventListener("input", renderCalc);
     $("calc-rate").addEventListener("input", renderCalc);
-    $("calc-bcv").addEventListener("click", function () { $("calc-rate").value = fmtIn(calcBcv()); renderCalc(); });
+    $("calc-bcv").addEventListener("click", function () { setCalcRate(); renderCalc(); });
     $("cal-cancel").addEventListener("click", closeCal);
     $("cal-backdrop").addEventListener("click", function (e) { if (e.target === $("cal-backdrop")) closeCal(); });
     $("cal-prev").addEventListener("click", function () { calStep(-1); });
