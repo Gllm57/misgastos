@@ -790,6 +790,9 @@ body.view-bn .bn-view { display: block; animation: viewIn 0.4s cubic-bezier(0.2,
 .bn-est .l { color: var(--muted); font-size: 0.78rem; }
 .bn-rate { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; font-size: 0.85rem; color: var(--muted); }
 .bn-rate input { width: 84px; min-height: 38px; padding: 6px 10px; text-align: right; font-weight: 700; }
+.bn-pin { display: flex; align-items: center; justify-content: space-between; gap: 14px; background: var(--surface); border: 1px solid var(--line); border-radius: 18px; padding: 12px 14px 12px 16px; margin-top: 12px; }
+.bn-pin b { display: block; font-size: 0.95rem; }
+.bn-pin small { display: block; color: var(--muted); font-size: 0.8rem; }
 .bn-disc { font-size: 0.76rem; color: var(--muted); line-height: 1.4; margin: 14px 4px 0; }
 @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation: none !important; transition: none !important; scroll-behavior: auto !important; } }
 </style>
@@ -960,6 +963,10 @@ body.view-bn .bn-view { display: block; animation: viewIn 0.4s cubic-bezier(0.2,
       <div class="bn-track"><i id="bn-bar"></i></div>
     </div>
     <ol class="bn-steps" id="bn-steps"></ol>
+    <div class="bn-pin">
+      <div><b>Mostrar en el Inicio</b><small>Una tarjeta en el Inicio para volver a esta guía.</small></div>
+      <button type="button" class="switch" id="bn-pin" role="switch" aria-checked="true" aria-label="Mostrar la tarjeta de Binance en el Inicio"><span></span></button>
+    </div>
     <p class="bn-disc">El botón «Crear mi cuenta» usa un enlace de referido de Mis gastos: si abres tu cuenta con él, Mis gastos puede recibir una comisión de Binance y a ti no te cuesta nada. Mis gastos no es parte de Binance y esto no es asesoría financiera. Binance Earn no es un plazo fijo bancario: el rendimiento cambia, no está garantizado y no tiene garantía de depósito. Mis gastos nunca te pedirá tu contraseña ni tus códigos.</p>
   </div>
   <div class="pay-view" id="pay-view" role="region" aria-label="Pagos" aria-hidden="true">
@@ -2107,6 +2114,7 @@ body.view-bn .bn-view { display: block; animation: viewIn 0.4s cubic-bezier(0.2,
     for (var i = 1; i <= total; i++) if (!state.bn.done[i]) { now = i; break; }
     $("bn-prog-t").textContent = now ? "Vas por el paso " + now + " de " + total : "¡Listo! Tu ahorro ya está trabajando";
     $("bn-pct").textContent = Math.round(done / total * 100) + "%";
+    $("bn-pin").setAttribute("aria-checked", state.bn.hide ? "false" : "true");
     $("bn-bar").style.width = (done / total * 100) + "%";
     var check = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"></path></svg>';
     var acc = bnAccount();
@@ -4129,7 +4137,7 @@ body.view-bn .bn-view { display: block; animation: viewIn 0.4s cubic-bezier(0.2,
     $("bv-back").addEventListener("click", function () { closeViews(); setTab(currentTab()); });
     $("bn-entry").addEventListener("click", function (e) { if (e.target.closest("#bn-hide")) return; openView("bn"); });
     $("bn-entry").addEventListener("keydown", function (e) { if ((e.key === "Enter" || e.key === " ") && e.target === $("bn-entry")) { e.preventDefault(); openView("bn"); } });
-    $("bn-hide").addEventListener("click", function () { state.bn.hide = true; save(); renderBnEntry(); showToast("Listo. La guía sigue en el botón + › Ahorrar en Binance."); });
+    $("bn-hide").addEventListener("click", function () { state.bn.hide = true; save(); renderBnEntry(); showToast("Tarjeta oculta. Para volver a verla: botón + › Ahorrar en Binance."); });
     $("bn-steps").addEventListener("click", function (e) {
       var b = e.target.closest("[data-bn-toggle]");
       if (b) { var k = b.getAttribute("data-bn-toggle"); state.bn.done[k] = !state.bn.done[k]; save(); renderBn(); renderBnEntry(); return; }
@@ -4143,6 +4151,10 @@ body.view-bn .bn-view { display: block; animation: viewIn 0.4s cubic-bezier(0.2,
       }
       var a = e.target.closest("a[data-bn-step]");
       if (a) { var st = a.getAttribute("data-bn-step"); state.bn.opened = state.bn.opened || {}; state.bn.opened[st] = Date.now(); save(); }
+    });
+    $("bn-pin").addEventListener("click", function () {
+      state.bn.hide = !state.bn.hide; save(); renderBn(); renderBnEntry();
+      showToast(state.bn.hide ? "La tarjeta ya no saldrá en el Inicio." : "Listo, la tarjeta vuelve a salir en el Inicio.");
     });
     $("bn-steps").addEventListener("input", function (e) {
       if (e.target.id !== "bn-apr") return;
