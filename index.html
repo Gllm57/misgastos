@@ -14,11 +14,11 @@
   --ink: #12262b;
   --muted: #5b6f74;
   --line: #d3dedb;
-  --accent: #2447d6;
+  --accent: #1f4fff;
   --accent-ink: #ffffff;
-  --in: #1b7f55;
-  --out: #c2255c;
-  --focus: #2447d6;
+  --in: #00994f;
+  --out: #e5133f;
+  --focus: #1f4fff;
   --display: "Bricolage Grotesque", "Trebuchet MS", system-ui, sans-serif;
   --body: "Figtree", system-ui, -apple-system, "Segoe UI", sans-serif;
   box-sizing: border-box;
@@ -28,14 +28,14 @@
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
     --bg: #000000; --surface: #121212; --ink: #f2f2f2; --muted: #9b9b9b;
-    --line: #2a2a2a; --accent: #7b96ff; --accent-ink: #0c1330;
-    --in: #4cc78f; --out: #ff7aa6; --focus: #9db1ff;
+    --line: #2a2a2a; --accent: #4f7bff; --accent-ink: #ffffff;
+    --in: #1fe07c; --out: #ff2d55; --focus: #7a9cff;
   }
 }
 :root[data-theme="dark"] {
   --bg: #000000; --surface: #121212; --ink: #f2f2f2; --muted: #9b9b9b;
-  --line: #2a2a2a; --accent: #7b96ff; --accent-ink: #0c1330;
-  --in: #4cc78f; --out: #ff7aa6; --focus: #9db1ff;
+  --line: #2a2a2a; --accent: #4f7bff; --accent-ink: #ffffff;
+  --in: #1fe07c; --out: #ff2d55; --focus: #7a9cff;
 }
 html { scroll-padding-top: env(safe-area-inset-top, 0px); }
 *, *::before, *::after { box-sizing: border-box; }
@@ -1335,7 +1335,7 @@ body.view-hist .hist-view { display: block; animation: viewIn 0.4s cubic-bezier(
     gasto: ["Alimentación", "Vivienda", "Transporte", "Servicios", "Salud", "Educación", "Ocio", "Negocio", "Otros"],
     ingreso: ["Ventas", "Sueldo", "Otros ingresos"]
   };
-  var COLORS = ["#2447d6", "#e08a00", "#0e9aa7", "#8a3ffc", "#c2255c", "#3b8f3b", "#6b7b86", "#d6502b", "#9a7b00"];
+  var COLORS = ["#1f4fff", "#e08a00", "#0e9aa7", "#8a3ffc", "#e5133f", "#00a651", "#6b7b86", "#d6502b", "#9a7b00"];
 
   var state = { items: [], rate: 0, disp: "USD", type: "gasto", month: "", sel: null, selIn: null, collapsed: {}, paySeries: [], templates: [], showAll: false, hideSav: false, rateManual: "", rateAutoAt: 0, rateLoading: false, rateFail: false, rateErr: "", accounts: [], rateEur: 0, rateEurDate: "", rateEurManual: "", rateUsdt: 0, rateUsdtDate: "", rateUsdtManual: "", rateUsdtSrc: "", goals: [], payments: [], lastAcc: null, rateDate: "", fsav: { on: false, pct: 10 }, sav: { on: false, pct: 10 } };
 
@@ -1779,7 +1779,7 @@ body.view-hist .hist-view { display: block; animation: viewIn 0.4s cubic-bezier(
   function goalById(id) {
     return state.goals.filter(function (g) { return String(g.id) === String(id); })[0] || null;
   }
-  var GOAL_COLORS = ["#2447d6", "#8a3ffc", "#0e9aa7", "#e08a00", "#c2255c", "#3b8f3b"];
+  var GOAL_COLORS = ["#1f4fff", "#8a3ffc", "#0e9aa7", "#e08a00", "#e5133f", "#00a651"];
   var goalsOpen = {};
   var gcRange = 0;
   function goalColor(g) {
@@ -2223,7 +2223,7 @@ body.view-hist .hist-view { display: block; animation: viewIn 0.4s cubic-bezier(
   }
 
   function colorForIn(cat) {
-    var IN_COLORS = ["#1f8a5b", "#0e9aa7", "#2447d6", "#e08a00", "#8a3ffc"];
+    var IN_COLORS = ["#00994f", "#0e9aa7", "#1f4fff", "#e08a00", "#8a3ffc"];
     var i = CATS.ingreso.indexOf(cat);
     return IN_COLORS[(i < 0 ? IN_COLORS.length - 1 : i) % IN_COLORS.length];
   }
