@@ -713,6 +713,21 @@ body.view-hist .hist-view { display: block; animation: viewIn 0.4s cubic-bezier(
 .legend .track { grid-column: 1 / -1; height: 6px; border-radius: 999px; background: color-mix(in srgb, var(--line) 70%, transparent); overflow: hidden; }
 .legend .track i { display: block; height: 100%; border-radius: inherit; transform-origin: left center; }
 .legend.draw .track i { animation: barGrow 0.7s cubic-bezier(0.2, 0.8, 0.2, 1) 0.1s backwards; }
+/* Ingresos / gastos / ahorro siempre en una línea */
+.flows { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; }
+.flow { padding-left: 10px; }
+.flow .v { font-size: clamp(1rem, 4.6vw, 1.25rem); line-height: 1.25; }
+.flow .l { display: flex; align-items: center; gap: 2px; white-space: nowrap; min-height: 28px; }
+.flow .eye { min-width: 32px; min-height: 32px; margin: -4px 0 -4px -2px; }
+.flow .eye svg { width: 18px; height: 18px; }
+.flow .v .usd { display: block; font-family: var(--body); font-weight: 500; font-size: 0.72rem; color: var(--muted); line-height: 1.3; }
+@media (max-width: 360px) { .flows { gap: 8px; } .flow { padding-left: 8px; } .flow .l { font-size: 0.78rem; } }
+
+/* Pagos: repetición */
+.pg-rep { display: flex; }
+.pg-rep button { flex: 1; }
+.pay-rep { display: inline-flex; align-items: center; gap: 3px; color: var(--accent); font-weight: 600; }
+.pay-rep svg { width: 12px; height: 12px; }
 @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation: none !important; transition: none !important; scroll-behavior: auto !important; } }
 </style>
 </head>
@@ -948,6 +963,14 @@ body.view-hist .hist-view { display: block; animation: viewIn 0.4s cubic-bezier(
           <label for="pg-fecha-btn">Fecha del pago</label>
           <input type="hidden" id="pg-fecha">
           <button type="button" class="pick" id="pg-fecha-btn" aria-haspopup="dialog"><span id="pg-fecha-label"></span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="3"></rect><path d="M8 3v4M16 3v4M3 10h18"></path></svg></button>
+        </div>
+        <div class="wide">
+          <label id="pg-rep-l">¿Cada cuánto?</label>
+          <div class="seg pg-rep" role="group" aria-labelledby="pg-rep-l">
+            <button type="button" data-pg-rep="once" aria-pressed="true">Una sola vez</button>
+            <button type="button" data-pg-rep="m" aria-pressed="false">Todos los meses</button>
+          </div>
+          <p class="hint" id="pg-rep-hint"></p>
         </div>
       </div>
       <p class="error" id="pg-err" role="alert"></p>
@@ -1303,7 +1326,7 @@ body.view-hist .hist-view { display: block; animation: viewIn 0.4s cubic-bezier(
   };
   var COLORS = ["#2447d6", "#e08a00", "#0e9aa7", "#8a3ffc", "#c2255c", "#3b8f3b", "#6b7b86", "#d6502b", "#9a7b00"];
 
-  var state = { items: [], rate: 0, disp: "USD", type: "gasto", month: "", sel: null, selIn: null, collapsed: {}, templates: [], showAll: false, hideSav: false, rateManual: "", rateAutoAt: 0, rateLoading: false, rateFail: false, rateErr: "", accounts: [], rateEur: 0, rateEurDate: "", rateEurManual: "", rateUsdt: 0, rateUsdtDate: "", rateUsdtManual: "", rateUsdtSrc: "", goals: [], payments: [], lastAcc: null, rateDate: "", fsav: { on: false, pct: 10 }, sav: { on: false, pct: 10 } };
+  var state = { items: [], rate: 0, disp: "USD", type: "gasto", month: "", sel: null, selIn: null, collapsed: {}, paySeries: [], templates: [], showAll: false, hideSav: false, rateManual: "", rateAutoAt: 0, rateLoading: false, rateFail: false, rateErr: "", accounts: [], rateEur: 0, rateEurDate: "", rateEurManual: "", rateUsdt: 0, rateUsdtDate: "", rateUsdtManual: "", rateUsdtSrc: "", goals: [], payments: [], lastAcc: null, rateDate: "", fsav: { on: false, pct: 10 }, sav: { on: false, pct: 10 } };
 
   function load() {
     try {
@@ -1320,6 +1343,7 @@ body.view-hist .hist-view { display: block; animation: viewIn 0.4s cubic-bezier(
         if (d && Array.isArray(d.templates)) state.templates = d.templates;
         if (d && Array.isArray(d.goals)) state.goals = d.goals;
         if (d && Array.isArray(d.payments)) state.payments = d.payments;
+        if (d && Array.isArray(d.paySeries)) state.paySeries = d.paySeries;
         if (d && typeof d.rateEur === "number") state.rateEur = d.rateEur;
         if (d && typeof d.rateEurDate === "string") state.rateEurDate = d.rateEurDate;
         if (d && typeof d.rateEurManual === "string") state.rateEurManual = d.rateEurManual;
@@ -1335,7 +1359,7 @@ body.view-hist .hist-view { display: block; animation: viewIn 0.4s cubic-bezier(
   }
   function save() {
     try {
-      localStorage.setItem(KEY, JSON.stringify({ items: state.items, rate: state.rate, rateDate: state.rateDate, hideSav: state.hideSav, rateManual: state.rateManual, rateAutoAt: state.rateAutoAt, accounts: state.accounts, templates: state.templates, goals: state.goals, payments: state.payments, rateEur: state.rateEur, rateEurDate: state.rateEurDate, rateEurManual: state.rateEurManual, rateUsdt: state.rateUsdt, rateUsdtDate: state.rateUsdtDate, rateUsdtManual: state.rateUsdtManual, rateUsdtSrc: state.rateUsdtSrc, collapsed: state.collapsed, disp: state.disp, sav: state.sav }));
+      localStorage.setItem(KEY, JSON.stringify({ items: state.items, rate: state.rate, rateDate: state.rateDate, hideSav: state.hideSav, rateManual: state.rateManual, rateAutoAt: state.rateAutoAt, accounts: state.accounts, templates: state.templates, goals: state.goals, payments: state.payments, paySeries: state.paySeries, rateEur: state.rateEur, rateEurDate: state.rateEurDate, rateEurManual: state.rateEurManual, rateUsdt: state.rateUsdt, rateUsdtDate: state.rateUsdtDate, rateUsdtManual: state.rateUsdtManual, rateUsdtSrc: state.rateUsdtSrc, collapsed: state.collapsed, disp: state.disp, sav: state.sav }));
     } catch (e) {}
   }
 
@@ -1954,6 +1978,27 @@ body.view-hist .hist-view { display: block; animation: viewIn 0.4s cubic-bezier(
   }
 
   var pay = { y: new Date().getFullYear(), m: new Date().getMonth(), sel: null };
+  if (!Array.isArray(state.paySeries)) state.paySeries = [];
+  function seriesById(id) { return state.paySeries.filter(function (s) { return String(s.id) === String(id); })[0] || null; }
+  function serieDate(s, ym) {
+    var q = ym.split("-"), nd = new Date(Number(q[0]), Number(q[1]), 0).getDate();
+    return ym + "-" + pad2(Math.min(s.dia, nd));
+  }
+  function nextYm(ym) { var q = ym.split("-"), y = Number(q[0]), m = Number(q[1]) + 1; if (m > 12) { m = 1; y++; } return y + "-" + pad2(m); }
+  // Crea los pagos de cada mes para los pagos que se repiten, hasta el mes indicado.
+  function ensureSeries(upto) {
+    var added = false;
+    state.paySeries.forEach(function (s) {
+      var have = {};
+      state.payments.forEach(function (p) { if (String(p.serie) === String(s.id)) have[p.fecha.slice(0, 7)] = true; });
+      for (var ym = s.desde; ym <= upto; ym = nextYm(ym)) {
+        if (have[ym] || (s.skip && s.skip[ym])) continue;
+        state.payments.push({ id: "s" + s.id + "-" + ym, titulo: s.titulo, monto: s.monto, moneda: s.moneda, fecha: serieDate(s, ym), paid: false, serie: s.id });
+        added = true;
+      }
+    });
+    if (added) save();
+  }
   function payById(id) { return state.payments.filter(function (p) { return String(p.id) === String(id); })[0] || null; }
   function daysBetween(a, b) { return Math.round((Date.parse(b) - Date.parse(a)) / 86400000); }
   function payWhen(p) {
@@ -1969,17 +2014,19 @@ body.view-hist .hist-view { display: block; animation: viewIn 0.4s cubic-bezier(
     var check = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"></path></svg>';
     return '<li class="pay' + (p.paid ? " paid" : "") + (over ? " over" : "") + '">' +
       '<button type="button" class="pay-check" data-pay-toggle="' + p.id + '" aria-pressed="' + (p.paid ? "true" : "false") + '" aria-label="' + (p.paid ? "Marcar como pendiente" : "Marcar como pagado") + '">' + check + "</button>" +
-      '<div class="pay-main"><div class="pay-t">' + esc(p.titulo) + '</div><div class="pay-s">' + Number(dd[2]) + " " + MESES_C[Number(dd[1]) - 1] + " · " + payWhen(p) + "</div></div>" +
+      '<div class="pay-main"><div class="pay-t">' + esc(p.titulo) + '</div><div class="pay-s">' + Number(dd[2]) + " " + MESES_C[Number(dd[1]) - 1] + " · " + payWhen(p) + (p.serie && seriesById(p.serie) ? ' · <span class="pay-rep"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M17 2l4 4-4 4"></path><path d="M3 11V9a3 3 0 0 1 3-3h15"></path><path d="M7 22l-4-4 4-4"></path><path d="M21 13v2a3 3 0 0 1-3 3H3"></path></svg>Cada mes</span>' : "") + "</div></div>" +
       '<div class="pay-a">' + moneyH(p.monto, p.moneda) + "</div>" +
       '<div class="menu-wrap"><button class="dots" type="button" aria-haspopup="menu" aria-expanded="false" aria-label="Opciones del pago">⋮</button>' +
       '<div class="menu" role="menu" hidden><button type="button" role="menuitem" data-pay-edit="' + p.id + '">Editar pago</button>' +
-      '<button type="button" role="menuitem" class="danger" data-pay-del="' + p.id + '">Eliminar pago</button></div></div></li>';
+      (p.serie && seriesById(p.serie) ? '<button type="button" role="menuitem" data-pay-stop="' + p.id + '">Dejar de repetir</button>' : "") +
+      '<button type="button" role="menuitem" class="danger" data-pay-del="' + p.id + '">' + (p.serie && seriesById(p.serie) ? "Eliminar solo este mes" : "Eliminar pago") + '</button></div></div></li>';
   }
-  function payCmp(a, b) { return a.fecha < b.fecha ? -1 : a.fecha > b.fecha ? 1 : a.id - b.id; }
+  function payCmp(a, b) { return a.fecha < b.fecha ? -1 : a.fecha > b.fecha ? 1 : String(a.id) < String(b.id) ? -1 : String(a.id) > String(b.id) ? 1 : 0; }
   function renderPay() {
     var t = today(), curM = t.slice(0, 7), D = state.disp;
     var vm = pay.y + "-" + pad2(pay.m + 1);
     if (vm < curM) { pay.y = Number(curM.slice(0, 4)); pay.m = Number(curM.slice(5, 7)) - 1; vm = curM; }
+    ensureSeries(vm);
     var inMonth = state.payments.filter(function (p) { return p.fecha.slice(0, 7) === vm; });
     var overdue = state.payments.filter(function (p) { return !p.paid && p.fecha < t; }).sort(payCmp);
     // resumen
@@ -3652,8 +3699,28 @@ body.view-hist .hist-view { display: block; animation: viewIn 0.4s cubic-bezier(
     });
 
     /* ---------- Pagos programados ---------- */
-    var pgId = null;
-    function setPagoFecha(v) { $("pg-fecha").value = v; $("pg-fecha-label").textContent = dateLabel(v); }
+    var pgId = null, pgRep = "once";
+    function renderPgRep() {
+      setPressed("[data-pg-rep]", "data-pg-rep", pgRep);
+      var f = $("pg-fecha").value;
+      $("pg-rep-hint").textContent = pgRep === "m" && f
+        ? "Se repetirá el día " + Number(f.slice(8, 10)) + " de cada mes. Si el mes es más corto, cae el último día."
+        : "Se programa solo para esa fecha.";
+    }
+    function setPagoFecha(v) { $("pg-fecha").value = v; $("pg-fecha-label").textContent = dateLabel(v); renderPgRep(); }
+    document.querySelectorAll("[data-pg-rep]").forEach(function (b) {
+      b.addEventListener("click", function () { pgRep = b.getAttribute("data-pg-rep"); renderPgRep(); });
+    });
+    // Quita la repetición: borra la serie y los pagos pendientes posteriores al indicado.
+    function stopSeries(sid, keepId) {
+      var k = payById(keepId), lim = k ? k.fecha : today();
+      state.paySeries = state.paySeries.filter(function (s) { return String(s.id) !== String(sid); });
+      state.payments = state.payments.filter(function (x) {
+        if (String(x.serie) !== String(sid)) return true;
+        return x.paid || x.fecha <= lim;
+      });
+      state.payments.forEach(function (x) { if (String(x.serie) === String(sid)) delete x.serie; });
+    }
     function openPg(p) {
       pgId = p ? p.id : null;
       $("h-pg").textContent = p ? "Editar pago" : "Programar pago";
@@ -3662,6 +3729,7 @@ body.view-hist .hist-view { display: block; animation: viewIn 0.4s cubic-bezier(
       $("pg-monto").value = p ? fmtIn(p.monto) : "";
       $("pg-moneda").value = p ? p.moneda : (state.disp === "VES" ? "VES" : state.disp === "EUR" ? "EUR" : "USD");
       var t = today(), vm = pay.y + "-" + pad2(pay.m + 1);
+      pgRep = p && p.serie && seriesById(p.serie) ? "m" : "once";
       setPagoFecha(p ? p.fecha : (pay.sel || (vm === t.slice(0, 7) ? t : vm + "-01")));
       $("pg-err").textContent = "";
       $("pg-sheet").hidden = false;
@@ -3679,9 +3747,29 @@ body.view-hist .hist-view { display: block; animation: viewIn 0.4s cubic-bezier(
       if (!(monto > 0)) { err.textContent = "Escribe la cantidad a pagar."; $("pg-monto").focus(); return; }
       if (!fecha) { err.textContent = "Elige la fecha del pago."; return; }
       var moneda = $("pg-moneda").value;
+      var dia = Number(fecha.slice(8, 10)), t0 = today();
       if (pgId) {
         var p = payById(pgId);
-        if (p) { p.titulo = titulo; p.monto = monto; p.moneda = moneda; p.fecha = fecha; }
+        if (p) {
+          p.titulo = titulo; p.monto = monto; p.moneda = moneda; p.fecha = fecha;
+          var sr = p.serie ? seriesById(p.serie) : null;
+          if (sr && pgRep === "once") stopSeries(sr.id, p.id);
+          else if (sr) {
+            sr.titulo = titulo; sr.monto = monto; sr.moneda = moneda; sr.dia = dia;
+            state.payments.forEach(function (x) {
+              if (String(x.serie) !== String(sr.id) || x === p || x.paid || x.fecha < t0) return;
+              x.titulo = titulo; x.monto = monto; x.moneda = moneda; x.fecha = serieDate(sr, x.fecha.slice(0, 7));
+            });
+          } else if (pgRep === "m") {
+            var ns = { id: Date.now(), titulo: titulo, monto: monto, moneda: moneda, dia: dia, desde: fecha.slice(0, 7), skip: {} };
+            state.paySeries.push(ns);
+            p.serie = ns.id;
+          }
+        }
+      } else if (pgRep === "m") {
+        var sid = Date.now();
+        state.paySeries.push({ id: sid, titulo: titulo, monto: monto, moneda: moneda, dia: dia, desde: fecha.slice(0, 7), skip: {} });
+        state.payments.push({ id: "s" + sid + "-" + fecha.slice(0, 7), titulo: titulo, monto: monto, moneda: moneda, fecha: fecha, paid: false, serie: sid });
       } else {
         state.payments.push({ id: Date.now(), titulo: titulo, monto: monto, moneda: moneda, fecha: fecha, paid: false });
       }
@@ -3691,7 +3779,7 @@ body.view-hist .hist-view { display: block; animation: viewIn 0.4s cubic-bezier(
       var wasEdit = !!pgId;
       save(); render();
       closePg();
-      showToast(wasEdit ? "Pago actualizado." : "Pago programado.");
+      showToast(wasEdit ? "Pago actualizado." : pgRep === "m" ? "Pago programado para todos los meses." : "Pago programado.");
     });
     $("pay-cal").addEventListener("click", function (e) {
       if (e.target.closest("#pay-prev")) { if (pay.m === 0) { pay.m = 11; pay.y--; } else pay.m--; pay.sel = null; renderPay(); return; }
@@ -3715,8 +3803,18 @@ body.view-hist .hist-view { display: block; animation: viewIn 0.4s cubic-bezier(
         return;
       }
       if ((b = e.target.closest("[data-pay-edit]"))) { closeMenus(); openPg(payById(b.getAttribute("data-pay-edit"))); return; }
+      if ((b = e.target.closest("[data-pay-stop]"))) {
+        closeMenus();
+        var ps = payById(b.getAttribute("data-pay-stop"));
+        if (ps && ps.serie) stopSeries(ps.serie, ps.id);
+        save(); render();
+        showToast("Este pago ya no se repetirá.");
+        return;
+      }
       if ((b = e.target.closest("[data-pay-del]"))) {
         closeMenus();
+        var pd = payById(b.getAttribute("data-pay-del")), sd0 = pd && pd.serie ? seriesById(pd.serie) : null;
+        if (sd0) { sd0.skip = sd0.skip || {}; sd0.skip[pd.fecha.slice(0, 7)] = true; }
         state.payments = state.payments.filter(function (x) { return String(x.id) !== b.getAttribute("data-pay-del"); });
         save(); render();
         showToast("Pago eliminado.");
