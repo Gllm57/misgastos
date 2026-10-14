@@ -7,6 +7,15 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700&family=Figtree:wght@400;500;600&display=swap" rel="stylesheet">
+<script>
+(function () {
+  try {
+    var d = JSON.parse(localStorage.getItem("gastos-v1") || "{}");
+    if (d.theme === "light" || d.theme === "dark") document.documentElement.setAttribute("data-theme", d.theme);
+    if (d.pin && d.pin.h) document.documentElement.classList.add("locked");
+  } catch (e) {}
+})();
+</script>
 <style>
 :root {
   --bg: #eef3f1;
@@ -794,13 +803,67 @@ body.view-bn .bn-view { display: block; animation: viewIn 0.4s cubic-bezier(0.2,
 .bn-pin b { display: block; font-size: 0.95rem; }
 .bn-pin small { display: block; color: var(--muted); font-size: 0.8rem; }
 .bn-disc { font-size: 0.76rem; color: var(--muted); line-height: 1.4; margin: 14px 4px 0; }
+/* Ajustes */
+.top h1 { display: flex; align-items: center; gap: 10px; }
+.set-btn { position: relative; flex: none; width: 38px; height: 38px; border-radius: 50%; border: 1px solid var(--line); background: var(--surface); color: var(--muted); display: inline-flex; align-items: center; justify-content: center; cursor: pointer; padding: 0; }
+.set-btn svg { width: 19px; height: 19px; }
+.set-btn:hover { color: var(--accent); border-color: var(--accent); }
+.set-dot { position: absolute; top: 1px; right: 1px; width: 10px; height: 10px; border-radius: 50%; background: var(--out); border: 2px solid var(--bg); }
+.set-dot[hidden] { display: none; }
+.set-view { display: none; max-width: 760px; margin: 0 auto; padding: 20px 16px 160px; }
+body.view-set .set-view { display: block; animation: viewIn 0.4s cubic-bezier(0.2, 0.8, 0.2, 1); }
+body.view-set main { display: none; }
+body.view-set .fab, body.view-set .ai-fab { opacity: 0; pointer-events: none; visibility: hidden; }
+.set-h { font-size: 0.75rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); margin: 24px 6px 8px; }
+.set-group { background: var(--surface); border: 1px solid var(--line); border-radius: 20px; overflow: hidden; }
+.set-row { display: flex; align-items: center; justify-content: space-between; gap: 14px; padding: 13px 16px; min-height: 60px; width: 100%; font: inherit; color: var(--ink); text-align: left; background: none; border: 0; }
+.set-row + .set-row { border-top: 1px solid var(--line); }
+.set-row[hidden] { display: none; }
+button.set-row { cursor: pointer; }
+button.set-row:active { background: var(--bg); }
+.set-row .tx { min-width: 0; }
+.set-row b { display: block; font-weight: 600; font-size: 0.97rem; }
+.set-row small { display: block; color: var(--muted); font-size: 0.8rem; line-height: 1.35; margin-top: 1px; }
+.set-row .chev-r { width: 18px; height: 18px; color: var(--muted); flex: none; }
+.set-row.set-stack { flex-direction: column; align-items: stretch; gap: 10px; }
+.set-row .seg { width: 100%; display: flex; }
+.set-row .seg button { flex: 1; }
+.set-row.danger b { color: var(--out); }
+.set-foot { text-align: center; color: var(--muted); font-size: 0.8rem; margin: 22px 0 0; line-height: 1.5; }
+.legal-body { display: grid; gap: 12px; color: var(--ink); font-size: 0.94rem; line-height: 1.55; }
+.legal-body h3 { font-family: var(--display); font-size: 1rem; margin: 8px 0 -4px; }
+.legal-body p, .legal-body ul { margin: 0; }
+.legal-body ul { padding-left: 1.15em; display: grid; gap: 6px; }
+.legal-body .upd { color: var(--muted); font-size: 0.8rem; }
+.confirm-in { margin-top: 8px; text-transform: uppercase; letter-spacing: 0.08em; }
+.btn-danger { background: var(--out) !important; color: #fff !important; }
+.btn-danger:disabled { opacity: 0.4; cursor: not-allowed; }
+
+/* Bloqueo con código */
+html.locked body > *:not(#lock):not(#cf-sheet):not(#toast) { visibility: hidden; }
+.lock { position: fixed; inset: 0; z-index: 100; background: var(--bg); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 22px; padding: calc(24px + env(safe-area-inset-top, 0px)) max(16px, env(safe-area-inset-right, 0px)) calc(24px + env(safe-area-inset-bottom, 0px)) max(16px, env(safe-area-inset-left, 0px)); }
+.lock[hidden] { display: none; }
+.lock h2 { font-family: var(--display); font-size: 1.35rem; margin: 0; text-align: center; }
+.lock .hint { text-align: center; min-height: 1.4em; }
+.lock .hint.err { color: var(--out); }
+.pin-dots { display: flex; gap: 16px; }
+.pin-dots i { width: 14px; height: 14px; border-radius: 50%; border: 2px solid var(--muted); transition: background 0.15s, border-color 0.15s; }
+.pin-dots i.on { background: var(--accent); border-color: var(--accent); }
+.pin-dots.shake { animation: pinShake 0.4s; }
+@keyframes pinShake { 20%, 60% { transform: translateX(-8px); } 40%, 80% { transform: translateX(8px); } }
+.keypad { display: grid; grid-template-columns: repeat(3, 72px); gap: 14px 22px; }
+.keypad button { width: 72px; height: 72px; border-radius: 50%; border: 1px solid var(--line); background: var(--surface); color: var(--ink); font-family: var(--display); font-size: 1.6rem; font-weight: 500; cursor: pointer; }
+.keypad button:active { background: var(--line); }
+.keypad .kp-x { border: 0; background: none; font-family: var(--body); font-size: 0.95rem; color: var(--muted); }
+.keypad .kp-sp { visibility: hidden; }
+.lock-forgot { font: inherit; font-size: 0.88rem; color: var(--accent); background: none; border: 0; cursor: pointer; min-height: 44px; }
 @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation: none !important; transition: none !important; scroll-behavior: auto !important; } }
 </style>
 </head>
 <body>
 <main>
   <div class="top">
-    <h1>Mis gastos</h1>
+    <h1>Mis gastos <button type="button" class="set-btn" id="set-open" aria-label="Ajustes"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg><i class="set-dot" id="set-dot" hidden></i></button></h1>
     <div class="controls">
       <div class="field-month">
         <label for="mes-btn">Mes</label>
@@ -951,6 +1014,95 @@ body.view-bn .bn-view { display: block; animation: viewIn 0.4s cubic-bezier(0.2,
       <p>Crea tu primera meta de ahorro: un viaje, un celular o un fondo de emergencia.</p>
       <button type="button" class="primary" id="goal-new2" style="width:auto;padding:0 28px">Crear meta</button>
     </div>
+  </div>
+  <div class="set-view" id="set-view" role="region" aria-label="Ajustes" aria-hidden="true">
+    <div class="gv-head">
+      <button type="button" class="gv-back" id="sv2-back" aria-label="Volver al inicio"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 5l-7 7 7 7"></path></svg>Inicio</button>
+    </div>
+    <h1 class="gv-title">Ajustes</h1>
+
+    <div class="set-h">Apariencia</div>
+    <div class="set-group">
+      <div class="set-row set-stack">
+        <div class="tx"><b>Tema</b><small>«Automático» sigue el modo claro u oscuro de tu teléfono.</small></div>
+        <div class="seg" role="group" aria-label="Tema">
+          <button type="button" data-theme-set="auto" aria-pressed="true">Automático</button>
+          <button type="button" data-theme-set="light" aria-pressed="false">Claro</button>
+          <button type="button" data-theme-set="dark" aria-pressed="false">Oscuro</button>
+        </div>
+      </div>
+      <div class="set-row set-stack">
+        <div class="tx"><b>Moneda para mostrar</b><small>En la que ves los totales del Inicio y del Historial.</small></div>
+        <div class="seg" role="group" aria-label="Moneda para mostrar">
+          <button type="button" data-disp="USD" aria-pressed="true">USD</button>
+          <button type="button" data-disp="VES" aria-pressed="false">Bs</button>
+          <button type="button" data-disp="EUR" aria-pressed="false">EUR</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="set-h">Seguridad</div>
+    <div class="set-group">
+      <div class="set-row">
+        <div class="tx"><b>Código de bloqueo</b><small id="pin-sub">Pide un código de 4 dígitos al abrir la app.</small></div>
+        <button type="button" class="switch" id="pin-switch" role="switch" aria-checked="false" aria-label="Código de bloqueo"><span></span></button>
+      </div>
+      <button type="button" class="set-row" id="pin-change" hidden><span class="tx"><b>Cambiar código</b></span><svg class="chev-r" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 5l7 7-7 7"></path></svg></button>
+    </div>
+
+    <div class="set-h">Tus datos</div>
+    <div class="set-group">
+      <button type="button" class="set-row " id="bk-save"><span class="tx"><b>Guardar una copia</b><small><span id="bk-sub">Descarga un archivo con todos tus movimientos.</span></small></span><svg class="chev-r" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 5l7 7-7 7"></path></svg></button>
+      <button type="button" class="set-row " id="bk-load"><span class="tx"><b>Restaurar una copia</b><small>Carga un archivo guardado antes. Reemplaza lo que tienes ahora.</small></span><svg class="chev-r" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 5l7 7-7 7"></path></svg></button>
+      <button type="button" class="set-row danger" id="data-del"><span class="tx"><b>Borrar todos los datos</b><small>Elimina todo lo guardado en este teléfono.</small></span><svg class="chev-r" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 5l7 7-7 7"></path></svg></button>
+      <input type="file" id="bk-file" accept=".json,application/json" hidden>
+    </div>
+    <p class="hint" style="margin:8px 6px 0;font-size:0.8rem">Tus datos se guardan solo en este teléfono. Si borras los datos del navegador o cambias de teléfono, se pierden si no tienes una copia.</p>
+
+    <div class="set-h">Binance</div>
+    <div class="set-group">
+      <div class="set-row">
+        <div class="tx"><b>Tarjeta en el Inicio</b><small>Acceso a la guía para ahorrar en Binance.</small></div>
+        <button type="button" class="switch" id="set-bn" role="switch" aria-checked="true" aria-label="Mostrar la tarjeta de Binance en el Inicio"><span></span></button>
+      </div>
+      <button type="button" class="set-row " id="set-bn-open"><span class="tx"><b>Abrir la guía</b><small>Paso a paso para poner tu ahorro a generar rendimiento.</small></span><svg class="chev-r" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 5l7 7-7 7"></path></svg></button>
+    </div>
+
+    <div class="set-h">Información legal</div>
+    <div class="set-group">
+      <button type="button" class="set-row " id="lg-terms"><span class="tx"><b>Términos de uso</b><small>Las condiciones para usar Mis gastos.</small></span><svg class="chev-r" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 5l7 7-7 7"></path></svg></button>
+      <button type="button" class="set-row " id="lg-priv"><span class="tx"><b>Política de privacidad</b><small>Qué datos se guardan y a quién se conecta la app.</small></span><svg class="chev-r" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 5l7 7-7 7"></path></svg></button>
+      <button type="button" class="set-row " id="lg-ref"><span class="tx"><b>Binance y enlaces de referido</b><small>Relación con Binance y comisiones.</small></span><svg class="chev-r" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 5l7 7-7 7"></path></svg></button>
+      <button type="button" class="set-row " id="lg-src"><span class="tx"><b>Fuentes de las tasas</b><small>De dónde salen las tasas y los precios.</small></span><svg class="chev-r" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 5l7 7-7 7"></path></svg></button>
+    </div>
+    <p class="set-foot">Mis gastos · versión 1.0<br>Mis gastos no es un banco ni una casa de cambio, y no da asesoría financiera.</p>
+  </div>
+  <div class="sheet-backdrop" id="lg-sheet" hidden>
+    <section class="panel sheet" role="dialog" aria-modal="true" aria-labelledby="h-lg">
+      <div class="sheet-head"><h2 id="h-lg"></h2><button type="button" class="del" id="lg-close" aria-label="Cerrar">✕</button></div>
+      <div class="legal-body" id="lg-body"></div>
+    </section>
+  </div>
+  <div class="sheet-backdrop" id="cf-sheet" hidden>
+    <section class="panel sheet" role="dialog" aria-modal="true" aria-labelledby="h-cf">
+      <div class="sheet-head"><h2 id="h-cf"></h2><button type="button" class="del" id="cf-close" aria-label="Cerrar">✕</button></div>
+      <p class="hint" id="cf-text"></p>
+      <div id="cf-type-wrap"><label for="cf-type" style="margin-top:12px">Escribe <b id="cf-word"></b> para confirmar</label><input type="text" id="cf-type" class="confirm-in" autocomplete="off" autocapitalize="characters"></div>
+      <button type="button" class="primary btn-danger" id="cf-ok" style="margin-top:14px"></button>
+      <button type="button" class="secondary" id="cf-cancel" style="width:100%;margin-top:8px">Cancelar</button>
+    </section>
+  </div>
+  <div class="lock" id="lock" hidden role="dialog" aria-modal="true" aria-labelledby="lock-t">
+    <h2 id="lock-t">Escribe tu código</h2>
+    <div class="pin-dots" id="pin-dots" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
+    <p class="hint" id="lock-msg" aria-live="polite"></p>
+    <div class="keypad" id="keypad">
+      <button type="button" data-k="1">1</button><button type="button" data-k="2">2</button><button type="button" data-k="3">3</button>
+      <button type="button" data-k="4">4</button><button type="button" data-k="5">5</button><button type="button" data-k="6">6</button>
+      <button type="button" data-k="7">7</button><button type="button" data-k="8">8</button><button type="button" data-k="9">9</button>
+      <button type="button" class="kp-x" id="kp-cancel">Cancelar</button><button type="button" data-k="0">0</button><button type="button" class="kp-x" data-k="del" aria-label="Borrar">⌫</button>
+    </div>
+    <button type="button" class="lock-forgot" id="lock-forgot">Olvidé mi código</button>
   </div>
   <div class="bn-view" id="bn-view" role="region" aria-label="Ahorro en Binance" aria-hidden="true">
     <div class="gv-head">
@@ -1421,7 +1573,7 @@ body.view-bn .bn-view { display: block; animation: viewIn 0.4s cubic-bezier(0.2,
   };
   var COLORS = ["#1f4fff", "#e08a00", "#0e9aa7", "#8a3ffc", "#e5133f", "#00a651", "#6b7b86", "#d6502b", "#9a7b00"];
 
-  var state = { items: [], rate: 0, disp: "USD", type: "gasto", month: "", sel: null, selIn: null, collapsed: {}, paySeries: [], bn: { done: {}, apr: 5, hide: false, opened: {}, v: 2 }, templates: [], showAll: false, hideSav: false, rateManual: "", rateAutoAt: 0, rateLoading: false, rateFail: false, rateErr: "", accounts: [], rateEur: 0, rateEurDate: "", rateEurManual: "", rateUsdt: 0, rateUsdtDate: "", rateUsdtManual: "", rateUsdtSrc: "", goals: [], payments: [], lastAcc: null, rateDate: "", fsav: { on: false, pct: 10 }, sav: { on: false, pct: 10 } };
+  var state = { items: [], rate: 0, disp: "USD", type: "gasto", month: "", sel: null, selIn: null, collapsed: {}, paySeries: [], theme: "auto", pin: null, backupAt: 0, bn: { done: {}, apr: 5, hide: false, opened: {}, v: 2 }, templates: [], showAll: false, hideSav: false, rateManual: "", rateAutoAt: 0, rateLoading: false, rateFail: false, rateErr: "", accounts: [], rateEur: 0, rateEurDate: "", rateEurManual: "", rateUsdt: 0, rateUsdtDate: "", rateUsdtManual: "", rateUsdtSrc: "", goals: [], payments: [], lastAcc: null, rateDate: "", fsav: { on: false, pct: 10 }, sav: { on: false, pct: 10 } };
 
   function load() {
     try {
@@ -1439,6 +1591,9 @@ body.view-bn .bn-view { display: block; animation: viewIn 0.4s cubic-bezier(0.2,
         if (d && Array.isArray(d.goals)) state.goals = d.goals;
         if (d && Array.isArray(d.payments)) state.payments = d.payments;
         if (d && Array.isArray(d.paySeries)) state.paySeries = d.paySeries;
+        if (d && (d.theme === "light" || d.theme === "dark")) state.theme = d.theme;
+        if (d && d.pin && typeof d.pin.h === "string") state.pin = d.pin;
+        if (d && typeof d.backupAt === "number") state.backupAt = d.backupAt;
         if (d && d.bn && typeof d.bn === "object") state.bn = { done: d.bn.done || {}, apr: typeof d.bn.apr === "number" ? d.bn.apr : BN_APR, hide: d.bn.v === 2 && !!d.bn.hide, opened: d.bn.opened || {}, v: 2 };
         if (d && typeof d.btcUsd === "number") { state.btcUsd = d.btcUsd; state.btcAt = d.btcAt || 0; }
         if (d && typeof d.rateEur === "number") state.rateEur = d.rateEur;
@@ -1456,7 +1611,7 @@ body.view-bn .bn-view { display: block; animation: viewIn 0.4s cubic-bezier(0.2,
   }
   function save() {
     try {
-      localStorage.setItem(KEY, JSON.stringify({ items: state.items, rate: state.rate, rateDate: state.rateDate, hideSav: state.hideSav, rateManual: state.rateManual, rateAutoAt: state.rateAutoAt, accounts: state.accounts, templates: state.templates, goals: state.goals, payments: state.payments, paySeries: state.paySeries, bn: state.bn, btcUsd: state.btcUsd, btcAt: state.btcAt, rateEur: state.rateEur, rateEurDate: state.rateEurDate, rateEurManual: state.rateEurManual, rateUsdt: state.rateUsdt, rateUsdtDate: state.rateUsdtDate, rateUsdtManual: state.rateUsdtManual, rateUsdtSrc: state.rateUsdtSrc, collapsed: state.collapsed, disp: state.disp, sav: state.sav }));
+      localStorage.setItem(KEY, JSON.stringify({ items: state.items, rate: state.rate, rateDate: state.rateDate, hideSav: state.hideSav, rateManual: state.rateManual, rateAutoAt: state.rateAutoAt, accounts: state.accounts, templates: state.templates, goals: state.goals, payments: state.payments, paySeries: state.paySeries, theme: state.theme, pin: state.pin, backupAt: state.backupAt, bn: state.bn, btcUsd: state.btcUsd, btcAt: state.btcAt, rateEur: state.rateEur, rateEurDate: state.rateEurDate, rateEurManual: state.rateEurManual, rateUsdt: state.rateUsdt, rateUsdtDate: state.rateUsdtDate, rateUsdtManual: state.rateUsdtManual, rateUsdtSrc: state.rateUsdtSrc, collapsed: state.collapsed, disp: state.disp, sav: state.sav }));
     } catch (e) {}
   }
 
@@ -2116,6 +2271,7 @@ body.view-bn .bn-view { display: block; animation: viewIn 0.4s cubic-bezier(0.2,
     $("bn-prog-t").textContent = now ? "Vas por el paso " + now + " de " + total : "¡Listo! Tu ahorro ya está trabajando";
     $("bn-pct").textContent = Math.round(done / total * 100) + "%";
     $("bn-pin").setAttribute("aria-checked", state.bn.hide ? "false" : "true");
+    $("set-bn").setAttribute("aria-checked", state.bn.hide ? "false" : "true");
     $("bn-bar").style.width = (done / total * 100) + "%";
     var check = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"></path></svg>';
     var acc = bnAccount();
@@ -2143,6 +2299,7 @@ body.view-bn .bn-view { display: block; animation: viewIn 0.4s cubic-bezier(0.2,
   function renderBnEntry() {
     var el = $("bn-entry"), done = bnDoneCount(), total = BN_STEPS.length;
     var show = !state.bn.hide && !bnHideNow && done < total;
+    $("set-bn").setAttribute("aria-checked", state.bn.hide ? "false" : "true");
     el.hidden = !show;
     if (!show) return;
     var base = bnSavedUsd();
@@ -2524,6 +2681,8 @@ body.view-bn .bn-view { display: block; animation: viewIn 0.4s cubic-bezier(0.2,
     renderPay();
     renderBnEntry();
     if (document.body.classList.contains("view-bn")) renderBn();
+    var sdot = $("set-dot");
+    if (sdot) sdot.hidden = !(state.items.length > 0 && Date.now() - (state.backupAt || 0) > 30 * 86400000);
     drawTrend();
     renderRateChips();
     renderUsdtSrc();
@@ -3078,6 +3237,8 @@ body.view-bn .bn-view { display: block; animation: viewIn 0.4s cubic-bezier(0.2,
       if (e.key !== "Escape") return;
       closeMenus();
       if (!$("dial").hidden) closeDial();
+      else if (!$("cf-sheet").hidden) closeCf();
+      else if (!$("lg-sheet").hidden) closeLg();
       else if (!$("pg-sheet").hidden) closePg();
       else if (!$("gm-sheet").hidden) closeGm();
       else if (!$("ge-sheet").hidden) closeGe();
@@ -4094,10 +4255,11 @@ body.view-bn .bn-view { display: block; animation: viewIn 0.4s cubic-bezier(0.2,
     }
     function activeView() {
       var c = document.body.classList;
-      return c.contains("view-goals") ? "goals" : c.contains("view-pay") ? "pay" : c.contains("view-hist") ? "hist" : c.contains("view-bn") ? "bn" : null;
+      return c.contains("view-goals") ? "goals" : c.contains("view-pay") ? "pay" : c.contains("view-hist") ? "hist" : c.contains("view-bn") ? "bn" : c.contains("view-set") ? "set" : null;
     }
     function closeViews() {
-      document.body.classList.remove("view-goals", "view-pay", "view-hist", "view-bn");
+      document.body.classList.remove("view-goals", "view-pay", "view-hist", "view-bn", "view-set");
+      $("set-view").setAttribute("aria-hidden", "true");
       $("goals-view").setAttribute("aria-hidden", "true");
       $("bn-view").setAttribute("aria-hidden", "true");
       $("pay-view").setAttribute("aria-hidden", "true");
@@ -4110,8 +4272,9 @@ body.view-bn .bn-view { display: block; animation: viewIn 0.4s cubic-bezier(0.2,
       try {
         closeDial();
         if (!activeView()) viewReturnY = window.scrollY || 0;
-        document.body.classList.remove("view-goals", "view-pay", "view-hist", "view-bn");
+        document.body.classList.remove("view-goals", "view-pay", "view-hist", "view-bn", "view-set");
         document.body.classList.add("view-" + name);
+        $("set-view").setAttribute("aria-hidden", name === "set" ? "false" : "true");
         $("bn-view").setAttribute("aria-hidden", name === "bn" ? "false" : "true");
         $("goals-view").setAttribute("aria-hidden", name === "goals" ? "false" : "true");
         $("pay-view").setAttribute("aria-hidden", name === "pay" ? "false" : "true");
@@ -4119,6 +4282,7 @@ body.view-bn .bn-view { display: block; animation: viewIn 0.4s cubic-bezier(0.2,
         instantScroll(0);
         setTab(name === "goals" ? 1 : name === "pay" ? 2 : name === "hist" ? 3 : 0);
         if (name === "bn") renderBn();
+        if (name === "set") renderSettings();
         if (name === "pay") renderPay();
         if (name === "hist") renderHistory();
         if (name === "goals") drawGoalsChart();
@@ -4157,6 +4321,273 @@ body.view-bn .bn-view { display: block; animation: viewIn 0.4s cubic-bezier(0.2,
       state.bn.hide = !state.bn.hide; if (!state.bn.hide) bnHideNow = false; save(); renderBn(); renderBnEntry();
       showToast(state.bn.hide ? "La tarjeta ya no saldrá en el Inicio." : "Listo, la tarjeta vuelve a salir en el Inicio.");
     });
+    /* ---------- Ajustes ---------- */
+    var LEGAL_DATE = "14 de octubre de 2026";
+    var LEGAL = {
+      terms: { t: "Términos de uso", b:
+        '<p class="upd">Última actualización: ' + LEGAL_DATE + '</p>' +
+        '<p>Al usar Mis gastos aceptas estas condiciones. Si no estás de acuerdo, no uses la app.</p>' +
+        '<h3>Qué es Mis gastos</h3><p>Una herramienta gratuita para anotar tus ingresos, gastos, ahorros, metas y pagos, y ver resúmenes. Mis gastos no es un banco, una casa de cambio, un corredor de valores ni un asesor financiero. No guarda, mueve ni administra tu dinero.</p>' +
+        '<h3>Información solo de referencia</h3><ul><li>Las tasas de cambio, los precios de USDT y bitcoin, los cálculos de rendimiento y los análisis son aproximados y pueden estar desactualizados o tener errores.</li><li>Nada de lo que muestra la app es una recomendación de inversión. Antes de tomar decisiones con tu dinero, verifica la información en la fuente oficial.</li><li>Los rendimientos de productos como Binance Earn cambian, no están garantizados y no tienen garantía de depósito. Puedes perder dinero.</li></ul>' +
+        '<h3>Tus datos son tu responsabilidad</h3><p>Todo lo que registras se guarda solo en tu teléfono. Si borras los datos del navegador, desinstalas la app o cambias de teléfono sin una copia, la información se pierde y no hay forma de recuperarla. Te recomendamos guardar una copia con frecuencia desde Ajustes.</p>' +
+        '<h3>Servicios de terceros</h3><p>La app se conecta a servicios de otras empresas para traer tasas y precios, y tiene enlaces a sitios como Binance. Esos servicios tienen sus propias condiciones y Mis gastos no es responsable de su contenido, disponibilidad ni de lo que hagas en ellos.</p>' +
+        '<h3>Sin garantías</h3><p>La app se ofrece «tal como está», sin garantías de ningún tipo. En la medida en que la ley lo permita, el creador de Mis gastos no responde por pérdidas o daños causados por el uso de la app, por errores en la información o por la pérdida de datos.</p>' +
+        '<h3>Cambios</h3><p>Estas condiciones pueden cambiar. La fecha de arriba indica la última versión. Si sigues usando la app después de un cambio, aceptas la nueva versión.</p>' },
+      priv: { t: "Política de privacidad", b:
+        '<p class="upd">Última actualización: ' + LEGAL_DATE + '</p>' +
+        '<h3>Lo corto</h3><p>Mis gastos no tiene cuentas de usuario ni servidores propios. Tus movimientos, cuentas, metas y pagos se guardan solo en tu teléfono, en el almacenamiento del navegador. Nadie más, incluido el creador de la app, puede verlos.</p>' +
+        '<h3>Qué se guarda en tu teléfono</h3><ul><li>Lo que registras: movimientos, cuentas, ahorros, metas, pagos y plantillas.</li><li>Tus preferencias: tema, moneda, tasas del día y el avance de la guía de Binance.</li><li>Si activas el código de bloqueo, una versión cifrada del código (no el código en sí).</li><li>Si configuras el análisis con IA, tu clave de Anthropic.</li></ul>' +
+        '<h3>A quién se conecta la app</h3><ul>' +
+        '<li><b>Tasas del día:</b> ve.dolarapi.com y pydolarve.org, para el dólar y el euro del BCV y la tasa USDT.</li>' +
+        '<li><b>Precio del bitcoin:</b> api.binance.com y, si falla, api.coingecko.com.</li>' +
+        '<li><b>Tipografías:</b> Google Fonts.</li>' +
+        '<li><b>Análisis con IA (opcional):</b> solo si tú guardas una clave y pides el análisis, se envían a Anthropic totales por categoría y por mes, sin nombres de cuentas ni notas.</li></ul>' +
+        '<p>En esas consultas no se envían tus movimientos. Como en cualquier conexión a internet, esos servicios pueden ver datos técnicos como tu dirección IP y tu navegador, según sus propias políticas de privacidad.</p>' +
+        '<h3>Enlaces a Binance</h3><p>Si tocas un enlace a Binance, sales de Mis gastos y aplica la política de privacidad de Binance. Mis gastos no recibe tus datos de Binance ni puede ver tu saldo.</p>' +
+        '<h3>Sin publicidad ni rastreo</h3><p>La app no usa cookies de publicidad, no tiene herramientas de analítica y no vende ni comparte tus datos.</p>' +
+        '<h3>Tus derechos</h3><p>Como tus datos están en tu teléfono, tú los controlas: puedes descargar una copia, restaurarla o borrar todo desde Ajustes en cualquier momento.</p>' },
+      ref: { t: "Binance y enlaces de referido", b:
+        '<p class="upd">Última actualización: ' + LEGAL_DATE + '</p>' +
+        '<ul><li>Mis gastos <b>no es parte de Binance</b>, no la representa y no está patrocinada por ella. Binance es una marca de sus respectivos dueños.</li>' +
+        '<li>El botón «Crear mi cuenta» de la guía usa un <b>enlace de referido</b> del creador de Mis gastos. Si abres tu cuenta con él, el creador puede recibir una comisión o recompensa de Binance según su programa de referidos. A ti no te cuesta nada y no cambia las condiciones de tu cuenta.</li>' +
+        '<li>Usar el enlace es opcional. Puedes registrarte directamente en binance.com.</li>' +
+        '<li>La guía es solo informativa. <b>No es asesoría financiera.</b> Comprar criptomonedas o stablecoins como USDT y usar productos como Binance Earn tiene riesgos: el precio puede cambiar, el rendimiento no está garantizado y no hay garantía de depósito como en un banco.</li>' +
+        '<li>La tasa anual que muestra la guía es un promedio de referencia o la que tú escribes. La real la fija Binance y cambia con frecuencia.</li>' +
+        '<li>Revisa los términos de Binance y las normas de tu país antes de usar sus servicios. Mis gastos nunca te pedirá tu contraseña, tus códigos ni tus claves de Binance.</li></ul>' },
+      src: { t: "Fuentes de las tasas", b:
+        '<ul><li><b>Dólar y euro BCV:</b> tasa oficial publicada por el Banco Central de Venezuela, consultada a través de ve.dolarapi.com.</li>' +
+        '<li><b>USDT:</b> precio de referencia de Binance P2P (pydolarve.org) o, si no está disponible, el dólar paralelo de ve.dolarapi.com.</li>' +
+        '<li><b>Bitcoin:</b> precio BTC/USDT de Binance o, si falla, de CoinGecko, multiplicado por la tasa USDT.</li></ul>' +
+        '<p>Mis gastos no está asociada al BCV, a Binance ni a esos servicios. Las tasas pueden tardar en actualizarse o fallar. Si una tasa no se pudo actualizar, la app te lo indica. Puedes escribir tu propia tasa al registrar un cambio.</p>' }
+    };
+    var lgBack = null;
+    function openLg(k) {
+      var d = LEGAL[k];
+      lgBack = document.activeElement;
+      $("h-lg").textContent = d.t;
+      $("lg-body").innerHTML = d.b;
+      $("lg-sheet").hidden = false;
+      $("lg-sheet").querySelector(".sheet").scrollTop = 0;
+      $("lg-close").focus();
+    }
+    function closeLg() { $("lg-sheet").hidden = true; if (lgBack && lgBack.focus) lgBack.focus(); }
+    $("lg-close").addEventListener("click", closeLg);
+    $("lg-sheet").addEventListener("click", function (e) { if (e.target === $("lg-sheet")) closeLg(); });
+    $("lg-terms").addEventListener("click", function () { openLg("terms"); });
+    $("lg-priv").addEventListener("click", function () { openLg("priv"); });
+    $("lg-ref").addEventListener("click", function () { openLg("ref"); });
+    $("lg-src").addEventListener("click", function () { openLg("src"); });
+
+    // Confirmación dentro de la página (confirm() no siempre está disponible)
+    var cfAction = null, cfCancel = null;
+    function openCf(o) {
+      cfAction = o.ok; cfCancel = o.cancel || null;
+      $("h-cf").textContent = o.title;
+      $("cf-text").textContent = o.text;
+      $("cf-ok").textContent = o.btn;
+      $("cf-type-wrap").hidden = !o.word;
+      $("cf-word").textContent = o.word || "";
+      $("cf-type").value = "";
+      $("cf-ok").disabled = !!o.word;
+      $("cf-ok")._word = o.word || "";
+      $("cf-sheet").hidden = false;
+      (o.word ? $("cf-type") : $("cf-cancel")).focus();
+    }
+    function closeCf() { var c = cfCancel; $("cf-sheet").hidden = true; cfAction = null; cfCancel = null; if (c) c(); }
+    $("cf-type").addEventListener("input", function () { $("cf-ok").disabled = $("cf-type").value.trim().toUpperCase() !== $("cf-ok")._word; });
+    $("cf-close").addEventListener("click", closeCf);
+    $("cf-cancel").addEventListener("click", closeCf);
+    $("cf-sheet").addEventListener("click", function (e) { if (e.target === $("cf-sheet")) closeCf(); });
+    $("cf-ok").addEventListener("click", function () { var a = cfAction; cfCancel = null; closeCf(); if (a) a(); });
+
+    function applyTheme() {
+      var r = document.documentElement;
+      if (state.theme === "light" || state.theme === "dark") r.setAttribute("data-theme", state.theme);
+      else r.removeAttribute("data-theme");
+    }
+    document.querySelectorAll("[data-theme-set]").forEach(function (b) {
+      b.addEventListener("click", function () {
+        state.theme = b.getAttribute("data-theme-set");
+        applyTheme(); save(); renderSettings();
+        try { drawTrend(); } catch (e) {}
+      });
+    });
+
+    var BACKUP_DAYS = 30;
+    function backupDue() { return state.items.length > 0 && Date.now() - (state.backupAt || 0) > BACKUP_DAYS * 86400000; }
+    function renderSetDot() { $("set-dot").hidden = !backupDue(); }
+    function renderSettings() {
+      setPressed("[data-theme-set]", "data-theme-set", state.theme === "light" || state.theme === "dark" ? state.theme : "auto");
+      var on = !!(state.pin && state.pin.h);
+      $("pin-switch").setAttribute("aria-checked", on ? "true" : "false");
+      $("pin-change").hidden = !on;
+      $("pin-sub").textContent = on ? "Activado. Se pide al abrir la app y al volver después de 1 minuto." : "Pide un código de 4 dígitos al abrir la app.";
+      var bs = $("bk-sub");
+      if (state.backupAt) {
+        var d = new Date(state.backupAt);
+        bs.textContent = "Última copia: " + d.getDate() + " " + MESES_C[d.getMonth()] + " " + d.getFullYear() + (backupDue() ? ". Ya toca guardar otra." : ".");
+      } else bs.textContent = state.items.length ? "Aún no has guardado ninguna copia." : "Descarga un archivo con todos tus movimientos.";
+      bs.parentNode.parentNode.querySelector("b").style.color = backupDue() ? "var(--out)" : "";
+      $("set-bn").setAttribute("aria-checked", state.bn.hide ? "false" : "true");
+      renderSetDot();
+    }
+    $("set-open").addEventListener("click", function () { openView("set"); });
+    $("sv2-back").addEventListener("click", function () { closeViews(); setTab(currentTab()); });
+    $("set-bn").addEventListener("click", function () {
+      state.bn.hide = !state.bn.hide; if (!state.bn.hide) bnHideNow = false;
+      save(); renderBnEntry(); renderSettings();
+      showToast(state.bn.hide ? "La tarjeta ya no saldrá en el Inicio." : "La tarjeta vuelve a salir en el Inicio.");
+    });
+    $("set-bn-open").addEventListener("click", function () { openView("bn"); });
+
+    // Copia de seguridad
+    function backupData() {
+      var d = {};
+      try { d = JSON.parse(localStorage.getItem(KEY) || "{}"); } catch (e) {}
+      delete d.pin;
+      return { app: "mis-gastos", version: 1, creado: new Date().toISOString(), datos: d };
+    }
+    $("bk-save").addEventListener("click", function () {
+      save();
+      var json = JSON.stringify(backupData(), null, 1), name = "mis-gastos-copia-" + today() + ".json";
+      var done = function () { state.backupAt = Date.now(); save(); renderSettings(); showToast("Copia guardada. Guárdala en Archivos, Drive o tu correo."); };
+      var blob = new Blob([json], { type: "application/json" });
+      var file = null;
+      try { file = new File([blob], name, { type: "application/json" }); } catch (e) {}
+      if (file && navigator.canShare && navigator.canShare({ files: [file] }) && navigator.share) {
+        navigator.share({ files: [file], title: "Copia de Mis gastos" }).then(done, function (e) { if (e && e.name !== "AbortError") download(); });
+        return;
+      }
+      download();
+      function download() {
+        var url = URL.createObjectURL(blob), a = document.createElement("a");
+        a.href = url; a.download = name; document.body.appendChild(a); a.click();
+        setTimeout(function () { URL.revokeObjectURL(url); a.remove(); }, 1500);
+        done();
+      }
+    });
+    $("bk-load").addEventListener("click", function () { $("bk-file").value = ""; $("bk-file").click(); });
+    $("bk-file").addEventListener("change", function () {
+      var f = $("bk-file").files && $("bk-file").files[0];
+      if (!f) return;
+      var r = new FileReader();
+      r.onload = function () {
+        var j = null;
+        try { j = JSON.parse(String(r.result)); } catch (e) {}
+        var d = j && j.app === "mis-gastos" && j.datos && typeof j.datos === "object" ? j.datos : null;
+        if (!d || !Array.isArray(d.items)) { showToast("Ese archivo no es una copia de Mis gastos."); return; }
+        var when = j.creado ? new Date(j.creado) : null;
+        openCf({
+          title: "¿Restaurar esta copia?",
+          text: "La copia tiene " + d.items.length + (d.items.length === 1 ? " movimiento" : " movimientos") + (when && !isNaN(when) ? " y es del " + when.getDate() + " " + MESES_C[when.getMonth()] + " " + when.getFullYear() : "") + ". Todo lo que tienes ahora en este teléfono se reemplaza por la copia.",
+          btn: "Restaurar copia",
+          ok: function () {
+            if (state.pin) d.pin = state.pin;
+            d.backupAt = Date.now();
+            try { localStorage.setItem(KEY, JSON.stringify(d)); } catch (e) { showToast("No pude guardar la copia en este teléfono."); return; }
+            location.reload();
+          }
+        });
+      };
+      r.onerror = function () { showToast("No pude leer el archivo."); };
+      r.readAsText(f);
+    });
+    $("data-del").addEventListener("click", function () {
+      openCf({
+        title: "¿Borrar todos los datos?",
+        text: "Se eliminan para siempre tus movimientos, cuentas, metas, pagos y ajustes de este teléfono. Si no tienes una copia, no hay forma de recuperarlos.",
+        word: "BORRAR", btn: "Borrar todo",
+        ok: function () {
+          try { localStorage.removeItem(KEY); localStorage.removeItem("gastos-ai-key"); } catch (e) {}
+          location.reload();
+        }
+      });
+    });
+
+    // Código de bloqueo
+    function pinHash(pin, salt) {
+      var txt = salt + ":" + pin;
+      if (window.crypto && crypto.subtle && window.TextEncoder) {
+        return crypto.subtle.digest("SHA-256", new TextEncoder().encode(txt)).then(function (b) {
+          return Array.prototype.map.call(new Uint8Array(b), function (x) { return ("0" + x.toString(16)).slice(-2); }).join("");
+        });
+      }
+      var h = 2166136261;
+      for (var i = 0; i < 2000; i++) for (var k = 0; k < txt.length; k++) { h ^= txt.charCodeAt(k); h = Math.imul(h, 16777619) >>> 0; }
+      return Promise.resolve("f" + h.toString(16));
+    }
+    var lk = { mode: "", buf: "", first: "", onDone: null, fails: 0, until: 0 };
+    function lockDots() { document.querySelectorAll("#pin-dots i").forEach(function (d, i) { d.classList.toggle("on", i < lk.buf.length); }); }
+    function lockMsg(t, err) { var m = $("lock-msg"); m.textContent = t || ""; m.className = "hint" + (err ? " err" : ""); }
+    function shake() { var d = $("pin-dots"); d.classList.remove("shake"); void d.offsetWidth; d.classList.add("shake"); }
+    function openLock(mode, onDone) {
+      lk.mode = mode; lk.buf = ""; lk.first = ""; lk.onDone = onDone || null;
+      $("lock-t").textContent = mode === "unlock" ? "Escribe tu código" : mode === "verify" ? "Escribe tu código actual" : "Crea un código de 4 dígitos";
+      lockMsg(mode === "set" ? "Lo pediremos cada vez que abras la app." : "");
+      $("kp-cancel").style.visibility = mode === "unlock" ? "hidden" : "visible";
+      $("lock-forgot").hidden = mode !== "unlock";
+      lockDots();
+      $("lock").hidden = false;
+      document.documentElement.classList.add("locked");
+    }
+    function closeLock() { $("lock").hidden = true; document.documentElement.classList.remove("locked"); lk.mode = ""; }
+    function lockInput(k) {
+      if (!lk.mode) return;
+      if (Date.now() < lk.until) { lockMsg("Espera unos segundos e intenta de nuevo.", true); return; }
+      if (k === "del") { lk.buf = lk.buf.slice(0, -1); lockDots(); return; }
+      if (lk.buf.length >= 4) return;
+      lk.buf += k; lockDots();
+      if (lk.buf.length < 4) return;
+      var pin = lk.buf;
+      if (lk.mode === "set") {
+        if (!lk.first) { lk.first = pin; lk.buf = ""; setTimeout(lockDots, 150); $("lock-t").textContent = "Repite el código"; lockMsg(""); return; }
+        if (lk.first !== pin) { lk.first = ""; lk.buf = ""; shake(); setTimeout(lockDots, 300); $("lock-t").textContent = "Crea un código de 4 dígitos"; lockMsg("No coincidían. Empieza de nuevo.", true); return; }
+        var salt = Math.random().toString(36).slice(2) + Date.now().toString(36);
+        pinHash(pin, salt).then(function (h) {
+          state.pin = { h: h, s: salt }; save(); closeLock(); renderSettings();
+          showToast("Código activado. Si lo olvidas, solo podrás entrar borrando los datos.");
+        });
+        return;
+      }
+      pinHash(pin, state.pin.s).then(function (h) {
+        if (h === state.pin.h) { lk.fails = 0; var cb = lk.onDone; closeLock(); if (cb) cb(); return; }
+        lk.fails++; lk.buf = ""; shake(); setTimeout(lockDots, 300);
+        if (lk.fails >= 5) { lk.until = Date.now() + 30000; lk.fails = 0; lockMsg("Demasiados intentos. Espera 30 segundos.", true); }
+        else lockMsg("Código incorrecto.", true);
+      });
+    }
+    $("keypad").addEventListener("click", function (e) { var b = e.target.closest("[data-k]"); if (b) lockInput(b.getAttribute("data-k")); });
+    document.addEventListener("keydown", function (e) {
+      if ($("lock").hidden) return;
+      if (/^[0-9]$/.test(e.key)) { e.preventDefault(); lockInput(e.key); }
+      else if (e.key === "Backspace") { e.preventDefault(); lockInput("del"); }
+    }, true);
+    $("kp-cancel").addEventListener("click", function () { if (lk.mode !== "unlock") closeLock(); });
+    $("lock-forgot").addEventListener("click", function () {
+      closeLock();
+      document.documentElement.classList.add("locked");
+      openCf({
+        title: "¿Olvidaste tu código?",
+        text: "Por seguridad, la única forma de entrar sin el código es borrar todos los datos de este teléfono. Después podrás restaurar una copia si guardaste una.",
+        word: "BORRAR", btn: "Borrar datos y entrar",
+        ok: function () { try { localStorage.removeItem(KEY); localStorage.removeItem("gastos-ai-key"); } catch (e) {} location.reload(); },
+        cancel: function () { if (state.pin && state.pin.h) openLock("unlock"); }
+      });
+    });
+    $("pin-switch").addEventListener("click", function () {
+      if (state.pin && state.pin.h) openLock("verify", function () { state.pin = null; save(); renderSettings(); showToast("Código desactivado."); });
+      else openLock("set");
+    });
+    $("pin-change").addEventListener("click", function () { openLock("verify", function () { openLock("set"); }); });
+    var hiddenAt = 0;
+    document.addEventListener("visibilitychange", function () {
+      if (document.hidden) { hiddenAt = Date.now(); return; }
+      if (state.pin && state.pin.h && hiddenAt && Date.now() - hiddenAt > 60000 && $("lock").hidden) openLock("unlock");
+    });
+    applyTheme();
+    renderSetDot();
+    if (state.pin && state.pin.h) openLock("unlock");
+    else document.documentElement.classList.remove("locked");
     $("bn-steps").addEventListener("input", function (e) {
       if (e.target.id !== "bn-apr") return;
       var v = parseNum(e.target.value);
