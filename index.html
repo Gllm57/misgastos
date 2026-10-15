@@ -1433,7 +1433,7 @@ body.view-accd .fab, body.view-accd .ai-fab { opacity: 0; pointer-events: none; 
     <div class="set-h">Seguridad</div>
     <div class="set-group">
       <div class="set-row">
-        <div class="tx"><b>Código de bloqueo</b><small id="pin-sub">Pide un código de 6 dígitos al abrir la app.</small></div>
+        <div class="tx"><b>Código de bloqueo</b><small id="pin-sub">Pide un código de 4 dígitos al abrir la app.</small></div>
         <button type="button" class="switch" id="pin-switch" role="switch" aria-checked="false" aria-label="Código de bloqueo"><span></span></button>
       </div>
       <button type="button" class="set-row" id="pin-change" hidden><span class="tx"><b>Cambiar código</b></span><svg class="chev-r" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 5l7 7-7 7"></path></svg></button>
@@ -5491,7 +5491,7 @@ body.view-accd .fab, body.view-accd .ai-fab { opacity: 0; pointer-events: none; 
       var on = !!(state.pin && state.pin.h);
       $("pin-switch").setAttribute("aria-checked", on ? "true" : "false");
       $("pin-change").hidden = !on;
-      $("pin-sub").textContent = on ? "Activado. Se pide al abrir la app y al volver después de 1 minuto." : "Pide un código de 6 dígitos al abrir la app.";
+      $("pin-sub").textContent = on ? "Activado. Se pide al abrir la app y al volver después de 1 minuto." : "Pide un código de 4 dígitos al abrir la app.";
       var bs = $("bk-sub");
       if (state.backupAt) {
         var d = new Date(state.backupAt);
@@ -5586,7 +5586,7 @@ body.view-accd .fab, body.view-accd .ai-fab { opacity: 0; pointer-events: none; 
       for (var i = 0; i < 2000; i++) for (var k = 0; k < txt.length; k++) { h ^= txt.charCodeAt(k); h = Math.imul(h, 16777619) >>> 0; }
       return Promise.resolve("f" + h.toString(16));
     }
-    var PIN_LEN = 6;
+    var PIN_LEN = 4;
     var lk = { mode: "", buf: "", first: "", onDone: null, fails: 0, until: 0, n: PIN_LEN, onb: false };
     function lockDots() {
       var w = $("pin-dots");
