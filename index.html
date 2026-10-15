@@ -1050,6 +1050,14 @@ body.view-accd .fab, body.view-accd .ai-fab { opacity: 0; pointer-events: none; 
 .ai-steps[hidden] { display: none; }
 .ai-link { display: block; margin: 10px auto 0; font: inherit; font-size: 0.85rem; font-weight: 600; color: var(--accent); background: none; border: 0; min-height: 40px; cursor: pointer; }
 .ai-empty { text-align: center; color: var(--muted); padding: 18px 8px 4px; }
+/* Encabezado: ajustes a la derecha y tasas junto a "Mes" */
+.top h1 { grid-column: 1 / -1; justify-content: space-between; }
+.fm-head { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; margin-bottom: 4px; }
+.fm-head label { margin: 0; flex: none; }
+.top .fm-head .rate-note { grid-column: auto; grid-row: auto; margin: 0; font-size: 0.8rem; text-align: right; min-width: 0; line-height: 1.35; }
+/* Metas: estado vacío centrado */
+.goals-view .gv-empty { min-height: calc(100vh - 330px); justify-content: center; }
+.gv-empty p { text-align: center; margin-left: auto; margin-right: auto; }
 @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation: none !important; transition: none !important; scroll-behavior: auto !important; } }
 </style>
 </head>
@@ -1059,12 +1067,11 @@ body.view-accd .fab, body.view-accd .ai-fab { opacity: 0; pointer-events: none; 
     <h1>Mis gastos <button type="button" class="set-btn" id="set-open" aria-label="Ajustes"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg><i class="set-dot" id="set-dot" hidden></i></button></h1>
     <div class="controls">
       <div class="field-month">
-        <label for="mes-btn">Mes</label>
+        <div class="fm-head"><label for="mes-btn">Mes</label><div class="rate-note" id="rate-note"></div></div>
         <input type="hidden" id="mes">
         <button type="button" class="pick" id="mes-btn" aria-haspopup="dialog"><span id="mes-label"></span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="3"></rect><path d="M8 3v4M16 3v4M3 10h18"></path></svg></button>
       </div>
       <div class="rates">
-        <div class="rate-note" id="rate-note"></div>
         <div class="rate-fields">
           <div class="field-rate rate-card rc-usd">
             <label for="tasa"><span class="rc-ic" aria-hidden="true">$</span>Dólar BCV</label>
@@ -1128,7 +1135,7 @@ body.view-accd .fab, body.view-accd .ai-fab { opacity: 0; pointer-events: none; 
   </section>
 
   <section class="panel collapsible" data-panel="sav" aria-labelledby="h-sav">
-    <div class="phead"><h2 id="h-sav">Ahorro automático</h2><div class="phead-r"><button type="button" class="eye eye-btn" aria-pressed="false"></button><button type="button" class="chev" aria-expanded="true" aria-controls="b-sav" aria-label="Minimizar Ahorro automático"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 15l6-6 6 6"></path></svg></button></div></div>
+    <div class="phead"><h2 id="h-sav">Ahorros</h2><div class="phead-r"><button type="button" class="eye eye-btn" aria-pressed="false"></button><button type="button" class="chev" aria-expanded="true" aria-controls="b-sav" aria-label="Minimizar Ahorros"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 15l6-6 6 6"></path></svg></button></div></div>
     <div class="cbody" id="b-sav"><div class="cbody-in">
     <p class="hint" id="sav-hint">Actívalo y la app aparta un porcentaje de cada ingreso por ti.</p>
     <div class="sav-total">
@@ -1204,7 +1211,7 @@ body.view-accd .fab, body.view-accd .ai-fab { opacity: 0; pointer-events: none; 
     <h2 class="gv-h2" id="gv-act-h">Actividad reciente</h2>
     <ul class="gv-act" id="gv-act"></ul>
     <div class="gv-empty" id="goal-empty">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 21V4M5 4h11l-2 4 2 4H5"></path></svg>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6.5 21V4M6.5 4h11l-2 4 2 4H6.5"></path></svg>
       <p>Crea tu primera meta de ahorro: un viaje, un celular o un fondo de emergencia.</p>
       <button type="button" class="primary" id="goal-new2" style="width:auto;padding:0 28px">Crear meta</button>
     </div>
@@ -1424,7 +1431,7 @@ body.view-accd .fab, body.view-accd .ai-fab { opacity: 0; pointer-events: none; 
   <nav class="tabbar" id="tabbar" aria-label="Navegación" style="--i:0">
     <span class="tab-lens" aria-hidden="true"></span>
     <button type="button" class="tab" data-tab="0" aria-current="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 11l8-7 8 7v8a2 2 0 0 1-2 2h-3.5v-6h-5v6H6a2 2 0 0 1-2-2z"></path></svg><span>Inicio</span></button>
-    <button type="button" class="tab" data-tab="1" aria-current="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 21V4M5 4h11l-2 4 2 4H5"></path></svg><span>Metas</span></button>
+    <button type="button" class="tab" data-tab="1" aria-current="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6.5 21V4M6.5 4h11l-2 4 2 4H6.5"></path></svg><span>Metas</span></button>
     <button type="button" class="tab" data-tab="2" aria-current="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="3"></rect><path d="M8 3v4M16 3v4M3 10h18M9 15.5l2 2 4-4"></path></svg><span>Pagos</span></button>
     <button type="button" class="tab" data-tab="3" aria-current="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6h11M9 12h11M9 18h11M4.5 6h.01M4.5 12h.01M4.5 18h.01"></path></svg><span>Historial</span></button>
   </nav>
