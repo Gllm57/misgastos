@@ -1627,6 +1627,11 @@ main > .panel::before, main > .panel::after, .bal-hero::before, .bal-hero::after
 .ai-cloud { background: none !important; border: 0 !important; border-top: 1px solid var(--line) !important; border-radius: 0 !important; padding: 16px 0 0 !important; }
 .ai-spark { border-radius: 50% !important; background: var(--fill) !important; color: var(--accent) !important; }
 .ai-month .cal-nav, .ai-month button { border: 0 !important; background: var(--fill) !important; }
+/* Tasas centradas, cada una en su columna */
+.top .rate-card, .top .rate-card:first-child { align-items: center !important; text-align: center; padding: 0 6px !important; }
+.top .rate-card label { justify-content: center; width: 100%; }
+.top .rate-card input[readonly] { text-align: center; width: 100%; }
+#usdt-src { display: none !important; }
 </style>
 </head>
 <body>
