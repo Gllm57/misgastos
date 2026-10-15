@@ -1128,9 +1128,10 @@ body.view-accd .fab, body.view-accd .ai-fab { opacity: 0; pointer-events: none; 
 .cx-in .cc-ic.cc-ves { font-size: 0.85rem; }
 .cx-in-main { min-width: 0; }
 .cx-name { color: var(--muted); font-size: 0.8rem; }
-.cx-amt { font-family: var(--display); font-weight: 700; font-size: 2rem; line-height: 1.15; font-variant-numeric: tabular-nums; white-space: nowrap; }
-.cx-amt.ph { color: var(--muted); opacity: 0.6; }
-.cx-amt::after { content: ""; display: inline-block; width: 2px; height: 1.5rem; margin-left: 2px; vertical-align: -3px; background: var(--accent); animation: cxBlink 1s steps(1) infinite; }
+.cx-amt { display: block; width: 100%; min-width: 0; min-height: 0; padding: 0; border: 0; border-radius: 0; background: none; color: var(--ink); font-family: var(--display); font-weight: 700; font-size: 2rem; line-height: 1.2; font-variant-numeric: tabular-nums; outline: none; caret-color: var(--accent); }
+.cx-amt::placeholder { color: var(--muted); opacity: 0.5; }
+.cx-amt:focus, .cx-amt:focus-visible { outline: none; box-shadow: none; }
+.cx-name { display: block; margin: 0; color: var(--muted); font-size: 0.8rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 @keyframes cxBlink { 50% { opacity: 0; } }
 .cx-clear { width: 32px; height: 32px; border-radius: 50%; border: 0; background: color-mix(in srgb, var(--muted) 18%, transparent); color: var(--muted); font-size: 0.8rem; cursor: pointer; }
 .cx-srcs { display: flex; gap: 6px; }
@@ -1155,6 +1156,27 @@ body.view-accd .fab, body.view-accd .ai-fab { opacity: 0; pointer-events: none; 
 .cx-kp { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; }
 .cx-kp button { font-family: var(--display); font-size: 1.35rem; font-weight: 600; min-height: 50px; border-radius: 14px; border: 0; background: var(--bg); color: var(--ink); cursor: pointer; touch-action: manipulation; }
 .cx-kp button:active { background: var(--line); transform: scale(0.97); }
+/* Tarjeta con degradado (estilo de Binance Earn y la IA). Úsala con --g para el color */
+.grad-card { --g: var(--accent); background: linear-gradient(135deg, color-mix(in srgb, var(--g) 16%, var(--surface)), var(--surface) 70%); border: 1px solid color-mix(in srgb, var(--g) 40%, var(--line)); border-radius: 20px; }
+.hist-cat-sum { --g: var(--c); background: linear-gradient(135deg, color-mix(in srgb, var(--c) 20%, var(--surface)), var(--surface) 72%); border: 1px solid color-mix(in srgb, var(--c) 42%, var(--line)); border-left-width: 1px; border-radius: 20px; padding: 16px 18px; box-shadow: 0 10px 28px color-mix(in srgb, var(--c) 12%, transparent); }
+.hist-cat-sum .v { color: var(--ink); font-size: 1.9rem; }
+.hist-cat-sum .l { font-weight: 600; color: color-mix(in srgb, var(--c) 70%, var(--ink)); }
+.hist-cat-sum .bar { height: 7px; background: color-mix(in srgb, var(--c) 14%, var(--bg)); }
+
+/* Flechas de minimizar circulares */
+.chev { border-radius: 50%; width: 40px; height: 40px; min-width: 40px; min-height: 40px; background: var(--surface); box-shadow: inset 0 1px 0 var(--glass-hi); }
+.chev svg { width: 18px; height: 18px; }
+.phead .eye { border-radius: 50%; width: 40px; height: 40px; min-width: 40px; min-height: 40px; }
+
+/* Mis cuentas */
+.acc-row { grid-template-columns: auto minmax(0, 1fr) auto auto; row-gap: 8px; padding: 14px 6px 12px 4px; }
+.acc-meta .up { color: var(--in); font-weight: 600; }
+.acc-meta .down { color: var(--out); font-weight: 600; }
+.acc-share { grid-column: 2 / 5; height: 4px; border-radius: 999px; background: color-mix(in srgb, var(--line) 70%, transparent); overflow: hidden; }
+.acc-share i { display: block; height: 100%; border-radius: inherit; background: var(--c); opacity: 0.85; }
+.acc-head { display: flex; justify-content: space-between; align-items: baseline; gap: 10px; margin: 2px 4px 2px; color: var(--muted); font-size: 0.78rem; }
+.acc-head b { font-weight: 600; color: var(--ink); }
+.acc-head[hidden] { display: none; }
 @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation: none !important; transition: none !important; scroll-behavior: auto !important; } }
 </style>
 </head>
@@ -1228,6 +1250,7 @@ body.view-accd .fab, body.view-accd .ai-fab { opacity: 0; pointer-events: none; 
     <div class="phead"><h2 id="h-acc">Mis cuentas</h2><button type="button" class="chev" aria-expanded="true" aria-controls="b-acc" aria-label="Minimizar Mis cuentas"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 15l6-6 6 6"></path></svg></button></div>
     <div class="cbody" id="b-acc"><div class="cbody-in">
     <div class="acc-sum" id="acc-sum" hidden></div>
+    <div class="acc-head" id="acc-head" hidden></div>
     <ul class="acc-list" id="acc-list"></ul>
     <p class="empty" id="acc-empty">Agrega tus cuentas (por ejemplo, Banco de Venezuela en bolívares o Binance en dólares) para saber en cuál entra y sale tu dinero.</p>
     <div class="acc-actions">
@@ -1846,11 +1869,11 @@ body.view-accd .fab, body.view-accd .ai-fab { opacity: 0; pointer-events: none; 
       <div class="sheet-head"><h2 id="h-calc">Calculadora</h2><button type="button" class="del" id="calc-close" aria-label="Cerrar">✕</button></div>
       <div class="cx-in" id="cx-in">
         <span id="cx-ic"></span>
-        <div class="cx-in-main"><div class="cx-name" id="cx-name"></div><div class="cx-amt fit" id="cx-amt" aria-live="polite"></div></div>
+        <div class="cx-in-main"><label class="cx-name" id="cx-name" for="cx-amt"></label><input type="text" class="cx-amt" id="cx-amt" inputmode="decimal" autocomplete="off" enterkeyhint="done" placeholder="0"></div>
         <button type="button" class="cx-clear" id="cx-clear" aria-label="Borrar el monto">✕</button>
       </div>
       <div class="cx-srcs">
-        <button type="button" id="cx-own-btn" aria-pressed="false">Usar otra tasa para el dólar</button>
+        <button type="button" id="cx-own-btn" aria-pressed="false">Tasa personalizada</button>
       </div>
       <div class="cx-own" id="cx-own" hidden>
         <label for="cx-own-rate">Bs por $1</label>
@@ -1858,12 +1881,6 @@ body.view-accd .fab, body.view-accd .ai-fab { opacity: 0; pointer-events: none; 
       </div>
       <ul class="cx-list" id="cx-list"></ul>
       <p class="cx-hint" id="cx-hint">Toca una moneda para escribir en ella. Mantén presionada una cifra para copiarla.</p>
-      <div class="cx-kp" id="cx-kp">
-        <button type="button" data-cx="1">1</button><button type="button" data-cx="2">2</button><button type="button" data-cx="3">3</button>
-        <button type="button" data-cx="4">4</button><button type="button" data-cx="5">5</button><button type="button" data-cx="6">6</button>
-        <button type="button" data-cx="7">7</button><button type="button" data-cx="8">8</button><button type="button" data-cx="9">9</button>
-        <button type="button" data-cx=",">,</button><button type="button" data-cx="0">0</button><button type="button" data-cx="del" aria-label="Borrar">⌫</button>
-      </div>
     </section>
   </div>
   <div class="sheet-backdrop" id="mv-sheet" hidden>
@@ -3357,21 +3374,44 @@ body.view-accd .fab, body.view-accd .ai-fab { opacity: 0; pointer-events: none; 
     var c = (ACC_CUR[a.moneda] || ACC_CUR.USD).c;
     return '<span class="acc-av' + (big ? " big" : "") + '" style="--c:' + c + '" aria-hidden="true">' + esc(accInitials(a.nombre)) + "</span>";
   }
+  function accMonthNet(a, mstr) {
+    var n = 0, any = false;
+    state.items.forEach(function (it) {
+      if (it.fecha.slice(0, 7) !== mstr) return;
+      var d = null;
+      if (it.tipo === "traspaso") {
+        if (it.hacia && it.hacia.k === "cuenta" && String(it.hacia.id) === String(a.id)) d = it.hacia.monto;
+        else if (it.desde && it.desde.k === "cuenta" && String(it.desde.id) === String(a.id)) d = -it.desde.monto;
+      } else if (String(it.cuenta) === String(a.id)) {
+        if (it.tipo === "ingreso" || it.tipo === "retiro") d = it.monto;
+        else if (it.tipo === "gasto" || it.tipo === "ahorro") d = -it.monto;
+      }
+      if (d !== null) { n += d; any = true; }
+    });
+    return any ? n : null;
+  }
   function renderAccounts() {
-    var list = $("acc-list"), m = savMap(), D = state.disp, tot = 0, miss = false;
+    var list = $("acc-list"), m = savMap(), D = state.disp, tot = 0, miss = false, posUsd = 0;
     $("acc-empty").style.display = state.accounts.length ? "none" : "";
+    state.accounts.forEach(function (a) { var u = conv(accBalance(a), a.moneda, "USD"); if (u > 0) posUsd += u; });
+    var mName = MESES[Number(state.month.slice(5, 7)) - 1];
     list.innerHTML = state.accounts.map(function (a) {
       var bal = accBalance(a), sv = m["a" + a.id] || 0, cv = conv(bal, a.moneda, D);
       if (cv === null) miss = true; else tot += cv;
-      var meta = (ACC_CUR[a.moneda] || { n: a.moneda }).n + (sv > 0.004 ? ' · <span class="acc-sv-in">Ahorro ' + mask(money(sv, a.moneda)) + "</span>" : "");
+      var net = accMonthNet(a, state.month), u = conv(bal, a.moneda, "USD"), share = posUsd > 0 && u > 0 ? u / posUsd * 100 : 0;
+      var meta = (net !== null && Math.abs(net) >= 0.005 ? '<span class="' + (net >= 0 ? "up" : "down") + '">' + (net >= 0 ? "+" : "−") + money(Math.abs(net), a.moneda) + "</span> este mes" : (ACC_CUR[a.moneda] || { n: a.moneda }).n) +
+        (sv > 0.004 ? ' · <span class="acc-sv-in">Ahorro ' + mask(money(sv, a.moneda)) + "</span>" : "");
       return '<li><button type="button" class="acc-row" data-acc-open="' + a.id + '" aria-label="Ver la cuenta ' + esc(a.nombre) + '">' + accAvatar(a) +
         '<span class="acc-mid"><span class="acc-name">' + esc(a.nombre) + '</span><span class="acc-meta">' + meta + "</span></span>" +
         '<span class="acc-right"><span class="acc-bal fit' + (bal < 0 ? " neg" : "") + '">' + money(bal, a.moneda) + "</span>" +
         (a.moneda !== "USD" && conv(bal, a.moneda, "USD") !== null ? '<span class="acc-alt">≈ ' + money(conv(bal, a.moneda, "USD"), "USD") + "</span>" : "") + "</span>" +
-        '<svg class="acc-chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 5l7 7-7 7"></path></svg></button></li>';
+        '<svg class="acc-chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 5l7 7-7 7"></path></svg>' +
+        (state.accounts.length > 1 ? '<span class="acc-share" style="--c:' + (ACC_CUR[a.moneda] || ACC_CUR.USD).c + '" title="' + Math.round(share) + '% de tu dinero"><i style="width:' + share.toFixed(1) + '%"></i></span>' : "") + "</button></li>";
     }).join("");
     var sum = $("acc-sum");
     sum.hidden = true;
+    var ah = $("acc-head");
+    if (ah) { ah.hidden = state.accounts.length < 2; ah.innerHTML = "<span>La barra indica qué parte de tu dinero está en cada cuenta</span>"; }
     if (false) {
       sum.innerHTML = '<div><span class="l">Saldo total en tus cuentas</span><strong class="fit">' + money(tot, D) + (miss ? "*" : "") + "</strong></div>" +
         '<span class="acc-n">' + state.accounts.length + (state.accounts.length === 1 ? " cuenta" : " cuentas") + "</span>";
@@ -5852,13 +5892,12 @@ body.view-accd .fab, body.view-accd .ai-fab { opacity: 0; pointer-events: none; 
     function renderCalc() {
       var k = calc.k;
       $("cx-ic").innerHTML = ccIcon(k);
-      $("cx-name").textContent = CC[k].name;
+      $("cx-name").textContent = CC[k].name + (k !== "VES" && cxSub(k) ? " · " + cxSub(k) : "");
       var amt = $("cx-amt");
-      amt.textContent = (k === "USD" ? "$" : k === "EUR" ? "€" : k === "VES" ? "Bs " : "") + cxShowBuf() + (k === "USDT" ? " USDT" : k === "BTC" ? " BTC" : "");
-      amt.classList.toggle("ph", !calc.buf);
+      if (amt.value !== calc.buf) amt.value = calc.buf;
       $("cx-clear").style.visibility = calc.buf ? "visible" : "hidden";
       $("cx-own-btn").setAttribute("aria-pressed", calc.src === "own" ? "true" : "false");
-      $("cx-own-btn").textContent = calc.src === "own" ? "Usando otra tasa · volver a BCV" : "Usar otra tasa para el dólar";
+      $("cx-own-btn").textContent = calc.src === "own" ? "Tasa personalizada · activada" : "Tasa personalizada";
       $("cx-own").hidden = calc.src !== "own";
       var bs = cxVal() * cxBs(k), base = cxBs(k) > 0;
       $("cx-list").innerHTML = CX_ORDER.filter(function (c) { return c !== k; }).map(function (c) {
@@ -5901,24 +5940,20 @@ body.view-accd .fab, body.view-accd .ai-fab { opacity: 0; pointer-events: none; 
       if (calc.own) $("cx-own-rate").value = fmtIn(calc.own);
       renderCalc();
       $("calc-sheet").hidden = false;
+      try { $("cx-amt").focus({ preventScroll: true }); } catch (e) { $("cx-amt").focus(); }
       fetchBtc();
     }
     function closeCalc() { $("calc-sheet").hidden = true; $("fab").focus(); }
     $("calc-close").addEventListener("click", closeCalc);
     $("calc-sheet").addEventListener("click", function (e) { if (e.target === $("calc-sheet")) closeCalc(); });
-    $("cx-kp").addEventListener("click", function (e) { var b = e.target.closest("[data-cx]"); if (b) cxKey(b.getAttribute("data-cx")); });
-    $("cx-clear").addEventListener("click", function () { calc.buf = ""; renderCalc(); });
+    $("cx-amt").addEventListener("input", function () { calc.buf = $("cx-amt").value.replace(/[^0-9.,]/g, ""); if ($("cx-amt").value !== calc.buf) $("cx-amt").value = calc.buf; renderCalc(); });
+    $("cx-clear").addEventListener("click", function () { calc.buf = ""; renderCalc(); $("cx-amt").focus(); });
     $("cx-own-btn").addEventListener("click", function () {
       calc.src = calc.src === "own" ? "bcv" : "own"; cxSave(); renderCalc();
       if (calc.src === "own") $("cx-own-rate").focus();
     });
     $("cx-own-rate").addEventListener("input", function () { var v = parseNum($("cx-own-rate").value); calc.own = v > 0 ? v : 0; cxSave(); renderCalc(); });
-    document.addEventListener("keydown", function (e) {
-      if ($("calc-sheet").hidden || e.target === $("cx-own-rate") || e.metaKey || e.ctrlKey) return;
-      if (/^[0-9]$/.test(e.key)) { e.preventDefault(); cxKey(e.key); }
-      else if (e.key === "," || e.key === ".") { e.preventDefault(); cxKey(","); }
-      else if (e.key === "Backspace") { e.preventDefault(); cxKey("del"); }
-    });
+
     // Tocar una fila: escribir en esa moneda. Mantener presionado: copiar la cifra.
     (function () {
       var timer = null, longDone = false;
@@ -5944,6 +5979,7 @@ body.view-accd .fab, body.view-accd .ai-fab { opacity: 0; pointer-events: none; 
         var n = v ? parseNum(v) : 0;
         calc.buf = n > 0 ? String(Math.round(n * Math.pow(10, cxDec(calc.k))) / Math.pow(10, cxDec(calc.k))).replace(".", ",") : "";
         renderCalc();
+        $("cx-amt").focus();
       });
     })();
     $("cal-cancel").addEventListener("click", closeCal);
