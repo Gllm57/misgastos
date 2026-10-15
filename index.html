@@ -1427,7 +1427,7 @@ main > .panel::before, main > .panel::after, .bal-hero::before, .bal-hero::after
 #mes-btn { border: 0 !important; background: var(--fill) !important; border-radius: 999px !important; min-height: 38px !important; height: 38px; padding: 0 14px !important; font-weight: 600; width: auto !important; display: inline-flex !important; gap: 8px; }
 #mes-btn svg { width: 16px; height: 16px; }
 .sheet .pick { width: 100% !important; }
-.field-month { width: auto !important; }
+.field-month { width: auto; }
 /* Disponible: cifras debajo con punto de color y separadores */
 .flows { gap: 0 !important; }
 .flow { border-left: 1px solid var(--line) !important; padding-left: 12px !important; }
@@ -1632,6 +1632,16 @@ main > .panel::before, main > .panel::after, .bal-hero::before, .bal-hero::after
 .top .rate-card label { justify-content: center; width: 100%; }
 .top .rate-card input[readonly] { text-align: center; width: 100%; }
 #usdt-src { display: none !important; }
+/* Mes y tasa del día en una sola línea */
+.top .field-month { grid-column: 1 / -1 !important; width: 100% !important; display: flex !important; align-items: center; justify-content: space-between; gap: 12px; }
+.top .fm-head { order: 2; margin: 0 !important; min-width: 0; flex: 1; justify-content: flex-end; }
+.top .fm-head label { display: none; }
+.top .fm-head .rate-note { text-align: right; font-size: 0.78rem !important; }
+#mes-btn { order: 1; flex: none; }
+.top .rate-card { margin-top: 8px; }
+/* Ingresos, gastos y ahorrado centrados */
+.flow, .flow:first-child { align-items: center; text-align: center; padding-left: 6px !important; padding-right: 6px !important; }
+.flow .l { justify-content: center; }
 </style>
 </head>
 <body>
