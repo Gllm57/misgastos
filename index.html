@@ -1096,6 +1096,29 @@ body.view-accd .fab, body.view-accd .ai-fab { opacity: 0; pointer-events: none; 
 .bk-go { grid-column: 2; justify-self: start; }
 .bk-ic { align-self: start; }
 .acc-actions button { white-space: nowrap; }
+/* Binance Earn en Ahorros */
+.earn-box { display: grid; gap: 10px; margin-top: 12px; }
+.earn-box[hidden] { display: none; }
+.earn-card { --g: #e8a300; border: 1px solid color-mix(in srgb, var(--g) 40%, var(--line)); background: linear-gradient(135deg, color-mix(in srgb, var(--g) 14%, var(--surface)), var(--surface) 70%); border-radius: 18px; padding: 14px; display: grid; gap: 8px; }
+.earn-card .row { display: flex; justify-content: space-between; align-items: center; gap: 10px; }
+.earn-card .tag { font-size: 0.72rem; font-weight: 700; padding: 3px 9px; border-radius: 999px; color: #1a1400; background: #f0b90b; }
+.earn-card .muted { color: var(--muted); font-size: 0.8rem; }
+.earn-card .big { font-family: var(--display); font-weight: 700; font-size: 1.3rem; font-variant-numeric: tabular-nums; }
+.earn-card .gain { font-family: var(--display); font-weight: 700; color: var(--in); font-variant-numeric: tabular-nums; }
+.earn-card .bar { height: 6px; border-radius: 999px; background: var(--line); overflow: hidden; }
+.earn-card .bar i { display: block; height: 100%; background: var(--in); border-radius: inherit; }
+.earn-card .acts { display: flex; gap: 8px; }
+.earn-card .acts button { flex: 1; font: inherit; font-size: 0.82rem; font-weight: 600; min-height: 38px; border-radius: 10px; border: 1px solid var(--line); background: var(--surface); color: var(--ink); cursor: pointer; }
+.earn-add { display: grid; grid-template-columns: auto 1fr; gap: 12px; align-items: center; width: 100%; margin-top: 12px; padding: 12px 14px; font: inherit; color: var(--ink); text-align: left; background: var(--bg); border: 1px dashed color-mix(in srgb, #e8a300 50%, var(--line)); border-radius: 16px; cursor: pointer; }
+.earn-add b { display: block; font-size: 0.94rem; }
+.earn-add small { display: block; color: var(--muted); font-size: 0.8rem; }
+.earn-ic { width: 38px; height: 38px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-family: var(--display); font-weight: 700; color: #e8a300; background: color-mix(in srgb, #e8a300 16%, transparent); }
+.earn-seg { display: flex; width: 100%; }
+.earn-seg button { flex: 1; font-size: 0.82rem; padding-left: 2px; padding-right: 2px; }
+.earn-prev { margin-top: 12px; }
+.earn-prev:empty { display: none; }
+.earn-prev .bn-est { margin: 0; }
+.dial-item .ic svg { width: 21px; height: 21px; }
 @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation: none !important; transition: none !important; scroll-behavior: auto !important; } }
 </style>
 </head>
@@ -1184,10 +1207,12 @@ body.view-accd .fab, body.view-accd .ai-fab { opacity: 0; pointer-events: none; 
     <p class="hint" id="sav-hint">Actívalo y la app aparta un porcentaje de cada ingreso por ti.</p>
     <div class="sav-total">
       <div class="sav-buckets" id="sav-buckets"></div>
+      <div class="earn-box" id="earn-box" hidden></div>
       <div class="sav-actions">
         <button type="button" class="secondary" id="mv-retirar">Retirar</button>
         <button type="button" class="secondary" id="mv-convertir">Convertir</button>
       </div>
+      <button type="button" class="earn-add" id="earn-add"><span class="earn-ic" aria-hidden="true">₮</span><span><b>Registrar ahorro en Binance Earn</b><small>Anota lo que pusiste a generar rendimiento y míralo crecer aquí.</small></span></button>
     </div>
     </div></div>
   </section>
@@ -1392,6 +1417,43 @@ body.view-accd .fab, body.view-accd .ai-fab { opacity: 0; pointer-events: none; 
       <p class="hint" id="rh-note" style="font-size:0.8rem;margin-top:10px"></p>
     </section>
   </div>
+  <div class="sheet-backdrop" id="earn-sheet" hidden>
+    <section class="panel sheet" role="dialog" aria-modal="true" aria-labelledby="h-earn">
+      <div class="sheet-head"><h2 id="h-earn">Ahorro en Binance Earn</h2><button type="button" class="del" id="earn-close" aria-label="Cerrar">✕</button></div>
+      <p class="hint" style="margin-bottom:12px">Anota lo que suscribiste en Binance Earn. La app lo guarda en tus ahorros y calcula cuánto vas ganando.</p>
+      <div class="grid">
+        <div class="wide">
+          <label for="earn-from">¿De dónde salió el dinero?</label>
+          <select id="earn-from"></select>
+        </div>
+        <div class="wide">
+          <label for="earn-monto" id="earn-monto-l">Monto que suscribiste (USDT)</label>
+          <input type="text" id="earn-monto" inputmode="decimal" autocomplete="off" placeholder="0,00">
+        </div>
+        <div class="wide" id="earn-rate-wrap" hidden>
+          <label for="earn-rate" id="earn-rate-l">Tasa</label>
+          <input type="text" id="earn-rate" inputmode="decimal" autocomplete="off">
+          <p class="hint" id="earn-conv" style="margin-top:6px"></p>
+        </div>
+        <div class="wide">
+          <label>Producto</label>
+          <div class="seg earn-seg" role="group" aria-label="Producto">
+            <button type="button" data-earn-p="0" aria-pressed="true">Flexible</button>
+            <button type="button" data-earn-p="30" aria-pressed="false">30 días</button>
+            <button type="button" data-earn-p="60" aria-pressed="false">60 días</button>
+            <button type="button" data-earn-p="90" aria-pressed="false">90 días</button>
+          </div>
+        </div>
+        <div class="wide">
+          <label for="earn-apr">Tasa anual que te muestra Binance (%)</label>
+          <input type="text" id="earn-apr" inputmode="decimal" autocomplete="off">
+        </div>
+      </div>
+      <div class="earn-prev" id="earn-prev"></div>
+      <p class="error" id="earn-err" role="alert"></p>
+      <button type="button" class="primary" id="earn-save">Guardar en mis ahorros</button>
+    </section>
+  </div>
   <div class="sheet-backdrop" id="lg-sheet" hidden>
     <section class="panel sheet" role="dialog" aria-modal="true" aria-labelledby="h-lg">
       <div class="sheet-head"><h2 id="h-lg"></h2><button type="button" class="del" id="lg-close" aria-label="Cerrar">✕</button></div>
@@ -1507,7 +1569,7 @@ body.view-accd .fab, body.view-accd .ai-fab { opacity: 0; pointer-events: none; 
   <div class="dial" id="dial" hidden>
     <div class="dial-menu" role="menu">
       <button type="button" class="dial-item" role="menuitem" data-dial="mov"><span>Nuevo movimiento</span><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5v14M5 12h14"></path></svg></span></button>
-      <button type="button" class="dial-item" role="menuitem" data-dial="ahorro"><span>Agregar ahorro</span><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12M7 10l5 5 5-5M4 21h16"></path></svg></span></button>
+      <button type="button" class="dial-item" role="menuitem" data-dial="ahorro"><span>Agregar ahorro</span><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 10c.8.3 1.5 1 1.8 2H22v3h-1.5c-.4.8-1 1.5-1.8 2V20h-3v-1.6c-.9.3-1.9.4-2.9.4-1 0-2-.1-2.8-.4V20h-3v-2.4C5 16.5 4 14.8 4 13c0-3.3 3.6-6 8-6 1 0 1.9.1 2.8.4L18 6v4z"></path><path d="M15.5 12h.01"></path><path d="M2 10.5c0 1 .7 1.8 1.6 2"></path></svg></span></button>
       <button type="button" class="dial-item" role="menuitem" data-dial="bn"><span>Ahorrar en Binance</span><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 17l6-6 4 4 8-8"></path><path d="M15 7h6v6"></path></svg></span></button>
       <button type="button" class="dial-item" role="menuitem" data-dial="calc"><span>Calculadora</span><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="2" width="14" height="20" rx="2"></rect><path d="M8 6h8M8 11h.01M12 11h.01M16 11h.01M8 15h.01M12 15h.01M16 15h.01M8 19h.01M12 19h.01M16 19h.01"></path></svg></span></button>
       <button type="button" class="dial-item" role="menuitem" data-dial="plantilla"><span>Plantilla</span><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13 2L4 14h7l-1 8 9-12h-7z"></path></svg></span></button>
@@ -1910,7 +1972,7 @@ body.view-accd .fab, body.view-accd .ai-fab { opacity: 0; pointer-events: none; 
   };
   var COLORS = ["#1f4fff", "#e08a00", "#0e9aa7", "#8a3ffc", "#e5133f", "#00a651", "#6b7b86", "#d6502b", "#9a7b00"];
 
-  var state = { items: [], rate: 0, disp: "USD", type: "gasto", month: "", sel: null, selIn: null, collapsed: {}, paySeries: [], rateHist: {}, rateHistAt: 0, theme: "auto", pin: null, backupAt: 0, onb: false, bn: { done: {}, apr: 5, hide: false, opened: {}, v: 2 }, templates: [], showAll: false, hideSav: false, rateManual: "", rateAutoAt: 0, rateLoading: false, rateFail: false, rateErr: "", accounts: [], rateEur: 0, rateEurDate: "", rateEurManual: "", rateUsdt: 0, rateUsdtDate: "", rateUsdtManual: "", rateUsdtSrc: "", goals: [], payments: [], lastAcc: null, rateDate: "", fsav: { on: false, pct: 10 }, sav: { on: false, pct: 10 } };
+  var state = { items: [], rate: 0, disp: "USD", type: "gasto", month: "", sel: null, selIn: null, collapsed: {}, paySeries: [], earn: [], rateHist: {}, rateHistAt: 0, theme: "auto", pin: null, backupAt: 0, onb: false, bn: { done: {}, apr: 5, hide: false, opened: {}, v: 2 }, templates: [], showAll: false, hideSav: false, rateManual: "", rateAutoAt: 0, rateLoading: false, rateFail: false, rateErr: "", accounts: [], rateEur: 0, rateEurDate: "", rateEurManual: "", rateUsdt: 0, rateUsdtDate: "", rateUsdtManual: "", rateUsdtSrc: "", goals: [], payments: [], lastAcc: null, rateDate: "", fsav: { on: false, pct: 10 }, sav: { on: false, pct: 10 } };
 
   function load() {
     try {
@@ -1928,6 +1990,7 @@ body.view-accd .fab, body.view-accd .ai-fab { opacity: 0; pointer-events: none; 
         if (d && Array.isArray(d.goals)) state.goals = d.goals;
         if (d && Array.isArray(d.payments)) state.payments = d.payments;
         if (d && Array.isArray(d.paySeries)) state.paySeries = d.paySeries;
+        if (d && Array.isArray(d.earn)) state.earn = d.earn;
         if (d && d.rateHist && typeof d.rateHist === "object") state.rateHist = d.rateHist;
         if (d && typeof d.rateHistAt === "number") state.rateHistAt = d.rateHistAt;
         if (d && (d.theme === "light" || d.theme === "dark")) state.theme = d.theme;
@@ -1951,7 +2014,7 @@ body.view-accd .fab, body.view-accd .ai-fab { opacity: 0; pointer-events: none; 
   }
   function save() {
     try {
-      localStorage.setItem(KEY, JSON.stringify({ items: state.items, rate: state.rate, rateDate: state.rateDate, hideSav: state.hideSav, rateManual: state.rateManual, rateAutoAt: state.rateAutoAt, accounts: state.accounts, templates: state.templates, goals: state.goals, payments: state.payments, paySeries: state.paySeries, rateHist: state.rateHist, rateHistAt: state.rateHistAt, theme: state.theme, pin: state.pin, backupAt: state.backupAt, onb: state.onb, bn: state.bn, btcUsd: state.btcUsd, btcAt: state.btcAt, rateEur: state.rateEur, rateEurDate: state.rateEurDate, rateEurManual: state.rateEurManual, rateUsdt: state.rateUsdt, rateUsdtDate: state.rateUsdtDate, rateUsdtManual: state.rateUsdtManual, rateUsdtSrc: state.rateUsdtSrc, collapsed: state.collapsed, disp: state.disp, sav: state.sav }));
+      localStorage.setItem(KEY, JSON.stringify({ items: state.items, rate: state.rate, rateDate: state.rateDate, hideSav: state.hideSav, rateManual: state.rateManual, rateAutoAt: state.rateAutoAt, accounts: state.accounts, templates: state.templates, goals: state.goals, payments: state.payments, paySeries: state.paySeries, earn: state.earn, rateHist: state.rateHist, rateHistAt: state.rateHistAt, theme: state.theme, pin: state.pin, backupAt: state.backupAt, onb: state.onb, bn: state.bn, btcUsd: state.btcUsd, btcAt: state.btcAt, rateEur: state.rateEur, rateEurDate: state.rateEurDate, rateEurManual: state.rateEurManual, rateUsdt: state.rateUsdt, rateUsdtDate: state.rateUsdtDate, rateUsdtManual: state.rateUsdtManual, rateUsdtSrc: state.rateUsdtSrc, collapsed: state.collapsed, disp: state.disp, sav: state.sav }));
     } catch (e) {}
   }
 
@@ -2591,7 +2654,7 @@ body.view-accd .fab, body.view-accd .ai-fab { opacity: 0; pointer-events: none; 
     { t: "Verificar tu identidad", d: "Binance te pide tu cédula o pasaporte y una selfie. Sin esto no puedes comprar." },
     { t: "Comprar USDT", d: "En P2P le compras a otra persona y pagas en bolívares por pago móvil o transferencia." },
     { t: "Mover a Earn", d: "En Simple Earn eliges Flexible (lo sacas cuando quieras) o Bloqueado (a plazo fijo, suele rendir más)." },
-    { t: "Anotarlo aquí", d: "Registra tu cuenta de Binance y tu ahorro para seguir viendo cuánto llevas." }
+    { t: "Anotarlo aquí", d: "Registra lo que suscribiste en Earn. Aparece en tus Ahorros con lo que vas ganando." }
   ];
   var bnHideNow = false; // la ✕ solo oculta la tarjeta hasta que se vuelva a abrir la app
   function bnAccount() { return state.accounts.filter(function (a) { return /binance/i.test(a.nombre); })[0] || null; }
@@ -2630,7 +2693,7 @@ body.view-accd .fab, body.view-accd .ai-fab { opacity: 0; pointer-events: none; 
          '<label class="bn-rate" for="bn-apr">Tasa anual: <input type="text" id="bn-apr" inputmode="decimal" autocomplete="off" value="' + fmtIn(state.bn.apr) + '"> %</label>' +
          '<div class="l">Viene con una tasa promedio de referencia. Cámbiala por la que veas en Binance: la real cambia seguido y no está garantizada.</div></div>' +
          '<div class="bn-btns">' + bnLink(BN_LINKS.earn, "Abrir Simple Earn", "pri", 4) + "</div>",
-      5: '<div class="bn-btns"><button type="button" class="bn-btn pri" data-bn-acc>' + (acc ? "Agregar ahorro en " + esc(acc.nombre) : "Agregar cuenta Binance") + "</button></div>"
+      5: '<div class="bn-btns"><button type="button" class="bn-btn pri" data-bn-earn>Registrar mi ahorro en Earn</button></div>'
     };
     var keepApr = document.activeElement && document.activeElement.id === "bn-apr";
     var h = BN_STEPS.map(function (s, k) {
@@ -3276,8 +3339,8 @@ body.view-accd .fab, body.view-accd .ai-fab { opacity: 0; pointer-events: none; 
         '<svg class="acc-chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 5l7 7-7 7"></path></svg></button></li>';
     }).join("");
     var sum = $("acc-sum");
-    sum.hidden = !state.accounts.length;
-    if (state.accounts.length) {
+    sum.hidden = true;
+    if (false) {
       sum.innerHTML = '<div><span class="l">Saldo total en tus cuentas</span><strong class="fit">' + money(tot, D) + (miss ? "*" : "") + "</strong></div>" +
         '<span class="acc-n">' + state.accounts.length + (state.accounts.length === 1 ? " cuenta" : " cuentas") + "</span>";
     }
@@ -3295,9 +3358,30 @@ body.view-accd .fab, body.view-accd .ai-fab { opacity: 0; pointer-events: none; 
       return '<div class="bk"><div class="l">Ahorros en ' + esc(r[0]) + '</div><div class="v fit">' + mask(moneyH(r[1], r[2], 1)) + "</div></div>";
     }).join("") : '<p class="empty" style="grid-column:1/-1">Aún no tienes ahorros. Actívalos al registrar un ingreso.</p>';
     $("sav-hint").textContent = "Al registrar un ingreso decides si ahorrar y cuánto. El ahorro queda en la cuenta del ingreso.";
+    renderEarn();
     renderEye();
   }
 
+  function earnGain(e, at) {
+    var end = at || today(), days = Math.max(0, Math.round((Date.parse(end) - Date.parse(e.fecha)) / 86400000));
+    if (e.plazo) days = Math.min(days, e.plazo);
+    return { days: days, gain: e.monto * (Math.pow(1 + e.apr / 100 / 365, days) - 1) };
+  }
+  function renderEarn() {
+    var box = $("earn-box");
+    if (!box) return;
+    var list = (state.earn || []).filter(function (e) { return accById(e.cuenta); });
+    box.hidden = !list.length;
+    box.innerHTML = list.map(function (e) {
+      var g = earnGain(e), end = e.plazo ? addDaysIso(e.fecha, e.plazo) : null, done = end && end <= today();
+      var fin = e.plazo ? e.monto * (Math.pow(1 + e.apr / 100 / 365, e.plazo) - 1) : null;
+      return '<div class="earn-card"><div class="row"><span class="tag">Binance Earn · ' + (e.plazo ? e.plazo + " días" : "Flexible") + '</span><span class="muted">' + num(e.apr) + "% anual</span></div>" +
+        '<div class="row"><div><div class="muted">Suscrito</div><div class="big">' + mask(money(e.monto, "USDT")) + '</div></div><div style="text-align:right"><div class="muted">Ganado aprox.</div><div class="gain">' + mask("+" + money(g.gain, "USDT")) + "</div></div></div>" +
+        (e.plazo ? '<div class="bar"><i style="width:' + Math.min(100, g.days / e.plazo * 100).toFixed(1) + '%"></i></div><div class="row muted"><span>Día ' + g.days + " de " + e.plazo + "</span><span>" + (done ? "Venció el " + shortDate(end) : "Vence el " + shortDate(end) + " · +" + money(fin, "USDT")) + "</span></div>"
+          : '<div class="muted">Desde el ' + shortDate(e.fecha) + " · " + g.days + (g.days === 1 ? " día" : " días") + ". Puedes sacarlo cuando quieras.</div>") +
+        '<div class="acts"><button type="button" data-earn-end="' + e.id + '">' + (done || !e.plazo ? "Ya lo retiré" : "Retiré antes") + '</button><button type="button" data-earn-apr="' + e.id + '">Cambiar tasa</button></div></div>';
+    }).join("");
+  }
   function setPressed(selector, attr, value) {
     document.querySelectorAll(selector).forEach(function (btn) {
       btn.setAttribute("aria-pressed", btn.getAttribute(attr) === value ? "true" : "false");
@@ -3652,6 +3736,7 @@ body.view-accd .fab, body.view-accd .ai-fab { opacity: 0; pointer-events: none; 
       if (!$("dial").hidden) closeDial();
       else if (!$("cf-sheet").hidden) closeCf();
       else if (!$("rh-sheet").hidden) closeRh();
+      else if (!$("earn-sheet").hidden) closeEarn();
       else if (!$("lg-sheet").hidden) closeLg();
       else if (!$("pg-sheet").hidden) closePg();
       else if (!$("gm-sheet").hidden) closeGm();
@@ -4452,6 +4537,94 @@ body.view-accd .fab, body.view-accd .ai-fab { opacity: 0; pointer-events: none; 
     $("bk-nudge-x").addEventListener("click", function () { nudgeOff = true; renderNudge(); showToast("Te lo recordaremos la próxima vez que abras la app."); });
     window.__nudge = renderNudge;
     renderNudge();
+    /* ---------- Binance Earn ---------- */
+    var earnP = 0;
+    function binanceAcc() { return state.accounts.filter(function (a) { return a.moneda === "USDT" && /binance/i.test(a.nombre); })[0] || state.accounts.filter(function (a) { return a.moneda === "USDT"; })[0] || null; }
+    function earnSrc() { var v = $("earn-from").value; return v === "new" ? null : accById(v); }
+    function renderEarnForm() {
+      setPressed("[data-earn-p]", "data-earn-p", String(earnP));
+      var a = earnSrc(), cur = a ? a.moneda : "USDT", need = cur !== "USDT";
+      $("earn-rate-wrap").hidden = !need;
+      if (need) {
+        var info = trRateInfo(cur, "USDT");
+        $("earn-rate-l").textContent = info.label;
+        if ($("earn-rate")._pair !== cur) { $("earn-rate").value = info.def > 0 ? fmtIn(Math.round(info.def * 10000) / 10000) : ""; $("earn-rate")._pair = cur; }
+      }
+      $("earn-monto-l").textContent = need ? "Monto que sale de " + a.nombre + " (" + curLabel(cur) + ")" : "Monto que suscribiste (USDT)";
+      var v = parseNum($("earn-monto").value), r = parseNum($("earn-rate").value), apr = parseNum($("earn-apr").value);
+      var usdt = !(v > 0) ? 0 : need ? (r > 0 ? mvOut(v, cur, "USDT", r) : 0) : v;
+      $("earn-conv").textContent = need && usdt > 0 ? "Llegan " + money(usdt, "USDT") + " a Binance." : "";
+      if (usdt > 0 && apr > 0) {
+        var days = earnP || 30, g = usdt * (Math.pow(1 + apr / 100 / 365, days) - 1), y = usdt * (Math.pow(1 + apr / 100 / 365, 365) - 1);
+        $("earn-prev").innerHTML = '<div class="bn-est"><div class="l">Con ' + money(usdt, "USDT") + " al " + num(apr) + '% anual ganarías aprox.</div><div class="cols"><div><div class="l">' + (earnP ? "En " + earnP + " días" : "En un mes") + '</div><div class="v">+' + money(g, "USDT") + '</div></div><div><div class="l">En un año</div><div class="v">+' + money(y, "USDT") + "</div></div></div></div>";
+      } else $("earn-prev").innerHTML = "";
+    }
+    function openEarn() {
+      var bin = binanceAcc();
+      var opts = state.accounts.map(function (a) { return '<option value="' + a.id + '">' + esc(a.nombre) + " · " + money(accBalance(a), a.moneda) + "</option>"; });
+      if (!bin) opts.unshift('<option value="new">Ya estaba en Binance (crear cuenta Binance en USDT)</option>');
+      $("earn-from").innerHTML = opts.join("");
+      $("earn-from").value = bin ? bin.id : "new";
+      $("earn-monto").value = ""; $("earn-rate").value = ""; $("earn-rate")._pair = "";
+      $("earn-apr").value = fmtIn(state.bn && state.bn.apr ? state.bn.apr : 5);
+      $("earn-err").textContent = "";
+      earnP = 0;
+      renderEarnForm();
+      $("earn-sheet").hidden = false;
+      $("earn-monto").focus();
+    }
+    function closeEarn() { $("earn-sheet").hidden = true; }
+    $("earn-add").addEventListener("click", openEarn);
+    $("earn-close").addEventListener("click", closeEarn);
+    $("earn-sheet").addEventListener("click", function (e) { if (e.target === $("earn-sheet")) closeEarn(); });
+    ["earn-from", "earn-monto", "earn-rate", "earn-apr"].forEach(function (id) { $(id).addEventListener(id === "earn-from" ? "change" : "input", renderEarnForm); });
+    document.querySelectorAll("[data-earn-p]").forEach(function (b) { b.addEventListener("click", function () { earnP = Number(b.getAttribute("data-earn-p")); renderEarnForm(); }); });
+    $("earn-save").addEventListener("click", function () {
+      var err = $("earn-err"), a = earnSrc(), cur = a ? a.moneda : "USDT", v = parseNum($("earn-monto").value), r = parseNum($("earn-rate").value), apr = parseNum($("earn-apr").value);
+      if (!(v > 0)) { err.textContent = "Escribe el monto."; $("earn-monto").focus(); return; }
+      if (cur !== "USDT" && !(r > 0)) { err.textContent = "Escribe la tasa a la que cambiaste a USDT."; $("earn-rate").focus(); return; }
+      if (!(apr > 0) || apr > 200) { err.textContent = "Escribe la tasa anual que te muestra Binance, por ejemplo 5."; $("earn-apr").focus(); return; }
+      var bin = binanceAcc();
+      if (!bin) { bin = { id: Date.now(), nombre: "Binance", moneda: "USDT" }; state.accounts.push(bin); }
+      var usdt = cur === "USDT" ? v : mvOut(v, cur, "USDT", r), base = Date.now(), t = today();
+      if (a && String(a.id) !== String(bin.id)) {
+        state.items.push({ id: base, tipo: "traspaso", fecha: t, cat: "Transferencia entre cuentas", moneda: a.moneda, monto: v,
+          nota: a.nombre + " → " + bin.nombre + (cur !== "USDT" ? " · tasa " + num(r, r < 10 ? 4 : 2) : ""), tasa: cur !== "USDT" ? r : undefined,
+          desde: { k: "cuenta", id: a.id, moneda: a.moneda, monto: v }, hacia: { k: "cuenta", id: bin.id, moneda: "USDT", monto: usdt } });
+      }
+      state.items.push({ id: base + 1, tipo: "ahorro", monto: usdt, moneda: "USDT", cuenta: bin.id, cat: "Binance Earn", fecha: t, nota: "Binance Earn · " + (earnP ? earnP + " días" : "Flexible") + " · " + num(apr) + "%" });
+      state.earn.push({ id: base + 2, cuenta: bin.id, monto: usdt, apr: apr, plazo: earnP, fecha: t, ahorroId: base + 1 });
+      if (state.bn) { state.bn.done[5] = true; state.bn.done[4] = true; }
+      state.month = t.slice(0, 7); $("mes").value = state.month;
+      save(); render(); closeEarn();
+      showToast("Guardado en tus ahorros: " + money(usdt, "USDT") + " en Binance Earn.");
+    });
+    $("earn-box").addEventListener("click", function (e) {
+      var b = e.target.closest("[data-earn-end]"), c = e.target.closest("[data-earn-apr]");
+      if (c) {
+        var ec = state.earn.filter(function (x) { return String(x.id) === c.getAttribute("data-earn-apr"); })[0];
+        if (!ec) return;
+        openCf({ title: "Cambiar la tasa", text: "Binance cambia la tasa del producto flexible casi a diario. Para usar otra, registra de nuevo el ahorro con la tasa nueva o cambia la tasa en la guía de Binance. La tasa actual es " + num(ec.apr) + "%.", btn: "Entendido", ok: function () {} });
+        return;
+      }
+      if (!b) return;
+      var e0 = state.earn.filter(function (x) { return String(x.id) === b.getAttribute("data-earn-end"); })[0];
+      if (!e0) return;
+      var g = earnGain(e0), early = e0.plazo && g.days < e0.plazo, gain = early ? 0 : Math.round(g.gain * 100) / 100;
+      openCf({
+        title: "¿Ya lo retiraste de Earn?",
+        text: "Se devuelven " + money(e0.monto, "USDT") + " a lo disponible en tu cuenta de Binance" + (gain > 0 ? " y se registra un ingreso de " + money(gain, "USDT") + " por el rendimiento estimado. Si Binance te pagó otra cifra, edita ese ingreso en el Historial." : early ? ". Como lo retiraste antes del plazo, no se registra rendimiento." : "."),
+        btn: "Sí, ya lo retiré",
+        ok: function () {
+          var t = today(), id = Date.now();
+          state.items.push({ id: id, tipo: "retiro", monto: e0.monto, moneda: "USDT", cuenta: e0.cuenta, cat: "Binance Earn", fecha: t, nota: "Retiro de Binance Earn" });
+          if (gain > 0) state.items.push({ id: id + 1, tipo: "ingreso", monto: gain, moneda: "USDT", cuenta: e0.cuenta, cat: CATS.ingreso.indexOf("Otros ingresos") >= 0 ? "Otros ingresos" : CATS.ingreso[CATS.ingreso.length - 1], fecha: t, nota: "Rendimiento Binance Earn" });
+          state.earn = state.earn.filter(function (x) { return x !== e0; });
+          save(); render();
+          showToast("Listo, el dinero volvió a tu cuenta de Binance.");
+        }
+      });
+    });
     /* ---------- Asistente financiero (IA) ---------- */
     var AI_KINDS = { warn: "Atención", tip: "Consejo", good: "Bien hecho", info: "Dato" };
     function renderAiKeyState() {
@@ -5097,6 +5270,7 @@ body.view-accd .fab, body.view-accd .ai-fab { opacity: 0; pointer-events: none; 
       var b = e.target.closest("[data-bn-toggle]");
       if (b) { var k = b.getAttribute("data-bn-toggle"); state.bn.done[k] = !state.bn.done[k]; save(); renderBn(); renderBnEntry(); return; }
       if (e.target.closest("[data-bn-have]")) { state.bn.done[1] = true; state.bn.done[2] = true; save(); renderBn(); renderBnEntry(); showToast("Perfecto, sigue con el paso 3."); return; }
+      if (e.target.closest("[data-bn-earn]")) { openEarn(); return; }
       if (e.target.closest("[data-bn-acc]")) {
         var ex = bnAccount();
         if (ex) { openSv(); return; }
