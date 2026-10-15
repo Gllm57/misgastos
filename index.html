@@ -1421,7 +1421,6 @@ main > .panel::before, main > .panel::after, .bal-hero::before, .bal-hero::after
 .top .rate-card { background: none !important; border: 0 !important; border-radius: 0 !important; box-shadow: none !important; padding: 0 12px !important; border-left: 1px solid var(--line) !important; }
 .top .rate-card:first-child { border-left: 0 !important; padding-left: 0 !important; }
 .top .rate-card::after { display: none !important; }
-.top .rate-card .rc-ic { display: none; }
 .top .rate-card label { color: var(--muted); font-size: 0.74rem; }
 .top .rate-card input[readonly] { font-size: 1.05rem !important; }
 .top .rates { padding-bottom: 16px; border-bottom: 1px solid var(--line); }
@@ -1559,6 +1558,75 @@ main > .panel::before, main > .panel::after, .bal-hero::before, .bal-hero::after
 .ad-stats div:first-child { border-left: 0 !important; padding-left: 0 !important; }
 .ad-av .acc-av, .ad-title .acc-av { border-radius: 50% !important; }
 .danger, .secondary.danger, #ad-del { border: 0 !important; background: color-mix(in srgb, var(--out) 10%, transparent) !important; border-radius: 999px !important; }
+/* Barra inferior, + y asistente con el estilo A */
+.tabbar { background: color-mix(in srgb, var(--surface) 86%, transparent) !important; border: 1px solid var(--line) !important; box-shadow: 0 8px 24px color-mix(in srgb, #000 18%, transparent) !important; -webkit-backdrop-filter: blur(20px) !important; backdrop-filter: blur(20px) !important; }
+.tabbar::before { display: none !important; }
+.tab-lens { background: color-mix(in srgb, var(--accent) 13%, transparent) !important; box-shadow: none !important; }
+.tab { font-weight: 600; letter-spacing: 0; }
+.tab svg { width: 21px; height: 21px; stroke-width: 1.8; }
+.fab { background: var(--accent) !important; box-shadow: 0 6px 16px color-mix(in srgb, var(--accent) 30%, transparent) !important; font-weight: 300; border: 0 !important; }
+.ai-fab { background: var(--surface) !important; color: var(--accent) !important; border: 1px solid var(--line) !important; box-shadow: 0 6px 16px color-mix(in srgb, #000 16%, transparent) !important; }
+.ai-fab::before, .ai-fab::after { display: none !important; }
+.dial-item { background: var(--surface) !important; border: 1px solid var(--line) !important; box-shadow: 0 8px 20px color-mix(in srgb, #000 18%, transparent) !important; font-weight: 600; }
+.dial-item .ic { background: var(--fill) !important; color: var(--accent) !important; box-shadow: none !important; }
+/* Asistente */
+.ai-stat { background: none !important; border-radius: 0 !important; padding: 0 10px !important; border-left: 1px solid var(--line); }
+.ai-stat:first-child { border-left: 0; padding-left: 0 !important; }
+.ai-stat .v { font-size: 1.15rem; letter-spacing: -0.02em; }
+.ai-list { gap: 0 !important; }
+.ai-card { background: none !important; border: 0 !important; border-radius: 0 !important; padding: 12px 0 12px 18px !important; position: relative; border-top: 1px solid var(--line) !important; }
+.ai-card:first-child { border-top: 0 !important; }
+.ai-card::before { content: ""; position: absolute; left: 0; top: 17px; width: 8px; height: 8px; border-radius: 50%; background: var(--muted); }
+.ai-card.k-warn::before { background: var(--out); } .ai-card.k-tip::before { background: var(--accent); } .ai-card.k-good::before { background: var(--in); }
+/* Historial · Por categoría */
+.hist-cat-sum { display: flex !important; align-items: center; gap: 16px; background: none !important; border: 0 !important; border-radius: 0 !important; padding: 4px 0 16px !important; box-shadow: none !important; border-bottom: 1px solid var(--line) !important; margin-bottom: 8px; }
+.hist-cat-sum[hidden] { display: none !important; }
+.hcs-ring { position: relative; flex: none; width: 92px; height: 92px; }
+.hcs-ring span { position: absolute; inset: 0; display: grid; place-items: center; font-weight: 700; font-size: 1.05rem; letter-spacing: -0.02em; }
+.hcs-main { min-width: 0; flex: 1; }
+.hist-cat-sum .l { font-size: 0.8rem; font-weight: 700; color: var(--c) !important; }
+.hist-cat-sum .v { color: var(--ink) !important; font-size: 2.2rem !important; letter-spacing: -0.045em; line-height: 1.05 !important; }
+.hist-cat-sum .s { font-size: 0.8rem !important; }
+.hist-cats button { background: var(--fill) !important; border: 0 !important; }
+.hist-cats button[aria-pressed="true"] { background: var(--c) !important; }
+/* Calculadora */
+.calc-box, .cx-in, .cx-card { background: none !important; border: 0 !important; box-shadow: none !important; }
+.calc-swap { border: 0 !important; background: var(--fill) !important; }
+.calc-cur { background: var(--fill) !important; border: 0 !important; }
+.calc-seg button { border: 0 !important; }
+/* Binance */
+.bn-prog, .bn-steps { background: none !important; border: 0 !important; box-shadow: none !important; border-radius: 0 !important; padding-left: 0 !important; padding-right: 0 !important; }
+.bn-prog { border-bottom: 1px solid var(--line) !important; padding-bottom: 16px !important; margin-bottom: 4px; }
+.bn-step { padding-left: 0 !important; padding-right: 0 !important; grid-template-columns: 40px 1fr !important; }
+.bn-dot { border: 0 !important; background: var(--fill) !important; }
+.bn-step.now .bn-dot { background: color-mix(in srgb, var(--accent) 16%, transparent) !important; }
+.bn-step.ok .bn-dot { background: var(--in) !important; }
+.bn-pct { background: var(--fill) !important; }
+.bn-btn { border: 0 !important; border-radius: 999px !important; background: var(--fill); }
+.bn-btn.pri { background: var(--accent) !important; }
+.bn-btn.gold { background: #f0b90b !important; }
+.bn-pin { background: none !important; border: 0 !important; border-top: 1px solid var(--line) !important; border-radius: 0 !important; padding: 16px 0 !important; box-shadow: none !important; }
+.bn-entry { background: color-mix(in srgb, var(--g) 7%, var(--surface)) !important; border: 0 !important; border-radius: 22px !important; }
+.earn-box, .earn-card { border-radius: 22px !important; }
+.earn-add { border-style: solid !important; border-color: var(--line) !important; background: none !important; border-radius: 999px !important; }
+.cx-in { border: 0 !important; background: none !important; padding: 6px 0 14px !important; border-bottom: 1px solid var(--line) !important; border-radius: 0 !important; box-shadow: none !important; }
+.sheet .cx-amt, .cx-amt { background: none !important; border-radius: 0 !important; box-shadow: none !important; padding: 0 !important; font-size: 2.6rem !important; letter-spacing: -0.045em; }
+.cx-srcs button { border: 0 !important; background: var(--fill) !important; }
+.cx-srcs button[aria-pressed="true"] { background: var(--ink) !important; color: var(--bg) !important; }
+.cx-list { border: 0 !important; border-radius: 0 !important; }
+.cx-row { padding-left: 0 !important; padding-right: 0 !important; background: none !important; }
+.sheet input#cx-amt { background: none !important; padding: 0 !important; border-radius: 0 !important; box-shadow: none !important; }
+.ai-score { background: none !important; border: 0 !important; box-shadow: none !important; padding: 4px 0 14px !important; border-radius: 0 !important; border-bottom: 1px solid var(--line) !important; }
+.ai-score::before, .ai-score::after { display: none !important; }
+.ai-items { background: none !important; border-radius: 0 !important; }
+.ai-item { padding-left: 0 !important; padding-right: 0 !important; }
+.ai-item .b { border-radius: 50% !important; }
+.ai-grp-h { margin-left: 0 !important; }
+.ai-grp-h i { border: 0 !important; background: var(--fill) !important; }
+.ai-quick button { border: 0 !important; background: var(--fill) !important; border-radius: 999px !important; box-shadow: none !important; }
+.ai-cloud { background: none !important; border: 0 !important; border-top: 1px solid var(--line) !important; border-radius: 0 !important; padding: 16px 0 0 !important; }
+.ai-spark { border-radius: 50% !important; background: var(--fill) !important; color: var(--accent) !important; }
+.ai-month .cal-nav, .ai-month button { border: 0 !important; background: var(--fill) !important; }
 </style>
 </head>
 <body>
@@ -2722,6 +2790,17 @@ main > .panel::before, main > .panel::after, .bal-hero::before, .bal-hero::after
       wrap.addEventListener("pointerup", function (e) { if (e.pointerType !== "mouse") setTimeout(end, 1200); });
     }
   }
+  var CAT_TIPS = {
+    "Alimentación": "Planifica un menú semanal y compra con lista: cocinar en casa suele recortar bastante.",
+    "Vivienda": "Revisa si puedes renegociar o repartir algún gasto fijo.",
+    "Transporte": "Agrupa tus traslados y compara opciones más económicas.",
+    "Servicios": "Revisa suscripciones y servicios que casi no usas.",
+    "Salud": "Compara precios de medicinas y guarda un fondo para imprevistos.",
+    "Educación": "Busca alternativas gratuitas o pagos por cuotas.",
+    "Ocio": "Ponte un tope semanal para salidas y compras por impulso.",
+    "Negocio": "Compara proveedores y evita compras que no rotan.",
+    "Otros": "Asígnale categoría a lo que está en «Otros» para entender mejor en qué gastas."
+  };
   function prevMonth(m) {
     var p = m.split("-"), d = new Date(Number(p[0]), Number(p[1]) - 2, 1);
     return d.getFullYear() + "-" + pad2(d.getMonth() + 1);
@@ -3373,10 +3452,9 @@ main > .panel::before, main > .panel::after, .bal-hero::before, .bal-hero::after
       }
       var tv = byC[hist.c] || 0, n = cnt[hist.c] || 0, base = totT[isIn ? "ingreso" : "gasto"];
       var pct = base > 0 ? Math.round(tv / base * 100) : 0;
-      var sh = '<div class="l">' + (isIn ? "Recibiste en " : "Gastaste en ") + esc(hist.c) + " en " + MESES[Number(mp[1]) - 1].toLowerCase() + '</div>' +
+      var sh = '<div class="hcs-ring">' + ringsSvg([{ p: base > 0 ? tv / base : 0, c: colOf(hist.c) }], 92, 11, 0) + '<span>' + pct + '%</span></div><div class="hcs-main"><div class="l">' + (isIn ? "Recibiste en " : "Gastaste en ") + esc(hist.c) + '</div>' +
         '<div class="v fit">' + moneyH(tv, D) + '</div>' +
-        '<div class="s">' + (n ? n + (n === 1 ? " movimiento" : " movimientos") + " · " + pct + "% de tus " + (isIn ? "ingresos" : "gastos") + " del mes" : "Sin movimientos en esta categoría este mes") + "</div>" +
-        '<div class="bar"><i style="width:' + pct + '%"></i></div>';
+        '<div class="s">' + (n ? n + (n === 1 ? " movimiento" : " movimientos") + " · " + pct + "% de tus " + (isIn ? "ingresos" : "gastos") + " del mes" : "Sin movimientos en esta categoría este mes") + "</div></div>";
       sumEl.style.setProperty("--c", colOf(hist.c));
       if (sumEl._h !== sh) { sumEl.innerHTML = sh; sumEl._h = sh; }
     }
