@@ -1329,6 +1329,18 @@ body.view-accd .fab, body.view-accd .ai-fab { opacity: 0; pointer-events: none; 
 .trend-cap .proj.none i { display: none; }
 .trend-cap b { color: var(--ink); font-variant-numeric: tabular-nums; }
 .trend-cap .proj.neg b { color: var(--out); }
+/* Ingresos y gastos del mes: categoría, porcentaje y monto */
+.cv-sec + .cv-sec { margin-top: 22px; padding-top: 18px; border-top: 1px solid var(--line); }
+.cv-sh { display: flex; justify-content: space-between; align-items: baseline; gap: 10px; margin-bottom: 10px; }
+.cv-st { display: inline-flex; align-items: center; gap: 8px; font-family: var(--display); font-weight: 700; font-size: 1rem; }
+.cv-st i { width: 8px; height: 8px; border-radius: 50%; background: var(--out); }
+.cv-sec.in .cv-st i { background: var(--in); }
+.cv-sh b { font-family: var(--display); font-size: 1.15rem; font-variant-numeric: tabular-nums; }
+.cv-row { grid-template-columns: auto minmax(0, 1fr) auto auto; padding: 11px 4px; }
+.cv-pct { font-size: 0.8rem; font-weight: 600; color: var(--muted); font-variant-numeric: tabular-nums; min-width: 38px; text-align: right; }
+.cv-amt b { font-size: 0.98rem; }
+.cv-bar { grid-column: 2 / 5; }
+.cv-ic { width: 32px; height: 32px; border-radius: 10px; font-size: 0.85rem; }
 @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation: none !important; transition: none !important; scroll-behavior: auto !important; } }
 </style>
 </head>
@@ -1431,10 +1443,6 @@ body.view-accd .fab, body.view-accd .ai-fab { opacity: 0; pointer-events: none; 
   <section class="panel collapsible" data-panel="cat" aria-labelledby="h-cat">
     <div class="phead"><h2 id="h-cat">Ingresos y gastos del mes</h2><button type="button" class="chev" aria-expanded="true" aria-controls="b-cat" aria-label="Minimizar Ingresos y gastos del mes"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 15l6-6 6 6"></path></svg></button></div>
     <div class="cbody" id="b-cat"><div class="cbody-in">
-    <div class="seg cv-seg" role="group" aria-label="Ver gastos o ingresos">
-      <button type="button" data-cv="gasto" aria-pressed="true">Gastos</button>
-      <button type="button" data-cv="ingreso" aria-pressed="false">Ingresos</button>
-    </div>
     <div id="cv"></div>
     <div class="donuts" hidden>
       <div class="dcol">
@@ -2108,9 +2116,9 @@ body.view-accd .fab, body.view-accd .ai-fab { opacity: 0; pointer-events: none; 
           <select id="acc-moneda"><option value="VES">Bolívares (Bs)</option><option value="USD">Dólares ($)</option><option value="USDT">USDT (Tether)</option><option value="EUR">Euros (€)</option></select>
         </div>
         <div class="wide" id="acc-saldo-wrap" style="display:none">
-          <label for="acc-saldo">Saldo actual de la cuenta</label>
+          <label for="acc-saldo" id="acc-saldo-l">Saldo actual de la cuenta</label>
           <input type="text" id="acc-saldo" inputmode="decimal" autocomplete="off" placeholder="0,00">
-          <p class="hint" style="margin-top:6px">Cámbialo si no coincide con lo que realmente tienes. Tus movimientos no se borran.</p>
+          <p id="acc-saldo-hint" class="hint" style="margin-top:6px">Cámbialo si no coincide con lo que realmente tienes. Tus movimientos no se borran.</p>
         </div>
       </div>
       <p class="error" id="acc-err" role="alert"></p>
@@ -3263,40 +3271,25 @@ body.view-accd .fab, body.view-accd .ai-fab { opacity: 0; pointer-events: none; 
     });
     return { by: by, n: n, tot: tot };
   }
+  function cvSection(tipo) {
+    var D = state.disp, isOut = tipo === "gasto", m = state.month, cur = cvData(m, tipo), mName = MESES[Number(m.slice(5, 7)) - 1];
+    var cats = Object.keys(cur.by).sort(function (a, b) { return cur.by[b] - cur.by[a]; });
+    var col = function (c) { return isOut ? colorFor(c) : colorForIn(c); };
+    var h = '<section class="cv-sec ' + (isOut ? "out" : "in") + '"><div class="cv-sh"><span class="cv-st"><i></i>' + (isOut ? "En qué se va el dinero" : "De dónde viene el dinero") + '</span><b>' + (cats.length ? money(cur.tot, D) : "") + "</b></div>";
+    if (!cats.length) return h + '<p class="cv-empty">' + (isOut ? "Aún no hay gastos en " + mName + "." : "Aún no hay ingresos en " + mName + ".") + "</p></section>";
+    h += '<div class="cv-stack" aria-hidden="true">' + cats.map(function (c) { return '<span style="flex:' + cur.by[c].toFixed(4) + " 1 0;background:" + col(c) + '"></span>'; }).join("") + "</div>";
+    h += '<ul class="cv-list">' + cats.map(function (c) {
+      var v = cur.by[c], pct = v / cur.tot * 100;
+      return '<li><button type="button" class="cv-row" data-cv-cat="' + esc(c) + '" style="--c:' + col(c) + '" aria-label="Ver los movimientos de ' + esc(c) + '">' +
+        '<span class="cv-ic">' + esc(c.charAt(0)) + '</span><span class="cv-mid"><b>' + esc(c) + '</b></span><span class="cv-pct">' + (pct < 1 ? "<1" : Math.round(pct)) + '%</span><span class="cv-amt"><b>' + money(v, D) + "</b></span>" +
+        '<span class="cv-bar"><i style="width:' + Math.max(pct, 1).toFixed(1) + '%"></i></span></button></li>';
+    }).join("") + "</ul></section>";
+    return h;
+  }
   function renderCv() {
     var w = $("cv");
     if (!w) return;
-    var D = state.disp, isOut = cvView === "gasto", m = state.month, pm = prevMonth(m);
-    var cur = cvData(m, cvView), prev = cvData(pm, cvView);
-    var mName = MESES[Number(m.slice(5, 7)) - 1], pName = MESES[Number(pm.slice(5, 7)) - 1];
-    setPressed("[data-cv]", "data-cv", cvView);
-    var cats = Object.keys(cur.by).sort(function (a, b) { return cur.by[b] - cur.by[a]; });
-    if (!cats.length) {
-      w.innerHTML = '<p class="cv-empty">' + (isOut ? "Aún no hay gastos en " + mName + ". Cuando registres uno, aquí verás en qué se va tu dinero." : "Aún no hay ingresos en " + mName + ". Cuando registres uno, aquí verás de dónde viene tu dinero.") + "</p>";
-      return;
-    }
-    var col = function (c) { return isOut ? colorFor(c) : colorForIn(c); };
-    var dTxt = "", dCls = "";
-    if (prev.tot > 0) {
-      var dp = (cur.tot - prev.tot) / prev.tot * 100, up = dp >= 0;
-      dCls = Math.abs(dp) < 0.5 ? "" : (isOut ? (up ? "bad" : "good") : (up ? "good" : "bad"));
-      dTxt = (Math.abs(dp) < 0.5 ? "Igual que" : (up ? "▲ " : "▼ ") + Math.round(Math.abs(dp)) + "% vs") + " " + pName + " (" + money(prev.tot, D) + ")";
-    } else dTxt = "Sin datos de " + pName + " para comparar";
-    var head = '<div class="cv-head"><div><div class="cv-l">' + (isOut ? "Gastaste en " : "Recibiste en ") + mName + '</div><div class="cv-v fit">' + money(cur.tot, D) + '</div></div><span class="cv-d ' + dCls + '">' + dTxt + "</span></div>" +
-      '<div class="cv-stack" aria-hidden="true">' + cats.map(function (c) { return '<span style="flex:' + cur.by[c].toFixed(4) + " 1 0;background:" + col(c) + '"></span>'; }).join("") + "</div>";
-    var rows = cats.map(function (c) {
-      var v = cur.by[c], pct = v / cur.tot * 100, pv = prev.by[c] || 0, delta = "";
-      if (pv > 0) {
-        var dp = (v - pv) / pv * 100, up = dp >= 0, cls = Math.abs(dp) < 0.5 ? "" : (isOut ? (up ? "bad" : "good") : (up ? "good" : "bad"));
-        delta = ' · <span class="' + cls + '">' + (Math.abs(dp) < 0.5 ? "igual" : (up ? "▲ " : "▼ ") + Math.round(Math.abs(dp)) + "%") + "</span>";
-      } else if (prev.tot > 0) delta = ' · <span class="new">nuevo</span>';
-      return '<li><button type="button" class="cv-row" data-cv-cat="' + esc(c) + '" style="--c:' + col(c) + '" aria-label="Ver los movimientos de ' + esc(c) + '">' +
-        '<span class="cv-ic">' + esc(c.charAt(0)) + '</span><span class="cv-mid"><b>' + esc(c) + "</b><small>" + cur.n[c] + (cur.n[c] === 1 ? " movimiento" : " movimientos") + delta + "</small></span>" +
-        '<span class="cv-amt"><b>' + money(v, D) + "</b><small>" + (pct < 1 ? "<1" : Math.round(pct)) + '%</small></span><span class="cv-bar"><i style="width:' + Math.max(pct, 1).toFixed(1) + '%"></i></span></button></li>';
-    }).join("");
-    var top = cats[0];
-    var tip = isOut && cats.length > 1 ? '<p class="cv-tip">Tu mayor gasto es <b>' + esc(top) + "</b> (" + Math.round(cur.by[top] / cur.tot * 100) + "%). Toca una categoría para ver sus movimientos.</p>" : '<p class="cv-tip">Toca una categoría para ver sus movimientos.</p>';
-    var html = head + '<ul class="cv-list">' + rows + "</ul>" + tip;
+    var html = cvSection("gasto") + cvSection("ingreso");
     if (w._h !== html) { w.innerHTML = html; w._h = html; }
   }
   function render() {
@@ -3838,7 +3831,7 @@ body.view-accd .fab, body.view-accd .ai-fab { opacity: 0; pointer-events: none; 
       $("mv-err").textContent = "";
       fillMvFrom();
       $("mv-sheet").hidden = false;
-      $("mv-monto").focus();
+
     }
     function closeMv() { $("mv-sheet").hidden = true; $("mv-retirar").focus(); }
     $("mv-retirar").addEventListener("click", function () { openMv("retirar"); });
@@ -3948,11 +3941,14 @@ body.view-accd .fab, body.view-accd .ai-fab { opacity: 0; pointer-events: none; 
       $("acc-nombre").value = a ? a.nombre : "";
       $("acc-moneda").value = a ? a.moneda : "VES";
       $("acc-moneda").disabled = !!(a && accUsed(a));
-      $("acc-saldo-wrap").style.display = a ? "" : "none";
+      $("acc-saldo-wrap").style.display = "";
+      $("acc-saldo-l").textContent = a ? "Saldo actual de la cuenta" : "¿Cuánto tienes ahora en esta cuenta? (opcional)";
+      $("acc-saldo-hint").textContent = a ? "Cámbialo si no coincide con lo que realmente tienes. Tus movimientos no se borran." : "Si ya tienes dinero en esta cuenta, escríbelo para empezar con el saldo correcto.";
+      $("acc-saldo").placeholder = a ? "0,00" : "Déjalo vacío para empezar en 0";
       $("acc-saldo").value = a ? fmtIn(accBalance(a)) : "";
       $("acc-err").textContent = "";
       $("acc-sheet").hidden = false;
-      $("acc-nombre").focus();
+
     }
     function closeAccSheet() { editAccId = null; $("acc-sheet").hidden = true; $("acc-add").focus(); }
     function openSheet(it) {
@@ -3986,7 +3982,7 @@ body.view-accd .fab, body.view-accd .ai-fab { opacity: 0; pointer-events: none; 
       }
       syncCuenta();
       $("sheet").hidden = false;
-      $("monto").focus();
+
     }
     function closeSheet() { state.editId = null; $("sheet").hidden = true; $("fab").focus(); }
     function openDial() { $("dial").hidden = false; document.body.classList.add("dial-open"); $("fab").setAttribute("aria-expanded", "true"); }
@@ -4049,12 +4045,10 @@ body.view-accd .fab, body.view-accd .ai-fab { opacity: 0; pointer-events: none; 
       var err = $("acc-err");
       if (!nombre) { err.textContent = "Escribe el nombre de la cuenta."; $("acc-nombre").focus(); return; }
       var nuevo = NaN;
-      if (editAccId) {
-        var raw = $("acc-saldo").value.trim();
-        if (raw) {
-          nuevo = parseNum(raw);
-          if (isNaN(nuevo)) { err.textContent = "Escribe un saldo válido, por ejemplo 1250,50."; $("acc-saldo").focus(); return; }
-        }
+      var raw = $("acc-saldo").value.trim();
+      if (raw) {
+        nuevo = parseNum(raw);
+        if (isNaN(nuevo)) { err.textContent = "Escribe un saldo válido, por ejemplo 1250,50."; return; }
       }
       err.textContent = "";
       if (editAccId) {
@@ -4068,7 +4062,7 @@ body.view-accd .fab, body.view-accd .ai-fab { opacity: 0; pointer-events: none; 
           if (!accUsed(a)) a.moneda = $("acc-moneda").value;
         }
       } else {
-        var na = { id: Date.now(), nombre: nombre, moneda: $("acc-moneda").value, saldo: 0 };
+        var na = { id: Date.now(), nombre: nombre, moneda: $("acc-moneda").value, saldo: isNaN(nuevo) ? 0 : Math.round(nuevo * 100) / 100 };
         state.accounts.push(na);
         state.lastAcc = na.id;
       }
@@ -4233,7 +4227,7 @@ body.view-accd .fab, body.view-accd .ai-fab { opacity: 0; pointer-events: none; 
       $("tr-err").textContent = "";
       fillTrFrom();
       $("tr-sheet").hidden = false;
-      $("tr-monto").focus();
+
     }
     function closeTr() { $("tr-sheet").hidden = true; $("acc-transfer").focus(); }
     $("acc-transfer").addEventListener("click", openTr);
@@ -4314,7 +4308,7 @@ body.view-accd .fab, body.view-accd .ai-fab { opacity: 0; pointer-events: none; 
       $("sv-err").textContent = "";
       fillSvFrom();
       $("sv-sheet").hidden = false;
-      $("sv-monto").focus();
+
     }
     function closeSv() { $("sv-sheet").hidden = true; $("fab").focus(); }
     $("sv-close").addEventListener("click", closeSv);
@@ -4414,7 +4408,7 @@ body.view-accd .fab, body.view-accd .ai-fab { opacity: 0; pointer-events: none; 
       fillTeAccs(t ? t.cuenta : state.lastAcc);
       $("te-err").textContent = "";
       $("te-sheet").hidden = false;
-      $("te-nombre").focus();
+
     }
     function closeTe() { $("te-sheet").hidden = true; teId = null; }
     $("te-close").addEventListener("click", closeTe);
@@ -4462,7 +4456,7 @@ body.view-accd .fab, body.view-accd .ai-fab { opacity: 0; pointer-events: none; 
       $("tu-err").textContent = "";
       renderTu();
       $("tu-sheet").hidden = false;
-      $("tu-monto").focus();
+
     }
     function closeTu() { $("tu-sheet").hidden = true; tuId = null; }
     $("tu-close").addEventListener("click", closeTu);
@@ -4858,7 +4852,7 @@ body.view-accd .fab, body.view-accd .ai-fab { opacity: 0; pointer-events: none; 
       earnP = 0;
       renderEarnForm();
       $("earn-sheet").hidden = false;
-      $("earn-monto").focus();
+
     }
     function closeEarn() { $("earn-sheet").hidden = true; }
     $("earn-add").addEventListener("click", openEarn);
@@ -4913,7 +4907,6 @@ body.view-accd .fab, body.view-accd .ai-fab { opacity: 0; pointer-events: none; 
       });
     });
     /* ---------- Ingresos y gastos del mes ---------- */
-    document.querySelectorAll("[data-cv]").forEach(function (b) { b.addEventListener("click", function () { cvView = b.getAttribute("data-cv"); renderCv(); }); });
     $("cv").addEventListener("click", function (e) {
       var b = e.target.closest("[data-cv-cat]"); if (!b) return;
       hist.f = "cat"; hist.c = b.getAttribute("data-cv-cat"); hist.q = ""; hist.n = 30; $("hist-q").value = "";
@@ -5061,7 +5054,7 @@ body.view-accd .fab, body.view-accd .ai-fab { opacity: 0; pointer-events: none; 
     $("ai-sheet").addEventListener("click", function (e) { if (e.target === $("ai-sheet")) closeAi(); });
     $("ai-ask").addEventListener("click", function () {
       var k = aiKey();
-      if (!k) { $("ai-cfg").hidden = false; $("ai-key").focus(); return; }
+      if (!k) { $("ai-cfg").hidden = false; return; }
       askAi(k);
     });
     $("ai-cfg-toggle").addEventListener("click", function () { $("ai-cfg").hidden = !$("ai-cfg").hidden; });
@@ -5125,7 +5118,7 @@ body.view-accd .fab, body.view-accd .ai-fab { opacity: 0; pointer-events: none; 
       $("ge-moneda").disabled = !!(g && goalUsed(g));
       $("ge-err").textContent = "";
       $("ge-sheet").hidden = false;
-      $("ge-nombre").focus();
+
     }
     function closeGe() { $("ge-sheet").hidden = true; geId = null; }
     $("goal-new").addEventListener("click", function () { openGe(null); });
@@ -5209,7 +5202,7 @@ body.view-accd .fab, body.view-accd .ai-fab { opacity: 0; pointer-events: none; 
       $("gm-err").textContent = "";
       fillGm();
       $("gm-sheet").hidden = false;
-      $("gm-monto").focus();
+
     }
     function closeGm() { $("gm-sheet").hidden = true; gm.id = null; }
     $("gm-close").addEventListener("click", closeGm);
@@ -5385,7 +5378,7 @@ body.view-accd .fab, body.view-accd .ai-fab { opacity: 0; pointer-events: none; 
       setPagoFecha(p ? p.fecha : (pay.sel || (vm === t.slice(0, 7) ? t : vm + "-01")));
       $("pg-err").textContent = "";
       $("pg-sheet").hidden = false;
-      $("pg-titulo").focus();
+
     }
     function closePg() { $("pg-sheet").hidden = true; pgId = null; }
     $("pay-new").addEventListener("click", function () { openPg(null); });
@@ -5666,7 +5659,7 @@ body.view-accd .fab, body.view-accd .ai-fab { opacity: 0; pointer-events: none; 
       $("cf-ok").disabled = !!o.word;
       $("cf-ok")._word = o.word || "";
       $("cf-sheet").hidden = false;
-      (o.word ? $("cf-type") : $("cf-cancel")).focus();
+      $("cf-cancel").focus();
     }
     function closeCf() { var c = cfCancel; $("cf-sheet").hidden = true; cfAction = null; cfCancel = null; if (c) c(); }
     $("cf-type").addEventListener("input", function () { $("cf-ok").disabled = $("cf-type").value.trim().toUpperCase() !== $("cf-ok")._word; });
@@ -6179,17 +6172,15 @@ body.view-accd .fab, body.view-accd .ai-fab { opacity: 0; pointer-events: none; 
       if (calc.own) $("cx-own-rate").value = fmtIn(calc.own);
       renderCalc();
       $("calc-sheet").hidden = false;
-      try { $("cx-amt").focus({ preventScroll: true }); } catch (e) { $("cx-amt").focus(); }
       fetchBtc();
     }
     function closeCalc() { $("calc-sheet").hidden = true; $("fab").focus(); }
     $("calc-close").addEventListener("click", closeCalc);
     $("calc-sheet").addEventListener("click", function (e) { if (e.target === $("calc-sheet")) closeCalc(); });
     $("cx-amt").addEventListener("input", function () { calc.buf = $("cx-amt").value.replace(/[^0-9.,]/g, ""); if ($("cx-amt").value !== calc.buf) $("cx-amt").value = calc.buf; renderCalc(); });
-    $("cx-clear").addEventListener("click", function () { calc.buf = ""; renderCalc(); $("cx-amt").focus(); });
+    $("cx-clear").addEventListener("click", function () { calc.buf = ""; renderCalc(); });
     $("cx-own-btn").addEventListener("click", function () {
       calc.src = calc.src === "own" ? "bcv" : "own"; cxSave(); renderCalc();
-      if (calc.src === "own") $("cx-own-rate").focus();
     });
     $("cx-own-rate").addEventListener("input", function () { var v = parseNum($("cx-own-rate").value); calc.own = v > 0 ? v : 0; cxSave(); renderCalc(); });
 
@@ -6218,7 +6209,6 @@ body.view-accd .fab, body.view-accd .ai-fab { opacity: 0; pointer-events: none; 
         var n = v ? parseNum(v) : 0;
         calc.buf = n > 0 ? String(Math.round(n * Math.pow(10, cxDec(calc.k))) / Math.pow(10, cxDec(calc.k))).replace(".", ",") : "";
         renderCalc();
-        $("cx-amt").focus();
       });
     })();
     $("cal-cancel").addEventListener("click", closeCal);
