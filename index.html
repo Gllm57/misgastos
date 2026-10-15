@@ -1371,6 +1371,18 @@ body.view-accd .fab, body.view-accd .ai-fab { opacity: 0; pointer-events: none; 
 /* ---------- Menos letras pequeñas ---------- */
 #sav-hint, #cx-hint, #goals-sub, #hist-sub, #acc-head, #gm-rate-hint, #sv-rate-hint, #tr-rate-hint, #mv-rate-hint, #f-sav-hint, .acc-meta, .acc-alt { display: none !important; }
 .earn-add { padding: 10px 14px; }
+.acc-av.sym svg { width: 22px; height: 22px; }
+.acc-av.big.sym svg { width: 28px; height: 28px; }
+.acc-prev .acc-av.sym svg { width: 30px; height: 30px; }
+.acc-look { grid-template-columns: 1fr; gap: 12px; }
+.acc-prev { display: flex; justify-content: center; }
+.acc-prev .acc-av { width: 64px; height: 64px; border-radius: 20px; }
+.acc-pl { color: var(--muted); font-size: 0.8rem; margin-bottom: -4px; }
+.acc-icons { grid-template-columns: repeat(6, minmax(0, 1fr)); }
+.acc-icons button { color: var(--ink); display: flex; align-items: center; justify-content: center; }
+.acc-icons button svg { width: 20px; height: 20px; }
+.acc-colors { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 6px; justify-items: center; }
+.acc-colors button { width: 32px; height: 32px; }
 @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation: none !important; transition: none !important; scroll-behavior: auto !important; } }
 </style>
 </head>
@@ -2147,11 +2159,12 @@ body.view-accd .fab, body.view-accd .ai-fab { opacity: 0; pointer-events: none; 
           <select id="acc-moneda"><option value="VES">Bolívares (Bs)</option><option value="USD">Dólares ($)</option><option value="USDT">USDT (Tether)</option><option value="EUR">Euros (€)</option></select>
         </div>
         <div class="wide">
-          <label>Símbolo y color</label>
           <div class="acc-look">
             <span class="acc-prev" id="acc-prev"></span>
             <div class="acc-pick">
+              <div class="acc-pl">Símbolo</div>
               <div class="acc-icons" id="acc-icons" role="radiogroup" aria-label="Símbolo"></div>
+              <div class="acc-pl">Color</div>
               <div class="acc-colors" id="acc-colors" role="radiogroup" aria-label="Color"></div>
             </div>
           </div>
@@ -3636,12 +3649,27 @@ body.view-accd .fab, body.view-accd .ai-fab { opacity: 0; pointer-events: none; 
     var w = String(n || "").trim().split(/\s+/).filter(Boolean);
     return ((w[0] || "?").charAt(0) + (w.length > 1 ? w[1].charAt(0) : (w[0] || "").charAt(1) || "")).toUpperCase();
   }
-  var ACC_ICONS = ["", "🏦", "💳", "💵", "💰", "🪙", "📱", "🏠", "🛒", "✈️", "🎓", "⭐"];
-  var ACC_COLORS = ["#1f4fff", "#00994f", "#e08a00", "#8a3ffc", "#e5133f", "#0e9aa7", "#d6502b", "#6b7b86"];
+  // Símbolos de línea, de un solo color (toman el color de la cuenta)
+  var ACC_SVG = {
+    bank: '<path d="M3 10l9-6 9 6"></path><path d="M5 10v8M9.5 10v8M14.5 10v8M19 10v8"></path><path d="M3 20h18"></path>',
+    card: '<rect x="3" y="6" width="18" height="12" rx="2.5"></rect><path d="M3 10h18M7 15h3"></path>',
+    cash: '<rect x="3" y="7" width="18" height="10" rx="2"></rect><circle cx="12" cy="12" r="2.5"></circle><path d="M6.5 12h.01M17.5 12h.01"></path>',
+    wallet: '<path d="M4 7.5A2.5 2.5 0 0 1 6.5 5H18v3"></path><rect x="4" y="8" width="16" height="11" rx="2.5"></rect><path d="M16 13.5h.01"></path>',
+    coin: '<circle cx="12" cy="12" r="8"></circle><path d="M14.5 9.5c-.5-.9-1.4-1.3-2.5-1.3-1.5 0-2.5.8-2.5 1.9 0 2.6 5 1.4 5 4 0 1.1-1.1 1.9-2.5 1.9-1.2 0-2.1-.5-2.6-1.4M12 7v1.2M12 15.8V17"></path>',
+    phone: '<rect x="7" y="3" width="10" height="18" rx="2.5"></rect><path d="M11 17.5h2"></path>',
+    home: '<path d="M4 11l8-6.5 8 6.5"></path><path d="M6 9.5V20h12V9.5"></path><path d="M10 20v-5h4v5"></path>',
+    cart: '<path d="M3 4h2.5l2 11h10l2-8H7"></path><circle cx="9.5" cy="19" r="1.3"></circle><circle cx="16.5" cy="19" r="1.3"></circle>',
+    plane: '<path d="M10.5 13.5L4 11l1.5-1.5 7 1L17 6c.8-.8 2.2-.8 2.5 0 .3.4.2 1.4-.6 2.2l-4.4 4.4 1 7L14 21l-2.5-6.5"></path>',
+    bag: '<rect x="4" y="8" width="16" height="12" rx="2.5"></rect><path d="M9 8V6.5A2.5 2.5 0 0 1 11.5 4h1A2.5 2.5 0 0 1 15 6.5V8"></path>',
+    star: '<path d="M12 4l2.4 5 5.4.6-4 3.7 1.1 5.3L12 16l-4.9 2.6 1.1-5.3-4-3.7 5.4-.6z"></path>'
+  };
+  var ACC_ICONS = ["", "bank", "card", "cash", "wallet", "coin", "phone", "home", "cart", "plane", "bag", "star"];
+  var ACC_COLORS = ["#1f4fff", "#00994f", "#e08a00", "#8a3ffc", "#e5133f", "#0e9aa7", "#d6502b"];
+  function accSvg(k) { return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' + ACC_SVG[k] + "</svg>"; }
   function accColor(a) { return a.color || (ACC_CUR[a.moneda] || ACC_CUR.USD).c; }
   function accAvatar(a, big) {
-    var c = accColor(a), ic = a.icon;
-    return '<span class="acc-av' + (big ? " big" : "") + (ic ? " emo" : "") + '" style="--c:' + c + '" aria-hidden="true">' + (ic ? ic : esc(accInitials(a.nombre))) + "</span>";
+    var c = accColor(a), ic = a.icon && ACC_SVG[a.icon] ? a.icon : "";
+    return '<span class="acc-av' + (big ? " big" : "") + (ic ? " sym" : "") + '" style="--c:' + c + '" aria-hidden="true">' + (ic ? accSvg(ic) : esc(accInitials(a.nombre))) + "</span>";
   }
   function accMonthNet(a, mstr) {
     var n = 0, any = false;
@@ -4032,7 +4060,7 @@ body.view-accd .fab, body.view-accd .ai-fab { opacity: 0; pointer-events: none; 
       var fake = { nombre: $("acc-nombre").value || "Cuenta", moneda: cur, icon: accLook.icon, color: col };
       $("acc-prev").innerHTML = accAvatar(fake, true);
       $("acc-icons").innerHTML = ACC_ICONS.map(function (ic) {
-        return '<button type="button" role="radio" data-acc-ic="' + ic + '" aria-checked="' + (ic === accLook.icon ? "true" : "false") + '" aria-label="' + (ic ? "Símbolo " + ic : "Iniciales") + '">' + (ic || '<span class="ini">Aa</span>') + "</button>";
+        return '<button type="button" role="radio" data-acc-ic="' + ic + '" aria-checked="' + (ic === accLook.icon ? "true" : "false") + '" aria-label="' + (ic ? "Símbolo " + ic : "Iniciales") + '">' + (ic ? accSvg(ic) : '<span class="ini">Aa</span>') + "</button>";
       }).join("");
       $("acc-colors").innerHTML = ACC_COLORS.map(function (c) {
         return '<button type="button" role="radio" data-acc-col="' + c + '" aria-checked="' + (c === col ? "true" : "false") + '" aria-label="Color" style="--c:' + c + '"></button>';
