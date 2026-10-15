@@ -1665,6 +1665,14 @@ main > .panel::before, main > .panel::after, .bal-hero::before, .bal-hero::after
 /* Al deslizar: solo un degradado translúcido arriba */
 .navbar { background: linear-gradient(to bottom, color-mix(in srgb, var(--bg) 92%, transparent) 0%, color-mix(in srgb, var(--bg) 60%, transparent) 55%, transparent 100%) !important; border-bottom: 0 !important; -webkit-backdrop-filter: blur(8px) !important; backdrop-filter: blur(8px) !important; -webkit-mask-image: linear-gradient(to bottom, #000 45%, transparent); mask-image: linear-gradient(to bottom, #000 45%, transparent); padding: 0 !important; height: calc(env(safe-area-inset-top, 0px) + 34px); pointer-events: none !important; transform: none !important; }
 .navbar button { display: none !important; }
+/* Barra más sólida y símbolos más visibles */
+.tabbar { background: color-mix(in srgb, var(--surface) 96%, transparent) !important; -webkit-backdrop-filter: blur(10px) !important; backdrop-filter: blur(10px) !important; }
+.tab { color: color-mix(in srgb, var(--ink) 72%, transparent) !important; }
+.tab[aria-current="true"] { color: var(--accent) !important; }
+.tab svg { stroke-width: 2; }
+.tab-lens { background: color-mix(in srgb, var(--accent) 16%, transparent) !important; }
+.dial-item { background: var(--surface) !important; -webkit-backdrop-filter: none !important; backdrop-filter: none !important; color: var(--ink) !important; }
+.dial-item .ic { background: var(--accent) !important; color: #fff !important; }
 </style>
 </head>
 <body>
