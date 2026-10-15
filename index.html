@@ -1304,6 +1304,31 @@ body.view-accd .fab, body.view-accd .ai-fab { opacity: 0; pointer-events: none; 
 .cv-tip { color: var(--muted); font-size: 0.8rem; margin: 8px 4px 0; }
 .cv-tip b { color: var(--ink); }
 .cv-empty { color: var(--muted); text-align: center; padding: 18px 8px; margin: 0; }
+/* ---------- Gráfico principal: disponible del mes ---------- */
+.trend { margin-top: 12px; }
+.trend-chart { position: relative; height: auto; touch-action: pan-y; }
+.trend-chart svg { display: block; width: 100%; height: 112px; overflow: visible; }
+.trend-chart .grid { stroke: var(--line); stroke-width: 1; stroke-dasharray: 2 4; opacity: 0.7; }
+.trend-chart .base { stroke: var(--line); stroke-width: 1; }
+.trend-chart .zero { stroke: var(--muted); stroke-width: 1; stroke-dasharray: 3 3; opacity: 0.6; }
+.trend-chart .ln { fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+.trend-chart .ln.bal { stroke: var(--accent); }
+.trend-chart .ln.proj { stroke: var(--muted); stroke-dasharray: 4 4; opacity: 0.8; }
+.trend-chart .now { fill: var(--accent); stroke: var(--surface); stroke-width: 2; }
+.trend-chart .now-l { fill: var(--ink); font: 700 11px var(--body); }
+.trend-chart .cross { stroke: var(--muted); stroke-width: 1; stroke-dasharray: 3 3; }
+.trend-chart .cdot { fill: var(--accent); stroke: var(--surface); stroke-width: 2; }
+.trend-chart .cdot.proj { fill: var(--muted); }
+.trend-tip { position: absolute; top: 100%; transform: translate(-50%, 2px); background: var(--ink); color: var(--bg); font-size: 0.74rem; font-weight: 600; padding: 5px 9px; border-radius: 9px; white-space: nowrap; pointer-events: none; font-variant-numeric: tabular-nums; z-index: 2; }
+.trend-tip[hidden] { display: none; }
+.trend-axis { display: flex; justify-content: space-between; color: var(--muted); font-size: 0.72rem; margin-top: 2px; }
+.trend-cap { display: flex; justify-content: space-between; align-items: center; gap: 10px; flex-wrap: wrap; margin: 8px 0 0; font-size: 0.8rem; color: var(--muted); }
+.trend-cap .tk { display: inline-flex; align-items: center; gap: 6px; }
+.trend-cap .tk i { width: 14px; height: 3px; border-radius: 2px; background: var(--accent); }
+.trend-cap .proj i { background: repeating-linear-gradient(90deg, var(--muted) 0 4px, transparent 4px 7px); }
+.trend-cap .proj.none i { display: none; }
+.trend-cap b { color: var(--ink); font-variant-numeric: tabular-nums; }
+.trend-cap .proj.neg b { color: var(--out); }
 @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation: none !important; transition: none !important; scroll-behavior: auto !important; } }
 </style>
 </head>
@@ -1349,9 +1374,9 @@ body.view-accd .fab, body.view-accd .ai-fab { opacity: 0; pointer-events: none; 
       </div>
     </div>
     <div class="trend" id="trend">
-      <div class="trend-cap"><span id="trend-title">Últimos 7 días</span><span class="trend-leg"><span><i style="background:var(--in)"></i>Ingresos</span><span><i style="background:var(--out)"></i>Gastos</span></span></div>
       <div class="trend-chart" id="trend-chart"></div>
-      <div class="trend-days" id="trend-days"></div>
+      <div class="trend-axis" id="trend-days"></div>
+      <div class="trend-cap"><span class="tk"><i></i>Disponible</span><span class="tk proj" id="trend-proj"><i></i><span id="trend-title"></span></span></div>
     </div>
     <div class="flows">
       <div class="flow in"><div class="v fit" id="tin">$0,00</div><div class="l">Ingresos</div></div>
@@ -2372,124 +2397,91 @@ body.view-accd .fab, body.view-accd .ai-fab { opacity: 0; pointer-events: none; 
   }
   function fmtIn(n) { return String(Math.round(n * 10000) / 10000).replace(".", ","); }
 
+  // Gráfico principal: disponible del mes día a día y proyección hasta fin de mes
   function drawTrend() {
     var wrap = $("trend-chart");
     if (!wrap) return;
-    var D = state.disp, t = new Date(), days = [], idx = {};
-    for (var i = 6; i >= 0; i--) {
-      var dt = new Date(t.getFullYear(), t.getMonth(), t.getDate() - i);
-      var iso = dt.getFullYear() + "-" + pad2(dt.getMonth() + 1) + "-" + pad2(dt.getDate());
-      idx[iso] = days.length;
-      days.push({ dow: dt.getDay(), inc: 0, exp: 0 });
-    }
+    var D = state.disp, m = state.month, q = m.split("-"), y = Number(q[0]), mo = Number(q[1]);
+    var nd = new Date(y, mo, 0).getDate(), t = today(), curM = t.slice(0, 7);
+    var isCur = m === curM, isPast = m < curM, lastDay = isCur ? Number(t.slice(8, 10)) : isPast ? nd : 0;
+    var delta = []; for (var i = 0; i <= nd; i++) delta.push(0);
+    var spent = 0;
     state.items.forEach(function (it) {
-      if (it.tipo !== "ingreso" && it.tipo !== "gasto") return;
-      var k = idx[it.fecha];
-      if (k === undefined) return;
-      var v = conv(it.monto, it.moneda, D);
-      if (v === null) return;
-      if (it.tipo === "ingreso") days[k].inc += v; else days[k].exp += v;
-    });
-    var w = Math.max(wrap.clientWidth || 300, 120), h = 64, pad = 8, base = h - pad;
-    var maxE = 0, maxI = 0;
-    days.forEach(function (d) { maxE = Math.max(maxE, d.exp); maxI = Math.max(maxI, d.inc); });
-    var has = maxE > 0 || maxI > 0, step = (w - 2 * pad) / 6;
-    function X(n) { return pad + n * step; }
-    function clampY(y) { return Math.min(base, Math.max(pad, y)); }
-    function pathFromYs(ys) {
-      var dstr = "M" + X(0).toFixed(1) + " " + ys[0].toFixed(1);
-      for (var n = 0; n < 6; n++) {
-        var y0 = ys[Math.max(n - 1, 0)], y1 = ys[n], y2 = ys[n + 1], y3 = ys[Math.min(n + 2, 6)];
-        var x0 = X(Math.max(n - 1, 0)), x1 = X(n), x2 = X(n + 1), x3 = X(Math.min(n + 2, 6));
-        var c1x = x1 + (x2 - x0) / 6, c1y = clampY(y1 + (y2 - y0) / 6);
-        var c2x = x2 - (x3 - x1) / 6, c2y = clampY(y2 - (y3 - y1) / 6);
-        dstr += " C" + c1x.toFixed(1) + " " + c1y.toFixed(1) + " " + c2x.toFixed(1) + " " + c2y.toFixed(1) + " " + x2.toFixed(1) + " " + y2.toFixed(1);
+      if (!it.fecha || it.fecha.slice(0, 7) !== m) return;
+      var d = Number(it.fecha.slice(8, 10)), v;
+      if (it.tipo === "traspaso") {
+        if (isSavK(it.desde.k)) { v = conv(it.desde.monto, it.desde.moneda, D); if (v !== null) delta[d] += v; }
+        if (isSavK(it.hacia.k)) { v = conv(it.hacia.monto, it.hacia.moneda, D); if (v !== null) delta[d] -= v; }
+        return;
       }
-      return dstr;
+      v = conv(it.monto, it.moneda, D);
+      if (v === null) return;
+      if (it.tipo === "ingreso" || it.tipo === "retiro") delta[d] += v;
+      else if (it.tipo === "gasto" || it.tipo === "ahorro") { delta[d] -= v; if (it.tipo === "gasto") spent += v; }
+    });
+    var bal = [], run = 0;
+    for (var d1 = 1; d1 <= lastDay; d1++) { run += delta[d1]; bal.push(run); }
+    var proj = [];
+    if (isCur && lastDay < nd) { var rate = spent / Math.max(1, lastDay); for (var d2 = lastDay; d2 <= nd; d2++) proj.push(run - rate * (d2 - lastDay)); }
+    var has = bal.some(function (v) { return Math.abs(v) > 0.004; }) || spent > 0;
+    var mN = MESES_C[mo - 1];
+    $("trend-days").innerHTML = "<span>1 " + mN + "</span><span>" + nd + " " + mN + "</span>";
+    var tt = $("trend-title"), pj = $("trend-proj");
+    if (!has) { tt.textContent = isCur ? "Sin movimientos este mes" : "Sin movimientos en " + MESES[mo - 1]; pj.classList.add("none"); }
+    else if (proj.length) { var ev = proj[proj.length - 1]; tt.innerHTML = "Si sigues así: <b>" + (ev < 0 ? "−" : "") + money(Math.abs(ev), D) + "</b> el " + nd; pj.classList.remove("none"); pj.classList.toggle("neg", ev < 0); }
+    else { tt.innerHTML = (isPast ? "Cerraste el mes con " : "") + "<b>" + (run < 0 ? "−" : "") + money(Math.abs(run), D) + "</b>"; pj.classList.add("none"); }
+    var W = Math.max(wrap.clientWidth || 300, 160), H = 112, top = 16, bot = H - 6;
+    var vals = bal.concat(proj);
+    if (!vals.length) vals = [0];
+    var mx = Math.max(0, Math.max.apply(null, vals)), mn = Math.min(0, Math.min.apply(null, vals));
+    if (mx - mn < 0.01) mx = mn + 1;
+    var span = mx - mn; mx += span * 0.08;
+    function X(d) { return (d - 1) / Math.max(1, nd - 1) * W; }
+    function Y(v) { return top + (1 - (v - mn) / (mx - mn)) * (bot - top); }
+    var line = bal.map(function (v, i) { return (i ? "L" : "M") + X(i + 1).toFixed(1) + " " + Y(v).toFixed(1); }).join(" ");
+    var y0 = Y(0);
+    var svg = '<svg viewBox="0 0 ' + W + " " + H + '" role="img" aria-label="Disponible del mes día a día">' +
+      '<defs><linearGradient id="trg-bal" x1="0" y1="0" x2="0" y2="1"><stop offset="0" style="stop-color:var(--accent);stop-opacity:0.2"></stop><stop offset="1" style="stop-color:var(--accent);stop-opacity:0"></stop></linearGradient></defs>' +
+      [0.33, 0.66].map(function (f) { var gy = (top + f * (bot - top)).toFixed(1); return '<line class="grid" x1="0" x2="' + W + '" y1="' + gy + '" y2="' + gy + '"></line>'; }).join("") +
+      (mn < 0 ? '<line class="zero" x1="0" x2="' + W + '" y1="' + y0.toFixed(1) + '" y2="' + y0.toFixed(1) + '"></line>' : '<line class="base" x1="0" x2="' + W + '" y1="' + bot + '" y2="' + bot + '"></line>');
+    if (bal.length) {
+      svg += '<path class="area" d="' + line + " L" + X(bal.length).toFixed(1) + " " + y0.toFixed(1) + " L" + X(1).toFixed(1) + " " + y0.toFixed(1) + ' Z" fill="url(#trg-bal)"></path>' +
+        '<path class="ln bal" d="' + line + '"></path>';
     }
-    function areaFromYs(ys) {
-      return pathFromYs(ys) + " L" + X(6).toFixed(1) + " " + base + " L" + X(0).toFixed(1) + " " + base + " Z";
+    if (proj.length) svg += '<path class="ln proj" d="' + proj.map(function (v, i) { return (i ? "L" : "M") + X(lastDay + i).toFixed(1) + " " + Y(v).toFixed(1); }).join(" ") + '"></path>';
+    if (bal.length) {
+      var lx = X(bal.length), ly = Y(run), right = lx > W - 90;
+      svg += '<circle class="now" cx="' + lx.toFixed(1) + '" cy="' + ly.toFixed(1) + '" r="4.5"></circle>' +
+        (isCur ? '<text class="now-l" x="' + (right ? lx - 8 : lx + 8).toFixed(1) + '" y="' + Math.max(11, ly - 9).toFixed(1) + '" text-anchor="' + (right ? "end" : "start") + '">Hoy</text>' : "");
     }
-    function targetYs(key, max) {
-      return days.map(function (d) { return max > 0 ? base - (d[key] / max) * (h - 2 * pad) : base; });
-    }
-    var toE = targetYs("exp", maxE), toI = targetYs("inc", maxI);
-    var flatYs = days.map(function () { return base; });
-
-    var first = !wrap._els, widthChanged = !first && wrap._w !== w;
-    if (first || widthChanged) {
-      if (wrap._raf) { cancelAnimationFrame(wrap._raf); wrap._raf = 0; }
-      wrap.innerHTML = '<svg viewBox="0 0 ' + w + " " + h + '" role="img" aria-label="Ingresos y gastos de los últimos 7 días">' +
-        '<line class="base" x1="' + pad + '" y1="' + base + '" x2="' + (w - pad) + '" y2="' + base + '"></line>' +
-        '<defs><linearGradient id="trg-exp" x1="0" y1="0" x2="0" y2="1"><stop offset="0" style="stop-color:var(--out);stop-opacity:0.34"></stop><stop offset="1" style="stop-color:var(--out);stop-opacity:0"></stop></linearGradient>' +
-        '<linearGradient id="trg-inc" x1="0" y1="0" x2="0" y2="1"><stop offset="0" style="stop-color:var(--in);stop-opacity:0.34"></stop><stop offset="1" style="stop-color:var(--in);stop-opacity:0"></stop></linearGradient></defs>' +
-        '<path class="area" data-s="exp" fill="url(#trg-exp)"></path><path class="area" data-s="inc" fill="url(#trg-inc)"></path>' +
-        '<path class="ln" data-s="exp" stroke="var(--out)"></path><path class="ln" data-s="inc" stroke="var(--in)"></path>' +
-        '<circle class="dot" data-s="exp" r="4" fill="var(--out)"></circle><circle class="dot" data-s="inc" r="4" fill="var(--in)"></circle></svg>';
-      wrap._els = {
-        pe: wrap.querySelector('path.ln[data-s="exp"]'), pi: wrap.querySelector('path.ln[data-s="inc"]'),
-        ae: wrap.querySelector('path.area[data-s="exp"]'), ai: wrap.querySelector('path.area[data-s="inc"]'),
-        de: wrap.querySelector('circle[data-s="exp"]'), di: wrap.querySelector('circle[data-s="inc"]')
+    svg += '<line class="cross" x1="0" x2="0" y1="' + top + '" y2="' + bot + '" visibility="hidden"></line><circle class="cdot" r="4" visibility="hidden"></circle></svg><div class="trend-tip" hidden></div>';
+    var sig = W + "|" + svg;
+    if (wrap._sig !== sig) { wrap.innerHTML = svg; wrap._sig = sig; }
+    wrap._pts = { bal: bal, proj: proj, lastDay: lastDay, nd: nd, X: X, Y: Y, W: W, mN: mN, D: D };
+    if (!wrap._bound) {
+      wrap._bound = true;
+      var pick = function (clientX) {
+        var P = wrap._pts, sv = wrap.querySelector("svg");
+        if (!P || !sv || (!P.bal.length && !P.proj.length)) return;
+        var r = sv.getBoundingClientRect(), x = (clientX - r.left) / r.width * P.W;
+        var day = Math.max(1, Math.min(P.nd, Math.round(x / P.W * (P.nd - 1)) + 1)), v, pr = false;
+        if (day <= P.bal.length) v = P.bal[day - 1];
+        else if (P.proj.length) { v = P.proj[day - P.lastDay]; pr = true; }
+        else return;
+        var cx = P.X(day), cy = P.Y(v), cl = sv.querySelector(".cross"), cd = sv.querySelector(".cdot"), tip = wrap.querySelector(".trend-tip");
+        cl.setAttribute("x1", cx); cl.setAttribute("x2", cx); cl.setAttribute("visibility", "visible");
+        cd.setAttribute("cx", cx); cd.setAttribute("cy", cy); cd.setAttribute("visibility", "visible"); cd.classList.toggle("proj", pr);
+        tip.hidden = false;
+        tip.textContent = day + " " + P.mN + " · " + (pr ? "Si sigues así " : "Disponible ") + (v < 0 ? "−" : "") + money(Math.abs(v), P.D);
+        tip.style.left = Math.max(70, Math.min(r.width - 70, cx / P.W * r.width)) + "px";
       };
-      wrap._w = w;
+      var end = function () { var sv = wrap.querySelector("svg"), tip = wrap.querySelector(".trend-tip"); if (tip) tip.hidden = true; if (sv) { sv.querySelector(".cross").setAttribute("visibility", "hidden"); sv.querySelector(".cdot").setAttribute("visibility", "hidden"); } };
+      wrap.addEventListener("pointermove", function (e) { pick(e.clientX); });
+      wrap.addEventListener("pointerdown", function (e) { pick(e.clientX); });
+      wrap.addEventListener("pointerleave", end);
+      wrap.addEventListener("pointerup", function (e) { if (e.pointerType !== "mouse") setTimeout(end, 1200); });
     }
-    var els = wrap._els;
-    function apply(ye, yi) {
-      els.pe.setAttribute("d", pathFromYs(ye));
-      els.pi.setAttribute("d", pathFromYs(yi));
-      els.ae.setAttribute("d", areaFromYs(ye));
-      els.ai.setAttribute("d", areaFromYs(yi));
-      els.de.setAttribute("cx", X(6).toFixed(1)); els.de.setAttribute("cy", ye[6].toFixed(1));
-      els.di.setAttribute("cx", X(6).toFixed(1)); els.di.setAttribute("cy", yi[6].toFixed(1));
-      wrap._cur = { exp: ye, inc: yi };
-    }
-    els.ae.classList.toggle("flat", !(maxE > 0));
-    els.ai.classList.toggle("flat", !(maxI > 0));
-    els.pe.classList.toggle("flat", !(maxE > 0));
-    els.de.classList.toggle("flat", !(maxE > 0));
-    els.pi.classList.toggle("flat", !(maxI > 0));
-    els.di.classList.toggle("flat", !(maxI > 0));
-
-    var fromE = first ? flatYs : (wrap._cur ? wrap._cur.exp : toE);
-    var fromI = first ? flatYs : (wrap._cur ? wrap._cur.inc : toI);
-    var moved = false;
-    for (var q = 0; q < 7; q++) if (Math.abs(fromE[q] - toE[q]) > 0.05 || Math.abs(fromI[q] - toI[q]) > 0.05) moved = true;
-    if (wrap._raf) { cancelAnimationFrame(wrap._raf); wrap._raf = 0; }
-    if (widthChanged || REDUCED || !moved) {
-      apply(toE, toI);
-    } else {
-      var t0 = null, dur = 800;
-      var lerp = function (a, b, e) { return a.map(function (v, n) { return v + (b[n] - v) * e; }); };
-      var frame = function (ts) {
-        if (t0 === null) t0 = ts;
-        var p = Math.min(1, (ts - t0) / dur), e = 1 - Math.pow(1 - p, 3);
-        apply(p >= 1 ? toE : lerp(fromE, toE, e), p >= 1 ? toI : lerp(fromI, toI, e));
-        wrap._raf = p < 1 ? requestAnimationFrame(frame) : 0;
-      };
-      apply(fromE, fromI);
-      wrap._raf = requestAnimationFrame(frame);
-    }
-
-    var L = ["D", "L", "M", "M", "J", "V", "S"];
-    var dh = days.map(function (d, n) {
-      return '<span class="' + (n === 6 ? "today" : "") + '" style="left:' + (X(n) / w * 100).toFixed(2) + '%">' + L[d.dow] + "</span>";
-    }).join("");
-    var dEl = $("trend-days");
-    if (dEl._html !== dh) { dEl.innerHTML = dh; dEl._html = dh; }
-    $("trend-title").textContent = has ? "Últimos 7 días" : "Sin movimientos en los últimos 7 días";
   }
-
-  var CAT_TIPS = {
-    "Alimentación": "Planifica un menú semanal y compra con lista: cocinar en casa suele recortar bastante.",
-    "Vivienda": "Revisa si puedes renegociar o repartir algún gasto fijo.",
-    "Transporte": "Agrupa tus traslados y compara opciones más económicas.",
-    "Servicios": "Revisa suscripciones y servicios que casi no usas.",
-    "Salud": "Compara precios de medicinas y guarda un fondo para imprevistos.",
-    "Educación": "Busca alternativas gratuitas o pagos por cuotas.",
-    "Ocio": "Ponte un tope semanal para salidas y compras por impulso.",
-    "Negocio": "Compara proveedores y evita compras que no rotan.",
-    "Otros": "Asígnale categoría a lo que está en «Otros» para entender mejor en qué gastas."
-  };
   function prevMonth(m) {
     var p = m.split("-"), d = new Date(Number(p[0]), Number(p[1]) - 2, 1);
     return d.getFullYear() + "-" + pad2(d.getMonth() + 1);
