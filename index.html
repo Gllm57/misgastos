@@ -1343,6 +1343,34 @@ body.view-accd .fab, body.view-accd .ai-fab { opacity: 0; pointer-events: none; 
 .cv-ic { width: 32px; height: 32px; border-radius: 10px; font-size: 0.85rem; }
 .bal-note { color: var(--muted); font-size: 0.78rem; margin-top: 2px; }
 .bal-note[hidden] { display: none; }
+/* ---------- Cuentas: símbolo y color ---------- */
+.acc-av.emo { font-size: 1.25rem; font-family: inherit; }
+.acc-av.big.emo { font-size: 1.6rem; }
+.acc-row { padding: 12px 6px 12px 4px; align-items: center; }
+.acc-mid .acc-name { font-size: 1rem; }
+.acc-look { display: grid; grid-template-columns: auto 1fr; gap: 14px; align-items: start; }
+.acc-prev .acc-av { width: 60px; height: 60px; border-radius: 18px; font-size: 1.2rem; }
+.acc-prev .acc-av.emo { font-size: 1.7rem; }
+.acc-pick { display: grid; gap: 10px; min-width: 0; }
+.acc-icons { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 6px; }
+.acc-icons button { aspect-ratio: 1; min-height: 38px; border-radius: 12px; border: 1px solid var(--line); background: var(--surface); font-size: 1.15rem; cursor: pointer; padding: 0; color: var(--ink); }
+.acc-icons button .ini { font-family: var(--display); font-weight: 700; font-size: 0.85rem; }
+.acc-icons button[aria-checked="true"] { border: 2px solid var(--accent); background: color-mix(in srgb, var(--accent) 10%, var(--surface)); }
+.acc-colors { display: flex; flex-wrap: wrap; gap: 8px; }
+.acc-colors button { width: 30px; height: 30px; border-radius: 50%; border: 0; background: var(--c); cursor: pointer; box-shadow: 0 0 0 2px var(--surface), 0 0 0 3px transparent; }
+.acc-colors button[aria-checked="true"] { box-shadow: 0 0 0 2px var(--surface), 0 0 0 4px var(--c); }
+/* ---------- Categoría: menú desplegable ---------- */
+.cat-btn { --c: var(--accent); width: 100%; display: flex; align-items: center; gap: 10px; min-height: 48px; padding: 0 14px; font: inherit; font-weight: 600; color: var(--ink); background: var(--surface); border: 1px solid var(--line); border-radius: 12px; cursor: pointer; text-align: left; }
+.cat-btn i { width: 12px; height: 12px; border-radius: 4px; background: var(--c); flex: none; }
+.cat-btn span { flex: 1; }
+.cat-btn svg { width: 18px; height: 18px; color: var(--muted); transition: transform 0.25s var(--spring, ease); }
+.cat-btn[aria-expanded="true"] { border-color: var(--accent); }
+.cat-btn[aria-expanded="true"] svg { transform: rotate(180deg); }
+.cat-chips { margin-top: 8px; padding: 10px; border: 1px solid var(--line); border-radius: 14px; background: var(--bg); animation: fadeUp 0.25s ease backwards; }
+.cat-chips[hidden] { display: none; }
+/* ---------- Menos letras pequeñas ---------- */
+#sav-hint, #cx-hint, #goals-sub, #hist-sub, #acc-head, #gm-rate-hint, #sv-rate-hint, #tr-rate-hint, #mv-rate-hint, #f-sav-hint, .acc-meta, .acc-alt { display: none !important; }
+.earn-add { padding: 10px 14px; }
 @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation: none !important; transition: none !important; scroll-behavior: auto !important; } }
 </style>
 </head>
@@ -1438,7 +1466,7 @@ body.view-accd .fab, body.view-accd .ai-fab { opacity: 0; pointer-events: none; 
         <button type="button" class="secondary" id="mv-retirar">Retirar</button>
         <button type="button" class="secondary" id="mv-convertir">Convertir</button>
       </div>
-      <button type="button" class="earn-add" id="earn-add"><span class="earn-ic" aria-hidden="true">₮</span><span><b>Registrar ahorro en Binance Earn</b><small>Anota lo que pusiste a generar rendimiento y míralo crecer aquí.</small></span></button>
+      <button type="button" class="earn-add" id="earn-add"><span class="earn-ic" aria-hidden="true">₮</span><span><b>Registrar ahorro en Binance Earn</b></span></button>
     </div>
     </div></div>
   </section>
@@ -2118,10 +2146,19 @@ body.view-accd .fab, body.view-accd .ai-fab { opacity: 0; pointer-events: none; 
           <label for="acc-moneda">Divisa</label>
           <select id="acc-moneda"><option value="VES">Bolívares (Bs)</option><option value="USD">Dólares ($)</option><option value="USDT">USDT (Tether)</option><option value="EUR">Euros (€)</option></select>
         </div>
+        <div class="wide">
+          <label>Símbolo y color</label>
+          <div class="acc-look">
+            <span class="acc-prev" id="acc-prev"></span>
+            <div class="acc-pick">
+              <div class="acc-icons" id="acc-icons" role="radiogroup" aria-label="Símbolo"></div>
+              <div class="acc-colors" id="acc-colors" role="radiogroup" aria-label="Color"></div>
+            </div>
+          </div>
+        </div>
         <div class="wide" id="acc-saldo-wrap" style="display:none">
           <label for="acc-saldo" id="acc-saldo-l">Saldo actual de la cuenta</label>
           <input type="text" id="acc-saldo" inputmode="decimal" autocomplete="off" placeholder="0,00">
-          <p id="acc-saldo-hint" class="hint" style="margin-top:6px">Cámbialo si no coincide con lo que realmente tienes. Tus movimientos no se borran.</p>
         </div>
       </div>
       <p class="error" id="acc-err" role="alert"></p>
@@ -2148,7 +2185,8 @@ body.view-accd .fab, body.view-accd .ai-fab { opacity: 0; pointer-events: none; 
       <div class="wide">
         <label id="cat-l">Categoría</label>
         <select id="cat" hidden aria-hidden="true" tabindex="-1"></select>
-        <div class="cat-chips" id="cat-chips" role="radiogroup" aria-labelledby="cat-l"></div>
+        <button type="button" class="cat-btn" id="cat-btn" aria-haspopup="listbox" aria-expanded="false" aria-labelledby="cat-l"></button>
+        <div class="cat-chips" id="cat-chips" role="listbox" aria-labelledby="cat-l" hidden></div>
       </div>
       <div>
         <label for="fecha-btn">Fecha</label>
@@ -3205,6 +3243,8 @@ body.view-accd .fab, body.view-accd .ai-fab { opacity: 0; pointer-events: none; 
       return '<button type="button" role="radio" class="cat-chip" data-cat-pick="' + esc(c) + '" aria-checked="' + (c === cur ? "true" : "false") + '" style="--c:' + col + '"><i></i>' + esc(c) + "</button>";
     }).join("");
     var am = $("amt-card"); if (am) am.classList.toggle("is-in", inc);
+    var cb = $("cat-btn");
+    if (cb) { var cc = inc ? colorForIn(cur) : colorFor(cur); cb.style.setProperty("--c", cc); cb.innerHTML = '<i></i><span>' + esc(cur || "Elige una categoría") + '</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"></path></svg>'; }
   }
 
   function colorFor(cat) {
@@ -3596,9 +3636,12 @@ body.view-accd .fab, body.view-accd .ai-fab { opacity: 0; pointer-events: none; 
     var w = String(n || "").trim().split(/\s+/).filter(Boolean);
     return ((w[0] || "?").charAt(0) + (w.length > 1 ? w[1].charAt(0) : (w[0] || "").charAt(1) || "")).toUpperCase();
   }
+  var ACC_ICONS = ["", "🏦", "💳", "💵", "💰", "🪙", "📱", "🏠", "🛒", "✈️", "🎓", "⭐"];
+  var ACC_COLORS = ["#1f4fff", "#00994f", "#e08a00", "#8a3ffc", "#e5133f", "#0e9aa7", "#d6502b", "#6b7b86"];
+  function accColor(a) { return a.color || (ACC_CUR[a.moneda] || ACC_CUR.USD).c; }
   function accAvatar(a, big) {
-    var c = (ACC_CUR[a.moneda] || ACC_CUR.USD).c;
-    return '<span class="acc-av' + (big ? " big" : "") + '" style="--c:' + c + '" aria-hidden="true">' + esc(accInitials(a.nombre)) + "</span>";
+    var c = accColor(a), ic = a.icon;
+    return '<span class="acc-av' + (big ? " big" : "") + (ic ? " emo" : "") + '" style="--c:' + c + '" aria-hidden="true">' + (ic ? ic : esc(accInitials(a.nombre))) + "</span>";
   }
   function accMonthNet(a, mstr) {
     var n = 0, any = false;
@@ -3628,16 +3671,16 @@ body.view-accd .fab, body.view-accd .ai-fab { opacity: 0; pointer-events: none; 
       var meta = (net !== null && Math.abs(net) >= 0.005 ? '<span class="' + (net >= 0 ? "up" : "down") + '">' + (net >= 0 ? "+" : "−") + money(Math.abs(net), a.moneda) + "</span> este mes" : (ACC_CUR[a.moneda] || { n: a.moneda }).n) +
         (sv > 0.004 ? ' · <span class="acc-sv-in">Ahorro ' + mask(money(sv, a.moneda)) + "</span>" : "");
       return '<li><button type="button" class="acc-row" data-acc-open="' + a.id + '" aria-label="Ver la cuenta ' + esc(a.nombre) + '">' + accAvatar(a) +
-        '<span class="acc-mid"><span class="acc-name">' + esc(a.nombre) + '</span><span class="acc-meta">' + meta + "</span></span>" +
+        '<span class="acc-mid"><span class="acc-name">' + esc(a.nombre) + "</span></span>" +
         '<span class="acc-right"><span class="acc-bal fit' + (bal < 0 ? " neg" : "") + '">' + money(bal, a.moneda) + "</span>" +
-        (a.moneda !== "USD" && conv(bal, a.moneda, "USD") !== null ? '<span class="acc-alt">≈ ' + money(conv(bal, a.moneda, "USD"), "USD") + "</span>" : "") + "</span>" +
+        "</span>" +
         '<svg class="acc-chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 5l7 7-7 7"></path></svg>' +
-        (state.accounts.length > 1 ? '<span class="acc-share" style="--c:' + (ACC_CUR[a.moneda] || ACC_CUR.USD).c + '" title="' + Math.round(share) + '% de tu dinero"><i style="width:' + share.toFixed(1) + '%"></i></span>' : "") + "</button></li>";
+        (state.accounts.length > 1 ? '<span class="acc-share" style="--c:' + accColor(a) + '" title="' + Math.round(share) + '% de tu dinero"><i style="width:' + share.toFixed(1) + '%"></i></span>' : "") + "</button></li>";
     }).join("");
     var sum = $("acc-sum");
     sum.hidden = true;
     var ah = $("acc-head");
-    if (ah) { ah.hidden = state.accounts.length < 2; ah.innerHTML = "<span>La barra indica qué parte de tu dinero está en cada cuenta</span>"; }
+    if (ah) { ah.hidden = true; ah.innerHTML = "<span>La barra indica qué parte de tu dinero está en cada cuenta</span>"; }
     if (false) {
       sum.innerHTML = '<div><span class="l">Saldo total en tus cuentas</span><strong class="fit">' + money(tot, D) + (miss ? "*" : "") + "</strong></div>" +
         '<span class="acc-n">' + state.accounts.length + (state.accounts.length === 1 ? " cuenta" : " cuentas") + "</span>";
@@ -3951,9 +3994,15 @@ body.view-accd .fab, body.view-accd .ai-fab { opacity: 0; pointer-events: none; 
       $("cat").value = b.getAttribute("data-cat-pick");
       $("cat").dispatchEvent(new Event("change", { bubbles: true }));
       renderCatChips();
+      $("cat-chips").hidden = true; $("cat-btn").setAttribute("aria-expanded", "false");
+    });
+    $("cat-btn").addEventListener("click", function () {
+      var open = $("cat-chips").hidden;
+      $("cat-chips").hidden = !open; $("cat-btn").setAttribute("aria-expanded", open ? "true" : "false");
     });
     function syncCuenta() {
       renderCatChips();
+      $("cat-chips").hidden = true; $("cat-btn").setAttribute("aria-expanded", "false");
       var a = accById($("cuenta").value);
       if (a) $("moneda").value = a.moneda;
       $("monto-label").textContent = "Monto (" + curLabel($("moneda").value) + ")";
@@ -3968,14 +4017,31 @@ body.view-accd .fab, body.view-accd .ai-fab { opacity: 0; pointer-events: none; 
       $("acc-moneda").value = a ? a.moneda : "VES";
       $("acc-moneda").disabled = !!(a && accUsed(a));
       $("acc-saldo-wrap").style.display = "";
+      accLook = { icon: a ? a.icon || "" : "", color: a ? a.color || "" : "" };
+      renderAccLook();
       $("acc-saldo-l").textContent = a ? "Saldo actual de la cuenta" : "¿Cuánto tienes ahora en esta cuenta? (opcional)";
-      $("acc-saldo-hint").textContent = a ? "Cámbialo si no coincide con lo que realmente tienes. Tus movimientos no se borran." : "Si ya tienes dinero en esta cuenta, escríbelo para empezar con el saldo correcto.";
       $("acc-saldo").placeholder = a ? "0,00" : "Déjalo vacío para empezar en 0";
       $("acc-saldo").value = a ? fmtIn(accBalance(a)) : "";
       $("acc-err").textContent = "";
       $("acc-sheet").hidden = false;
 
     }
+    var accLook = { icon: "", color: "" };
+    function renderAccLook() {
+      var cur = $("acc-moneda").value, base = (ACC_CUR[cur] || ACC_CUR.USD).c, col = accLook.color || base;
+      var fake = { nombre: $("acc-nombre").value || "Cuenta", moneda: cur, icon: accLook.icon, color: col };
+      $("acc-prev").innerHTML = accAvatar(fake, true);
+      $("acc-icons").innerHTML = ACC_ICONS.map(function (ic) {
+        return '<button type="button" role="radio" data-acc-ic="' + ic + '" aria-checked="' + (ic === accLook.icon ? "true" : "false") + '" aria-label="' + (ic ? "Símbolo " + ic : "Iniciales") + '">' + (ic || '<span class="ini">Aa</span>') + "</button>";
+      }).join("");
+      $("acc-colors").innerHTML = ACC_COLORS.map(function (c) {
+        return '<button type="button" role="radio" data-acc-col="' + c + '" aria-checked="' + (c === col ? "true" : "false") + '" aria-label="Color" style="--c:' + c + '"></button>';
+      }).join("");
+    }
+    $("acc-icons").addEventListener("click", function (e) { var b = e.target.closest("[data-acc-ic]"); if (b) { accLook.icon = b.getAttribute("data-acc-ic"); renderAccLook(); } });
+    $("acc-colors").addEventListener("click", function (e) { var b = e.target.closest("[data-acc-col]"); if (b) { accLook.color = b.getAttribute("data-acc-col"); renderAccLook(); } });
+    $("acc-nombre").addEventListener("input", function () { if (!accLook.icon) renderAccLook(); });
+    $("acc-moneda").addEventListener("change", renderAccLook);
     function closeAccSheet() { editAccId = null; $("acc-sheet").hidden = true; $("acc-add").focus(); }
     function openSheet(it) {
       if (!it && !state.accounts.length) {
@@ -4080,7 +4146,7 @@ body.view-accd .fab, body.view-accd .ai-fab { opacity: 0; pointer-events: none; 
       if (editAccId) {
         var a = accById(editAccId);
         if (a) {
-          a.nombre = nombre;
+          a.nombre = nombre; a.icon = accLook.icon || ""; if (accLook.color) a.color = accLook.color;
           if (!isNaN(nuevo)) {
             var actual = accBalance(a);
             a.saldo = Math.round(((Number(a.saldo) || 0) + nuevo - actual) * 100) / 100;
@@ -4088,7 +4154,7 @@ body.view-accd .fab, body.view-accd .ai-fab { opacity: 0; pointer-events: none; 
           if (!accUsed(a)) a.moneda = $("acc-moneda").value;
         }
       } else {
-        var na = { id: Date.now(), nombre: nombre, moneda: $("acc-moneda").value, saldo: isNaN(nuevo) ? 0 : Math.round(nuevo * 100) / 100, creado: today() };
+        var na = { id: Date.now(), nombre: nombre, moneda: $("acc-moneda").value, saldo: isNaN(nuevo) ? 0 : Math.round(nuevo * 100) / 100, creado: today(), icon: accLook.icon || "", color: accLook.color || "" };
         state.accounts.push(na);
         state.lastAcc = na.id;
       }
