@@ -1058,6 +1058,44 @@ body.view-accd .fab, body.view-accd .ai-fab { opacity: 0; pointer-events: none; 
 /* Metas: estado vacío centrado */
 .goals-view .gv-empty { min-height: calc(100vh - 330px); justify-content: center; }
 .gv-empty p { text-align: center; margin-left: auto; margin-right: auto; }
+/* Tarjetas de tasas: abren el historial */
+.top .rate-card { cursor: pointer; position: relative; transition: transform 0.2s var(--spring, ease), border-color 0.2s; }
+.top .rate-card:active { transform: scale(0.97); }
+.top .rate-card::after { content: ""; position: absolute; right: 10px; top: 50%; width: 7px; height: 7px; border-right: 2px solid var(--muted); border-top: 2px solid var(--muted); transform: translateY(-15%) rotate(45deg); opacity: 0.55; }
+/* Historial de tasas */
+.rh-seg { display: flex; width: 100%; margin-bottom: 14px; }
+.rh-seg button { flex: 1; font-size: 0.82rem; }
+.rh-top { display: flex; justify-content: space-between; align-items: flex-end; gap: 10px; flex-wrap: wrap; }
+.rh-v { font-family: var(--display); font-weight: 700; font-size: 2rem; line-height: 1.1; font-variant-numeric: tabular-nums; }
+.rh-d { font-size: 0.88rem; font-weight: 600; color: var(--muted); min-height: 1.3em; }
+.rh-d.up { color: var(--out); } .rh-d.down { color: var(--in); }
+.rh-chart { position: relative; margin: 14px 0 6px; touch-action: pan-y; }
+.rh-chart svg { display: block; width: 100%; height: 170px; overflow: visible; }
+.rh-chart .ax { display: flex; justify-content: space-between; color: var(--muted); font-size: 0.72rem; margin-top: 4px; }
+.rh-tip { position: absolute; top: -6px; transform: translateX(-50%); background: var(--ink); color: var(--bg); font-size: 0.75rem; font-weight: 600; padding: 4px 8px; border-radius: 8px; white-space: nowrap; pointer-events: none; }
+.rh-tip[hidden] { display: none; }
+.rh-empty { text-align: center; color: var(--muted); padding: 34px 10px; font-size: 0.9rem; }
+.rh-stats { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; margin-top: 8px; }
+.rh-stats div { background: var(--bg); border-radius: 12px; padding: 8px 10px; min-width: 0; }
+.rh-stats span { display: block; color: var(--muted); font-size: 0.72rem; }
+.rh-stats b { font-family: var(--display); font-size: 0.98rem; font-variant-numeric: tabular-nums; }
+.rh-h { font-size: 0.75rem; font-weight: 700; letter-spacing: 0.07em; text-transform: uppercase; color: var(--muted); margin: 18px 4px 8px; }
+.rh-list { list-style: none; margin: 0; padding: 0; background: var(--bg); border-radius: 16px; }
+.rh-list li { display: grid; grid-template-columns: 1fr auto auto; gap: 12px; padding: 10px 14px; border-top: 1px solid var(--line); font-variant-numeric: tabular-nums; font-size: 0.9rem; }
+.rh-list li:first-child { border-top: 0; }
+.rh-list .c { min-width: 64px; text-align: right; font-weight: 600; font-size: 0.82rem; color: var(--muted); }
+.rh-list .c.up { color: var(--out); } .rh-list .c.down { color: var(--in); }
+/* Recordatorio de copia */
+.bk-nudge { position: relative; display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 8px 12px; align-items: center; background: var(--surface); border: 1px solid color-mix(in srgb, var(--out) 35%, var(--line)); border-radius: 18px; padding: 12px 40px 12px 12px; margin-bottom: 16px; }
+.bk-nudge[hidden] { display: none; }
+.bk-ic { width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: var(--out); background: color-mix(in srgb, var(--out) 14%, transparent); }
+.bk-ic svg { width: 21px; height: 21px; }
+.bk-tx b { display: block; font-family: var(--display); font-size: 0.98rem; }
+.bk-tx small { display: block; color: var(--muted); font-size: 0.8rem; line-height: 1.35; }
+.bk-go { font: inherit; font-weight: 700; font-size: 0.82rem; color: var(--accent-ink); background: var(--accent); border: 0; border-radius: 999px; padding: 0 14px; min-height: 36px; cursor: pointer; white-space: nowrap; }
+.bk-go { grid-column: 2; justify-self: start; }
+.bk-ic { align-self: start; }
+.acc-actions button { white-space: nowrap; }
 @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation: none !important; transition: none !important; scroll-behavior: auto !important; } }
 </style>
 </head>
@@ -1114,6 +1152,12 @@ body.view-accd .fab, body.view-accd .ai-fab { opacity: 0; pointer-events: none; 
     </div>
   </section>
 
+  <div class="bk-nudge" id="bk-nudge" hidden>
+    <span class="bk-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l8 3v6c0 4.5-3.4 8.3-8 9-4.6-.7-8-4.5-8-9V6z"></path><path d="M12 8v6M9.5 11.5L12 14l2.5-2.5"></path></svg></span>
+    <span class="bk-tx"><b>Protege tus datos</b><small id="bk-nudge-s"></small></span>
+    <button type="button" class="bk-go" id="bk-nudge-go">Guardar copia</button>
+    <button type="button" class="bn-x" id="bk-nudge-x" aria-label="Recordármelo más tarde">✕</button>
+  </div>
   <div class="bn-entry" id="bn-entry" role="button" tabindex="0" aria-label="Abrir la guía para ahorrar en Binance" hidden>
     <span class="bn-ic" aria-hidden="true">₮</span>
     <span><b id="bn-entry-t">Pon tu ahorro a trabajar</b><small id="bn-entry-s"></small></span>
@@ -1296,9 +1340,10 @@ body.view-accd .fab, body.view-accd .ai-fab { opacity: 0; pointer-events: none; 
       <button type="button" class="set-row " id="bk-save"><span class="tx"><b>Guardar una copia</b><small><span id="bk-sub">Descarga un archivo con todos tus movimientos.</span></small></span><svg class="chev-r" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 5l7 7-7 7"></path></svg></button>
       <button type="button" class="set-row " id="bk-load"><span class="tx"><b>Restaurar una copia</b><small>Carga un archivo guardado antes. Reemplaza lo que tienes ahora.</small></span><svg class="chev-r" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 5l7 7-7 7"></path></svg></button>
       <button type="button" class="set-row danger" id="data-del"><span class="tx"><b>Borrar todos los datos</b><small>Elimina todo lo guardado en este teléfono.</small></span><svg class="chev-r" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 5l7 7-7 7"></path></svg></button>
+      <button type="button" class="set-row " id="ex-all"><span class="tx"><b>Exportar movimientos a Excel</b><small>Un archivo con todos tus movimientos para abrir en Excel o Numbers.</small></span><svg class="chev-r" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 5l7 7-7 7"></path></svg></button>
       <input type="file" id="bk-file" accept=".json,application/json" hidden>
     </div>
-    <p class="hint" style="margin:8px 6px 0;font-size:0.8rem">Tus datos se guardan solo en este teléfono. Si borras los datos del navegador o cambias de teléfono, se pierden si no tienes una copia.</p>
+    <p class="hint" style="margin:8px 6px 0;font-size:0.8rem">Tus datos se guardan solo en este teléfono. Si lo pierdes, borras los datos de Safari o cambias de teléfono, solo podrás recuperarlos con una copia. Al guardarla, elige <b>Guardar en Archivos › iCloud Drive</b> o envíatela por correo para tenerla fuera del teléfono.</p>
 
     <div class="set-h">Binance</div>
     <div class="set-group">
@@ -1322,6 +1367,30 @@ body.view-accd .fab, body.view-accd .ai-fab { opacity: 0; pointer-events: none; 
       <button type="button" class="set-row " id="lg-src"><span class="tx"><b>Fuentes de las tasas</b><small>De dónde salen las tasas y los precios.</small></span><svg class="chev-r" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 5l7 7-7 7"></path></svg></button>
     </div>
     <p class="set-foot">Mis gastos · versión 1.0<br>Mis gastos no es un banco ni una casa de cambio, y no da asesoría financiera.</p>
+  </div>
+  <div class="sheet-backdrop" id="rh-sheet" hidden>
+    <section class="panel sheet" role="dialog" aria-modal="true" aria-labelledby="h-rh">
+      <div class="sheet-head"><h2 id="h-rh">Historial de tasas</h2><button type="button" class="del" id="rh-close" aria-label="Cerrar">✕</button></div>
+      <div class="seg rh-seg" role="group" aria-label="Tasa">
+        <button type="button" data-rhk="usd" aria-pressed="true">Dólar BCV</button>
+        <button type="button" data-rhk="eur" aria-pressed="false">Euro BCV</button>
+        <button type="button" data-rhk="usdt" aria-pressed="false">USDT</button>
+      </div>
+      <div class="rh-top">
+        <div><div class="rh-v" id="rh-v"></div><div class="rh-d" id="rh-d"></div></div>
+        <div class="gc-ranges rh-ranges" role="group" aria-label="Periodo">
+          <button type="button" data-rhr="7" aria-pressed="false">7D</button>
+          <button type="button" data-rhr="30" aria-pressed="true">1M</button>
+          <button type="button" data-rhr="90" aria-pressed="false">3M</button>
+          <button type="button" data-rhr="0" aria-pressed="false">Todo</button>
+        </div>
+      </div>
+      <div class="rh-chart" id="rh-chart"></div>
+      <div class="rh-stats" id="rh-stats"></div>
+      <div class="rh-h">Últimos días</div>
+      <ul class="rh-list" id="rh-list"></ul>
+      <p class="hint" id="rh-note" style="font-size:0.8rem;margin-top:10px"></p>
+    </section>
   </div>
   <div class="sheet-backdrop" id="lg-sheet" hidden>
     <section class="panel sheet" role="dialog" aria-modal="true" aria-labelledby="h-lg">
@@ -1459,7 +1528,7 @@ body.view-accd .fab, body.view-accd .ai-fab { opacity: 0; pointer-events: none; 
         </div>
         <div>
           <label for="pg-moneda">Divisa</label>
-          <select id="pg-moneda"><option value="USD">Dólares ($)</option><option value="VES">Bolívares (Bs)</option><option value="EUR">Euros (€)</option></select>
+          <select id="pg-moneda"><option value="USD">Dólares ($)</option><option value="VES">Bolívares (Bs)</option><option value="USDT">USDT</option><option value="EUR">Euros (€)</option></select>
         </div>
         <div class="wide">
           <label for="pg-fecha-btn">Fecha del pago</label>
@@ -1761,7 +1830,7 @@ body.view-accd .fab, body.view-accd .ai-fab { opacity: 0; pointer-events: none; 
         </div>
         <div class="wide">
           <label for="acc-moneda">Divisa</label>
-          <select id="acc-moneda"><option value="VES">Bolívares (Bs)</option><option value="USD">Dólares ($)</option><option value="EUR">Euros (€)</option></select>
+          <select id="acc-moneda"><option value="VES">Bolívares (Bs)</option><option value="USD">Dólares ($)</option><option value="USDT">USDT (Tether)</option><option value="EUR">Euros (€)</option></select>
         </div>
         <div class="wide" id="acc-saldo-wrap" style="display:none">
           <label for="acc-saldo">Saldo actual de la cuenta</label>
@@ -1789,7 +1858,7 @@ body.view-accd .fab, body.view-accd .ai-fab { opacity: 0; pointer-events: none; 
         <label for="cuenta">Cuenta</label>
         <select id="cuenta"></select>
       </div>
-      <select id="moneda" hidden aria-hidden="true" tabindex="-1"><option value="USD">Dólares ($)</option><option value="VES">Bolívares (Bs)</option><option value="EUR">Euros (€)</option></select>
+      <select id="moneda" hidden aria-hidden="true" tabindex="-1"><option value="USD">Dólares ($)</option><option value="VES">Bolívares (Bs)</option><option value="USDT">USDT</option><option value="EUR">Euros (€)</option></select>
       <div>
         <label for="cat">Categoría</label>
         <select id="cat"></select>
@@ -1841,7 +1910,7 @@ body.view-accd .fab, body.view-accd .ai-fab { opacity: 0; pointer-events: none; 
   };
   var COLORS = ["#1f4fff", "#e08a00", "#0e9aa7", "#8a3ffc", "#e5133f", "#00a651", "#6b7b86", "#d6502b", "#9a7b00"];
 
-  var state = { items: [], rate: 0, disp: "USD", type: "gasto", month: "", sel: null, selIn: null, collapsed: {}, paySeries: [], theme: "auto", pin: null, backupAt: 0, onb: false, bn: { done: {}, apr: 5, hide: false, opened: {}, v: 2 }, templates: [], showAll: false, hideSav: false, rateManual: "", rateAutoAt: 0, rateLoading: false, rateFail: false, rateErr: "", accounts: [], rateEur: 0, rateEurDate: "", rateEurManual: "", rateUsdt: 0, rateUsdtDate: "", rateUsdtManual: "", rateUsdtSrc: "", goals: [], payments: [], lastAcc: null, rateDate: "", fsav: { on: false, pct: 10 }, sav: { on: false, pct: 10 } };
+  var state = { items: [], rate: 0, disp: "USD", type: "gasto", month: "", sel: null, selIn: null, collapsed: {}, paySeries: [], rateHist: {}, rateHistAt: 0, theme: "auto", pin: null, backupAt: 0, onb: false, bn: { done: {}, apr: 5, hide: false, opened: {}, v: 2 }, templates: [], showAll: false, hideSav: false, rateManual: "", rateAutoAt: 0, rateLoading: false, rateFail: false, rateErr: "", accounts: [], rateEur: 0, rateEurDate: "", rateEurManual: "", rateUsdt: 0, rateUsdtDate: "", rateUsdtManual: "", rateUsdtSrc: "", goals: [], payments: [], lastAcc: null, rateDate: "", fsav: { on: false, pct: 10 }, sav: { on: false, pct: 10 } };
 
   function load() {
     try {
@@ -1859,6 +1928,8 @@ body.view-accd .fab, body.view-accd .ai-fab { opacity: 0; pointer-events: none; 
         if (d && Array.isArray(d.goals)) state.goals = d.goals;
         if (d && Array.isArray(d.payments)) state.payments = d.payments;
         if (d && Array.isArray(d.paySeries)) state.paySeries = d.paySeries;
+        if (d && d.rateHist && typeof d.rateHist === "object") state.rateHist = d.rateHist;
+        if (d && typeof d.rateHistAt === "number") state.rateHistAt = d.rateHistAt;
         if (d && (d.theme === "light" || d.theme === "dark")) state.theme = d.theme;
         if (d && d.pin && typeof d.pin.h === "string") state.pin = d.pin;
         if (d && typeof d.backupAt === "number") state.backupAt = d.backupAt;
@@ -1880,7 +1951,7 @@ body.view-accd .fab, body.view-accd .ai-fab { opacity: 0; pointer-events: none; 
   }
   function save() {
     try {
-      localStorage.setItem(KEY, JSON.stringify({ items: state.items, rate: state.rate, rateDate: state.rateDate, hideSav: state.hideSav, rateManual: state.rateManual, rateAutoAt: state.rateAutoAt, accounts: state.accounts, templates: state.templates, goals: state.goals, payments: state.payments, paySeries: state.paySeries, theme: state.theme, pin: state.pin, backupAt: state.backupAt, onb: state.onb, bn: state.bn, btcUsd: state.btcUsd, btcAt: state.btcAt, rateEur: state.rateEur, rateEurDate: state.rateEurDate, rateEurManual: state.rateEurManual, rateUsdt: state.rateUsdt, rateUsdtDate: state.rateUsdtDate, rateUsdtManual: state.rateUsdtManual, rateUsdtSrc: state.rateUsdtSrc, collapsed: state.collapsed, disp: state.disp, sav: state.sav }));
+      localStorage.setItem(KEY, JSON.stringify({ items: state.items, rate: state.rate, rateDate: state.rateDate, hideSav: state.hideSav, rateManual: state.rateManual, rateAutoAt: state.rateAutoAt, accounts: state.accounts, templates: state.templates, goals: state.goals, payments: state.payments, paySeries: state.paySeries, rateHist: state.rateHist, rateHistAt: state.rateHistAt, theme: state.theme, pin: state.pin, backupAt: state.backupAt, onb: state.onb, bn: state.bn, btcUsd: state.btcUsd, btcAt: state.btcAt, rateEur: state.rateEur, rateEurDate: state.rateEurDate, rateEurManual: state.rateEurManual, rateUsdt: state.rateUsdt, rateUsdtDate: state.rateUsdtDate, rateUsdtManual: state.rateUsdtManual, rateUsdtSrc: state.rateUsdtSrc, collapsed: state.collapsed, disp: state.disp, sav: state.sav }));
     } catch (e) {}
   }
 
@@ -1903,11 +1974,12 @@ body.view-accd .fab, body.view-accd .ai-fab { opacity: 0; pointer-events: none; 
   function money(n, cur, d) {
     var sign = n < 0 ? "-" : "";
     var v = num(Math.abs(n), d);
+    if (cur === "USDT") return sign + v + " USDT";
     return (cur === "USD" ? sign + "$" : cur === "EUR" ? sign + "€" : sign + "Bs ") + v;
   }
   function moneyH(n, cur, d) {
     var s = money(n, cur, d);
-    if (cur === "VES" || cur === "EUR") {
+    if (cur === "VES" || cur === "EUR" || cur === "USDT") {
       var u = conv(n, cur, "USD");
       if (u !== null) s += ' <small class="usd">≈ ' + money(u, "USD", d) + "</small>";
     }
@@ -1917,6 +1989,7 @@ body.view-accd .fab, body.view-accd .ai-fab { opacity: 0; pointer-events: none; 
     if (c === "VES") return a;
     if (c === "USD") return state.rate > 0 ? a * state.rate : null;
     if (c === "EUR") return state.rateEur > 0 ? a * state.rateEur : null;
+    if (c === "USDT") return state.rateUsdt > 0 ? a * state.rateUsdt : null;
     return null;
   }
   function fromVES(v, c) {
@@ -1924,13 +1997,18 @@ body.view-accd .fab, body.view-accd .ai-fab { opacity: 0; pointer-events: none; 
     if (c === "VES") return v;
     if (c === "USD") return state.rate > 0 ? v / state.rate : null;
     if (c === "EUR") return state.rateEur > 0 ? v / state.rateEur : null;
+    if (c === "USDT") return state.rateUsdt > 0 ? v / state.rateUsdt : null;
     return null;
   }
   function conv(amount, from, to) {
     if (from === to) return amount;
+    // USDT y dólar se toman 1 a 1; a bolívares el USDT va a su propia tasa
+    if ((from === "USDT" && to === "USD") || (from === "USD" && to === "USDT")) return amount;
     return fromVES(toVES(amount, from), to);
   }
-  function curLabel(c) { return c === "USD" ? "$" : c === "EUR" ? "€" : "Bs"; }
+  function curLabel(c) { return c === "USD" ? "$" : c === "EUR" ? "€" : c === "USDT" ? "USDT" : "Bs"; }
+  // Monedas que solo se mueven entre cuentas de la misma moneda en ahorros y metas
+  function curCompat(x, y) { return (x === "EUR" || x === "USDT" || y === "EUR" || y === "USDT") ? x === y : true; }
   function accById(id) {
     if (id === undefined || id === null || id === "") return null;
     return state.accounts.filter(function (a) { return String(a.id) === String(id); })[0] || null;
@@ -2720,7 +2798,7 @@ body.view-accd .fab, body.view-accd .ai-fab { opacity: 0; pointer-events: none; 
     } else {
       var plus = it.tipo === "ingreso" || it.tipo === "retiro";
       var sign = it.tipo === "ahorro" ? "" : (plus ? "+" : "−");
-      var other = it.moneda === "VES" || it.moneda === "EUR" ? "USD" : "VES";
+      var other = it.moneda === "VES" || it.moneda === "EUR" || it.moneda === "USDT" ? "USD" : "VES";
       var alt = conv(it.monto, it.moneda, other);
       amt = sign + money(it.monto, it.moneda) + (alt !== null ? "<small>≈ " + money(alt, other) + "</small>" : "");
       cls = it.tipo === "ahorro" ? "sv" : (plus ? "in" : "out");
@@ -3118,6 +3196,7 @@ body.view-accd .fab, body.view-accd .ai-fab { opacity: 0; pointer-events: none; 
           state[f.m] = "";
           if (o.k === "usdt") state.rateUsdtSrc = o.src;
           $(f.input).value = num(state[f.v]);
+          histPut(t, o.k, state[f.v]);
         });
         state.rateFail = fail;
         if (!fail) state.rateErr = "";
@@ -3129,6 +3208,41 @@ body.view-accd .fab, body.view-accd .ai-fab { opacity: 0; pointer-events: none; 
         render();
       });
   }
+  // Historial de tasas: se guarda una tasa por día y se completa con el histórico público cuando hay internet
+  function histPut(day, k, v) {
+    if (!(v > 0) || !/^\d{4}-\d{2}-\d{2}$/.test(day)) return;
+    var h = state.rateHist || (state.rateHist = {}), o = h[day] || (h[day] = {});
+    o[k] = Math.round(v * 10000) / 10000;
+  }
+  function histSeed() {
+    if (state.rate > 0) histPut(state.rateDate || today(), "usd", state.rate);
+    if (state.rateEur > 0) histPut(state.rateEurDate || today(), "eur", state.rateEur);
+    if (state.rateUsdt > 0) histPut(state.rateUsdtDate || today(), "usdt", state.rateUsdt);
+  }
+  var HIST_URLS = {
+    usd: "https://ve.dolarapi.com/v1/historicos/dolares/oficial",
+    eur: "https://ve.dolarapi.com/v1/historicos/euros/oficial",
+    usdt: "https://ve.dolarapi.com/v1/historicos/dolares/paralelo"
+  };
+  function fetchRateHist(force) {
+    if (typeof fetch !== "function") return Promise.resolve(false);
+    if (!force && Date.now() - (state.rateHistAt || 0) < 12 * 3600 * 1000) return Promise.resolve(false);
+    var any = false;
+    return Promise.all(Object.keys(HIST_URLS).map(function (k) {
+      return getJSON(HIST_URLS[k], 15000).then(function (arr) {
+        if (!Array.isArray(arr)) return;
+        arr.forEach(function (x) {
+          var f = String((x && (x.fecha || x.date)) || "").slice(0, 10), v = Number(x && (x.promedio != null ? x.promedio : x.price));
+          if (/^\d{4}-\d{2}-\d{2}$/.test(f) && v > 0) { var h = state.rateHist[f]; if (!h || !(h[k] > 0)) { histPut(f, k, v); any = true; } }
+        });
+      }, function () {});
+    })).then(function () {
+      var keys = Object.keys(state.rateHist).sort();
+      if (keys.length > 800) keys.slice(0, keys.length - 800).forEach(function (d) { delete state.rateHist[d]; });
+      state.rateHistAt = Date.now(); save();
+      return any;
+    });
+  }
   function renderRateChips() {
     var items = [];
     if (state.rate > 0) items.push(["BCV", state.rate]);
@@ -3139,7 +3253,7 @@ body.view-accd .fab, body.view-accd .ai-fab { opacity: 0; pointer-events: none; 
     });
   }
 
-  var ACC_CUR = { USD: { c: "var(--in)", n: "Dólares" }, VES: { c: "#0e9aa7", n: "Bolívares" }, EUR: { c: "var(--accent)", n: "Euros" } };
+  var ACC_CUR = { USD: { c: "var(--in)", n: "Dólares" }, VES: { c: "#0e9aa7", n: "Bolívares" }, EUR: { c: "var(--accent)", n: "Euros" }, USDT: { c: "#26a17b", n: "USDT" } };
   function accInitials(n) {
     var w = String(n || "").trim().split(/\s+/).filter(Boolean);
     return ((w[0] || "?").charAt(0) + (w.length > 1 ? w[1].charAt(0) : (w[0] || "").charAt(1) || "")).toUpperCase();
@@ -3168,6 +3282,7 @@ body.view-accd .fab, body.view-accd .ai-fab { opacity: 0; pointer-events: none; 
         '<span class="acc-n">' + state.accounts.length + (state.accounts.length === 1 ? " cuenta" : " cuentas") + "</span>";
     }
     if (typeof window.__accd === "function") window.__accd();
+    if (typeof window.__nudge === "function") window.__nudge();
   }
 
   function renderSavings() {
@@ -3280,7 +3395,19 @@ body.view-accd .fab, body.view-accd .ai-fab { opacity: 0; pointer-events: none; 
     }
     function mvOut(v, src, dst, r) {
       if (src === dst) return Math.round(v * 100) / 100;
+      if (src !== "VES" && dst !== "VES") return Math.round(v * r * 100) / 100;
       return Math.round((src === "VES" ? v / r : v * r) * 100) / 100;
+    }
+    function dayRate(c) { return c === "EUR" ? state.rateEur : c === "USDT" ? state.rateUsdt : state.rate; }
+    // Qué significa la tasa del traspaso y cuál es la del día para ese par
+    function trRateInfo(a, b) {
+      if (a === "VES" || b === "VES") {
+        var x = a === "VES" ? b : a, unit = x === "USD" ? "$1" : x === "EUR" ? "€1" : "1 USDT";
+        return { label: "Tasa (Bs por " + unit + ")", def: dayRate(x), hint: "Bs " + "{r} por " + unit, chips: x === "USD" };
+      }
+      var u1 = a === "USD" ? "$1" : a === "EUR" ? "€1" : "1 USDT";
+      var d = conv(1, a, b);
+      return { label: "Tasa (" + curLabel(b) + " por " + u1 + ")", def: d, hint: "{r} " + curLabel(b) + " por " + u1, chips: false };
     }
     function fillMvFrom() {
       var from = $("mv-from"), prev = from.value, m = savMap(), opts = [];
@@ -3303,7 +3430,7 @@ body.view-accd .fab, body.view-accd .ai-fab { opacity: 0; pointer-events: none; 
             if (a.moneda === src.cur) opts.push(a);
           } else {
             if (src.id !== null && a.id === src.id) return;
-            var ok = src.cur === "EUR" ? a.moneda === "EUR" : a.moneda !== "EUR";
+            var ok = curCompat(src.cur, a.moneda);
             if (ok) opts.push(a);
           }
         });
@@ -3524,6 +3651,7 @@ body.view-accd .fab, body.view-accd .ai-fab { opacity: 0; pointer-events: none; 
       closeMenus();
       if (!$("dial").hidden) closeDial();
       else if (!$("cf-sheet").hidden) closeCf();
+      else if (!$("rh-sheet").hidden) closeRh();
       else if (!$("lg-sheet").hidden) closeLg();
       else if (!$("pg-sheet").hidden) closePg();
       else if (!$("gm-sheet").hidden) closeGm();
@@ -3694,18 +3822,24 @@ body.view-accd .fab, body.view-accd .ai-fab { opacity: 0; pointer-events: none; 
       var src = trSrc(), prev = $("tr-to").value, opts = [];
       state.accounts.forEach(function (a) {
         if (!src || a.id === src.id) return;
-        var ok = src.moneda === "EUR" ? a.moneda === "EUR" : a.moneda !== "EUR";
-        if (ok) opts.push('<option value="' + a.id + '">' + esc(a.nombre) + " (" + curLabel(a.moneda) + ")</option>");
+        opts.push('<option value="' + a.id + '">' + esc(a.nombre) + " (" + curLabel(a.moneda) + ")</option>");
       });
       $("tr-to").innerHTML = opts.length ? opts.join("") : '<option value="">No hay otra cuenta que pueda recibirlo</option>';
       for (var i = 0; i < $("tr-to").options.length; i++) if ($("tr-to").options[i].value === prev) $("tr-to").value = prev;
       $("tr-monto-label").textContent = "Monto" + (src ? " (" + curLabel(src.moneda) + ")" : "");
       syncTr();
     }
+    var trPair = "";
     function syncTr() {
-      var rate = trNeedsRate();
+      var rate = trNeedsRate(), a = trSrc(), b = trDst();
       $("tr-rate-wrap").style.display = rate ? "" : "none";
       $("tr-rate-hint").style.display = rate ? "" : "none";
+      if (rate) {
+        var info = trRateInfo(a.moneda, b.moneda), pair = a.moneda + ">" + b.moneda;
+        $("tr-rate-wrap").querySelector("label").textContent = info.label;
+        $("tr-rate-wrap").querySelector(".rate-chips").style.display = info.chips ? "" : "none";
+        if (pair !== trPair) { $("tr-rate").value = info.def > 0 ? fmtIn(Math.round(info.def * 10000) / 10000) : ""; trPair = pair; }
+      }
       renderTrPrev();
     }
     function renderTrPrev() {
@@ -3716,7 +3850,7 @@ body.view-accd .fab, body.view-accd .ai-fab { opacity: 0; pointer-events: none; 
       var out = mvOut(v, a.moneda, b.moneda, r);
       var html = '<div class="pv"><span>Sale de ' + esc(a.nombre) + '</span><strong>' + money(v, a.moneda) + '</strong></div>' +
         '<div class="pv"><span>Llega a ' + esc(b.nombre) + '</span><strong>' + money(out, b.moneda) + "</strong></div>";
-      if (a.moneda !== b.moneda) html += '<span class="hint">Tasa usada: Bs ' + num(r) + " por $1.</span>";
+      if (a.moneda !== b.moneda) html += '<span class="hint">Tasa usada: ' + trRateInfo(a.moneda, b.moneda).hint.replace("{r}", num(r, r < 10 ? 4 : 2)) + ".</span>";
       if (v > accBalance(a) + 0.005) html += '<span class="hint">Ojo: en la app esta cuenta quedará en negativo.</span>';
       p.innerHTML = html;
     }
@@ -3775,7 +3909,7 @@ body.view-accd .fab, body.view-accd .ai-fab { opacity: 0; pointer-events: none; 
       var src = svSrc(), opts = [];
       state.accounts.forEach(function (a) {
         if (!src) return;
-        var ok = src.moneda === "EUR" ? a.moneda === "EUR" : a.moneda !== "EUR";
+        var ok = curCompat(src.moneda, a.moneda);
         if (ok) opts.push('<option value="' + a.id + '">' + esc(a.nombre) + " (" + curLabel(a.moneda) + ")</option>");
       });
       $("sv-to").innerHTML = opts.length ? opts.join("") : '<option value="">No hay una cuenta que pueda recibirlo</option>';
@@ -3797,7 +3931,7 @@ body.view-accd .fab, body.view-accd .ai-fab { opacity: 0; pointer-events: none; 
       var out = mvOut(v, a.moneda, b.moneda, r);
       var html = '<div class="pv"><span>Sale de ' + esc(a.nombre) + '</span><strong>' + money(v, a.moneda) + '</strong></div>' +
         '<div class="pv"><span>Llega a los ahorros de ' + esc(b.nombre) + '</span><strong>' + money(out, b.moneda) + "</strong></div>";
-      if (a.moneda !== b.moneda) html += '<span class="hint">Tasa usada: Bs ' + num(r) + " por $1.</span>";
+      if (a.moneda !== b.moneda) html += '<span class="hint">Tasa usada: ' + trRateInfo(a.moneda, b.moneda).hint.replace("{r}", num(r, r < 10 ? 4 : 2)) + ".</span>";
       if (v > accBalance(a) + 0.005) html += '<span class="hint">Ojo: en la app esta cuenta quedará en negativo.</span>';
       p.innerHTML = html;
     }
@@ -4183,6 +4317,141 @@ body.view-accd .fab, body.view-accd .ai-fab { opacity: 0; pointer-events: none; 
         showToast("Archivo listo. Se abre en Excel o Numbers.");
       }
     }
+    /* ---------- Historial de tasas ---------- */
+    var rh = { k: "usd", r: 30, pts: [] };
+    var RH_NAME = { usd: "dólar BCV", eur: "euro BCV", usdt: "USDT" };
+    function rhSeries() {
+      var h = state.rateHist || {}, days = Object.keys(h).sort(), out = [];
+      days.forEach(function (d) { var v = h[d] && h[d][rh.k]; if (v > 0) out.push([d, v]); });
+      if (rh.r) { var from = addDaysIso(today(), -(rh.r - 1)); out = out.filter(function (x) { return x[0] >= from; }); }
+      return out;
+    }
+    function pctTxt(a, b) { var p = (b - a) / a * 100; return (p >= 0 ? "+" : "−") + Math.abs(p).toLocaleString("es-VE", { maximumFractionDigits: 2 }) + "%"; }
+    function renderRh() {
+      setPressed("[data-rhk]", "data-rhk", rh.k);
+      setPressed("[data-rhr]", "data-rhr", String(rh.r));
+      var pts = rhSeries(), cur = { usd: state.rate, eur: state.rateEur, usdt: state.rateUsdt }[rh.k];
+      rh.pts = pts;
+      $("rh-v").textContent = cur > 0 ? "Bs " + num(cur) : "—";
+      var dEl = $("rh-d");
+      if (pts.length >= 2) {
+        var a = pts[0][1], b = pts[pts.length - 1][1], diff = b - a;
+        dEl.textContent = (diff >= 0 ? "+" : "−") + "Bs " + num(Math.abs(diff)) + " (" + pctTxt(a, b) + ") " + (rh.r ? "en " + (rh.r === 7 ? "7 días" : rh.r === 30 ? "1 mes" : "3 meses") : "desde " + shortDate(pts[0][0]));
+        dEl.className = "rh-d " + (diff > 0.0001 ? "up" : diff < -0.0001 ? "down" : "");
+      } else { dEl.textContent = ""; dEl.className = "rh-d"; }
+      var ch = $("rh-chart");
+      if (pts.length < 2) {
+        ch.innerHTML = '<div class="rh-empty">Aún no hay suficiente historial del ' + RH_NAME[rh.k] + '.<br>La app guarda la tasa cada día que la abres' + (navigator.onLine === false ? "" : " y trae el histórico cuando hay internet") + ".</div>";
+        $("rh-stats").innerHTML = "";
+      } else {
+        var vs = pts.map(function (x) { return x[1]; }), mn = Math.min.apply(null, vs), mx = Math.max.apply(null, vs);
+        var W = 320, H = 170, pt = 14, pb = 10, span = mx - mn || mx * 0.01 || 1, lo = mn - span * 0.08, hi = mx + span * 0.08;
+        var t0 = Date.parse(pts[0][0]), t1 = Date.parse(pts[pts.length - 1][0]) || t0 + 1;
+        var xy = pts.map(function (x) { return [((Date.parse(x[0]) - t0) / Math.max(1, t1 - t0)) * W, pt + (1 - (x[1] - lo) / (hi - lo)) * (H - pt - pb)]; });
+        var line = xy.map(function (q, i) { return (i ? "L" : "M") + q[0].toFixed(1) + " " + q[1].toFixed(1); }).join(" ");
+        var col = vs[vs.length - 1] >= vs[0] ? "var(--out)" : "var(--in)", last = xy[xy.length - 1];
+        var grid = [0.25, 0.5, 0.75].map(function (f) { var y = (pt + f * (H - pt - pb)).toFixed(1); return '<line x1="0" x2="' + W + '" y1="' + y + '" y2="' + y + '" stroke="var(--line)" stroke-width="1" stroke-dasharray="3 4" vector-effect="non-scaling-stroke"></line>'; }).join("");
+        ch.innerHTML = '<svg viewBox="0 0 ' + W + " " + H + '" preserveAspectRatio="none" aria-label="Gráfico de la tasa del ' + RH_NAME[rh.k] + '"><defs><linearGradient id="rhg" x1="0" x2="0" y1="0" y2="1"><stop offset="0" stop-color="' + col + '" stop-opacity="0.22"></stop><stop offset="1" stop-color="' + col + '" stop-opacity="0"></stop></linearGradient></defs>' + grid +
+          '<path d="' + line + " L" + W + " " + H + " L0 " + H + ' Z" fill="url(#rhg)" stroke="none"></path><path d="' + line + '" fill="none" stroke="' + col + '" stroke-width="2.4" stroke-linejoin="round" stroke-linecap="round" vector-effect="non-scaling-stroke"></path>' +
+          '<line id="rh-cur" x1="0" x2="0" y1="0" y2="' + H + '" stroke="var(--muted)" stroke-width="1" vector-effect="non-scaling-stroke" visibility="hidden"></line>' +
+          '<circle id="rh-dot" cx="' + last[0] + '" cy="' + last[1] + '" r="4" fill="' + col + '" stroke="var(--surface)" stroke-width="2" vector-effect="non-scaling-stroke"></circle></svg>' +
+          '<div class="rh-tip" id="rh-tip" hidden></div><div class="ax"><span>' + shortDate(pts[0][0]) + "</span><span>" + shortDate(pts[pts.length - 1][0]) + "</span></div>";
+        ch._xy = xy;
+        var avg = vs.reduce(function (s, v) { return s + v; }, 0) / vs.length;
+        $("rh-stats").innerHTML = '<div><span>Mínimo</span><b>' + num(mn) + '</b></div><div><span>Promedio</span><b>' + num(avg) + '</b></div><div><span>Máximo</span><b>' + num(mx) + "</b></div>";
+      }
+      var all = (function () { var h = state.rateHist || {}; return Object.keys(h).sort().filter(function (d) { return h[d][rh.k] > 0; }).map(function (d) { return [d, h[d][rh.k]]; }); })();
+      var rows = all.slice(-10).reverse();
+      $("rh-list").innerHTML = rows.length ? rows.map(function (x, i) {
+        var prev = all[all.length - 1 - i - 1], c = prev ? x[1] - prev[1] : 0, cls = c > 0.0001 ? "up" : c < -0.0001 ? "down" : "";
+        return "<li><span>" + dayLabel(x[0]) + "</span><b>Bs " + num(x[1]) + '</b><span class="c ' + cls + '">' + (prev ? pctTxt(prev[1], x[1]) : "—") + "</span></li>";
+      }).join("") : '<li><span class="hint">Sin datos todavía.</span></li>';
+      $("rh-note").textContent = "Tasas guardadas en este teléfono" + (state.rateHistAt ? " y completadas con el histórico de ve.dolarapi.com" : "") + ". Subir = el bolívar pierde valor.";
+    }
+    function rhScrub(clientX) {
+      var ch = $("rh-chart"), xy = ch._xy, svg = ch.querySelector("svg");
+      if (!xy || !svg) return;
+      var r = svg.getBoundingClientRect(), x = (clientX - r.left) / r.width * 320, best = 0;
+      for (var i = 1; i < xy.length; i++) if (Math.abs(xy[i][0] - x) < Math.abs(xy[best][0] - x)) best = i;
+      var q = xy[best], p = rh.pts[best];
+      $("rh-dot").setAttribute("cx", q[0]); $("rh-dot").setAttribute("cy", q[1]);
+      var cl = $("rh-cur"); cl.setAttribute("x1", q[0]); cl.setAttribute("x2", q[0]); cl.setAttribute("visibility", "visible");
+      var tip = $("rh-tip"); tip.hidden = false; tip.textContent = shortDate(p[0]) + " · Bs " + num(p[1]);
+      tip.style.left = Math.max(40, Math.min(r.width - 40, q[0] / 320 * r.width)) + "px";
+    }
+    function rhScrubEnd() { var t = $("rh-tip"); if (t) t.hidden = true; var c = $("rh-cur"); if (c) c.setAttribute("visibility", "hidden"); var xy = $("rh-chart")._xy; if (xy && $("rh-dot")) { var l = xy[xy.length - 1]; $("rh-dot").setAttribute("cx", l[0]); $("rh-dot").setAttribute("cy", l[1]); } }
+    $("rh-chart").addEventListener("pointermove", function (e) { rhScrub(e.clientX); });
+    $("rh-chart").addEventListener("pointerdown", function (e) { rhScrub(e.clientX); });
+    $("rh-chart").addEventListener("pointerleave", rhScrubEnd);
+    $("rh-chart").addEventListener("pointerup", function (e) { if (e.pointerType !== "mouse") setTimeout(rhScrubEnd, 900); });
+    function openRh(k) {
+      rh.k = k || "usd";
+      histSeed();
+      renderRh();
+      $("rh-sheet").hidden = false;
+      fetchRateHist(false).then(function (changed) { if (changed && !$("rh-sheet").hidden) renderRh(); });
+    }
+    function closeRh() { $("rh-sheet").hidden = true; }
+    $("rh-close").addEventListener("click", closeRh);
+    $("rh-sheet").addEventListener("click", function (e) { if (e.target === $("rh-sheet")) closeRh(); });
+    document.querySelectorAll("[data-rhk]").forEach(function (b) { b.addEventListener("click", function () { rh.k = b.getAttribute("data-rhk"); renderRh(); }); });
+    document.querySelectorAll("[data-rhr]").forEach(function (b) { b.addEventListener("click", function () { rh.r = Number(b.getAttribute("data-rhr")); renderRh(); }); });
+    [["rc-usd", "usd"], ["rc-eur", "eur"], ["rc-usdt", "usdt"]].forEach(function (x) {
+      var el = document.querySelector(".rate-card." + x[0]);
+      if (!el) return;
+      el.setAttribute("role", "button"); el.setAttribute("tabindex", "0"); el.setAttribute("aria-label", "Ver el historial del " + RH_NAME[x[1]]);
+      el.addEventListener("click", function () { openRh(x[1]); });
+      el.addEventListener("keydown", function (e) { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); openRh(x[1]); } });
+    });
+    histSeed();
+    setTimeout(function () { fetchRateHist(false); }, 4000);
+
+    /* ---------- Exportar todo y recordatorio de copia ---------- */
+    function shareOrDownload(blob, name, title, msg) {
+      var file = null;
+      try { file = new File([blob], name, { type: blob.type }); } catch (e) {}
+      if (file && navigator.canShare && navigator.canShare({ files: [file] }) && navigator.share) {
+        return navigator.share({ files: [file], title: title }).then(function () { return true; }, function (e) { if (e && e.name !== "AbortError") { dl(); return true; } return false; });
+      }
+      dl();
+      return Promise.resolve(true);
+      function dl() {
+        var url = URL.createObjectURL(blob), el = document.createElement("a");
+        el.href = url; el.download = name; document.body.appendChild(el); el.click();
+        setTimeout(function () { URL.revokeObjectURL(url); el.remove(); }, 1500);
+        if (msg) showToast(msg);
+      }
+    }
+    $("ex-all").addEventListener("click", function () {
+      if (!state.items.length) { showToast("Todavía no tienes movimientos para exportar."); return; }
+      var TIPO = { ingreso: "Ingreso", gasto: "Gasto", ahorro: "Ahorro", retiro: "Retiro de ahorro", traspaso: "Transferencia" };
+      function c(v) { v = String(v == null ? "" : v); return /[";\n]/.test(v) ? '"' + v.replace(/"/g, '""') + '"' : v; }
+      function n(v) { return v === null || v === undefined ? "" : (Math.round(v * 100) / 100).toFixed(2).replace(".", ","); }
+      var lines = ["Fecha;Tipo;Categoría;Cuenta;Hacia;Nota;Monto;Moneda;Equivalente en USD"];
+      state.items.slice().sort(function (a, b) { return a.fecha < b.fecha ? -1 : a.fecha > b.fecha ? 1 : a.id - b.id; }).forEach(function (it) {
+        if (it.tipo === "traspaso") {
+          var da = it.desde && it.desde.k === "cuenta" ? accById(it.desde.id) : null, ha = it.hacia && it.hacia.k === "cuenta" ? accById(it.hacia.id) : null;
+          lines.push([it.fecha, TIPO.traspaso, it.cat || "", da ? da.nombre : (it.desde && it.desde.k === "meta" ? "Meta" : "Ahorro"), ha ? ha.nombre : (it.hacia && it.hacia.k === "meta" ? "Meta" : "Ahorro"), it.nota || "", n(it.desde.monto), it.desde.moneda, n(conv(it.desde.monto, it.desde.moneda, "USD"))].map(c).join(";"));
+        } else {
+          var a = accById(it.cuenta), sg = it.tipo === "gasto" || it.tipo === "ahorro" ? -1 : 1;
+          lines.push([it.fecha, TIPO[it.tipo] || it.tipo, it.cat || "", a ? a.nombre : "", "", it.nota || "", n(sg * it.monto), it.moneda, n(conv(sg * it.monto, it.moneda, "USD"))].map(c).join(";"));
+        }
+      });
+      shareOrDownload(new Blob(["﻿" + lines.join("\r\n")], { type: "text/csv" }), "mis-gastos-movimientos-" + today() + ".csv", "Movimientos de Mis gastos", "Archivo listo. Se abre en Excel o Numbers.");
+    });
+    var nudgeOff = false;
+    function renderNudge() {
+      var el = $("bk-nudge"), n = state.items.length;
+      var due = !nudgeOff && n >= 5 && (!state.backupAt || Date.now() - state.backupAt > 30 * 86400000);
+      el.hidden = !due;
+      if (!due) return;
+      var d = state.backupAt ? Math.floor((Date.now() - state.backupAt) / 86400000) : 0;
+      $("bk-nudge-s").textContent = state.backupAt ? "Hace " + d + " días que no guardas una copia de tus " + n + " movimientos." : "Tienes " + n + " movimientos sin copia. Si pierdes el teléfono o borras Safari, se pierden.";
+    }
+    $("bk-nudge-go").addEventListener("click", function () { $("bk-save").click(); setTimeout(renderNudge, 500); });
+    $("bk-nudge-x").addEventListener("click", function () { nudgeOff = true; renderNudge(); showToast("Te lo recordaremos la próxima vez que abras la app."); });
+    window.__nudge = renderNudge;
+    renderNudge();
     /* ---------- Asistente financiero (IA) ---------- */
     var AI_KINDS = { warn: "Atención", tip: "Consejo", good: "Bien hecho", info: "Dato" };
     function renderAiKeyState() {
@@ -4413,12 +4682,12 @@ body.view-accd .fab, body.view-accd .ai-fab { opacity: 0; pointer-events: none; 
     function gmOptions(g) {
       var m = savMap(), opts = [];
       state.accounts.forEach(function (a) {
-        if (g.moneda === "EUR" ? a.moneda !== "EUR" : a.moneda === "EUR") return;
+        if (!curCompat(g.moneda, a.moneda)) return;
         var v = m["a" + a.id] || 0;
         if (gm.mode === "ret" || v > 0.004) opts.push({ value: "s:" + a.id, acc: a, kind: "s", label: "Ahorros de " + a.nombre + (gm.mode === "dep" && !state.hideSav ? " · " + money(v, a.moneda) : "") });
       });
       state.accounts.forEach(function (a) {
-        if (g.moneda === "EUR" ? a.moneda !== "EUR" : a.moneda === "EUR") return;
+        if (!curCompat(g.moneda, a.moneda)) return;
         opts.push({ value: "c:" + a.id, acc: a, kind: "c", label: "Saldo de " + a.nombre + (gm.mode === "dep" ? " · " + money(accBalance(a), a.moneda) : "") });
       });
       return opts;
