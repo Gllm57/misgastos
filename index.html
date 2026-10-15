@@ -934,14 +934,122 @@ body.tb-min .tab > :not(svg) { opacity: 0; max-height: 0; }
 .panel.sheet { margin: 0; }
 @media (min-width: 640px) { .sheet { border-radius: 28px; } .sheet-backdrop[hidden] .sheet { transform: translateY(40px) scale(0.96); opacity: 0; } }
 .sheet-backdrop { background: rgba(0, 0, 0, 0.32); }
-main, .goals-view, .pay-view, .hist-view, .bn-view, .set-view { transition: transform 0.45s var(--spring), border-radius 0.45s var(--spring), filter 0.45s var(--spring); }
+main, .goals-view, .pay-view, .hist-view, .bn-view, .set-view, .accd-view { transition: transform 0.45s var(--spring), border-radius 0.45s var(--spring), filter 0.45s var(--spring); }
 html.sheet-open { background: #000; }
 html.sheet-open body { background: #000; }
-html.sheet-open main, html.sheet-open .goals-view, html.sheet-open .pay-view, html.sheet-open .hist-view, html.sheet-open .bn-view, html.sheet-open .set-view {
+html.sheet-open main, html.sheet-open .goals-view, html.sheet-open .pay-view, html.sheet-open .hist-view, html.sheet-open .bn-view, html.sheet-open .set-view, html.sheet-open .accd-view {
   transform: scale(0.94); border-radius: 22px; overflow: hidden; background: var(--bg); filter: brightness(0.92); transform-origin: 50% var(--so, 50vh); }
 html.sheet-open .tabbar, html.sheet-open .fab, html.sheet-open .ai-fab, html.sheet-open .navbar { opacity: 0; pointer-events: none; }
 .tabbar { transition: left 0.45s var(--spring), right 0.45s var(--spring), height 0.45s var(--spring), border-radius 0.45s var(--spring), opacity 0.3s ease; }
 @media (prefers-reduced-transparency: reduce) { .navbar, .sheet { background: var(--surface); -webkit-backdrop-filter: none; backdrop-filter: none; } }
+/* ---------- Mis cuentas ---------- */
+.acc-sum { display: flex; justify-content: space-between; align-items: flex-end; gap: 12px; padding: 14px 16px; border-radius: 16px; background: var(--bg); margin-bottom: 6px; }
+.acc-sum[hidden] { display: none; }
+.acc-sum > div { min-width: 0; }
+.acc-sum .l { display: block; color: var(--muted); font-size: 0.8rem; }
+.acc-sum strong { display: block; font-family: var(--display); font-size: 1.45rem; line-height: 1.2; font-variant-numeric: tabular-nums; }
+.acc-n { flex: none; font-size: 0.78rem; font-weight: 600; color: var(--muted); padding: 4px 10px; border-radius: 999px; border: 1px solid var(--line); }
+.acc-list li { list-style: none; }
+.acc-row { width: 100%; display: grid; grid-template-columns: auto minmax(0, 1fr) auto auto; align-items: center; gap: 12px; padding: 12px 6px 12px 4px; border: 0; border-top: 1px solid var(--line); background: none; font: inherit; color: var(--ink); text-align: left; cursor: pointer; border-radius: 0; }
+.acc-list li:first-child .acc-row { border-top: 0; }
+.acc-row:active { background: var(--bg); }
+.acc-av { --c: var(--accent); width: 42px; height: 42px; border-radius: 14px; display: flex; align-items: center; justify-content: center; font-family: var(--display); font-weight: 700; font-size: 0.95rem; color: var(--c); background: color-mix(in srgb, var(--c) 15%, transparent); border: 1px solid color-mix(in srgb, var(--c) 28%, transparent); flex: none; }
+.acc-av.big { width: 56px; height: 56px; border-radius: 18px; font-size: 1.2rem; }
+.acc-mid { min-width: 0; display: grid; }
+.acc-mid .acc-name { display: block; font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.acc-meta { color: var(--muted); font-size: 0.8rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.acc-sv-in { color: var(--accent); }
+.acc-right { display: grid; justify-items: end; min-width: 0; max-width: 46vw; }
+.acc-row .acc-bal { font-family: var(--display); font-weight: 700; font-size: 1.05rem; font-variant-numeric: tabular-nums; max-width: 100%; }
+.acc-alt { color: var(--muted); font-size: 0.75rem; white-space: nowrap; }
+.acc-chev { width: 18px; height: 18px; color: var(--muted); }
+.acc-actions { margin: 10px 0 0; }
+.acc-actions button { display: inline-flex; align-items: center; justify-content: center; gap: 8px; }
+.acc-actions svg { width: 17px; height: 17px; }
+
+/* ---------- Detalle de cuenta ---------- */
+.accd-view { display: none; max-width: 760px; margin: 0 auto; padding: 20px 16px 160px; }
+body.view-accd .accd-view { display: block; animation: viewIn 0.4s cubic-bezier(0.2, 0.8, 0.2, 1); }
+body.view-accd main { display: none; }
+body.view-accd .fab, body.view-accd .ai-fab { opacity: 0; pointer-events: none; visibility: hidden; }
+.gv-add svg { width: 19px; height: 19px; }
+.ad-title { display: flex; align-items: center; gap: 14px; margin: 6px 0 16px; }
+.ad-title .gv-title { margin: 0; overflow-wrap: anywhere; }
+.ad-kind { margin: 2px 0 0; color: var(--muted); font-size: 0.9rem; }
+.ad-hero { background: var(--surface); border: 1px solid var(--line); border-radius: 24px; padding: 18px 18px 12px; box-shadow: 0 10px 30px var(--glass-shadow); }
+.ad-hero .l { color: var(--muted); font-size: 0.85rem; }
+.ad-bal { font-family: var(--display); font-weight: 700; font-size: 2.3rem; line-height: 1.1; letter-spacing: -0.02em; font-variant-numeric: tabular-nums; }
+.ad-bal.neg { color: var(--out); }
+.ad-alt { color: var(--muted); font-size: 0.9rem; min-height: 1.2em; }
+.ad-split { display: flex; gap: 10px; margin-top: 12px; }
+.ad-split:empty { display: none; }
+.ad-split div { flex: 1; background: var(--bg); border-radius: 12px; padding: 8px 10px; min-width: 0; }
+.ad-split span { display: block; color: var(--muted); font-size: 0.75rem; }
+.ad-split b { font-family: var(--display); font-variant-numeric: tabular-nums; }
+.ad-spark { margin-top: 10px; }
+.ad-spark svg { display: block; width: 100%; height: 64px; overflow: visible; }
+.ad-spark .cap { display: flex; justify-content: space-between; color: var(--muted); font-size: 0.72rem; margin-top: 2px; }
+.ad-acts { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin: 16px 0; }
+.ad-acts button { display: grid; justify-items: center; gap: 6px; font: inherit; font-size: 0.78rem; font-weight: 600; color: var(--ink); background: none; border: 0; padding: 4px 0; cursor: pointer; }
+.ad-acts .i { width: 50px; height: 50px; border-radius: 50%; display: flex; align-items: center; justify-content: center; border: 1px solid var(--glass-line); box-shadow: inset 0 1px 0 var(--glass-hi); }
+.ad-acts .i svg { width: 21px; height: 21px; }
+.ad-acts .k-in { background: color-mix(in srgb, var(--in) 16%, var(--surface)); color: var(--in); }
+.ad-acts .k-out { background: color-mix(in srgb, var(--out) 14%, var(--surface)); color: var(--out); }
+.ad-acts .k-tr { background: var(--surface); color: var(--ink); }
+.ad-acts .k-sv { background: color-mix(in srgb, var(--accent) 14%, var(--surface)); color: var(--accent); }
+.ad-acts button:active .i { transform: scale(0.92); }
+.ad-per { display: flex; width: 100%; margin-bottom: 12px; }
+.ad-per button { flex: 1; font-size: 0.8rem; padding-left: 4px; padding-right: 4px; }
+.ad-stats { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; margin-bottom: 12px; }
+.ad-stats div { background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 10px 12px; min-width: 0; }
+.ad-stats span { display: block; color: var(--muted); font-size: 0.74rem; }
+.ad-stats b { display: block; font-family: var(--display); font-size: 1rem; white-space: nowrap; font-variant-numeric: tabular-nums; }
+.ad-stats .in b { color: var(--in); }
+.ad-stats .out b { color: var(--out); }
+.ha .run { display: block; color: var(--muted); font-weight: 400; font-size: 0.72rem; }
+.ad-del { display: block; width: 100%; margin-top: 26px; font: inherit; font-weight: 600; color: var(--out); background: var(--surface); border: 1px solid var(--line); border-radius: 16px; min-height: 50px; cursor: pointer; }
+.gv-empty[hidden] { display: none; }
+
+/* ---------- Asistente financiero ---------- */
+.ai-month { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin: -4px 0 12px; }
+.ai-month span { font-family: var(--display); font-weight: 700; font-size: 1.02rem; }
+.ai-score { --c: var(--accent); display: grid; grid-template-columns: auto 1fr; gap: 16px; align-items: center; padding: 16px; border-radius: 20px; background: linear-gradient(135deg, color-mix(in srgb, var(--c) 16%, var(--bg)), var(--bg) 75%); border: 1px solid color-mix(in srgb, var(--c) 28%, var(--line)); }
+.ai-score:empty { display: none; }
+.ai-ring { position: relative; width: 78px; height: 78px; }
+.ai-ring svg { width: 100%; height: 100%; transform: rotate(-90deg); }
+.ai-ring .num { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; font-family: var(--display); font-weight: 700; font-size: 1.45rem; line-height: 1; color: var(--c); }
+.ai-ring .num small { font-family: var(--body); font-size: 0.62rem; font-weight: 600; color: var(--muted); margin-top: 2px; }
+.ai-score h3 { font-family: var(--display); font-size: 1.12rem; margin: 0 0 4px; line-height: 1.2; }
+.ai-score p { margin: 0; color: var(--muted); font-size: 0.88rem; line-height: 1.4; }
+.ai-stats { margin: 10px 0 4px; }
+.ai-grp { margin-top: 16px; }
+.ai-grp-h { display: flex; align-items: center; gap: 8px; font-size: 0.75rem; font-weight: 700; letter-spacing: 0.07em; text-transform: uppercase; color: var(--muted); margin: 0 4px 8px; }
+.ai-grp-h i { font-style: normal; font-size: 0.72rem; padding: 1px 7px; border-radius: 999px; background: var(--bg); border: 1px solid var(--line); letter-spacing: 0; }
+.ai-items { list-style: none; margin: 0; padding: 0; background: var(--bg); border-radius: 18px; }
+.ai-item { display: grid; grid-template-columns: 34px 1fr; gap: 12px; padding: 12px 14px; border-top: 1px solid var(--line); animation: fadeUp 0.35s cubic-bezier(0.2, 0.8, 0.2, 1) backwards; }
+.ai-item:first-child { border-top: 0; }
+.ai-item .b { width: 34px; height: 34px; border-radius: 11px; display: flex; align-items: center; justify-content: center; }
+.ai-item .b svg { width: 18px; height: 18px; }
+.ai-item.k-warn .b { background: color-mix(in srgb, var(--out) 15%, transparent); color: var(--out); }
+.ai-item.k-tip .b { background: color-mix(in srgb, var(--accent) 15%, transparent); color: var(--accent); }
+.ai-item.k-good .b { background: color-mix(in srgb, var(--in) 15%, transparent); color: var(--in); }
+.ai-item.k-info .b { background: var(--surface); color: var(--muted); border: 1px solid var(--line); }
+.ai-item .t { font-weight: 600; line-height: 1.3; }
+.ai-item .x { color: var(--muted); font-size: 0.88rem; margin-top: 2px; line-height: 1.45; }
+.ai-quick { display: flex; gap: 8px; overflow-x: auto; margin: 16px -2px 0; padding: 2px; scrollbar-width: none; }
+.ai-quick::-webkit-scrollbar { display: none; }
+.ai-quick button { flex: none; display: inline-flex; align-items: center; gap: 7px; font: inherit; font-size: 0.84rem; font-weight: 600; color: var(--ink); background: var(--surface); border: 1px solid var(--line); border-radius: 999px; padding: 9px 14px; min-height: 40px; cursor: pointer; }
+.ai-quick svg { width: 16px; height: 16px; color: var(--accent); }
+.ai-cloud { margin-top: 18px; padding: 16px; border: 1px solid color-mix(in srgb, #8a3ffc 35%, var(--line)); border-radius: 20px; background: linear-gradient(160deg, color-mix(in srgb, #8a3ffc 12%, var(--surface)), var(--surface) 60%); }
+.ai-cloud-top { display: grid; grid-template-columns: auto 1fr; gap: 12px; align-items: start; }
+.ai-spark { width: 40px; height: 40px; border-radius: 13px; display: flex; align-items: center; justify-content: center; color: #fff; background: linear-gradient(135deg, var(--accent), #8a3ffc); }
+.ai-spark svg { width: 21px; height: 21px; }
+.ai-cloud-head { margin: 0; }
+.ai-steps { margin: 12px 0 0; padding-left: 1.3em; display: grid; gap: 6px; color: var(--muted); font-size: 0.88rem; }
+.ai-steps b { color: var(--ink); font-weight: 600; }
+.ai-steps[hidden] { display: none; }
+.ai-link { display: block; margin: 10px auto 0; font: inherit; font-size: 0.85rem; font-weight: 600; color: var(--accent); background: none; border: 0; min-height: 40px; cursor: pointer; }
+.ai-empty { text-align: center; color: var(--muted); padding: 18px 8px 4px; }
 @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation: none !important; transition: none !important; scroll-behavior: auto !important; } }
 </style>
 </head>
@@ -1009,12 +1117,13 @@ html.sheet-open .tabbar, html.sheet-open .fab, html.sheet-open .ai-fab, html.she
   <section class="panel collapsible" data-panel="acc" aria-labelledby="h-acc">
     <div class="phead"><h2 id="h-acc">Mis cuentas</h2><button type="button" class="chev" aria-expanded="true" aria-controls="b-acc" aria-label="Minimizar Mis cuentas"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 15l6-6 6 6"></path></svg></button></div>
     <div class="cbody" id="b-acc"><div class="cbody-in">
-    <div class="acc-actions">
-      <button type="button" class="secondary" id="acc-transfer">Transferir</button>
-      <button type="button" class="secondary" id="acc-add">Agregar cuenta</button>
-    </div>
+    <div class="acc-sum" id="acc-sum" hidden></div>
     <ul class="acc-list" id="acc-list"></ul>
     <p class="empty" id="acc-empty">Agrega tus cuentas (por ejemplo, Banco de Venezuela en bolívares o Binance en dólares) para saber en cuál entra y sale tu dinero.</p>
+    <div class="acc-actions">
+      <button type="button" class="secondary" id="acc-transfer"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 7h13M16 3l4 4-4 4M17 17H4M8 13l-4 4 4 4"></path></svg>Transferir</button>
+      <button type="button" class="secondary" id="acc-add"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5v14M5 12h14"></path></svg>Agregar cuenta</button>
+    </div>
     </div></div>
   </section>
 
@@ -1099,6 +1208,46 @@ html.sheet-open .tabbar, html.sheet-open .fab, html.sheet-open .ai-fab, html.she
       <p>Crea tu primera meta de ahorro: un viaje, un celular o un fondo de emergencia.</p>
       <button type="button" class="primary" id="goal-new2" style="width:auto;padding:0 28px">Crear meta</button>
     </div>
+  </div>
+  <div class="accd-view" id="accd-view" role="region" aria-label="Detalle de la cuenta" aria-hidden="true">
+    <div class="gv-head">
+      <button type="button" class="gv-back" id="ad-back" aria-label="Volver al inicio"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 5l-7 7 7 7"></path></svg>Inicio</button>
+      <div class="gv-actions">
+        <button type="button" class="gv-add" id="ad-edit" aria-label="Editar la cuenta"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 20h4L19 9l-4-4L4 16z"></path><path d="M14 6l4 4"></path></svg></button>
+      </div>
+    </div>
+    <div class="ad-title"><span id="ad-av"></span><div><h1 class="gv-title" id="ad-name"></h1><p class="ad-kind" id="ad-kind"></p></div></div>
+    <section class="ad-hero">
+      <div class="l" id="ad-bal-l">Saldo actual</div>
+      <div class="ad-bal fit" id="ad-bal"></div>
+      <div class="ad-alt" id="ad-alt"></div>
+      <div class="ad-split" id="ad-split"></div>
+      <div class="ad-spark" id="ad-spark"></div>
+    </section>
+    <div class="ad-acts">
+      <button type="button" data-ad="in"><span class="i k-in"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5v14M5 12l7 7 7-7"></path></svg></span>Ingreso</button>
+      <button type="button" data-ad="out"><span class="i k-out"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 19V5M5 12l7-7 7 7"></path></svg></span>Gasto</button>
+      <button type="button" data-ad="tr"><span class="i k-tr"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 7h13M16 3l4 4-4 4M17 17H4M8 13l-4 4 4 4"></path></svg></span>Transferir</button>
+      <button type="button" data-ad="csv"><span class="i k-sv"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12M7 10l5 5 5-5M4 21h16"></path></svg></span>Exportar</button>
+    </div>
+    <div class="seg ad-per" role="group" aria-label="Periodo">
+      <button type="button" data-adp="m" aria-pressed="true">Este mes</button>
+      <button type="button" data-adp="pm" aria-pressed="false">Mes pasado</button>
+      <button type="button" data-adp="3m" aria-pressed="false">3 meses</button>
+      <button type="button" data-adp="all" aria-pressed="false">Todo</button>
+    </div>
+    <div class="ad-stats" id="ad-stats"></div>
+    <div class="hist-search"><input type="search" id="ad-q" placeholder="Buscar en esta cuenta" autocomplete="off" aria-label="Buscar movimientos de la cuenta"></div>
+    <div class="hist-chips" id="ad-chips" role="group" aria-label="Filtrar por tipo">
+      <button type="button" data-adf="all" aria-pressed="true">Todo</button>
+      <button type="button" data-adf="in" aria-pressed="false">Entradas</button>
+      <button type="button" data-adf="out" aria-pressed="false">Salidas</button>
+      <button type="button" data-adf="tr" aria-pressed="false">Transferencias</button>
+      <button type="button" data-adf="sv" aria-pressed="false">Ahorro</button>
+    </div>
+    <div id="ad-list"></div>
+    <div class="gv-empty" id="ad-empty" hidden><p id="ad-empty-t">No hay movimientos en este periodo.</p></div>
+    <button type="button" class="ad-del" id="ad-del">Eliminar esta cuenta</button>
   </div>
   <div class="set-view" id="set-view" role="region" aria-label="Ajustes" aria-hidden="true">
     <div class="gv-head">
@@ -1377,15 +1526,27 @@ html.sheet-open .tabbar, html.sheet-open .fab, html.sheet-open .ai-fab, html.she
   <div class="sheet-backdrop" id="ai-sheet" hidden>
     <section class="panel sheet" role="dialog" aria-modal="true" aria-labelledby="h-ai">
       <div class="sheet-head"><h2 id="h-ai">Asistente financiero</h2><button type="button" class="del" id="ai-close" aria-label="Cerrar">✕</button></div>
-      <p class="hint" id="ai-sub"></p>
+      <div class="ai-month"><button type="button" class="cal-nav" id="ai-prev" aria-label="Mes anterior">‹</button><span id="ai-mlabel"></span><button type="button" class="cal-nav" id="ai-next" aria-label="Mes siguiente">›</button></div>
+      <div class="ai-score" id="ai-score"></div>
       <div class="ai-stats" id="ai-stats"></div>
-      <ul class="ai-list" id="ai-list"></ul>
+      <p class="hint" id="ai-sub" hidden></p>
+      <div id="ai-groups"></div>
+      <ul class="ai-list" id="ai-list" hidden></ul>
+      <div class="ai-quick" id="ai-quick">
+        <button type="button" data-aiq="cat"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 6h16M4 12h10M4 18h6"></path></svg>Ver gastos por categoría</button>
+        <button type="button" data-aiq="goal"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="8"></circle><circle cx="12" cy="12" r="3"></circle></svg>Crear una meta</button>
+        <button type="button" data-aiq="pay"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="3"></rect><path d="M8 3v4M16 3v4M3 10h18"></path></svg>Programar un pago</button>
+      </div>
       <div class="ai-cloud">
-        <div class="ai-cloud-head">Análisis con IA</div>
-        <p class="hint" id="ai-key-state"></p>
+        <div class="ai-cloud-top"><span class="ai-spark"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l1.8 4.7L18.5 9.5l-4.7 1.8L12 16l-1.8-4.7L5.5 9.5l4.7-1.8z"></path><path d="M19 15l.8 2.2L22 18l-2.2.8L19 21l-.8-2.2L16 18l2.2-.8z"></path></svg></span><div><div class="ai-cloud-head">Plan personalizado con IA</div><p class="hint" id="ai-key-state"></p></div></div>
+        <ol class="ai-steps" id="ai-steps">
+          <li>Crea una clave gratis en <b>console.anthropic.com</b> y ponle un límite de gasto.</li>
+          <li>Pégala aquí. Se guarda solo en este teléfono.</li>
+          <li>Toca «Analizar» y recibe un diagnóstico y un plan de ahorro.</li>
+        </ol>
         <button type="button" class="primary" id="ai-ask" style="margin-top:10px">Pedir análisis a la IA</button>
         <div class="ai-out" id="ai-out" aria-live="polite"></div>
-        <button type="button" class="secondary" id="ai-cfg-toggle" style="margin-top:12px;width:100%">Configurar la IA</button>
+        <button type="button" class="ai-link" id="ai-cfg-toggle">Configurar la IA</button>
         <div id="ai-cfg" hidden style="margin-top:12px">
           <label for="ai-key">Tu clave de Anthropic</label>
           <input type="password" id="ai-key" autocomplete="off" placeholder="sk-ant-...">
@@ -2971,18 +3132,35 @@ html.sheet-open .tabbar, html.sheet-open .fab, html.sheet-open .ai-fab, html.she
     });
   }
 
+  var ACC_CUR = { USD: { c: "var(--in)", n: "Dólares" }, VES: { c: "#0e9aa7", n: "Bolívares" }, EUR: { c: "var(--accent)", n: "Euros" } };
+  function accInitials(n) {
+    var w = String(n || "").trim().split(/\s+/).filter(Boolean);
+    return ((w[0] || "?").charAt(0) + (w.length > 1 ? w[1].charAt(0) : (w[0] || "").charAt(1) || "")).toUpperCase();
+  }
+  function accAvatar(a, big) {
+    var c = (ACC_CUR[a.moneda] || ACC_CUR.USD).c;
+    return '<span class="acc-av' + (big ? " big" : "") + '" style="--c:' + c + '" aria-hidden="true">' + esc(accInitials(a.nombre)) + "</span>";
+  }
   function renderAccounts() {
-    var list = $("acc-list"), m = savMap();
+    var list = $("acc-list"), m = savMap(), D = state.disp, tot = 0, miss = false;
     $("acc-empty").style.display = state.accounts.length ? "none" : "";
     list.innerHTML = state.accounts.map(function (a) {
-      var bal = accBalance(a), sv = m["a" + a.id] || 0;
-      return '<li class="acc"><div><div class="acc-name">' + esc(a.nombre) + '<span class="badge">' + esc(a.moneda === "VES" ? "Bs" : a.moneda) +
-        '</span></div><div class="acc-bal fit' + (bal < 0 ? " neg" : "") + '">' + moneyH(bal, a.moneda) + '</div>' +
-        (sv > 0.004 ? '<div class="acc-sv">En ahorro: ' + mask(moneyH(sv, a.moneda)) + '</div>' : "") + '</div>' +
-        '<div class="menu-wrap"><button class="dots" type="button" aria-haspopup="menu" aria-expanded="false" aria-label="Opciones de la cuenta">⋮</button>' +
-        '<div class="menu" role="menu" hidden><button type="button" role="menuitem" data-acc-edit="' + a.id + '">Editar cuenta</button>' +
-        '<button type="button" role="menuitem" class="danger" data-acc-del="' + a.id + '">Eliminar cuenta</button></div></div></li>';
+      var bal = accBalance(a), sv = m["a" + a.id] || 0, cv = conv(bal, a.moneda, D);
+      if (cv === null) miss = true; else tot += cv;
+      var meta = (ACC_CUR[a.moneda] || { n: a.moneda }).n + (sv > 0.004 ? ' · <span class="acc-sv-in">Ahorro ' + mask(money(sv, a.moneda)) + "</span>" : "");
+      return '<li><button type="button" class="acc-row" data-acc-open="' + a.id + '" aria-label="Ver la cuenta ' + esc(a.nombre) + '">' + accAvatar(a) +
+        '<span class="acc-mid"><span class="acc-name">' + esc(a.nombre) + '</span><span class="acc-meta">' + meta + "</span></span>" +
+        '<span class="acc-right"><span class="acc-bal fit' + (bal < 0 ? " neg" : "") + '">' + money(bal, a.moneda) + "</span>" +
+        (a.moneda !== "USD" && conv(bal, a.moneda, "USD") !== null ? '<span class="acc-alt">≈ ' + money(conv(bal, a.moneda, "USD"), "USD") + "</span>" : "") + "</span>" +
+        '<svg class="acc-chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 5l7 7-7 7"></path></svg></button></li>';
     }).join("");
+    var sum = $("acc-sum");
+    sum.hidden = !state.accounts.length;
+    if (state.accounts.length) {
+      sum.innerHTML = '<div><span class="l">Saldo total en tus cuentas</span><strong class="fit">' + money(tot, D) + (miss ? "*" : "") + "</strong></div>" +
+        '<span class="acc-n">' + state.accounts.length + (state.accounts.length === 1 ? " cuenta" : " cuentas") + "</span>";
+    }
+    if (typeof window.__accd === "function") window.__accd();
   }
 
   function renderSavings() {
@@ -3396,24 +3574,8 @@ html.sheet-open .tabbar, html.sheet-open .fab, html.sheet-open .ai-fab, html.she
       document.querySelectorAll(".dots").forEach(function (d) { d.setAttribute("aria-expanded", "false"); });
     }
     $("acc-list").addEventListener("click", function (e) {
-      var dots = e.target.closest(".dots");
-      if (dots) {
-        var menu = dots.parentNode.querySelector(".menu");
-        var willOpen = menu.hidden;
-        closeMenus();
-        if (willOpen) { menu.hidden = false; dots.setAttribute("aria-expanded", "true"); }
-        return;
-      }
-      var eb = e.target.closest("[data-acc-edit]");
-      if (eb) { closeMenus(); openAccSheet(accById(eb.getAttribute("data-acc-edit"))); return; }
-      var db = e.target.closest("[data-acc-del]");
-      if (!db) return;
-      closeMenus();
-      var a = accById(db.getAttribute("data-acc-del"));
-      if (!a) return;
-      if (accUsed(a)) { showToast("Esa cuenta tiene movimientos. Elimínalos o cámbialos de cuenta primero."); return; }
-      state.accounts = state.accounts.filter(function (x) { return x.id !== a.id; });
-      save(); render();
+      var b = e.target.closest("[data-acc-open]");
+      if (b) openAccd(b.getAttribute("data-acc-open"));
     });
     document.addEventListener("click", function (e) { if (!e.target.closest(".menu-wrap")) closeMenus(); });
 
@@ -3814,28 +3976,277 @@ html.sheet-open .tabbar, html.sheet-open .fab, html.sheet-open .ai-fab, html.she
       showToast("Movimiento agregado.");
     });
 
+    /* ---------- Detalle de cuenta ---------- */
+    var ad = { id: null, per: "m", f: "all", q: "" };
+    function accDelta(it, a) {
+      if (it.tipo === "traspaso") {
+        if (it.hacia && it.hacia.k === "cuenta" && String(it.hacia.id) === String(a.id)) return it.hacia.monto;
+        if (it.desde && it.desde.k === "cuenta" && String(it.desde.id) === String(a.id)) return -it.desde.monto;
+        return null;
+      }
+      if (String(it.cuenta) !== String(a.id)) return null;
+      if (it.tipo === "ingreso" || it.tipo === "retiro") return it.monto;
+      if (it.tipo === "gasto" || it.tipo === "ahorro") return -it.monto;
+      return null;
+    }
+    function accKind(it) {
+      if (it.tipo === "traspaso") return "tr";
+      if (it.tipo === "ahorro" || it.tipo === "retiro") return "sv";
+      return it.tipo === "ingreso" ? "in" : "out";
+    }
+    function accLedger(a) {
+      var rows = [];
+      state.items.forEach(function (it) { var d = accDelta(it, a); if (d !== null) rows.push({ it: it, d: d }); });
+      rows.sort(function (x, y) { return x.it.fecha < y.it.fecha ? -1 : x.it.fecha > y.it.fecha ? 1 : x.it.id - y.it.id; });
+      var run = Number(a.saldo) || 0;
+      rows.forEach(function (r) { run += r.d; r.run = Math.round(run * 100) / 100; });
+      return rows;
+    }
+    function adRange() {
+      var t = today(), m = t.slice(0, 7), q = m.split("-"), y = Number(q[0]), mo = Number(q[1]);
+      function ym(yy, mm) { while (mm < 1) { mm += 12; yy--; } return yy + "-" + pad2(mm); }
+      if (ad.per === "m") return [m + "-01", m + "-31", "este mes"];
+      if (ad.per === "pm") { var pm = ym(y, mo - 1); return [pm + "-01", pm + "-31", "el mes pasado"]; }
+      if (ad.per === "3m") return [ym(y, mo - 2) + "-01", m + "-31", "los últimos 3 meses"];
+      return ["0000-00-00", "9999-99-99", "todo el historial"];
+    }
+    function adTitle(it) {
+      if (it.tipo === "traspaso") {
+        var a = accById(ad.id), inc = it.hacia && String(it.hacia.id) === String(a.id) && it.hacia.k === "cuenta";
+        var other = inc ? it.desde : it.hacia, on = other && other.k === "cuenta" ? accById(other.id) : null;
+        return inc ? "Recibido de " + (on ? on.nombre : "otra cuenta") : "Enviado a " + (on ? on.nombre : other && other.k === "meta" ? "una meta" : "otra cuenta");
+      }
+      return histTitle(it);
+    }
+    function adRow(r, a) {
+      var it = r.it, k = accKind(it), pos = r.d >= 0;
+      var cls = k === "sv" ? "sv" : pos ? "in" : "out";
+      var amt = (pos ? "+" : "−") + money(Math.abs(r.d), a.moneda);
+      if (k === "sv" && state.hideSav) amt = '<span class="masked">••••</span>';
+      var sub = it.tipo === "traspaso" ? (it.nota || "") : (it.nota || (k === "sv" ? "" : it.cat));
+      var canEdit = it.tipo === "gasto" || it.tipo === "ingreso";
+      var menu = it.auto ? '<span class="hnone"></span>' :
+        '<div class="menu-wrap"><button class="dots" type="button" aria-haspopup="menu" aria-expanded="false" aria-label="Opciones del movimiento">⋮</button>' +
+        '<div class="menu" role="menu" hidden>' + (canEdit ? '<button type="button" role="menuitem" data-h-edit="' + it.id + '">Editar movimiento</button>' : "") +
+        '<button type="button" role="menuitem" class="danger" data-h-del="' + it.id + '">Eliminar movimiento</button></div></div>';
+      return '<li class="hrow"><span class="hic k-' + k + '"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' + H_ICONS[k] + "</svg></span>" +
+        '<div class="hmain"><div class="ht">' + esc(adTitle(it)) + '</div><div class="hs">' + esc(sub) + '</div></div><div class="ha ' + cls + '">' + amt +
+        '<small class="run">Saldo ' + money(r.run, a.moneda) + "</small></div>" + menu + "</li>";
+    }
+    function adSpark(rows, a) {
+      var days = 30, t = today(), start = addDaysIso(t, -(days - 1)), pts = [], base = Number(a.saldo) || 0, i = 0;
+      while (i < rows.length && rows[i].it.fecha < start) { base = rows[i].run; i++; }
+      for (var k = 0; k < days; k++) {
+        var d = addDaysIso(start, k);
+        while (i < rows.length && rows[i].it.fecha <= d) { base = rows[i].run; i++; }
+        pts.push(base);
+      }
+      var mn = Math.min.apply(null, pts), mx = Math.max.apply(null, pts), W = 300, H = 56, pad = 4;
+      if (mx - mn < 0.01) { mx += 1; mn -= 1; }
+      var xy = pts.map(function (v, k) { return [(k / (days - 1)) * W, pad + (1 - (v - mn) / (mx - mn)) * (H - pad * 2)]; });
+      var line = xy.map(function (p, k) { return (k ? "L" : "M") + p[0].toFixed(1) + " " + p[1].toFixed(1); }).join(" ");
+      var up = pts[days - 1] >= pts[0], col = up ? "var(--in)" : "var(--out)", last = xy[days - 1];
+      var diff = pts[days - 1] - pts[0];
+      return '<svg viewBox="0 0 ' + W + " " + H + '" preserveAspectRatio="none" aria-hidden="true"><defs><linearGradient id="adg" x1="0" x2="0" y1="0" y2="1"><stop offset="0" stop-color="' + col + '" stop-opacity="0.25"></stop><stop offset="1" stop-color="' + col + '" stop-opacity="0"></stop></linearGradient></defs>' +
+        '<path d="' + line + " L" + W + " " + H + " L0 " + H + ' Z" fill="url(#adg)" stroke="none"></path><path d="' + line + '" fill="none" stroke="' + col + '" stroke-width="2.2" stroke-linejoin="round" stroke-linecap="round" vector-effect="non-scaling-stroke"></path>' +
+        '<circle cx="' + last[0] + '" cy="' + last[1] + '" r="3.5" fill="' + col + '"></circle></svg>' +
+        '<div class="cap"><span>Últimos 30 días</span><span style="color:' + col + ';font-weight:600">' + (diff >= 0 ? "+" : "−") + money(Math.abs(diff), a.moneda) + "</span></div>";
+    }
+    function renderAccd() {
+      var a = accById(ad.id);
+      if (!a) { if (activeView() === "accd") { closeViews(); setTab(currentTab()); } return; }
+      var bal = accBalance(a), sv = savMap()["a" + a.id] || 0, rows = accLedger(a);
+      $("ad-av").innerHTML = accAvatar(a, true);
+      $("ad-name").textContent = a.nombre;
+      $("ad-kind").textContent = "Cuenta en " + ((ACC_CUR[a.moneda] || { n: a.moneda }).n).toLowerCase() + " · " + rows.length + (rows.length === 1 ? " movimiento" : " movimientos");
+      $("ad-bal").textContent = money(bal, a.moneda);
+      $("ad-bal").className = "ad-bal fit" + (bal < 0 ? " neg" : "");
+      var alt = a.moneda === "USD" ? conv(bal, "USD", "VES") : conv(bal, a.moneda, "USD");
+      $("ad-alt").textContent = alt !== null ? "≈ " + money(alt, a.moneda === "USD" ? "VES" : "USD") : "";
+      $("ad-bal-l").textContent = sv > 0.004 ? "Disponible" : "Saldo actual";
+      $("ad-split").innerHTML = sv > 0.004 ? '<div><span>En ahorro</span><b>' + mask(money(sv, a.moneda)) + '</b></div><div><span>Total en la cuenta</span><b>' + mask(money(bal + sv, a.moneda)) + "</b></div>" : "";
+      $("ad-spark").innerHTML = rows.length ? adSpark(rows, a) : "";
+      setPressed("[data-adp]", "data-adp", ad.per);
+      setPressed("[data-adf]", "data-adf", ad.f);
+      var rg = adRange(), inP = rows.filter(function (r) { return r.it.fecha >= rg[0] && r.it.fecha <= rg[1]; });
+      var ein = 0, eout = 0;
+      inP.forEach(function (r) { if (r.d >= 0) ein += r.d; else eout -= r.d; });
+      $("ad-stats").innerHTML = '<div class="in"><span>Entradas</span><b class="fit">+' + money(ein, a.moneda) + '</b></div><div class="out"><span>Salidas</span><b class="fit">−' + money(eout, a.moneda) + '</b></div><div><span>Neto</span><b class="fit">' + (ein - eout >= 0 ? "+" : "−") + money(Math.abs(ein - eout), a.moneda) + "</b></div>";
+      var q = ad.q.trim().toLowerCase();
+      var shown = inP.filter(function (r) {
+        var k = accKind(r.it);
+        if (ad.f === "in" && !(r.d > 0 && k !== "sv")) return false;
+        if (ad.f === "out" && !(r.d < 0 && k !== "sv" && k !== "tr")) return false;
+        if (ad.f === "tr" && k !== "tr") return false;
+        if (ad.f === "sv" && k !== "sv") return false;
+        if (!q) return true;
+        return (adTitle(r.it) + " " + (r.it.cat || "") + " " + (r.it.nota || "")).toLowerCase().indexOf(q) >= 0;
+      }).reverse();
+      var days = [], by = {};
+      shown.forEach(function (r) { var d = r.it.fecha; if (!by[d]) { by[d] = []; days.push(d); } by[d].push(r); });
+      $("ad-list").innerHTML = days.map(function (d) {
+        var net = by[d].reduce(function (s, r) { return s + r.d; }, 0);
+        return '<section class="hday"><div class="hday-h"><span>' + dayLabel(d) + '</span><span class="net ' + (net >= 0 ? "in" : "out") + '">' + (net >= 0 ? "+" : "−") + money(Math.abs(net), a.moneda) + "</span></div>" +
+          '<ul class="hlist">' + by[d].map(function (r) { return adRow(r, a); }).join("") + "</ul></section>";
+      }).join("");
+      $("ad-empty").hidden = shown.length > 0;
+      $("ad-empty-t").textContent = q || ad.f !== "all" ? "Ningún movimiento coincide con el filtro." : "No hay movimientos en " + rg[2] + ".";
+      scheduleFit();
+    }
+    window.__accd = function () { if (activeView() === "accd") renderAccd(); };
+    function openAccd(id) {
+      ad.id = id; ad.per = "m"; ad.f = "all"; ad.q = ""; $("ad-q").value = "";
+      openView("accd");
+      renderAccd();
+    }
+    $("ad-back").addEventListener("click", function () { closeViews(); setTab(currentTab()); });
+    $("ad-edit").addEventListener("click", function () { var a = accById(ad.id); if (a) openAccSheet(a); });
+    document.querySelectorAll("[data-adp]").forEach(function (b) { b.addEventListener("click", function () { ad.per = b.getAttribute("data-adp"); renderAccd(); }); });
+    document.querySelectorAll("[data-adf]").forEach(function (b) { b.addEventListener("click", function () { ad.f = b.getAttribute("data-adf"); renderAccd(); }); });
+    $("ad-q").addEventListener("input", function (e) { ad.q = e.target.value; renderAccd(); });
+    $("ad-del").addEventListener("click", function () {
+      var a = accById(ad.id);
+      if (!a) return;
+      if (accUsed(a)) { showToast("Esta cuenta tiene movimientos. Elimínalos o muévelos a otra cuenta primero."); return; }
+      openCf({ title: "¿Eliminar " + a.nombre + "?", text: "La cuenta se borra de la app. No tiene movimientos, así que no se pierde ningún registro.", btn: "Eliminar cuenta",
+        ok: function () { state.accounts = state.accounts.filter(function (x) { return x.id !== a.id; }); save(); closeViews(); setTab(currentTab()); render(); showToast("Cuenta eliminada."); } });
+    });
+    $("ad-list").addEventListener("click", function (e) {
+      var dots = e.target.closest(".dots");
+      if (dots) {
+        var menu = dots.parentNode.querySelector(".menu"), willOpen = menu.hidden;
+        closeMenus();
+        if (willOpen) { menu.hidden = false; dots.setAttribute("aria-expanded", "true"); }
+        return;
+      }
+      var b;
+      if ((b = e.target.closest("[data-h-edit]"))) {
+        closeMenus();
+        var id = Number(b.getAttribute("data-h-edit")), found = state.items.filter(function (x) { return x.id === id; })[0];
+        if (found) openSheet(found);
+        return;
+      }
+      if ((b = e.target.closest("[data-h-del]"))) {
+        closeMenus();
+        var did = Number(b.getAttribute("data-h-del"));
+        state.items = state.items.filter(function (it) { return it.id !== did && it.linkId !== did; });
+        save(); render();
+        showToast("Movimiento eliminado.");
+      }
+    });
+    document.querySelectorAll("[data-ad]").forEach(function (b) {
+      b.addEventListener("click", function () {
+        var a = accById(ad.id), act = b.getAttribute("data-ad");
+        if (!a) return;
+        if (act === "in" || act === "out") {
+          var t = act === "in" ? "ingreso" : "gasto";
+          state.type = t; setPressed("[data-type]", "data-type", t); fillCats();
+          openSheet(null);
+          fillAccounts(a.id, false); syncCuenta();
+          return;
+        }
+        if (act === "tr") {
+          if (state.accounts.length < 2) { showToast("Necesitas al menos dos cuentas para transferir."); return; }
+          openTr(); $("tr-from").value = a.id; fillTrTo();
+          return;
+        }
+        if (act === "csv") exportAccCsv(a);
+      });
+    });
+    function exportAccCsv(a) {
+      var rg = adRange(), rows = accLedger(a).filter(function (r) { return r.it.fecha >= rg[0] && r.it.fecha <= rg[1]; });
+      if (!rows.length) { showToast("No hay movimientos para exportar en este periodo."); return; }
+      var KIND = { in: "Entrada", out: "Salida", tr: "Transferencia", sv: "Ahorro" };
+      function c(v) { v = String(v == null ? "" : v); return /[";\n]/.test(v) ? '"' + v.replace(/"/g, '""') + '"' : v; }
+      function n(v) { return (Math.round(v * 100) / 100).toFixed(2).replace(".", ","); }
+      var lines = ["Fecha;Tipo;Concepto;Categoría;Nota;Monto;Saldo;Moneda"];
+      rows.forEach(function (r) { lines.push([r.it.fecha, KIND[accKind(r.it)], adTitle(r.it), r.it.tipo === "traspaso" ? "" : r.it.cat || "", r.it.nota || "", n(r.d), n(r.run), a.moneda].map(c).join(";")); });
+      var csv = "﻿" + lines.join("\r\n"), name = "mis-gastos-" + a.nombre.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "") + "-" + today() + ".csv";
+      var blob = new Blob([csv], { type: "text/csv" }), file = null;
+      try { file = new File([blob], name, { type: "text/csv" }); } catch (e) {}
+      if (file && navigator.canShare && navigator.canShare({ files: [file] }) && navigator.share) {
+        navigator.share({ files: [file], title: "Movimientos de " + a.nombre }).catch(function (e) { if (e && e.name !== "AbortError") dl(); });
+        return;
+      }
+      dl();
+      function dl() {
+        var url = URL.createObjectURL(blob), el = document.createElement("a");
+        el.href = url; el.download = name; document.body.appendChild(el); el.click();
+        setTimeout(function () { URL.revokeObjectURL(url); el.remove(); }, 1500);
+        showToast("Archivo listo. Se abre en Excel o Numbers.");
+      }
+    }
     /* ---------- Asistente financiero (IA) ---------- */
     var AI_KINDS = { warn: "Atención", tip: "Consejo", good: "Bien hecho", info: "Dato" };
     function renderAiKeyState() {
       var k = aiKey();
-      $("ai-key-state").textContent = k ? "IA conectada (clave terminada en " + k.slice(-4) + ")." : "Para recibir un análisis redactado por una IA, conecta tu clave de Anthropic.";
-      $("ai-ask").textContent = k ? "Pedir análisis a la IA" : "Conectar la IA";
+      $("ai-key-state").textContent = k ? "Conectada · clave terminada en " + k.slice(-4) + ". Solo se envían totales por categoría, sin nombres ni notas." : "Opcional. Una IA lee los totales de tu mes y te escribe un diagnóstico y un plan.";
+      $("ai-ask").textContent = k ? "Analizar " + monthLabel(state.month).toLowerCase() + " con IA" : "Conectar la IA";
+      $("ai-steps").hidden = !!k;
+      $("ai-cfg-toggle").textContent = k ? "Cambiar o quitar la clave" : "Ya tengo una clave";
+    }
+    var AI_GROUPS = [
+      ["warn", "Requiere atención", '<path d="M12 3l9.5 17h-19z"></path><path d="M12 10v4M12 17.5v.01"></path>'],
+      ["tip", "Consejos para ti", '<path d="M9 18h6M10 21h4"></path><path d="M12 3a6 6 0 0 0-3.5 10.9c.6.5 1 1.2 1 2.1h5c0-.9.4-1.6 1-2.1A6 6 0 0 0 12 3z"></path>'],
+      ["good", "Lo que haces bien", '<path d="M5 12.5l4.5 4.5L19 7.5"></path>'],
+      ["info", "Datos del mes", '<circle cx="12" cy="12" r="9"></circle><path d="M12 11v5M12 7.5v.01"></path>']
+    ];
+    function aiScore(res) {
+      var c = res.cur;
+      if (c.inc <= 0 && c.exp <= 0) return null;
+      var n = { warn: 0, good: 0 };
+      res.items.forEach(function (o) { if (n[o.kind] !== undefined) n[o.kind]++; });
+      var sr = c.inc > 0 ? c.sav / c.inc : 0, bal = c.inc - c.exp - c.sav;
+      var s = 50 + Math.min(25, sr * 125) + (bal >= 0 ? 12 : -22) + (c.inc > 0 && c.exp / c.inc < 0.7 ? 8 : 0) - n.warn * 8 + n.good * 4;
+      return Math.max(5, Math.min(100, Math.round(s)));
     }
     function renderAi() {
-      var mstr = state.month, D = state.disp, res = buildInsights(mstr), c = res.cur;
-      $("ai-sub").textContent = "Análisis de " + monthLabel(mstr) + " · cifras en " + curLabel(D) + ". Se calcula en tu teléfono.";
+      var mstr = state.month, D = state.disp, res = buildInsights(mstr), c = res.cur, score = aiScore(res);
+      $("ai-mlabel").textContent = monthLabel(mstr);
+      $("ai-next").disabled = mstr >= today().slice(0, 7);
       var sr = c.inc > 0 ? Math.round(c.sav / c.inc * 100) + "%" : "—";
       $("ai-stats").innerHTML =
         '<div class="ai-stat"><div class="l">Ingresos</div><div class="v fit">' + money(c.inc, D) + '</div></div>' +
         '<div class="ai-stat"><div class="l">Gastos</div><div class="v fit">' + money(c.exp, D) + '</div></div>' +
-        '<div class="ai-stat"><div class="l">Ahorro</div><div class="v fit">' + mask(state.hideSav ? "" : sr) + "</div></div>";
-      $("ai-list").innerHTML = res.items.map(function (o, i) {
-        return '<li class="ai-card k-' + o.kind + '" style="animation-delay:' + (i * 0.05).toFixed(2) + 's"><div class="ai-tag">' + AI_KINDS[o.kind] +
-          '</div><div class="ai-t">' + esc(o.title) + '</div><div class="ai-x">' + esc(o.text) + "</div></li>";
-      }).join("");
+        '<div class="ai-stat"><div class="l">Ahorraste</div><div class="v fit">' + mask(state.hideSav ? "" : sr) + "</div></div>";
+      if (score === null) {
+        $("ai-score").innerHTML = "";
+        $("ai-groups").innerHTML = '<p class="ai-empty">Aún no hay movimientos en ' + monthLabel(mstr).toLowerCase() + '. Cuando registres ingresos y gastos, aquí verás cómo va tu mes y qué puedes mejorar.</p>';
+      } else {
+        var col = score >= 75 ? "var(--in)" : score >= 50 ? "var(--accent)" : score >= 30 ? "#e08a00" : "var(--out)";
+        var head = score >= 75 ? "Tu mes va muy bien" : score >= 50 ? "Tu mes va bien, con detalles por mejorar" : score >= 30 ? "Tu mes necesita atención" : "Tu mes está en rojo";
+        var bal = c.inc - c.exp;
+        var sub = c.inc <= 0 ? "Registraste gastos pero ningún ingreso este mes." :
+          bal >= 0 ? "Ingresaste " + money(bal, D) + " más de lo que gastaste" + (c.sav > 0 && !state.hideSav ? " y ahorraste el " + sr + "." : ".") :
+          "Gastaste " + money(-bal, D) + " más de lo que ingresaste.";
+        var R = 15.9155, len = Math.max(0.01, score);
+        $("ai-score").style.setProperty("--c", col);
+        $("ai-score").innerHTML = '<div class="ai-ring"><svg viewBox="0 0 36 36" aria-hidden="true"><circle cx="18" cy="18" r="' + R + '" fill="none" stroke="var(--line)" stroke-width="3.2"></circle><circle cx="18" cy="18" r="' + R + '" fill="none" stroke="' + col + '" stroke-width="3.2" stroke-linecap="round" stroke-dasharray="' + len + " " + (100 - len) + '"></circle></svg><div class="num">' + score + "<small>de 100</small></div></div>" +
+          "<div><h3>" + head + "</h3><p>" + esc(sub) + "</p></div>";
+        $("ai-score").setAttribute("aria-label", "Salud financiera del mes: " + score + " de 100. " + head);
+        var k = 0;
+        $("ai-groups").innerHTML = AI_GROUPS.map(function (g) {
+          var its = res.items.filter(function (o) { return o.kind === g[0]; });
+          if (!its.length) return "";
+          return '<div class="ai-grp"><div class="ai-grp-h">' + g[1] + " <i>" + its.length + '</i></div><ul class="ai-items">' + its.map(function (o) {
+            return '<li class="ai-item k-' + o.kind + '" style="animation-delay:' + (k++ * 0.04).toFixed(2) + 's"><span class="b"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' + g[2] + '</svg></span><div><div class="t">' + esc(o.title) + '</div><div class="x">' + esc(o.text) + "</div></div></li>";
+          }).join("") + "</ul></div>";
+        }).join("");
+      }
       renderAiKeyState();
       scheduleFit();
     }
+    $("ai-prev").addEventListener("click", function () { var p = state.month.split("-"), d = new Date(Number(p[0]), Number(p[1]) - 2, 1); setMonth(d.getFullYear() + "-" + pad2(d.getMonth() + 1)); $("ai-out").innerHTML = ""; renderAi(); });
+    $("ai-next").addEventListener("click", function () { var p = state.month.split("-"), d = new Date(Number(p[0]), Number(p[1]), 1); setMonth(d.getFullYear() + "-" + pad2(d.getMonth() + 1)); $("ai-out").innerHTML = ""; renderAi(); });
+    $("ai-quick").addEventListener("click", function (e) {
+      var b = e.target.closest("[data-aiq]");
+      if (!b) return;
+      var q = b.getAttribute("data-aiq");
+      closeAi();
+      if (q === "cat") { hist.f = "cat"; hist.c = null; hist.n = 30; showHist(); }
+      else if (q === "goal") { showGoals(); openGe(null); }
+      else if (q === "pay") { showPay(); openPg(null); }
+    });
     function openAi() {
       $("ai-out").innerHTML = "";
       $("ai-cfg").hidden = true;
@@ -4356,11 +4767,12 @@ html.sheet-open .tabbar, html.sheet-open .fab, html.sheet-open .ai-fab, html.she
     }
     function activeView() {
       var c = document.body.classList;
-      return c.contains("view-goals") ? "goals" : c.contains("view-pay") ? "pay" : c.contains("view-hist") ? "hist" : c.contains("view-bn") ? "bn" : c.contains("view-set") ? "set" : null;
+      return c.contains("view-goals") ? "goals" : c.contains("view-pay") ? "pay" : c.contains("view-hist") ? "hist" : c.contains("view-bn") ? "bn" : c.contains("view-set") ? "set" : c.contains("view-accd") ? "accd" : null;
     }
     function closeViews() {
-      document.body.classList.remove("view-goals", "view-pay", "view-hist", "view-bn", "view-set");
+      document.body.classList.remove("view-goals", "view-pay", "view-hist", "view-bn", "view-set", "view-accd");
       $("set-view").setAttribute("aria-hidden", "true");
+      $("accd-view").setAttribute("aria-hidden", "true");
       $("goals-view").setAttribute("aria-hidden", "true");
       $("bn-view").setAttribute("aria-hidden", "true");
       $("pay-view").setAttribute("aria-hidden", "true");
@@ -4373,8 +4785,9 @@ html.sheet-open .tabbar, html.sheet-open .fab, html.sheet-open .ai-fab, html.she
       try {
         closeDial();
         if (!activeView()) viewReturnY = window.scrollY || 0;
-        document.body.classList.remove("view-goals", "view-pay", "view-hist", "view-bn", "view-set");
+        document.body.classList.remove("view-goals", "view-pay", "view-hist", "view-bn", "view-set", "view-accd");
         document.body.classList.add("view-" + name);
+        $("accd-view").setAttribute("aria-hidden", name === "accd" ? "false" : "true");
         $("set-view").setAttribute("aria-hidden", name === "set" ? "false" : "true");
         $("bn-view").setAttribute("aria-hidden", name === "bn" ? "false" : "true");
         $("goals-view").setAttribute("aria-hidden", name === "goals" ? "false" : "true");
@@ -4823,7 +5236,7 @@ html.sheet-open .tabbar, html.sheet-open .fab, html.sheet-open .ai-fab, html.she
       function activeTitle() {
         var v = activeView();
         if (!v) return document.querySelector(".top h1");
-        var el = $({ goals: "goals-view", pay: "pay-view", hist: "hist-view", bn: "bn-view", set: "set-view" }[v]);
+        var el = $({ goals: "goals-view", pay: "pay-view", hist: "hist-view", bn: "bn-view", set: "set-view", accd: "accd-view" }[v]);
         return el ? el.querySelector(".gv-title") : null;
       }
       function onScroll() {
