@@ -1177,6 +1177,26 @@ body.view-accd .fab, body.view-accd .ai-fab { opacity: 0; pointer-events: none; 
 .acc-head { display: flex; justify-content: space-between; align-items: baseline; gap: 10px; margin: 2px 4px 2px; color: var(--muted); font-size: 0.78rem; }
 .acc-head b { font-weight: 600; color: var(--ink); }
 .acc-head[hidden] { display: none; }
+/* ---------- Metas y Pagos con la estética de tarjetas con degradado ---------- */
+.dots { border-radius: 50%; min-width: 40px; min-height: 40px; width: 40px; height: 40px; }
+.gv-actions .eye { border-radius: 50%; width: 44px; height: 44px; min-width: 44px; min-height: 44px; border-color: var(--glass-line); background: color-mix(in srgb, var(--surface) 62%, transparent); }
+.gv-hero { background: linear-gradient(140deg, color-mix(in srgb, var(--accent) 18%, var(--surface)), color-mix(in srgb, #8a3ffc 8%, var(--surface)) 55%, var(--surface) 85%); border-color: color-mix(in srgb, var(--accent) 35%, var(--line)); }
+.gv-hero .gc-ranges { background: color-mix(in srgb, var(--bg) 70%, transparent); }
+.goal { background: linear-gradient(135deg, color-mix(in srgb, var(--gc, var(--accent)) 15%, var(--surface)), var(--surface) 68%); border-color: color-mix(in srgb, var(--gc, var(--accent)) 35%, var(--line)); }
+.goal.done { --gc: var(--in); }
+.goal-act [data-goal-dep] { background: color-mix(in srgb, var(--gc, var(--accent)) 16%, var(--surface)); border-color: color-mix(in srgb, var(--gc, var(--accent)) 45%, var(--line)); color: var(--ink); border-radius: 999px; }
+.goal-chev { width: 32px; height: 32px; padding: 6px; border-radius: 50%; border: 1px solid var(--line); background: var(--surface); }
+.gv-act { background: var(--surface); }
+.pay-hero { --g: var(--accent); display: grid; gap: 4px; margin: 0 0 14px; padding: 18px; border-radius: 24px; background: linear-gradient(135deg, color-mix(in srgb, var(--g) 18%, var(--surface)), var(--surface) 72%); border: 1px solid color-mix(in srgb, var(--g) 38%, var(--line)); box-shadow: 0 10px 30px color-mix(in srgb, var(--g) 10%, transparent); }
+.pay-hero[hidden] { display: none; }
+.ph-l { color: var(--muted); font-size: 0.88rem; font-weight: 600; }
+.ph-v { font-family: var(--display); font-weight: 700; font-size: 2.2rem; line-height: 1.1; letter-spacing: -0.02em; font-variant-numeric: tabular-nums; }
+.ph-chips { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
+.ph-chip { display: inline-flex; align-items: center; gap: 6px; font-size: 0.78rem; font-weight: 600; padding: 5px 10px; border-radius: 999px; background: color-mix(in srgb, var(--surface) 70%, transparent); border: 1px solid var(--line); }
+.ph-chip i { width: 7px; height: 7px; border-radius: 50%; }
+.ph-chip.over { color: var(--out); border-color: color-mix(in srgb, var(--out) 40%, var(--line)); }
+#pay-over { background: linear-gradient(135deg, color-mix(in srgb, var(--out) 12%, var(--surface)), var(--surface) 70%); border-color: color-mix(in srgb, var(--out) 35%, var(--line)); }
+.pay-check { width: 30px; height: 30px; }
 @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation: none !important; transition: none !important; scroll-behavior: auto !important; } }
 </style>
 </head>
@@ -1573,6 +1593,7 @@ body.view-accd .fab, body.view-accd .ai-fab { opacity: 0; pointer-events: none; 
     </div>
     <h1 class="gv-title">Pagos</h1>
     <p class="gv-sub" id="pay-sub"></p>
+    <div class="pay-hero" id="pay-hero" hidden></div>
     <div class="pay-cal" id="pay-cal"></div>
     <div id="pay-over-wrap">
       <h2 class="gv-h2 over-h">Vencidos</h2>
@@ -2829,6 +2850,19 @@ body.view-accd .fab, body.view-accd .ai-fab { opacity: 0; pointer-events: none; 
     $("pay-sub").textContent = state.payments.length
       ? (pend.length ? pend.length + (pend.length === 1 ? " pendiente" : " pendientes") + " en " + mName + " · " + money(tot, D) + " por pagar" : "Nada pendiente en " + mName) + (overdue.length ? " · " + overdue.length + (overdue.length === 1 ? " vencido" : " vencidos") : "")
       : "Programa tus pagos y no se te pasa ninguno.";
+    var paidN = inMonth.filter(function (p) { return p.paid; }).length, hero = $("pay-hero");
+    hero.hidden = !state.payments.length;
+    $("pay-sub").hidden = !!state.payments.length;
+    if (state.payments.length) {
+      var overTot = 0;
+      overdue.forEach(function (p) { var v = conv(p.monto, p.moneda, D); if (v !== null) overTot += v; });
+      var hh = '<div class="ph-l">Por pagar en ' + mName + '</div><div class="ph-v fit">' + money(tot, D) + "</div>" +
+        '<div class="ph-chips"><span class="ph-chip"><i style="background:var(--accent)"></i>' + pend.length + (pend.length === 1 ? " pendiente" : " pendientes") + "</span>" +
+        (overdue.length ? '<span class="ph-chip over"><i style="background:var(--out)"></i>' + overdue.length + (overdue.length === 1 ? " vencido" : " vencidos") + " · " + money(overTot, D) + "</span>" : "") +
+        '<span class="ph-chip"><i style="background:var(--in)"></i>' + paidN + (paidN === 1 ? " pagado" : " pagados") + "</span></div>";
+      if (hero._h !== hh) { hero.innerHTML = hh; hero._h = hh; }
+      hero.style.setProperty("--g", overdue.length ? "var(--out)" : "var(--accent)");
+    }
     // calendario
     var first = (new Date(pay.y, pay.m, 1).getDay() + 6) % 7, nd = new Date(pay.y, pay.m + 1, 0).getDate(), by = {};
     inMonth.forEach(function (p) {
