@@ -1236,6 +1236,40 @@ body.view-accd .fab, body.view-accd .ai-fab { opacity: 0; pointer-events: none; 
 .cat-chip { display: inline-flex; align-items: center; gap: 7px; font: inherit; font-size: 0.85rem; font-weight: 600; padding: 7px 12px; min-height: 36px; border-radius: 999px; border: 1px solid var(--line); background: var(--surface); color: var(--ink); cursor: pointer; }
 .cat-chip i { width: 9px; height: 9px; border-radius: 3px; background: var(--c); }
 .cat-chip[aria-checked="true"] { background: color-mix(in srgb, var(--c) 14%, var(--surface)); border-color: var(--c); }
+/* ---------- Metas: cuadrícula (maqueta A) ---------- */
+.gv-hero { display: block; padding: 16px 18px; border-radius: 22px; }
+.gv-hero #hero-ring, .gv-hero .share, .gv-hero .gv-chart { display: none !important; }
+.gv-hero .hero-v { font-size: 2rem; display: inline-block; }
+.gv-hero .hero-s { display: inline-block; margin-left: 8px; }
+.hero-bar { height: 7px; border-radius: 999px; background: color-mix(in srgb, var(--line) 80%, transparent); overflow: hidden; margin-top: 10px; }
+.hero-bar i { display: block; height: 100%; border-radius: inherit; background: var(--accent); transition: width 0.6s cubic-bezier(0.2, 0.8, 0.2, 1); }
+.goal-list { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+.goal-list .goal { padding: 14px; border-radius: 20px; background: var(--surface); border: 1px solid var(--line); }
+.goal-list .goal .gbar, .goal-list .goal .goal-eta, .goal-list .goal .goal-detail, .goal-list .goal .goal-act, .goal-list .goal .goal-chev, .goal-list .goal .goal-sub { display: none !important; }
+.goal-list .goal-head { flex-direction: column; align-items: flex-start; gap: 10px; height: 100%; }
+.goal-list .goal-head .ring { width: 56px; height: 56px; }
+.goal-list .goal-name { font-size: 0.98rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 100%; }
+.goal-list .goal-amt { font-size: 0.8rem; }
+.goal-list .goal-main { width: 100%; }
+.goal-short { font-size: 0.76rem; color: var(--muted); margin-top: auto; }
+.goal-short.hot { color: var(--in); font-weight: 600; }
+.goal-head:active { transform: scale(0.98); }
+.goal-add button { width: 100%; height: 100%; min-height: 150px; font: inherit; font-weight: 600; color: var(--muted); background: none; border: 1.5px dashed var(--line); border-radius: 20px; cursor: pointer; }
+.goal-add button:hover { color: var(--accent); border-color: var(--accent); }
+.goal-short { display: block; }
+.goal-list .goal-head .goal-short { display: block; }
+.goal-head .goal-short { display: none; }
+/* Detalle de la meta en una hoja */
+.gd-body { --gc: var(--accent); }
+.gd-top { display: flex; align-items: center; gap: 14px; margin-bottom: 12px; }
+.gd-top .ring { width: 72px; height: 72px; }
+.gd-top .goal-main { display: grid; gap: 2px; }
+.gd-top .goal-name { display: none; }
+.gd-top .goal-amt { font-family: var(--display); font-weight: 700; font-size: 1.15rem; color: var(--ink); }
+.gd-body .goal-eta { margin: 10px 0 12px; }
+.gd-more { margin-bottom: 14px; }
+.gd-body .goal-act { display: flex; gap: 8px; align-items: center; }
+.gd-body .goal-act > .secondary { flex: 1; }
 @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation: none !important; transition: none !important; scroll-behavior: auto !important; } }
 </style>
 </head>
@@ -1374,6 +1408,7 @@ body.view-accd .fab, body.view-accd .ai-fab { opacity: 0; pointer-events: none; 
         <div class="hero-l">Total ahorrado en metas</div>
         <div class="hero-v fit" id="hero-v"></div>
         <div class="hero-s" id="hero-s"></div>
+        <div class="hero-bar"><i id="hero-bar"></i></div>
       </div>
       <div class="share" id="hero-share"></div>
       <div class="gv-chart" id="gv-chart">
@@ -1570,6 +1605,12 @@ body.view-accd .fab, body.view-accd .ai-fab { opacity: 0; pointer-events: none; 
       <div class="earn-prev" id="earn-prev"></div>
       <p class="error" id="earn-err" role="alert"></p>
       <button type="button" class="primary" id="earn-save">Guardar en mis ahorros</button>
+    </section>
+  </div>
+  <div class="sheet-backdrop" id="gd-sheet" hidden>
+    <section class="panel sheet" role="dialog" aria-modal="true" aria-labelledby="h-gd">
+      <div class="sheet-head"><h2 id="h-gd"></h2><button type="button" class="del" id="gd-close" aria-label="Cerrar">✕</button></div>
+      <div class="gd-body" id="gd-body"></div>
     </section>
   </div>
   <div class="sheet-backdrop" id="lg-sheet" hidden>
@@ -2636,7 +2677,9 @@ body.view-accd .fab, body.view-accd .ai-fab { opacity: 0; pointer-events: none; 
     var hero = $("gv-hero");
     if (hero._k !== heroKey) { $("hero-ring").innerHTML = ringHtml; $("hero-share").innerHTML = shareHtml; hero._k = heroKey; }
     $("hero-v").innerHTML = mask(money(saved, D));
-    $("hero-s").innerHTML = target > 0 ? "de " + mask(money(target, D)) + " · te faltan " + mask(money(Math.max(0, target - saved), D)) : "";
+    document.querySelector("#gv-hero .hero-l").textContent = "Ahorrado en tus " + state.goals.length + (state.goals.length === 1 ? " meta" : " metas");
+    $("hero-s").innerHTML = target > 0 ? "de " + mask(money(target, D)) + " · " + fmtPct(hp) : "";
+    $("hero-bar").style.width = hp.toFixed(1) + "%";
 
     var order = info.slice().sort(function (a, b) { return (a.done ? 1 : 0) - (b.done ? 1 : 0); });
     var chev = '<svg class="goal-chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"></path></svg>';
@@ -2649,6 +2692,8 @@ body.view-accd .fab, body.view-accd .ai-fab { opacity: 0; pointer-events: none; 
       else if (pace.months < 1) eta = "Al ritmo actual (" + mask(money(pace.monthly, g.moneda)) + "/mes) la lograrías en menos de un mes.";
       else { var nm = Math.round(pace.months), ep = pace.eta.split("-"); eta = "Al ritmo actual (" + mask(money(pace.monthly, g.moneda)) + "/mes) la lograrías en ~" + nm + (nm === 1 ? " mes" : " meses") + " (" + MESES_C[Number(ep[1]) - 1] + " " + ep[0] + ")."; }
       var ticks = [25, 50, 75].map(function (t) { return '<i style="left:' + t + '%"></i>'; }).join("");
+      var shortEta = o.done ? "Lograda" : pace.kind === "eta" ? (pace.months < 1 ? "Este mes" : "~ " + MESES_C[Number(pace.eta.split("-")[1]) - 1] + " " + pace.eta.split("-")[0]) : pace.kind === "none" ? "Sin aportes" : pace.kind === "wait" ? "Calculando ritmo" : "Sin avance";
+      if (!o.done && o.pct >= 85) shortEta = "Falta poco";
       var stats = o.done ? "" : '<div class="gd-stats"><div><b>Ritmo actual</b><span>' + (pace.kind === "eta" ? mask(money(pace.monthly, g.moneda)) + "<small>por mes</small>" : "—") + "</span></div>" +
         "<div><b>Para lograrla en 6 meses</b><span>" + mask(money(rem / 6, g.moneda)) + "<small>por mes</small></span></div><div><b>Para lograrla en 12 meses</b><span>" + mask(money(rem / 12, g.moneda)) + "<small>por mes</small></span></div></div>";
       var hist = evs.slice(-5).reverse().map(function (e) {
@@ -2659,7 +2704,8 @@ body.view-accd .fab, body.view-accd .ai-fab { opacity: 0; pointer-events: none; 
         '<span class="ring"><svg viewBox="0 0 42 42" aria-hidden="true"><circle class="trk" cx="21" cy="21" r="15.9155"></circle><circle class="bar" cx="21" cy="21" r="15.9155" style="--p:' + o.pct.toFixed(2) + '"></circle></svg>' +
         '<span class="pct">' + (o.done ? "✓" : fmtPct(o.pct)) + "</span></span>" +
         '<span class="goal-main"><span class="goal-name">' + esc(g.nombre) + '</span><span class="goal-amt">' + mask(money(bal, g.moneda) + " de " + money(g.meta, g.moneda)) +
-        '</span><span class="goal-sub">' + (o.done ? "¡Meta lograda!" : "Te faltan " + mask(money(rem, g.moneda))) + "</span></span>" + chev + "</button>" +
+        '</span><span class="goal-sub">' + (o.done ? "¡Meta lograda!" : "Te faltan " + mask(money(rem, g.moneda))) + "</span></span>" + chev +
+        '<span class="goal-short' + (o.done || o.pct >= 85 ? " hot" : "") + '">' + shortEta + "</span></button>" +
         '<div class="gbar" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="' + Math.round(o.pct) + '"><span style="width:' + o.pct.toFixed(2) + '%"></span>' + ticks + "</div>" +
         '<div class="goal-eta">' + eta + "</div>" +
         '<div class="goal-detail" id="gd-' + g.id + '" hidden><div class="gd-spark">' + goalSpark(g, evs) + "</div>" + stats +
@@ -2669,14 +2715,9 @@ body.view-accd .fab, body.view-accd .ai-fab { opacity: 0; pointer-events: none; 
         '<div class="menu" role="menu" hidden><button type="button" role="menuitem" data-goal-ret="' + g.id + '">Retirar fondos</button>' +
         '<button type="button" role="menuitem" data-goal-edit="' + g.id + '">Editar meta</button>' +
         '<button type="button" role="menuitem" class="danger" data-goal-del="' + g.id + '">Eliminar meta</button></div></div></div></li>';
-    }).join("");
+    }).join("") + (has ? '<li class="goal-add"><button type="button" data-goal-new>+ Nueva meta</button></li>' : "");
     if (list._h !== html) { list.innerHTML = html; list._h = html; }
-    list.querySelectorAll(".goal").forEach(function (li) {
-      var gid = li.getAttribute("data-gid"), open = !!goalsOpen[gid];
-      li.classList.toggle("open", open);
-      li.querySelector(".goal-head").setAttribute("aria-expanded", open ? "true" : "false");
-      li.querySelector(".goal-detail").hidden = !open;
-    });
+    if (typeof window.__gdRefresh === "function") window.__gdRefresh();
 
     var evs = state.items.filter(function (it) { return it.tipo === "traspaso" && (it.hacia.k === "meta" || it.desde.k === "meta"); })
       .sort(function (a, b) { return a.fecha < b.fecha ? 1 : a.fecha > b.fecha ? -1 : b.id - a.id; }).slice(0, 6);
@@ -3901,6 +3942,7 @@ body.view-accd .fab, body.view-accd .ai-fab { opacity: 0; pointer-events: none; 
       if (!$("dial").hidden) closeDial();
       else if (!$("cf-sheet").hidden) closeCf();
       else if (!$("rh-sheet").hidden) closeRh();
+      else if (!$("gd-sheet").hidden) closeGd();
       else if (!$("earn-sheet").hidden) closeEarn();
       else if (!$("lg-sheet").hidden) closeLg();
       else if (!$("pg-sheet").hidden) closePg();
@@ -5172,16 +5214,32 @@ body.view-accd .fab, body.view-accd .ai-fab { opacity: 0; pointer-events: none; 
       wrap.addEventListener("pointerup", function (e) { if (e.pointerType !== "mouse") reset(); });
       wrap.addEventListener("pointercancel", reset);
     })();
+    var gdId = null;
+    function fillGd() {
+      var li = $("goal-list").querySelector('.goal[data-gid="' + gdId + '"]'), g = goalById(gdId);
+      if (!li || !g) { closeGd(); return; }
+      $("h-gd").textContent = g.nombre;
+      var head = li.querySelector(".goal-head").cloneNode(true);
+      var body = '<div class="gd-top" style="' + li.getAttribute("style") + '">' + head.querySelector(".ring").outerHTML + head.querySelector(".goal-main").outerHTML + "</div>" +
+        li.querySelector(".gbar").outerHTML + li.querySelector(".goal-eta").outerHTML +
+        '<div class="gd-more">' + li.querySelector(".goal-detail").innerHTML + "</div>" + li.querySelector(".goal-act").outerHTML;
+      var w = $("gd-body");
+      w.setAttribute("style", li.getAttribute("style"));
+      w.className = "gd-body" + (li.classList.contains("done") ? " done" : "");
+      if (w._h !== body) { w.innerHTML = body; w._h = body; }
+    }
+    function openGd(id) { gdId = id; fillGd(); $("gd-sheet").hidden = false; }
+    function closeGd() { $("gd-sheet").hidden = true; gdId = null; }
+    window.__gdRefresh = function () { if (gdId && !$("gd-sheet").hidden) fillGd(); };
+    $("gd-close").addEventListener("click", closeGd);
+    $("gd-sheet").addEventListener("click", function (e) { if (e.target === $("gd-sheet")) { closeGd(); return; } goalClick(e); });
     $("goal-list").addEventListener("click", function (e) {
       var op = e.target.closest("[data-goal-open]");
-      if (op) {
-        var oid = op.getAttribute("data-goal-open"), li = op.closest(".goal");
-        goalsOpen[oid] = !goalsOpen[oid];
-        li.classList.toggle("open", !!goalsOpen[oid]);
-        op.setAttribute("aria-expanded", goalsOpen[oid] ? "true" : "false");
-        li.querySelector(".goal-detail").hidden = !goalsOpen[oid];
-        return;
-      }
+      if (op) { openGd(op.getAttribute("data-goal-open")); return; }
+      if (e.target.closest("[data-goal-new]")) { openGe(null); return; }
+      goalClick(e);
+    });
+    function goalClick(e) {
       var dots = e.target.closest(".dots");
       if (dots) {
         var menu = dots.parentNode.querySelector(".menu"), willOpen = menu.hidden;
@@ -5199,10 +5257,11 @@ body.view-accd .fab, body.view-accd .ai-fab { opacity: 0; pointer-events: none; 
         if (!g) return;
         if ((goalMap()[g.id] || 0) > 0.004) { showToast("Retira los fondos de la meta antes de eliminarla."); return; }
         state.goals = state.goals.filter(function (x) { return x.id !== g.id; });
+        if (String(gdId) === String(g.id)) closeGd();
         save(); render();
         showToast("Meta eliminada.");
       }
-    });
+    }
 
     /* ---------- Pagos programados ---------- */
     var pgId = null, pgRep = "once";
