@@ -1122,6 +1122,7 @@ body.view-accd .fab, body.view-accd .ai-fab { opacity: 0; pointer-events: none; 
 /* Calculadora (todas las monedas a la vez) */
 .calc2 { display: flex; flex-direction: column; gap: 10px; }
 .calc2 .sheet-head { margin-bottom: 0; }
+.calc2 > * { flex: none; }
 .cx-in { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; gap: 12px; align-items: center; padding: 12px 12px 12px 14px; border-radius: 18px; border: 2px solid var(--accent); background: color-mix(in srgb, var(--accent) 7%, var(--surface)); }
 .cx-in .cc-ic { width: 40px; height: 40px; font-size: 1.1rem; }
 .cx-in .cc-ic.cc-ves { font-size: 0.85rem; }
@@ -1134,7 +1135,7 @@ body.view-accd .fab, body.view-accd .ai-fab { opacity: 0; pointer-events: none; 
 .cx-clear { width: 32px; height: 32px; border-radius: 50%; border: 0; background: color-mix(in srgb, var(--muted) 18%, transparent); color: var(--muted); font-size: 0.8rem; cursor: pointer; }
 .cx-srcs { display: flex; gap: 6px; }
 .cx-srcs button { flex: 1; font: inherit; font-size: 0.8rem; font-weight: 700; min-height: 36px; border-radius: 999px; border: 1px solid var(--line); background: var(--surface); color: var(--muted); cursor: pointer; }
-.cx-srcs button[aria-pressed="true"] { background: var(--ink); border-color: var(--ink); color: var(--bg); }
+.cx-srcs button[aria-pressed="true"] { background: color-mix(in srgb, var(--accent) 12%, var(--surface)); border-color: var(--accent); color: var(--accent); }
 .cx-own { display: flex; align-items: center; gap: 10px; }
 .cx-own[hidden] { display: none; }
 .cx-own label { margin: 0; flex: none; }
@@ -1848,10 +1849,8 @@ body.view-accd .fab, body.view-accd .ai-fab { opacity: 0; pointer-events: none; 
         <div class="cx-in-main"><div class="cx-name" id="cx-name"></div><div class="cx-amt fit" id="cx-amt" aria-live="polite"></div></div>
         <button type="button" class="cx-clear" id="cx-clear" aria-label="Borrar el monto">✕</button>
       </div>
-      <div class="cx-srcs" role="group" aria-label="Tasa para el dólar">
-        <button type="button" data-cx-src="bcv" aria-pressed="true">Tasa BCV</button>
-        <button type="button" data-cx-src="usdt" aria-pressed="false">Tasa USDT</button>
-        <button type="button" data-cx-src="own" aria-pressed="false">Otra tasa</button>
+      <div class="cx-srcs">
+        <button type="button" id="cx-own-btn" aria-pressed="false">Usar otra tasa para el dólar</button>
       </div>
       <div class="cx-own" id="cx-own" hidden>
         <label for="cx-own-rate">Bs por $1</label>
@@ -2127,6 +2126,7 @@ body.view-accd .fab, body.view-accd .ai-fab { opacity: 0; pointer-events: none; 
     var m = {};
     function add(k, v) { m[k] = (m[k] || 0) + v; }
     state.items.forEach(function (it) {
+      if (it.cat === "Binance Earn" && (it.tipo === "ahorro" || it.tipo === "retiro")) return; // va en su propio bloque
       if (it.tipo === "ahorro") add(savKey(it.cuenta, it.moneda), it.monto);
       else if (it.tipo === "retiro") add(savKey(it.cuenta, it.moneda), -it.monto);
       else if (it.tipo === "traspaso") {
@@ -5816,7 +5816,7 @@ body.view-accd .fab, body.view-accd .ai-fab { opacity: 0; pointer-events: none; 
 
     /* ---------- Calculadora de cambio ---------- */
     var calc = { k: "VES", src: "bcv", buf: "" };
-    try { var cxs = JSON.parse(localStorage.getItem("gastos-calc") || "{}"); if (cxs.k) calc.k = cxs.k; if (cxs.src) calc.src = cxs.src; if (cxs.own) calc.own = cxs.own; } catch (e) {}
+    try { var cxs = JSON.parse(localStorage.getItem("gastos-calc") || "{}"); if (cxs.k) calc.k = cxs.k; if (cxs.src === "own") calc.src = "own"; if (cxs.own) calc.own = cxs.own; } catch (e) {}
     function cxSave() { try { localStorage.setItem("gastos-calc", JSON.stringify({ k: calc.k, src: calc.src, own: calc.own || 0 })); } catch (e) {} }
     var CC = {
       VES: { ic: "cc-ves", sym: "Bs", name: "Bolívares" },
@@ -5829,7 +5829,7 @@ body.view-accd .fab, body.view-accd .ai-fab { opacity: 0; pointer-events: none; 
     function ccIcon(c) { return '<span class="cc-ic ' + CC[c].ic + '" aria-hidden="true">' + CC[c].sym + "</span>"; }
     // Precio del bitcoin en Bs: precio en dólares × tasa USDT (o la del BCV si no hay USDT).
     function btcVes() { var r = state.rateUsdt > 0 ? state.rateUsdt : state.rate; return state.btcUsd > 0 && r > 0 ? state.btcUsd * r : 0; }
-    function cxUsd() { return calc.src === "usdt" ? state.rateUsdt : calc.src === "own" ? (calc.own || 0) : state.rate; }
+    function cxUsd() { return calc.src === "own" && calc.own > 0 ? calc.own : state.rate; }
     function cxBs(k) { return k === "VES" ? 1 : k === "USD" ? cxUsd() : k === "EUR" ? state.rateEur : k === "USDT" ? state.rateUsdt : btcVes(); }
     function cxDec(k) { return k === "BTC" ? 8 : 2; }
     function cxFmt(n, k) { return num(n, cxDec(k)); }
@@ -5837,7 +5837,7 @@ body.view-accd .fab, body.view-accd .ai-fab { opacity: 0; pointer-events: none; 
     function cxSub(k) {
       var r = cxBs(k);
       if (!(r > 0)) return k === "BTC" ? "Buscando el precio…" : "Sin tasa disponible";
-      if (k === "USD") return (calc.src === "usdt" ? "Tasa USDT" : calc.src === "own" ? "Tu tasa" : "BCV") + " · Bs " + num(r);
+      if (k === "USD") return (calc.src === "own" && calc.own > 0 ? "Tu tasa" : "BCV") + " · Bs " + num(r);
       if (k === "EUR") return "BCV · Bs " + num(r);
       if (k === "USDT") return "Bs " + num(r);
       if (k === "BTC") return "$" + num(state.btcUsd, 0) + " · USDT";
@@ -5857,7 +5857,8 @@ body.view-accd .fab, body.view-accd .ai-fab { opacity: 0; pointer-events: none; 
       amt.textContent = (k === "USD" ? "$" : k === "EUR" ? "€" : k === "VES" ? "Bs " : "") + cxShowBuf() + (k === "USDT" ? " USDT" : k === "BTC" ? " BTC" : "");
       amt.classList.toggle("ph", !calc.buf);
       $("cx-clear").style.visibility = calc.buf ? "visible" : "hidden";
-      setPressed("[data-cx-src]", "data-cx-src", calc.src);
+      $("cx-own-btn").setAttribute("aria-pressed", calc.src === "own" ? "true" : "false");
+      $("cx-own-btn").textContent = calc.src === "own" ? "Usando otra tasa · volver a BCV" : "Usar otra tasa para el dólar";
       $("cx-own").hidden = calc.src !== "own";
       var bs = cxVal() * cxBs(k), base = cxBs(k) > 0;
       $("cx-list").innerHTML = CX_ORDER.filter(function (c) { return c !== k; }).map(function (c) {
@@ -5907,11 +5908,9 @@ body.view-accd .fab, body.view-accd .ai-fab { opacity: 0; pointer-events: none; 
     $("calc-sheet").addEventListener("click", function (e) { if (e.target === $("calc-sheet")) closeCalc(); });
     $("cx-kp").addEventListener("click", function (e) { var b = e.target.closest("[data-cx]"); if (b) cxKey(b.getAttribute("data-cx")); });
     $("cx-clear").addEventListener("click", function () { calc.buf = ""; renderCalc(); });
-    document.querySelectorAll("[data-cx-src]").forEach(function (b) {
-      b.addEventListener("click", function () {
-        calc.src = b.getAttribute("data-cx-src"); cxSave(); renderCalc();
-        if (calc.src === "own" && !calc.own) $("cx-own-rate").focus();
-      });
+    $("cx-own-btn").addEventListener("click", function () {
+      calc.src = calc.src === "own" ? "bcv" : "own"; cxSave(); renderCalc();
+      if (calc.src === "own") $("cx-own-rate").focus();
     });
     $("cx-own-rate").addEventListener("input", function () { var v = parseNum($("cx-own-rate").value); calc.own = v > 0 ? v : 0; cxSave(); renderCalc(); });
     document.addEventListener("keydown", function (e) {
