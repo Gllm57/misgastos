@@ -1119,6 +1119,41 @@ body.view-accd .fab, body.view-accd .ai-fab { opacity: 0; pointer-events: none; 
 .earn-prev:empty { display: none; }
 .earn-prev .bn-est { margin: 0; }
 .dial-item .ic svg { width: 21px; height: 21px; }
+/* Calculadora (todas las monedas a la vez) */
+.calc2 { display: flex; flex-direction: column; gap: 10px; }
+.calc2 .sheet-head { margin-bottom: 0; }
+.cx-in { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; gap: 12px; align-items: center; padding: 12px 12px 12px 14px; border-radius: 18px; border: 2px solid var(--accent); background: color-mix(in srgb, var(--accent) 7%, var(--surface)); }
+.cx-in .cc-ic { width: 40px; height: 40px; font-size: 1.1rem; }
+.cx-in .cc-ic.cc-ves { font-size: 0.85rem; }
+.cx-in-main { min-width: 0; }
+.cx-name { color: var(--muted); font-size: 0.8rem; }
+.cx-amt { font-family: var(--display); font-weight: 700; font-size: 2rem; line-height: 1.15; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.cx-amt.ph { color: var(--muted); opacity: 0.6; }
+.cx-amt::after { content: ""; display: inline-block; width: 2px; height: 1.5rem; margin-left: 2px; vertical-align: -3px; background: var(--accent); animation: cxBlink 1s steps(1) infinite; }
+@keyframes cxBlink { 50% { opacity: 0; } }
+.cx-clear { width: 32px; height: 32px; border-radius: 50%; border: 0; background: color-mix(in srgb, var(--muted) 18%, transparent); color: var(--muted); font-size: 0.8rem; cursor: pointer; }
+.cx-srcs { display: flex; gap: 6px; }
+.cx-srcs button { flex: 1; font: inherit; font-size: 0.8rem; font-weight: 700; min-height: 36px; border-radius: 999px; border: 1px solid var(--line); background: var(--surface); color: var(--muted); cursor: pointer; }
+.cx-srcs button[aria-pressed="true"] { background: var(--ink); border-color: var(--ink); color: var(--bg); }
+.cx-own { display: flex; align-items: center; gap: 10px; }
+.cx-own[hidden] { display: none; }
+.cx-own label { margin: 0; flex: none; }
+.cx-own input { min-height: 40px; padding: 6px 12px; font-weight: 700; }
+.cx-list { list-style: none; margin: 0; padding: 0; border: 1px solid var(--line); border-radius: 18px; overflow: hidden; }
+.cx-row { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; gap: 12px; align-items: center; width: 100%; padding: 11px 14px; font: inherit; color: var(--ink); text-align: left; background: none; border: 0; border-top: 1px solid var(--line); cursor: pointer; -webkit-user-select: none; user-select: none; -webkit-touch-callout: none; }
+.cx-list li:first-child .cx-row { border-top: 0; }
+.cx-row:active { background: color-mix(in srgb, var(--accent) 6%, transparent); }
+.cx-row .cc-ic { width: 32px; height: 32px; font-size: 0.9rem; }
+.cx-row .cc-ic.cc-ves { font-size: 0.72rem; }
+.cx-row .nm { min-width: 0; }
+.cx-row .nm b { display: block; font-weight: 600; }
+.cx-row .nm small { display: block; color: var(--muted); font-size: 0.74rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.cx-row .v { font-family: var(--display); font-weight: 700; font-size: 1.15rem; font-variant-numeric: tabular-nums; text-align: right; white-space: nowrap; max-width: 52vw; }
+.cx-row.copied .v { color: var(--in); }
+.cx-hint { color: var(--muted); font-size: 0.76rem; text-align: center; margin: 0; }
+.cx-kp { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; }
+.cx-kp button { font-family: var(--display); font-size: 1.35rem; font-weight: 600; min-height: 50px; border-radius: 14px; border: 0; background: var(--bg); color: var(--ink); cursor: pointer; touch-action: manipulation; }
+.cx-kp button:active { background: var(--line); transform: scale(0.97); }
 @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation: none !important; transition: none !important; scroll-behavior: auto !important; } }
 </style>
 </head>
@@ -1806,33 +1841,30 @@ body.view-accd .fab, body.view-accd .ai-fab { opacity: 0; pointer-events: none; 
     </section>
   </div>
   <div class="sheet-backdrop" id="calc-sheet" hidden>
-    <section class="panel sheet" role="dialog" aria-modal="true" aria-labelledby="h-calc">
-      <div class="sheet-head"><h2 id="h-calc">Calculadora de cambio</h2><button type="button" class="del" id="calc-close" aria-label="Cerrar">✕</button></div>
-      <div class="seg calc-seg" role="group" aria-label="Moneda de la calculadora">
-        <button type="button" data-calc-cur="USD" aria-pressed="true" aria-label="Dólar" title="Dólar"><span class="cc-ic cc-usd" aria-hidden="true">$</span></button>
-        <button type="button" data-calc-cur="EUR" aria-pressed="false" aria-label="Euro" title="Euro"><span class="cc-ic cc-eur" aria-hidden="true">€</span></button>
-        <button type="button" data-calc-cur="USDT" aria-pressed="false" aria-label="USDT" title="USDT"><span class="cc-ic cc-usdt" aria-hidden="true">₮</span></button>
-        <button type="button" data-calc-cur="BTC" aria-pressed="false" aria-label="Bitcoin" title="Bitcoin"><span class="cc-ic cc-btc" aria-hidden="true">₿</span></button>
+    <section class="panel sheet calc2" role="dialog" aria-modal="true" aria-labelledby="h-calc">
+      <div class="sheet-head"><h2 id="h-calc">Calculadora</h2><button type="button" class="del" id="calc-close" aria-label="Cerrar">✕</button></div>
+      <div class="cx-in" id="cx-in">
+        <span id="cx-ic"></span>
+        <div class="cx-in-main"><div class="cx-name" id="cx-name"></div><div class="cx-amt fit" id="cx-amt" aria-live="polite"></div></div>
+        <button type="button" class="cx-clear" id="cx-clear" aria-label="Borrar el monto">✕</button>
       </div>
-      <div class="calc-box">
-        <label class="calc-lbl" for="calc-amt">Tengo</label>
-        <div class="calc-line">
-          <input type="text" id="calc-amt" inputmode="decimal" autocomplete="off" placeholder="0,00">
-          <span class="calc-cur" id="calc-from-cur"></span>
-        </div>
-        <button type="button" class="calc-swap" id="calc-swap" aria-label="Invertir el cambio"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 20V4M7 4L3 8M7 4l4 4"></path><path d="M17 4v16M17 20l-4-4M17 20l4-4"></path></svg></button>
-        <div class="calc-lbl">Recibo</div>
-        <div class="calc-line">
-          <div class="calc-out fit" id="calc-out" aria-live="polite">0,00</div>
-          <span class="calc-cur" id="calc-to-cur"></span>
-        </div>
+      <div class="cx-srcs" role="group" aria-label="Tasa para el dólar">
+        <button type="button" data-cx-src="bcv" aria-pressed="true">Tasa BCV</button>
+        <button type="button" data-cx-src="usdt" aria-pressed="false">Tasa USDT</button>
+        <button type="button" data-cx-src="own" aria-pressed="false">Otra tasa</button>
       </div>
-      <label for="calc-rate" id="calc-rate-lbl">Tasa (Bs por $1)</label>
-      <div class="calc-rate-row">
-        <input type="text" id="calc-rate" inputmode="decimal" autocomplete="off" placeholder="Ej: 875,67">
-        <button type="button" class="secondary" id="calc-bcv">Usar la del BCV</button>
+      <div class="cx-own" id="cx-own" hidden>
+        <label for="cx-own-rate">Bs por $1</label>
+        <input type="text" id="cx-own-rate" inputmode="decimal" autocomplete="off" placeholder="Ej: 950,00">
       </div>
-      <p class="hint" id="calc-note"></p>
+      <ul class="cx-list" id="cx-list"></ul>
+      <p class="cx-hint" id="cx-hint">Toca una moneda para escribir en ella. Mantén presionada una cifra para copiarla.</p>
+      <div class="cx-kp" id="cx-kp">
+        <button type="button" data-cx="1">1</button><button type="button" data-cx="2">2</button><button type="button" data-cx="3">3</button>
+        <button type="button" data-cx="4">4</button><button type="button" data-cx="5">5</button><button type="button" data-cx="6">6</button>
+        <button type="button" data-cx="7">7</button><button type="button" data-cx="8">8</button><button type="button" data-cx="9">9</button>
+        <button type="button" data-cx=",">,</button><button type="button" data-cx="0">0</button><button type="button" data-cx="del" aria-label="Borrar">⌫</button>
+      </div>
     </section>
   </div>
   <div class="sheet-backdrop" id="mv-sheet" hidden>
@@ -5783,22 +5815,68 @@ body.view-accd .fab, body.view-accd .ai-fab { opacity: 0; pointer-events: none; 
     spy();
 
     /* ---------- Calculadora de cambio ---------- */
-    var calc = { from: "VES", cur: "USD" };
+    var calc = { k: "VES", src: "bcv", buf: "" };
+    try { var cxs = JSON.parse(localStorage.getItem("gastos-calc") || "{}"); if (cxs.k) calc.k = cxs.k; if (cxs.src) calc.src = cxs.src; if (cxs.own) calc.own = cxs.own; } catch (e) {}
+    function cxSave() { try { localStorage.setItem("gastos-calc", JSON.stringify({ k: calc.k, src: calc.src, own: calc.own || 0 })); } catch (e) {} }
     var CC = {
-      USD: { ic: "cc-usd", sym: "$", name: "Dólar", unit: "$1" },
-      EUR: { ic: "cc-eur", sym: "€", name: "Euro", unit: "€1" },
-      USDT: { ic: "cc-usdt", sym: "₮", name: "USDT", unit: "1 USDT" },
-      BTC: { ic: "cc-btc", sym: "₿", name: "Bitcoin", unit: "1 BTC" },
-      VES: { ic: "cc-ves", sym: "Bs", name: "Bolívares" }
+      VES: { ic: "cc-ves", sym: "Bs", name: "Bolívares" },
+      USD: { ic: "cc-usd", sym: "$", name: "Dólar" },
+      EUR: { ic: "cc-eur", sym: "€", name: "Euro" },
+      USDT: { ic: "cc-usdt", sym: "₮", name: "USDT" },
+      BTC: { ic: "cc-btc", sym: "₿", name: "Bitcoin" }
     };
-    function ccIcon(c) { return '<span class="cc-ic ' + CC[c].ic + '" role="img" aria-label="' + CC[c].name + '">' + CC[c].sym + "</span>"; }
+    var CX_ORDER = ["VES", "USD", "EUR", "USDT", "BTC"];
+    function ccIcon(c) { return '<span class="cc-ic ' + CC[c].ic + '" aria-hidden="true">' + CC[c].sym + "</span>"; }
     // Precio del bitcoin en Bs: precio en dólares × tasa USDT (o la del BCV si no hay USDT).
     function btcVes() { var r = state.rateUsdt > 0 ? state.rateUsdt : state.rate; return state.btcUsd > 0 && r > 0 ? state.btcUsd * r : 0; }
-    function calcBcv() {
-      if (calc.cur === "EUR") return state.rateEur;
-      if (calc.cur === "USDT") return state.rateUsdt;
-      if (calc.cur === "BTC") return btcVes();
-      return state.rate;
+    function cxUsd() { return calc.src === "usdt" ? state.rateUsdt : calc.src === "own" ? (calc.own || 0) : state.rate; }
+    function cxBs(k) { return k === "VES" ? 1 : k === "USD" ? cxUsd() : k === "EUR" ? state.rateEur : k === "USDT" ? state.rateUsdt : btcVes(); }
+    function cxDec(k) { return k === "BTC" ? 8 : 2; }
+    function cxFmt(n, k) { return num(n, cxDec(k)); }
+    function cxLabel(n, k) { return k === "VES" ? "Bs " + cxFmt(n, k) : k === "USD" ? "$" + cxFmt(n, k) : k === "EUR" ? "€" + cxFmt(n, k) : k === "USDT" ? cxFmt(n, k) + " USDT" : cxFmt(n, k) + " BTC"; }
+    function cxSub(k) {
+      var r = cxBs(k);
+      if (!(r > 0)) return k === "BTC" ? "Buscando el precio…" : "Sin tasa disponible";
+      if (k === "USD") return (calc.src === "usdt" ? "Tasa USDT" : calc.src === "own" ? "Tu tasa" : "BCV") + " · Bs " + num(r);
+      if (k === "EUR") return "BCV · Bs " + num(r);
+      if (k === "USDT") return "Bs " + num(r);
+      if (k === "BTC") return "$" + num(state.btcUsd, 0) + " · USDT";
+      return "";
+    }
+    function cxVal() { var v = parseNum(calc.buf); return v > 0 ? v : 0; }
+    function cxShowBuf() {
+      if (!calc.buf) return "0";
+      var parts = calc.buf.split(","), ip = parts[0] ? Number(parts[0]).toLocaleString("es-VE") : "0";
+      return ip + (parts.length > 1 ? "," + parts[1] : "");
+    }
+    function renderCalc() {
+      var k = calc.k;
+      $("cx-ic").innerHTML = ccIcon(k);
+      $("cx-name").textContent = CC[k].name;
+      var amt = $("cx-amt");
+      amt.textContent = (k === "USD" ? "$" : k === "EUR" ? "€" : k === "VES" ? "Bs " : "") + cxShowBuf() + (k === "USDT" ? " USDT" : k === "BTC" ? " BTC" : "");
+      amt.classList.toggle("ph", !calc.buf);
+      $("cx-clear").style.visibility = calc.buf ? "visible" : "hidden";
+      setPressed("[data-cx-src]", "data-cx-src", calc.src);
+      $("cx-own").hidden = calc.src !== "own";
+      var bs = cxVal() * cxBs(k), base = cxBs(k) > 0;
+      $("cx-list").innerHTML = CX_ORDER.filter(function (c) { return c !== k; }).map(function (c) {
+        var r = cxBs(c), v = base && r > 0 ? bs / r : null;
+        return '<li><button type="button" class="cx-row" data-cx-k="' + c + '" data-cx-v="' + (v === null ? "" : cxFmt(v, c)) + '" aria-label="Escribir en ' + CC[c].name + '">' + ccIcon(c) +
+          '<span class="nm"><b>' + CC[c].name + "</b><small>" + cxSub(c) + '</small></span><span class="v fit">' + (v === null ? "—" : cxLabel(v, c)) + "</span></button></li>";
+      }).join("");
+      scheduleFit();
+    }
+    function cxKey(x) {
+      if (x === "del") calc.buf = calc.buf.slice(0, -1);
+      else if (x === ",") { if (calc.buf.indexOf(",") < 0) calc.buf = (calc.buf || "0") + ","; }
+      else {
+        var parts = calc.buf.split(",");
+        if (parts.length > 1 && parts[1].length >= cxDec(calc.k)) return;
+        if (parts[0].replace(/^0+/, "").length >= 12 && parts.length === 1) return;
+        calc.buf = calc.buf === "0" ? x : calc.buf + x;
+      }
+      renderCalc();
     }
     var btcLoading = false;
     function fetchBtc() {
@@ -5812,62 +5890,63 @@ body.view-accd .fab, body.view-accd .ai-fab { opacity: 0; pointer-events: none; 
             .then(function (j) { var v = Number(j && j.bitcoin && j.bitcoin.usd); if (!(v > 0)) throw rateError("dato"); return v; });
         })
         .then(function (v) {
-          var wasEmpty = !(calcRate() > 0);
           state.btcUsd = v; state.btcAt = Date.now(); save();
-          if (!$("calc-sheet").hidden && calc.cur === "BTC" && wasEmpty) $("calc-rate").value = fmtIn(Math.round(btcVes() * 100) / 100);
           if (!$("calc-sheet").hidden) renderCalc();
         }, function () {})
         .then(function () { btcLoading = false; });
     }
-    function calcRate() { var r = parseNum($("calc-rate").value); return r > 0 ? r : 0; }
-    function renderCalc() {
-      var from = calc.from, to = from === "VES" ? calc.cur : "VES", cc = CC[calc.cur];
-      $("calc-from-cur").innerHTML = ccIcon(from);
-      $("calc-to-cur").innerHTML = ccIcon(to);
-      $("calc-rate-lbl").textContent = "Tasa (Bs por " + cc.unit + ")";
-      setPressed("[data-calc-cur]", "data-calc-cur", calc.cur);
-      var a = parseNum($("calc-amt").value), r = calcRate(), out = $("calc-out"), dec = to === "BTC" ? 8 : 2;
-      $("calc-amt").placeholder = from === "BTC" ? "0,00000000" : "0,00";
-      if (!(r > 0)) out.textContent = "—";
-      else if (!(a > 0)) out.textContent = num(0, dec);
-      else out.textContent = num(from === "VES" ? a / r : a * r, dec);
-      var note = $("calc-note"), base = calcBcv(), has = base > 0, same = has && Math.abs(r - base) < Math.max(0.0001, base * 0.00001);
-      var src = calc.cur === "BTC" ? "el precio actual del bitcoin" + (state.btcUsd > 0 ? " ($" + num(state.btcUsd) + ")" : "")
-        : calc.cur === "USDT" ? "la tasa USDT del día" : "la tasa del día del " + (calc.cur === "EUR" ? "euro" : "dólar") + " (BCV)";
-      if (!(r > 0)) note.textContent = calc.cur === "BTC" && !has ? "Buscando el precio del bitcoin… o escribe la tasa que quieres usar." : "Escribe la tasa que quieres usar.";
-      else if (same) note.textContent = "Usando " + src + ".";
-      else note.textContent = "Usando una tasa personalizada." + (has ? " La del día es Bs " + num(base) + "." : "");
-      $("calc-bcv").textContent = calc.cur === "BTC" ? "Usar el precio actual" : calc.cur === "USDT" ? "Usar la del día" : "Usar la del BCV";
-      $("calc-bcv").style.display = has && !same ? "" : "none";
-      scheduleFit();
-    }
-    function setCalcRate() { var b = calcBcv(); $("calc-rate").value = b > 0 ? fmtIn(Math.round(b * 100) / 100) : ""; }
     function openCalc() {
-      setCalcRate();
-      $("calc-amt").value = "";
+      calc.buf = "";
+      if (calc.own) $("cx-own-rate").value = fmtIn(calc.own);
       renderCalc();
       $("calc-sheet").hidden = false;
-      $("calc-amt").focus();
       fetchBtc();
     }
     function closeCalc() { $("calc-sheet").hidden = true; $("fab").focus(); }
     $("calc-close").addEventListener("click", closeCalc);
     $("calc-sheet").addEventListener("click", function (e) { if (e.target === $("calc-sheet")) closeCalc(); });
-    $("calc-swap").addEventListener("click", function () { calc.from = calc.from === "VES" ? calc.cur : "VES"; renderCalc(); });
-    document.querySelectorAll("[data-calc-cur]").forEach(function (b) {
+    $("cx-kp").addEventListener("click", function (e) { var b = e.target.closest("[data-cx]"); if (b) cxKey(b.getAttribute("data-cx")); });
+    $("cx-clear").addEventListener("click", function () { calc.buf = ""; renderCalc(); });
+    document.querySelectorAll("[data-cx-src]").forEach(function (b) {
       b.addEventListener("click", function () {
-        var c = b.getAttribute("data-calc-cur");
-        if (c === calc.cur) return;
-        calc.cur = c;
-        if (calc.from !== "VES") calc.from = c;
-        setCalcRate();
-        if (c === "BTC") fetchBtc();
-        renderCalc();
+        calc.src = b.getAttribute("data-cx-src"); cxSave(); renderCalc();
+        if (calc.src === "own" && !calc.own) $("cx-own-rate").focus();
       });
     });
-    $("calc-amt").addEventListener("input", renderCalc);
-    $("calc-rate").addEventListener("input", renderCalc);
-    $("calc-bcv").addEventListener("click", function () { setCalcRate(); renderCalc(); });
+    $("cx-own-rate").addEventListener("input", function () { var v = parseNum($("cx-own-rate").value); calc.own = v > 0 ? v : 0; cxSave(); renderCalc(); });
+    document.addEventListener("keydown", function (e) {
+      if ($("calc-sheet").hidden || e.target === $("cx-own-rate") || e.metaKey || e.ctrlKey) return;
+      if (/^[0-9]$/.test(e.key)) { e.preventDefault(); cxKey(e.key); }
+      else if (e.key === "," || e.key === ".") { e.preventDefault(); cxKey(","); }
+      else if (e.key === "Backspace") { e.preventDefault(); cxKey("del"); }
+    });
+    // Tocar una fila: escribir en esa moneda. Mantener presionado: copiar la cifra.
+    (function () {
+      var timer = null, longDone = false;
+      function copy(btn) {
+        var v = btn.getAttribute("data-cx-v");
+        if (!v) return;
+        var done = function () { btn.classList.add("copied"); setTimeout(function () { btn.classList.remove("copied"); }, 900); showToast("Copiado: " + v); };
+        if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(v).then(done, function () { showToast(v); });
+        else showToast(v);
+      }
+      $("cx-list").addEventListener("pointerdown", function (e) {
+        var btn = e.target.closest(".cx-row"); if (!btn) return;
+        longDone = false;
+        timer = setTimeout(function () { longDone = true; copy(btn); }, 550);
+      });
+      ["pointerup", "pointerleave", "pointercancel"].forEach(function (ev) { $("cx-list").addEventListener(ev, function () { clearTimeout(timer); }); });
+      $("cx-list").addEventListener("contextmenu", function (e) { if (e.target.closest(".cx-row")) e.preventDefault(); });
+      $("cx-list").addEventListener("click", function (e) {
+        var btn = e.target.closest(".cx-row"); if (!btn) return;
+        if (longDone) { longDone = false; return; }
+        var v = btn.getAttribute("data-cx-v");
+        calc.k = btn.getAttribute("data-cx-k"); cxSave();
+        var n = v ? parseNum(v) : 0;
+        calc.buf = n > 0 ? String(Math.round(n * Math.pow(10, cxDec(calc.k))) / Math.pow(10, cxDec(calc.k))).replace(".", ",") : "";
+        renderCalc();
+      });
+    })();
     $("cal-cancel").addEventListener("click", closeCal);
     $("cal-backdrop").addEventListener("click", function (e) { if (e.target === $("cal-backdrop")) closeCal(); });
     $("cal-prev").addEventListener("click", function () { calStep(-1); });
