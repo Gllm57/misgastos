@@ -892,6 +892,56 @@ html.locked body > *:not(#lock):not(#cf-sheet):not(#toast):not(#onb):not(#lg-she
 .onb-btns .secondary { flex: 0 0 auto; min-height: 52px; border-radius: 14px; }
 .onb-btns .primary { margin: 0; min-height: 52px; border-radius: 14px; font-size: 1rem; }
 .onb-btns .secondary[hidden] { display: none; }
+/* ---------- Liquid Glass (estilo iOS 26) ---------- */
+:root { --spring: cubic-bezier(0.32, 0.72, 0, 1); --bounce: cubic-bezier(0.34, 1.4, 0.5, 1); --tbh: 58px; --tbx: 16px; }
+body.tb-min { --tbh: 48px; --tbx: 44px; }
+/* Barra de pestañas flotante que se achica al bajar */
+.tabbar { left: var(--tbx); right: var(--tbx); height: var(--tbh); border-radius: calc(var(--tbh) / 2);
+  transition: left 0.45s var(--spring), right 0.45s var(--spring), height 0.45s var(--spring), border-radius 0.45s var(--spring); }
+.tabbar::after { content: ""; position: absolute; inset: 0; border-radius: inherit; pointer-events: none;
+  background: radial-gradient(120% 90% at 18% 0%, rgba(255, 255, 255, 0.22), transparent 55%), radial-gradient(90% 70% at 90% 110%, rgba(255, 255, 255, 0.10), transparent 60%); mix-blend-mode: soft-light; }
+.tab-lens { border-radius: calc(var(--tbh) / 2 - 5px); transition: transform 0.5s var(--bounce), border-radius 0.45s var(--spring); }
+.tab span, .tab > :not(svg) { transition: opacity 0.25s ease, max-height 0.35s var(--spring); max-height: 1.2em; }
+body.tb-min .tab > :not(svg) { opacity: 0; max-height: 0; }
+.tab svg { transition: transform 0.35s var(--spring); }
+.tab:active svg { transform: scale(0.86); }
+.fab { bottom: calc(12px + var(--tbh) + 12px + env(safe-area-inset-bottom, 0px)); transition: transform 0.28s var(--spring), bottom 0.45s var(--spring); }
+.ai-fab { bottom: calc(12px + var(--tbh) + 12px + 58px + 12px + env(safe-area-inset-bottom, 0px)); transition: bottom 0.45s var(--spring), opacity 0.2s ease, transform 0.2s ease; }
+.dial-menu { bottom: calc(12px + var(--tbh) + 12px + 58px + 14px + env(safe-area-inset-bottom, 0px)); }
+.toast { bottom: calc(12px + var(--tbh) + 12px + env(safe-area-inset-bottom, 0px)); }
+/* Brillo de vidrio en los botones flotantes */
+.fab, .ai-fab { overflow: hidden; }
+.fab::after, .ai-fab::after { content: ""; position: absolute; inset: 0; border-radius: inherit; pointer-events: none; background: linear-gradient(160deg, rgba(255, 255, 255, 0.45), rgba(255, 255, 255, 0) 45%); }
+
+/* Barra superior que aparece cuando el título grande se va */
+.navbar { position: fixed; top: 0; left: 0; right: 0; z-index: 16; pointer-events: none; opacity: 0; transform: translateY(-6px);
+  padding: calc(env(safe-area-inset-top, 0px) + 10px) max(16px, env(safe-area-inset-right, 0px)) 10px max(16px, env(safe-area-inset-left, 0px));
+  background: color-mix(in srgb, var(--bg) 62%, transparent); -webkit-backdrop-filter: blur(20px) saturate(180%); backdrop-filter: blur(20px) saturate(180%);
+  border-bottom: 1px solid color-mix(in srgb, var(--line) 70%, transparent);
+  transition: opacity 0.25s ease, transform 0.35s var(--spring); }
+.navbar.on { opacity: 1; transform: none; pointer-events: auto; }
+.navbar button { display: block; margin: 0 auto; font: inherit; font-family: var(--display); font-weight: 700; font-size: 1.02rem; color: var(--ink); background: none; border: 0; padding: 4px 12px; min-height: 30px; cursor: pointer; max-width: 70vw; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) { .navbar { background: var(--bg); } }
+
+/* Hojas al estilo iPhone: agarradera, deslizar para cerrar y fondo que se hunde */
+.sheet { position: relative; border-radius: 28px 28px 0 0; padding-top: 22px;
+  background: color-mix(in srgb, var(--surface) 97%, transparent); -webkit-backdrop-filter: blur(30px) saturate(180%); backdrop-filter: blur(30px) saturate(180%);
+  box-shadow: 0 -10px 40px rgba(0, 0, 0, 0.18), inset 0 1px 0 var(--glass-hi); border-color: var(--glass-line); overscroll-behavior: contain; }
+.sheet::before { content: ""; position: absolute; top: 8px; left: 50%; width: 38px; height: 5px; margin-left: -19px; border-radius: 999px; background: color-mix(in srgb, var(--muted) 45%, transparent); }
+.sheet, .cal { transition: transform 0.45s var(--spring), opacity 0.25s ease; }
+.sheet-backdrop[hidden] .sheet { transform: translateY(100%); opacity: 1; }
+.sheet.dragging { transition: none; }
+.panel.sheet { margin: 0; }
+@media (min-width: 640px) { .sheet { border-radius: 28px; } .sheet-backdrop[hidden] .sheet { transform: translateY(40px) scale(0.96); opacity: 0; } }
+.sheet-backdrop { background: rgba(0, 0, 0, 0.32); }
+main, .goals-view, .pay-view, .hist-view, .bn-view, .set-view { transition: transform 0.45s var(--spring), border-radius 0.45s var(--spring), filter 0.45s var(--spring); }
+html.sheet-open { background: #000; }
+html.sheet-open body { background: #000; }
+html.sheet-open main, html.sheet-open .goals-view, html.sheet-open .pay-view, html.sheet-open .hist-view, html.sheet-open .bn-view, html.sheet-open .set-view {
+  transform: scale(0.94); border-radius: 22px; overflow: hidden; background: var(--bg); filter: brightness(0.92); transform-origin: 50% var(--so, 50vh); }
+html.sheet-open .tabbar, html.sheet-open .fab, html.sheet-open .ai-fab, html.sheet-open .navbar { opacity: 0; pointer-events: none; }
+.tabbar { transition: left 0.45s var(--spring), right 0.45s var(--spring), height 0.45s var(--spring), border-radius 0.45s var(--spring), opacity 0.3s ease; }
+@media (prefers-reduced-transparency: reduce) { .navbar, .sheet { background: var(--surface); -webkit-backdrop-filter: none; backdrop-filter: none; } }
 @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation: none !important; transition: none !important; scroll-behavior: auto !important; } }
 </style>
 </head>
@@ -1221,6 +1271,7 @@ html.locked body > *:not(#lock):not(#cf-sheet):not(#toast):not(#onb):not(#lg-she
       <p id="hist-empty-t">No hay movimientos en este mes.</p>
     </div>
   </div>
+  <div class="navbar" id="navbar" aria-hidden="true"><button type="button" id="navbar-t" tabindex="-1"></button></div>
   <nav class="tabbar" id="tabbar" aria-label="Navegación" style="--i:0">
     <span class="tab-lens" aria-hidden="true"></span>
     <button type="button" class="tab" data-tab="0" aria-current="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 11l8-7 8 7v8a2 2 0 0 1-2 2h-3.5v-6h-5v6H6a2 2 0 0 1-2-2z"></path></svg><span>Inicio</span></button>
@@ -4766,6 +4817,85 @@ html.locked body > *:not(#lock):not(#cf-sheet):not(#toast):not(#onb):not(#lg-she
         if (Date.now() >= spyLock && !activeView()) setTab(currentTab());
       });
     }
+    /* ---------- Liquid Glass: barra que se achica, título que se encoge y hojas ---------- */
+    (function () {
+      var lastY = window.scrollY || 0, ticking = false, nb = $("navbar"), nbT = $("navbar-t");
+      function activeTitle() {
+        var v = activeView();
+        if (!v) return document.querySelector(".top h1");
+        var el = $({ goals: "goals-view", pay: "pay-view", hist: "hist-view", bn: "bn-view", set: "set-view" }[v]);
+        return el ? el.querySelector(".gv-title") : null;
+      }
+      function onScroll() {
+        ticking = false;
+        var y = window.scrollY || 0, dy = y - lastY;
+        if (y < 40) document.body.classList.remove("tb-min");
+        else if (dy > 6) document.body.classList.add("tb-min");
+        else if (dy < -6) document.body.classList.remove("tb-min");
+        lastY = y;
+        var t = activeTitle(), on = false;
+        if (t) {
+          var r = t.getBoundingClientRect();
+          on = r.bottom < 6;
+          var txt = t.firstChild && t.firstChild.nodeType === 3 ? t.firstChild.nodeValue.trim() : t.textContent.trim();
+          if (nbT.textContent !== txt) nbT.textContent = txt;
+        }
+        nb.classList.toggle("on", on);
+      }
+      window.addEventListener("scroll", function () { if (!ticking) { ticking = true; requestAnimationFrame(onScroll); } }, { passive: true });
+      nbT.addEventListener("click", function () { try { window.scrollTo({ top: 0, behavior: "smooth" }); } catch (e) { window.scrollTo(0, 0); } });
+      new MutationObserver(function () { requestAnimationFrame(onScroll); }).observe(document.body, { attributes: true, attributeFilter: ["class"] });
+
+      // Fondo que se hunde cuando hay una hoja abierta
+      var sheets = Array.prototype.slice.call(document.querySelectorAll(".sheet-backdrop"));
+      function syncSheets() {
+        var open = sheets.some(function (b) { return !b.hidden && b.querySelector(".sheet"); });
+        var r = document.documentElement;
+        if (open && !r.classList.contains("sheet-open")) r.style.setProperty("--so", ((window.scrollY || 0) + window.innerHeight / 2) + "px");
+        r.classList.toggle("sheet-open", open);
+      }
+      var mo = new MutationObserver(syncSheets);
+      sheets.forEach(function (b) { mo.observe(b, { attributes: true, attributeFilter: ["hidden"] }); });
+
+      // Deslizar hacia abajo para cerrar
+      sheets.forEach(function (b) {
+        var sh = b.querySelector(".sheet");
+        if (!sh) return;
+        var y0 = null, dy = 0, t0 = 0, active = false;
+        sh.addEventListener("touchstart", function (e) {
+          if (e.touches.length !== 1) return;
+          var tag = e.target.tagName;
+          if (tag === "INPUT" || tag === "SELECT" || tag === "TEXTAREA") return;
+          y0 = e.touches[0].clientY; dy = 0; t0 = Date.now(); active = false;
+        }, { passive: true });
+        sh.addEventListener("touchmove", function (e) {
+          if (y0 === null) return;
+          var d = e.touches[0].clientY - y0;
+          if (!active) {
+            if (d > 8 && sh.scrollTop <= 0) { active = true; sh.classList.add("dragging"); }
+            else if (d < -4 || sh.scrollTop > 0) { y0 = null; return; }
+            else return;
+          }
+          dy = Math.max(0, d);
+          sh.style.transform = "translateY(" + dy + "px)";
+          if (e.cancelable) e.preventDefault();
+        }, { passive: false });
+        function end() {
+          if (y0 === null) return;
+          y0 = null;
+          if (!active) return;
+          sh.classList.remove("dragging");
+          var fast = dy > 40 && dy / Math.max(1, Date.now() - t0) > 0.6;
+          if (dy > Math.min(140, sh.offsetHeight * 0.3) || fast) {
+            var close = sh.querySelector(".sheet-head .del");
+            sh.style.transform = "";
+            if (close) close.click(); else b.hidden = true;
+          } else sh.style.transform = "";
+        }
+        sh.addEventListener("touchend", end);
+        sh.addEventListener("touchcancel", end);
+      });
+    })();
     window.addEventListener("scroll", spy, { passive: true });
     window.addEventListener("resize", spy);
     tabBtns.forEach(function (b) {
