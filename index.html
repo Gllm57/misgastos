@@ -1341,6 +1341,8 @@ body.view-accd .fab, body.view-accd .ai-fab { opacity: 0; pointer-events: none; 
 .cv-amt b { font-size: 0.98rem; }
 .cv-bar { grid-column: 2 / 5; }
 .cv-ic { width: 32px; height: 32px; border-radius: 10px; font-size: 0.85rem; }
+.bal-note { color: var(--muted); font-size: 0.78rem; margin-top: 2px; }
+.bal-note[hidden] { display: none; }
 @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation: none !important; transition: none !important; scroll-behavior: auto !important; } }
 </style>
 </head>
@@ -1378,6 +1380,7 @@ body.view-accd .fab, body.view-accd .ai-fab { opacity: 0; pointer-events: none; 
       <div>
         <div class="balance-label" id="h-bal">Disponible del mes</div>
         <div class="balance-amount fit" id="balance">$0,00</div>
+        <div class="bal-note" id="bal-note" hidden></div>
       </div>
       <div class="seg" role="group" aria-label="Moneda para mostrar">
         <button type="button" data-disp="USD" aria-pressed="true">USD</button>
@@ -2427,6 +2430,8 @@ body.view-accd .fab, body.view-accd .ai-fab { opacity: 0; pointer-events: none; 
       if (it.tipo === "ingreso" || it.tipo === "retiro") delta[d] += v;
       else if (it.tipo === "gasto" || it.tipo === "ahorro") { delta[d] -= v; if (it.tipo === "gasto") spent += v; }
     });
+    var op = accOpening(m);
+    Object.keys(op.byDay).forEach(function (k) { if (Number(k) >= 1 && Number(k) <= nd) delta[Number(k)] += op.byDay[k]; });
     var bal = [], run = 0;
     for (var d1 = 1; d1 <= lastDay; d1++) { run += delta[d1]; bal.push(run); }
     var proj = [];
@@ -3286,6 +3291,24 @@ body.view-accd .fab, body.view-accd .ai-fab { opacity: 0; pointer-events: none; 
     }).join("") + "</ul></section>";
     return h;
   }
+  // Saldo con el que se crearon las cuentas en ese mes: cuenta como dinero disponible desde ese día
+  function accCreated(a) {
+    if (a.creado) return a.creado;
+    var t = Number(a.id);
+    if (t > 1e12) { var d = new Date(t); return d.getFullYear() + "-" + pad2(d.getMonth() + 1) + "-" + pad2(d.getDate()); }
+    return "";
+  }
+  function accOpening(mstr) {
+    var D = state.disp, tot = 0, n = 0, byDay = {};
+    state.accounts.forEach(function (a) {
+      var s0 = Number(a.saldo) || 0, c = accCreated(a);
+      if (!s0 || c.slice(0, 7) !== mstr) return;
+      var v = conv(s0, a.moneda, D);
+      if (v === null) return;
+      tot += v; n++; byDay[Number(c.slice(8, 10))] = (byDay[Number(c.slice(8, 10))] || 0) + v;
+    });
+    return { tot: tot, n: n, byDay: byDay };
+  }
   function renderCv() {
     var w = $("cv");
     if (!w) return;
@@ -3322,7 +3345,10 @@ body.view-accd .fab, body.view-accd .ai-fab { opacity: 0; pointer-events: none; 
       }
     });
 
-    var bal = tin - tout - tsv;
+    var open = accOpening(state.month), bal = tin - tout - tsv + open.tot;
+    var bn = $("bal-note");
+    bn.hidden = !(Math.abs(open.tot) > 0.004);
+    if (!bn.hidden) bn.textContent = "Incluye " + money(open.tot, D) + " de saldo inicial de " + (open.n === 1 ? "tu cuenta nueva" : "tus cuentas nuevas");
     var b = $("balance");
     setMoney(b, bal, function (v) { return moneyH(v, D); }, D);
     b.className = "balance-amount fit" + (bal < 0 ? " neg" : "");
@@ -4062,7 +4088,7 @@ body.view-accd .fab, body.view-accd .ai-fab { opacity: 0; pointer-events: none; 
           if (!accUsed(a)) a.moneda = $("acc-moneda").value;
         }
       } else {
-        var na = { id: Date.now(), nombre: nombre, moneda: $("acc-moneda").value, saldo: isNaN(nuevo) ? 0 : Math.round(nuevo * 100) / 100 };
+        var na = { id: Date.now(), nombre: nombre, moneda: $("acc-moneda").value, saldo: isNaN(nuevo) ? 0 : Math.round(nuevo * 100) / 100, creado: today() };
         state.accounts.push(na);
         state.lastAcc = na.id;
       }
