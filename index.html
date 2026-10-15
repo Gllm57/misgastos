@@ -1270,6 +1270,40 @@ body.view-accd .fab, body.view-accd .ai-fab { opacity: 0; pointer-events: none; 
 .gd-more { margin-bottom: 14px; }
 .gd-body .goal-act { display: flex; gap: 8px; align-items: center; }
 .gd-body .goal-act > .secondary { flex: 1; }
+/* ---------- Ingresos y gastos del mes ---------- */
+.donuts[hidden] { display: none; }
+.cv-seg { display: flex; width: 100%; margin-bottom: 14px; }
+.cv-seg button { flex: 1; }
+.cv-seg [data-cv="gasto"][aria-pressed="true"] { background: var(--out); color: #fff; }
+.cv-seg [data-cv="ingreso"][aria-pressed="true"] { background: var(--in); color: #fff; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .cv-seg [data-cv="ingreso"][aria-pressed="true"] { color: #03150b; } }
+:root[data-theme="dark"] .cv-seg [data-cv="ingreso"][aria-pressed="true"] { color: #03150b; }
+.cv-head { display: flex; justify-content: space-between; align-items: flex-end; gap: 10px; flex-wrap: wrap; margin-bottom: 10px; }
+.cv-head > div { min-width: 0; }
+.cv-l { color: var(--muted); font-size: 0.85rem; }
+.cv-v { font-family: var(--display); font-weight: 700; font-size: 1.8rem; line-height: 1.15; letter-spacing: -0.02em; font-variant-numeric: tabular-nums; }
+.cv-d { font-size: 0.78rem; font-weight: 600; color: var(--muted); padding: 4px 10px; border-radius: 999px; background: var(--bg); }
+.cv-d.good, .cv-mid .good { color: var(--in); }
+.cv-d.bad, .cv-mid .bad { color: var(--out); }
+.cv-mid .new { color: var(--accent); }
+.cv-stack { display: flex; gap: 3px; height: 10px; border-radius: 999px; overflow: hidden; background: var(--line); margin-bottom: 8px; }
+.cv-stack span { display: block; min-width: 3px; }
+.cv-list { list-style: none; margin: 0; padding: 0; }
+.cv-row { width: 100%; display: grid; grid-template-columns: auto minmax(0, 1fr) auto; gap: 6px 12px; align-items: center; padding: 12px 4px; font: inherit; color: var(--ink); text-align: left; background: none; border: 0; border-top: 1px solid var(--line); cursor: pointer; }
+.cv-list li:first-child .cv-row { border-top: 0; }
+.cv-row:active { background: var(--bg); }
+.cv-ic { width: 36px; height: 36px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-family: var(--display); font-weight: 700; color: var(--c); background: color-mix(in srgb, var(--c) 15%, transparent); }
+.cv-mid { min-width: 0; display: grid; }
+.cv-mid b { font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.cv-mid small { color: var(--muted); font-size: 0.76rem; }
+.cv-amt { display: grid; justify-items: end; }
+.cv-amt b { font-family: var(--display); font-variant-numeric: tabular-nums; white-space: nowrap; }
+.cv-amt small { color: var(--muted); font-size: 0.74rem; }
+.cv-bar { grid-column: 2 / 4; height: 5px; border-radius: 999px; background: color-mix(in srgb, var(--line) 75%, transparent); overflow: hidden; }
+.cv-bar i { display: block; height: 100%; border-radius: inherit; background: var(--c); }
+.cv-tip { color: var(--muted); font-size: 0.8rem; margin: 8px 4px 0; }
+.cv-tip b { color: var(--ink); }
+.cv-empty { color: var(--muted); text-align: center; padding: 18px 8px; margin: 0; }
 @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation: none !important; transition: none !important; scroll-behavior: auto !important; } }
 </style>
 </head>
@@ -1372,7 +1406,12 @@ body.view-accd .fab, body.view-accd .ai-fab { opacity: 0; pointer-events: none; 
   <section class="panel collapsible" data-panel="cat" aria-labelledby="h-cat">
     <div class="phead"><h2 id="h-cat">Ingresos y gastos del mes</h2><button type="button" class="chev" aria-expanded="true" aria-controls="b-cat" aria-label="Minimizar Ingresos y gastos del mes"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 15l6-6 6 6"></path></svg></button></div>
     <div class="cbody" id="b-cat"><div class="cbody-in">
-    <div class="donuts">
+    <div class="seg cv-seg" role="group" aria-label="Ver gastos o ingresos">
+      <button type="button" data-cv="gasto" aria-pressed="true">Gastos</button>
+      <button type="button" data-cv="ingreso" aria-pressed="false">Ingresos</button>
+    </div>
+    <div id="cv"></div>
+    <div class="donuts" hidden>
       <div class="dcol">
         <h3 class="dtitle">En qué se va el dinero</h3>
         <div class="split" id="split-out" data-key="out"></div>
@@ -3220,6 +3259,54 @@ body.view-accd .fab, body.view-accd .ai-fab { opacity: 0; pointer-events: none; 
     }
   }
 
+  // Bloque «Ingresos y gastos del mes»: una vista a la vez, comparación con el mes anterior y acceso al Historial
+  var cvView = "gasto";
+  function cvData(mstr, tipo) {
+    var D = state.disp, by = {}, n = {}, tot = 0;
+    state.items.forEach(function (it) {
+      if (!it.fecha || it.fecha.slice(0, 7) !== mstr || it.tipo !== tipo) return;
+      var v = conv(it.monto, it.moneda, D);
+      if (v === null) return;
+      by[it.cat] = (by[it.cat] || 0) + v; n[it.cat] = (n[it.cat] || 0) + 1; tot += v;
+    });
+    return { by: by, n: n, tot: tot };
+  }
+  function renderCv() {
+    var w = $("cv");
+    if (!w) return;
+    var D = state.disp, isOut = cvView === "gasto", m = state.month, pm = prevMonth(m);
+    var cur = cvData(m, cvView), prev = cvData(pm, cvView);
+    var mName = MESES[Number(m.slice(5, 7)) - 1], pName = MESES[Number(pm.slice(5, 7)) - 1];
+    setPressed("[data-cv]", "data-cv", cvView);
+    var cats = Object.keys(cur.by).sort(function (a, b) { return cur.by[b] - cur.by[a]; });
+    if (!cats.length) {
+      w.innerHTML = '<p class="cv-empty">' + (isOut ? "Aún no hay gastos en " + mName + ". Cuando registres uno, aquí verás en qué se va tu dinero." : "Aún no hay ingresos en " + mName + ". Cuando registres uno, aquí verás de dónde viene tu dinero.") + "</p>";
+      return;
+    }
+    var col = function (c) { return isOut ? colorFor(c) : colorForIn(c); };
+    var dTxt = "", dCls = "";
+    if (prev.tot > 0) {
+      var dp = (cur.tot - prev.tot) / prev.tot * 100, up = dp >= 0;
+      dCls = Math.abs(dp) < 0.5 ? "" : (isOut ? (up ? "bad" : "good") : (up ? "good" : "bad"));
+      dTxt = (Math.abs(dp) < 0.5 ? "Igual que" : (up ? "▲ " : "▼ ") + Math.round(Math.abs(dp)) + "% vs") + " " + pName + " (" + money(prev.tot, D) + ")";
+    } else dTxt = "Sin datos de " + pName + " para comparar";
+    var head = '<div class="cv-head"><div><div class="cv-l">' + (isOut ? "Gastaste en " : "Recibiste en ") + mName + '</div><div class="cv-v fit">' + money(cur.tot, D) + '</div></div><span class="cv-d ' + dCls + '">' + dTxt + "</span></div>" +
+      '<div class="cv-stack" aria-hidden="true">' + cats.map(function (c) { return '<span style="flex:' + cur.by[c].toFixed(4) + " 1 0;background:" + col(c) + '"></span>'; }).join("") + "</div>";
+    var rows = cats.map(function (c) {
+      var v = cur.by[c], pct = v / cur.tot * 100, pv = prev.by[c] || 0, delta = "";
+      if (pv > 0) {
+        var dp = (v - pv) / pv * 100, up = dp >= 0, cls = Math.abs(dp) < 0.5 ? "" : (isOut ? (up ? "bad" : "good") : (up ? "good" : "bad"));
+        delta = ' · <span class="' + cls + '">' + (Math.abs(dp) < 0.5 ? "igual" : (up ? "▲ " : "▼ ") + Math.round(Math.abs(dp)) + "%") + "</span>";
+      } else if (prev.tot > 0) delta = ' · <span class="new">nuevo</span>';
+      return '<li><button type="button" class="cv-row" data-cv-cat="' + esc(c) + '" style="--c:' + col(c) + '" aria-label="Ver los movimientos de ' + esc(c) + '">' +
+        '<span class="cv-ic">' + esc(c.charAt(0)) + '</span><span class="cv-mid"><b>' + esc(c) + "</b><small>" + cur.n[c] + (cur.n[c] === 1 ? " movimiento" : " movimientos") + delta + "</small></span>" +
+        '<span class="cv-amt"><b>' + money(v, D) + "</b><small>" + (pct < 1 ? "<1" : Math.round(pct)) + '%</small></span><span class="cv-bar"><i style="width:' + Math.max(pct, 1).toFixed(1) + '%"></i></span></button></li>';
+    }).join("");
+    var top = cats[0];
+    var tip = isOut && cats.length > 1 ? '<p class="cv-tip">Tu mayor gasto es <b>' + esc(top) + "</b> (" + Math.round(cur.by[top] / cur.tot * 100) + "%). Toca una categoría para ver sus movimientos.</p>" : '<p class="cv-tip">Toca una categoría para ver sus movimientos.</p>';
+    var html = head + '<ul class="cv-list">' + rows + "</ul>" + tip;
+    if (w._h !== html) { w.innerHTML = html; w._h = html; }
+  }
   function render() {
     var items = monthItems();
     $("mes-label").textContent = monthLabel(state.month);
@@ -3261,6 +3348,7 @@ body.view-accd .fab, body.view-accd .ai-fab { opacity: 0; pointer-events: none; 
 
     drawDonut({ key: "out", data: byCat, total: tout, colorFn: colorFor, label: "Gastos", selKey: "sel", D: D });
     drawDonut({ key: "in", data: byIn, total: tin, colorFn: colorForIn, label: "Ingresos", selKey: "selIn", D: D });
+    renderCv();
 
     renderAccounts();
     renderGoals();
@@ -4831,6 +4919,13 @@ body.view-accd .fab, body.view-accd .ai-fab { opacity: 0; pointer-events: none; 
           showToast("Listo, el dinero volvió a tu cuenta de Binance.");
         }
       });
+    });
+    /* ---------- Ingresos y gastos del mes ---------- */
+    document.querySelectorAll("[data-cv]").forEach(function (b) { b.addEventListener("click", function () { cvView = b.getAttribute("data-cv"); renderCv(); }); });
+    $("cv").addEventListener("click", function (e) {
+      var b = e.target.closest("[data-cv-cat]"); if (!b) return;
+      hist.f = "cat"; hist.c = b.getAttribute("data-cv-cat"); hist.q = ""; hist.n = 30; $("hist-q").value = "";
+      showHist();
     });
     /* ---------- Asistente financiero (IA) ---------- */
     var AI_KINDS = { warn: "Atención", tip: "Consejo", good: "Bien hecho", info: "Dato" };
