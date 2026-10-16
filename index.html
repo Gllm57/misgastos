@@ -1745,19 +1745,31 @@ main > .panel::before, main > .panel::after, .bal-hero::before, .bal-hero::after
 .cv-seg { margin-bottom: 6px; }
 .cv-rest { border-top: 0 !important; margin-top: 6px !important; }
 /* Transiciones entre páginas: deslizan según la dirección, estilo iOS */
-@keyframes navInR { from { opacity: 0; transform: translate3d(36px, 0, 0); } to { opacity: 1; transform: none; } }
-@keyframes navInL { from { opacity: 0; transform: translate3d(-36px, 0, 0); } to { opacity: 1; transform: none; } }
+@keyframes navInR { from { opacity: 0; transform: translateX(36px); } to { opacity: 1; transform: translateX(0); } }
+@keyframes navInL { from { opacity: 0; transform: translateX(-36px); } to { opacity: 1; transform: translateX(0); } }
 @media (prefers-reduced-motion: no-preference) {
-  body.nav-fwd .goals-view, body.nav-fwd .pay-view, body.nav-fwd .hist-view, body.nav-fwd .bn-view, body.nav-fwd .set-view, body.nav-fwd .accd-view { animation: navInR 0.42s cubic-bezier(0.32, 0.72, 0, 1) both !important; will-change: transform, opacity; }
-  body.nav-back .goals-view, body.nav-back .pay-view, body.nav-back .hist-view, body.nav-back .bn-view, body.nav-back .set-view, body.nav-back .accd-view, body.nav-back main { animation: navInL 0.42s cubic-bezier(0.32, 0.72, 0, 1) both !important; will-change: transform, opacity; }
+  body.nav-fwd .goals-view, body.nav-fwd .pay-view, body.nav-fwd .hist-view, body.nav-fwd .bn-view, body.nav-fwd .set-view, body.nav-fwd .accd-view { animation: navInR 0.42s cubic-bezier(0.32, 0.72, 0, 1) both !important; }
+  body.nav-back .goals-view, body.nav-back .pay-view, body.nav-back .hist-view, body.nav-back .bn-view, body.nav-back .set-view, body.nav-back .accd-view, body.nav-back main { animation: navInL 0.42s cubic-bezier(0.32, 0.72, 0, 1) both !important; }
   body.nav-back main > * { animation: none !important; }
   .tab-lens { transition: transform 0.42s cubic-bezier(0.32, 0.72, 0, 1), border-radius 0.45s var(--spring) !important; }
   .tab { transition: color 0.25s ease; }
   .tab svg { transition: transform 0.3s cubic-bezier(0.32, 0.72, 0, 1); }
   .tab:active svg { transform: scale(0.88); }
-  .sheet-backdrop:not([hidden]) .sheet { will-change: transform; }
 }
 html { -webkit-tap-highlight-color: transparent; }
+/* Gráficos que se rellenan al entrar a cada página */
+@keyframes rgDraw { from { stroke-dashoffset: 1; } to { stroke-dashoffset: 0; } }
+@keyframes segIn { from { transform: scaleX(0); } to { transform: scaleX(1); } }
+@keyframes svFade { from { opacity: 0; } }
+@media (prefers-reduced-motion: no-preference) {
+  .rings .rg { animation: rgDraw 1s cubic-bezier(0.32, 0.72, 0, 1) both; }
+  .acc-seg, .cv-seg { transform-origin: left center; animation: segIn 0.8s cubic-bezier(0.32, 0.72, 0, 1) both; }
+  .sav-chart .sv-ln { stroke-dasharray: 1 1; animation: lnDraw 1s cubic-bezier(0.3, 0.7, 0.2, 1) both; }
+  .sav-chart .sv-area { animation: svFade 0.9s ease 0.2s both; }
+  .sav-dot { animation: svFade 0.3s ease 0.9s both; }
+  .cv-bar i, .bn-track i, .gbar span, .hero-bar { transform-origin: left center; animation: segIn 0.8s cubic-bezier(0.32, 0.72, 0, 1) both; }
+}
+.sav-plot { position: relative; }
 </style>
 </head>
 <body>
@@ -3759,7 +3771,7 @@ html { -webkit-tap-highlight-color: transparent; }
       if (r < sw) return;
       var L = 2 * Math.PI * r, pr = Math.max(0, Math.min(1, it.p || 0));
       h += '<circle cx="' + c + '" cy="' + c + '" r="' + r.toFixed(2) + '" fill="none" style="stroke:' + it.c + ';stroke-opacity:.18;stroke-width:' + sw + '"></circle>';
-      if (pr > 0.002) h += '<circle cx="' + c + '" cy="' + c + '" r="' + r.toFixed(2) + '" fill="none" stroke-linecap="round" stroke-dasharray="' + (L * pr).toFixed(2) + " " + L.toFixed(2) + '" transform="rotate(-90 ' + c + " " + c + ')" style="stroke:' + it.c + ";stroke-width:" + sw + '"></circle>';
+      if (pr > 0.002) h += '<circle class="rg" cx="' + c + '" cy="' + c + '" r="' + r.toFixed(2) + '" fill="none" stroke-linecap="round" pathLength="' + (1 / pr).toFixed(4) + '" stroke-dasharray="1 1000" transform="rotate(-90 ' + c + " " + c + ')" style="stroke:' + it.c + ";stroke-width:" + sw + ";animation-delay:" + (k * 0.08).toFixed(2) + 's"></circle>';
     });
     return '<svg class="rings" width="' + size + '" height="' + size + '" viewBox="0 0 ' + size + " " + size + '" aria-hidden="true">' + h + "</svg>";
   }
@@ -4199,9 +4211,9 @@ html { -webkit-tap-highlight-color: transparent; }
     var xy = pts.map(function (v, k) { return [(k / n * W).toFixed(1), (H - 4 - (v - mn) / rg * (H - 12)).toFixed(1)]; });
     var dd = "M" + xy.map(function (p) { return p.join(" "); }).join(" L"), last = xy[xy.length - 1];
     var f = function (d) { return d.getDate() + " " + MESES_C[d.getMonth()].toLowerCase(); };
-    return '<div class="sav-chart"><svg viewBox="0 0 ' + W + " " + H + '" preserveAspectRatio="none" aria-hidden="true"><defs><linearGradient id="svg-sav" x1="0" y1="0" x2="0" y2="1"><stop offset="0" style="stop-color:var(--accent);stop-opacity:.22"></stop><stop offset="1" style="stop-color:var(--accent);stop-opacity:0"></stop></linearGradient></defs>' +
-      '<path d="' + dd + " L" + W + " " + H + " L0 " + H + 'Z" fill="url(#svg-sav)"></path><path d="' + dd + '" fill="none" style="stroke:var(--accent)" stroke-width="2.2" stroke-linejoin="round" stroke-linecap="round" vector-effect="non-scaling-stroke"></path></svg>' +
-      '<i class="sav-dot" style="left:' + (last[0] / W * 100) + "%;top:" + (last[1] / H * 100) + '%"></i><div class="sav-ax"><span>' + f(d0) + "</span><span>Hoy</span></div></div>";
+    return '<div class="sav-chart"><div class="sav-plot"><svg viewBox="0 0 ' + W + " " + H + '" preserveAspectRatio="none" aria-hidden="true"><defs><linearGradient id="svg-sav" x1="0" y1="0" x2="0" y2="1"><stop offset="0" style="stop-color:var(--accent);stop-opacity:.22"></stop><stop offset="1" style="stop-color:var(--accent);stop-opacity:0"></stop></linearGradient></defs>' +
+      '<path d="' + dd + " L" + W + " " + H + " L0 " + H + 'Z" class="sv-area" fill="url(#svg-sav)"></path><path class="sv-ln" pathLength="1" d="' + dd + '" fill="none" style="stroke:var(--accent)" stroke-width="2.2" stroke-linejoin="round" stroke-linecap="round"></path></svg>' +
+      '<i class="sav-dot" style="left:' + (last[0] / W * 100) + "%;top:" + (last[1] / H * 100) + '%"></i></div><div class="sav-ax"><span>' + f(d0) + "</span><span>Hoy</span></div></div>";
   }
   function renderSavings() {
     var m = savMap(), rows = [], D = state.disp, tot = 0, mon = 0, ym = state.month;
@@ -6212,7 +6224,7 @@ html { -webkit-tap-highlight-color: transparent; }
       $("hist-view").setAttribute("aria-hidden", "true");
       instantScroll(viewReturnY);
       try { drawTrend(); } catch (e) {}
-      scheduleFit();
+      try { fitAll(); } catch (e) { scheduleFit(); }
     }
     function openView(name) {
       try {
@@ -6234,7 +6246,7 @@ html { -webkit-tap-highlight-color: transparent; }
         if (name === "pay") renderPay();
         if (name === "hist") renderHistory();
         if (name === "goals") drawGoalsChart();
-        scheduleFit();
+        try { fitAll(); } catch (e) { scheduleFit(); }
       } catch (e) {
         closeViews();
       }
