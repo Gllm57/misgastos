@@ -1736,6 +1736,14 @@ main > .panel::before, main > .panel::after, .bal-hero::before, .bal-hero::after
   .trend .now-l { animation: lnFade 0.4s ease 0.85s both; }
   .trend .ln, .trend .now, .trend-cap .tk i { transition: stroke 0.4s ease, fill 0.4s ease, background 0.4s ease; }
 }
+/* Cuentas con anillos; categorías con barra */
+#acc-sum .rw { padding: 2px 0 8px; }
+#acc-sum .rleg-i b small { font-size: 0.72em; }
+.cv-tot { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 10px; }
+.cv-tot span { color: var(--muted); font-size: 0.8rem; font-weight: 600; }
+.cv-tot b { font-size: 1.35rem; letter-spacing: -0.03em; font-variant-numeric: tabular-nums; }
+.cv-seg { margin-bottom: 6px; }
+.cv-rest { border-top: 0 !important; margin-top: 6px !important; }
 </style>
 </head>
 <body>
@@ -3747,14 +3755,10 @@ main > .panel::before, main > .panel::after, .bal-hero::before, .bal-hero::after
     var col = function (c) { return isOut ? colorFor(c) : colorForIn(c); };
     var h = '<section class="cv-sec ' + (isOut ? "out" : "in") + '">';
     if (!cats.length) return h + '<p class="cv-empty">' + (isOut ? "Aún no hay gastos en " + mName + "." : "Aún no hay ingresos en " + mName + ".") + "</p></section>";
-    var top = cats.slice(0, 4), rest = cats.slice(4), restV = 0;
-    rest.forEach(function (c) { restV += cur.by[c]; });
     var pct = function (v) { var q = v / cur.tot * 100; return (q < 1 ? "<1" : Math.round(q)) + "%"; };
-    h += '<div class="rw">' + ringsSvg(top.map(function (c) { return { p: cur.by[c] / cur.tot, c: col(c) }; }), 124, 11, 4) +
-      '<div class="rleg"><div class="rleg-tot"><span>Total</span><b>' + money(cur.tot, D) + "</b></div>" + top.map(function (c) {
-        return '<button type="button" class="rleg-i" data-cv-cat="' + esc(c) + '" style="--c:' + col(c) + '" aria-label="Ver los movimientos de ' + esc(c) + '"><span>' + esc(c) + "</span><b>" + money(cur.by[c], D) + " <small>· " + pct(cur.by[c]) + "</small></b></button>";
-      }).join("") + "</div></div>";
-    if (rest.length) h += '<ul class="cv-list cv-rest">' + rest.map(function (c) {
+    h += '<div class="cv-tot"><span>Total</span><b>' + money(cur.tot, D) + "</b></div>";
+    h += '<div class="acc-seg cv-seg" aria-hidden="true">' + cats.map(function (c) { return '<i style="flex:' + (cur.by[c] / cur.tot).toFixed(4) + " 1 0;background:" + col(c) + '"></i>'; }).join("") + "</div>";
+    h += '<ul class="cv-list cv-rest">' + cats.map(function (c) {
       return '<li><button type="button" class="cv-row" data-cv-cat="' + esc(c) + '" style="--c:' + col(c) + '" aria-label="Ver los movimientos de ' + esc(c) + '"><span class="cv-dot"></span><span class="cv-mid"><b>' + esc(c) + '</b></span><span class="cv-pct">' + pct(cur.by[c]) + '</span><span class="cv-amt"><b>' + money(cur.by[c], D) + "</b></span></button></li>";
     }).join("") + "</ul>";
     return h + "</section>";
@@ -4134,10 +4138,13 @@ main > .panel::before, main > .panel::after, .bal-hero::before, .bal-hero::after
     var sum = $("acc-sum");
     sum.hidden = !(state.accounts.length > 1 && posUsd > 0);
     if (state.accounts.length) {
-      var segs = state.accounts.length > 1 && posUsd > 0 ? '<div class="acc-seg" aria-hidden="true">' + state.accounts.map(function (a) {
-        var u = conv(accBalance(a), a.moneda, "USD");
-        return u > 0 ? '<i style="flex:' + (u / posUsd).toFixed(4) + " 1 0;background:" + accColor(a) + '"></i>' : "";
-      }).join("") + "</div>" : "";
+      var ra = state.accounts.map(function (a) { return { a: a, u: conv(accBalance(a), a.moneda, "USD") || 0 }; })
+        .filter(function (o) { return o.u > 0; }).sort(function (x, y) { return y.u - x.u; }).slice(0, 4);
+      var segs = ra.length ? '<div class="rw">' + ringsSvg(ra.map(function (o) { return { p: o.u / posUsd, c: accColor(o.a) }; }), 112, 10, 4) +
+        '<div class="rleg">' + ra.map(function (o) {
+          var q = o.u / posUsd * 100;
+          return '<button type="button" class="rleg-i" data-acc-open="' + o.a.id + '" style="--c:' + accColor(o.a) + '"><span>' + esc(o.a.nombre) + "</span><b>" + (q < 1 ? "<1" : Math.round(q)) + "% <small>de tu dinero</small></b></button>";
+        }).join("") + "</div></div>" : "";
       var sh = segs;
       if (sum._h !== sh) { sum.innerHTML = sh; sum._h = sh; }
     }
@@ -4672,6 +4679,10 @@ main > .panel::before, main > .panel::after, .bal-hero::before, .bal-hero::after
       document.querySelectorAll(".menu").forEach(function (m) { m.hidden = true; });
       document.querySelectorAll(".dots").forEach(function (d) { d.setAttribute("aria-expanded", "false"); });
     }
+    $("acc-sum").addEventListener("click", function (e) {
+      var b = e.target.closest("[data-acc-open]");
+      if (b) openAccd(b.getAttribute("data-acc-open"));
+    });
     $("acc-list").addEventListener("click", function (e) {
       var b = e.target.closest("[data-acc-open]");
       if (b) openAccd(b.getAttribute("data-acc-open"));
