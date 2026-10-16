@@ -1716,6 +1716,14 @@ main > .panel::before, main > .panel::after, .bal-hero::before, .bal-hero::after
 .goals-view .gv-empty { min-height: 0 !important; justify-content: flex-start !important; padding: 18px 12px 24px !important; }
 .goals-view .gv-empty svg { width: 44px; height: 44px; }
 .gv-hero[style*="display: none"] { display: none !important; }
+/* Gráfico: una sola línea, verde si sube y roja si baja */
+.trend { --tc: var(--in); }
+.trend.t-down { --tc: var(--out); }
+.trend .ln.bal, .trend .ln.bal.up, .trend .ln.bal.down { stroke: var(--tc) !important; stroke-dasharray: none !important; opacity: 1 !important; }
+.trend .ln.proj { stroke: var(--tc) !important; opacity: 0.5; }
+.trend .now { fill: var(--tc) !important; }
+.trend-cap .tk:not(.proj) i { background: var(--tc) !important; }
+.trend-cap .tk.proj i { border-top-color: var(--tc) !important; opacity: .6; }
 </style>
 </head>
 <body>
@@ -2800,6 +2808,14 @@ main > .panel::before, main > .panel::after, .bal-hero::before, .bal-hero::after
   function fmtIn(n) { return String(Math.round(n * 10000) / 10000).replace(".", ","); }
 
   // Gráfico principal: disponible del mes día a día y proyección hasta fin de mes
+  // Sube o baja: compara el saldo de hoy con el de hace 7 días (o el último cambio)
+  function trendDir(bal) {
+    if (bal.length < 2) return "up";
+    var n = bal.length - 1, a = bal[Math.max(0, n - 7)], b = bal[n];
+    if (Math.abs(b - a) > 0.004) return b > a ? "up" : "down";
+    for (var i = n; i > 0; i--) if (Math.abs(bal[i] - bal[i - 1]) > 0.004) return bal[i] > bal[i - 1] ? "up" : "down";
+    return "up";
+  }
   function trendSegs(bal, X, Y) {
     if (bal.length < 2) return '<path class="ln bal flat" d="M' + X(1).toFixed(1) + " " + Y(bal[0] || 0).toFixed(1) + '"></path>';
     var out = "", cur = null, d = "";
@@ -2856,14 +2872,15 @@ main > .panel::before, main > .panel::after, .bal-hero::before, .bal-hero::after
     function X(d) { return (d - 1) / Math.max(1, nd - 1) * W; }
     function Y(v) { return top + (1 - (v - mn) / (mx - mn)) * (bot - top); }
     var line = bal.map(function (v, i) { return (i ? "L" : "M") + X(i + 1).toFixed(1) + " " + Y(v).toFixed(1); }).join(" ");
-    var y0 = Y(0);
+    var y0 = Y(0), tdir = trendDir(bal);
+    wrap.parentNode.classList.toggle("t-down", tdir === "down");
     var svg = '<svg viewBox="0 0 ' + W + " " + H + '" role="img" aria-label="Saldo disponible día a día">' +
-      '<defs><linearGradient id="trg-bal" x1="0" y1="0" x2="0" y2="1"><stop offset="0" style="stop-color:var(--soft);stop-opacity:0.22"></stop><stop offset="1" style="stop-color:var(--soft);stop-opacity:0"></stop></linearGradient></defs>' +
+      '<defs><linearGradient id="trg-bal" x1="0" y1="0" x2="0" y2="1"><stop offset="0" style="stop-color:var(--tc);stop-opacity:0.22"></stop><stop offset="1" style="stop-color:var(--tc);stop-opacity:0"></stop></linearGradient></defs>' +
       [0.33, 0.66].map(function (f) { var gy = (top + f * (bot - top)).toFixed(1); return '<line class="grid" x1="0" x2="' + W + '" y1="' + gy + '" y2="' + gy + '"></line>'; }).join("") +
       (mn < 0 ? '<line class="zero" x1="0" x2="' + W + '" y1="' + y0.toFixed(1) + '" y2="' + y0.toFixed(1) + '"></line>' : '<line class="base" x1="0" x2="' + W + '" y1="' + bot + '" y2="' + bot + '"></line>');
     if (bal.length) {
       svg += '<path class="area" d="' + line + " L" + X(bal.length).toFixed(1) + " " + y0.toFixed(1) + " L" + X(1).toFixed(1) + " " + y0.toFixed(1) + ' Z" fill="url(#trg-bal)"></path>' +
-        trendSegs(bal, X, Y);
+        '<path class="ln bal ' + tdir + '" d="' + line + '"></path>';
     }
     if (proj.length) svg += '<path class="ln proj" d="' + proj.map(function (v, i) { return (i ? "L" : "M") + X(lastDay + i).toFixed(1) + " " + Y(v).toFixed(1); }).join(" ") + '"></path>';
     if (bal.length) {
