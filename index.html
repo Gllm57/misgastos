@@ -1699,6 +1699,23 @@ main > .panel::before, main > .panel::after, .bal-hero::before, .bal-hero::after
 .rleg-i b span { color: inherit; font-size: inherit; }
 @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .type-seg button[aria-pressed="true"] { color: #14121f !important; } }
 :root[data-theme="dark"] .type-seg button[aria-pressed="true"] { color: #14121f !important; }
+/* Menú de la meta: se abre hacia arriba, junto al botón */
+.gd-body .menu, #gd-sheet .menu { top: auto !important; bottom: calc(100% + 8px) !important; transform-origin: bottom right !important; z-index: 5; }
+/* Gráfico del saldo: verde si sube, rojo si baja, morado suave si no cambia */
+:root { --soft: #8f84ff; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) { --soft: #a69dff; } }
+:root[data-theme="dark"] { --soft: #a69dff; }
+.trend .ln.bal.up { stroke: var(--in) !important; }
+.trend .ln.bal.down { stroke: var(--out) !important; }
+.trend .ln.bal.flat { stroke: var(--soft) !important; }
+.trend .ln.proj { stroke: var(--soft) !important; }
+.trend .now { fill: var(--soft) !important; }
+.trend-cap .tk:not(.proj) i { background: linear-gradient(90deg, var(--in) 50%, var(--out) 50%) !important; }
+.trend-cap .tk.proj i { background: none !important; border-top: 2px dashed var(--soft); height: 0 !important; }
+/* Metas vacías: aviso arriba, sin hueco */
+.goals-view .gv-empty { min-height: 0 !important; justify-content: flex-start !important; padding: 18px 12px 24px !important; }
+.goals-view .gv-empty svg { width: 44px; height: 44px; }
+.gv-hero[style*="display: none"] { display: none !important; }
 </style>
 </head>
 <body>
@@ -1769,7 +1786,7 @@ main > .panel::before, main > .panel::after, .bal-hero::before, .bal-hero::after
   </div>
 
   <section class="panel collapsible" data-panel="acc" aria-labelledby="h-acc">
-    <div class="phead"><h2 id="h-acc">Mis cuentas</h2><button type="button" class="chev" aria-expanded="true" aria-controls="b-acc" aria-label="Minimizar Mis cuentas"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 15l6-6 6 6"></path></svg></button></div>
+    <div class="phead"><h2 id="h-acc">Cuentas</h2><button type="button" class="chev" aria-expanded="true" aria-controls="b-acc" aria-label="Minimizar Cuentas"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 15l6-6 6 6"></path></svg></button></div>
     <div class="cbody" id="b-acc"><div class="cbody-in">
     <div class="acc-sum" id="acc-sum" hidden></div>
     <div class="acc-head" id="acc-head" hidden></div>
@@ -2783,6 +2800,19 @@ main > .panel::before, main > .panel::after, .bal-hero::before, .bal-hero::after
   function fmtIn(n) { return String(Math.round(n * 10000) / 10000).replace(".", ","); }
 
   // Gráfico principal: disponible del mes día a día y proyección hasta fin de mes
+  function trendSegs(bal, X, Y) {
+    if (bal.length < 2) return '<path class="ln bal flat" d="M' + X(1).toFixed(1) + " " + Y(bal[0] || 0).toFixed(1) + '"></path>';
+    var out = "", cur = null, d = "";
+    for (var i = 1; i < bal.length; i++) {
+      var k = bal[i] > bal[i - 1] + 0.004 ? "up" : bal[i] < bal[i - 1] - 0.004 ? "down" : "flat";
+      if (k !== cur) {
+        if (d) out += '<path class="ln bal ' + cur + '" d="' + d + '"></path>';
+        cur = k; d = "M" + X(i).toFixed(1) + " " + Y(bal[i - 1]).toFixed(1);
+      }
+      d += " L" + X(i + 1).toFixed(1) + " " + Y(bal[i]).toFixed(1);
+    }
+    return out + '<path class="ln bal ' + cur + '" d="' + d + '"></path>';
+  }
   function drawTrend() {
     var wrap = $("trend-chart");
     if (!wrap) return;
@@ -2827,13 +2857,13 @@ main > .panel::before, main > .panel::after, .bal-hero::before, .bal-hero::after
     function Y(v) { return top + (1 - (v - mn) / (mx - mn)) * (bot - top); }
     var line = bal.map(function (v, i) { return (i ? "L" : "M") + X(i + 1).toFixed(1) + " " + Y(v).toFixed(1); }).join(" ");
     var y0 = Y(0);
-    var svg = '<svg viewBox="0 0 ' + W + " " + H + '" role="img" aria-label="Disponible del mes día a día">' +
-      '<defs><linearGradient id="trg-bal" x1="0" y1="0" x2="0" y2="1"><stop offset="0" style="stop-color:var(--accent);stop-opacity:0.2"></stop><stop offset="1" style="stop-color:var(--accent);stop-opacity:0"></stop></linearGradient></defs>' +
+    var svg = '<svg viewBox="0 0 ' + W + " " + H + '" role="img" aria-label="Saldo disponible día a día">' +
+      '<defs><linearGradient id="trg-bal" x1="0" y1="0" x2="0" y2="1"><stop offset="0" style="stop-color:var(--soft);stop-opacity:0.22"></stop><stop offset="1" style="stop-color:var(--soft);stop-opacity:0"></stop></linearGradient></defs>' +
       [0.33, 0.66].map(function (f) { var gy = (top + f * (bot - top)).toFixed(1); return '<line class="grid" x1="0" x2="' + W + '" y1="' + gy + '" y2="' + gy + '"></line>'; }).join("") +
       (mn < 0 ? '<line class="zero" x1="0" x2="' + W + '" y1="' + y0.toFixed(1) + '" y2="' + y0.toFixed(1) + '"></line>' : '<line class="base" x1="0" x2="' + W + '" y1="' + bot + '" y2="' + bot + '"></line>');
     if (bal.length) {
       svg += '<path class="area" d="' + line + " L" + X(bal.length).toFixed(1) + " " + y0.toFixed(1) + " L" + X(1).toFixed(1) + " " + y0.toFixed(1) + ' Z" fill="url(#trg-bal)"></path>' +
-        '<path class="ln bal" d="' + line + '"></path>';
+        trendSegs(bal, X, Y);
     }
     if (proj.length) svg += '<path class="ln proj" d="' + proj.map(function (v, i) { return (i ? "L" : "M") + X(lastDay + i).toFixed(1) + " " + Y(v).toFixed(1); }).join(" ") + '"></path>';
     if (bal.length) {
