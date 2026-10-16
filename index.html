@@ -18,16 +18,16 @@
 </script>
 <style>
 :root {
-  --bg: #eef3f1;
+  --bg: #f4f3fb;
   --surface: #ffffff;
-  --ink: #12262b;
-  --muted: #5b6f74;
-  --line: #d3dedb;
-  --accent: #1f4fff;
+  --ink: #1a1733;
+  --muted: #625f7d;
+  --line: #dedcf0;
+  --accent: #5b4cff;
   --accent-ink: #ffffff;
-  --in: #00994f;
-  --out: #e5133f;
-  --focus: #1f4fff;
+  --in: #12a37a;
+  --out: #e8436a;
+  --focus: #5b4cff;
   --display: "Bricolage Grotesque", "Trebuchet MS", system-ui, sans-serif;
   --body: "Figtree", system-ui, -apple-system, "Segoe UI", sans-serif;
   box-sizing: border-box;
@@ -36,15 +36,15 @@
 }
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
-    --bg: #000000; --surface: #121212; --ink: #f2f2f2; --muted: #9b9b9b;
-    --line: #2a2a2a; --accent: #4f7bff; --accent-ink: #ffffff;
-    --in: #1fe07c; --out: #ff2d55; --focus: #7a9cff;
+    --bg: #0b0a14; --surface: #16142a; --ink: #efeefe; --muted: #9a97b8;
+    --line: #2a2745; --accent: #8f84ff; --accent-ink: #ffffff;
+    --in: #3ddc9f; --out: #ff6b8b; --focus: #a9a1ff;
   }
 }
 :root[data-theme="dark"] {
-  --bg: #000000; --surface: #121212; --ink: #f2f2f2; --muted: #9b9b9b;
-  --line: #2a2a2a; --accent: #4f7bff; --accent-ink: #ffffff;
-  --in: #1fe07c; --out: #ff2d55; --focus: #7a9cff;
+  --bg: #0b0a14; --surface: #16142a; --ink: #efeefe; --muted: #9a97b8;
+  --line: #2a2745; --accent: #8f84ff; --accent-ink: #ffffff;
+  --in: #3ddc9f; --out: #ff6b8b; --focus: #a9a1ff;
 }
 html { scroll-padding-top: env(safe-area-inset-top, 0px); }
 *, *::before, *::after { box-sizing: border-box; }
@@ -1461,7 +1461,7 @@ main > .panel::before, main > .panel::after, .bal-hero::before, .bal-hero::after
 .rings { flex: none; display: block; }
 .rleg { display: grid; gap: 8px; flex: 1; min-width: 0; }
 .rleg-i { all: unset; display: grid; cursor: pointer; min-width: 0; -webkit-tap-highlight-color: transparent; }
-.rleg-i span { color: var(--c); font-size: 0.78rem; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.rleg-i > span { color: var(--c); font-size: 0.78rem; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .rleg-i b { font-family: var(--display); font-size: 1.05rem; letter-spacing: -0.02em; font-variant-numeric: tabular-nums; white-space: nowrap; }
 .rleg-i b small { color: var(--muted); font-size: 0.74em; font-weight: 600; letter-spacing: 0; }
 .rleg-tot { display: grid; padding-bottom: 6px; border-bottom: 1px solid var(--line); }
@@ -1544,8 +1544,9 @@ main > .panel::before, main > .panel::after, .bal-hero::before, .bal-hero::after
 .amt-card { background: none !important; border: 0 !important; box-shadow: none !important; text-align: center; padding: 8px 0 4px !important; }
 .amt-card label { color: var(--muted); font-size: 0.8rem; font-weight: 600; }
 .sheet .amt-card #monto, .amt-card #monto { background: none !important; text-align: center; font-size: 3rem !important; letter-spacing: -0.045em; font-weight: 700; padding: 0 !important; border-radius: 0 !important; box-shadow: none !important; }
-.type-seg button[aria-pressed="true"][data-type="gasto"] { color: var(--out); }
-.type-seg button[aria-pressed="true"][data-type="ingreso"] { color: var(--in); }
+.type-seg button[aria-pressed="true"][data-type="gasto"] { background: var(--out) !important; color: #fff !important; }
+.type-seg button[aria-pressed="true"][data-type="ingreso"] { background: var(--in) !important; color: #fff !important; }
+.type-seg button[aria-pressed="false"] { color: var(--ink) !important; opacity: .7; }
 /* Detalle de cuenta sin cajas */
 .ad-hero { background: none !important; border: 0 !important; box-shadow: none !important; padding: 0 !important; border-radius: 0 !important; }
 .ad-hero::before, .ad-hero::after { display: none !important; }
@@ -1673,6 +1674,31 @@ main > .panel::before, main > .panel::after, .bal-hero::before, .bal-hero::after
 .tab-lens { background: color-mix(in srgb, var(--accent) 16%, transparent) !important; }
 .dial-item { background: var(--surface) !important; -webkit-backdrop-filter: none !important; backdrop-filter: none !important; color: var(--ink) !important; }
 .dial-item .ic { background: var(--accent) !important; color: #fff !important; }
+/* Gráfico del ahorro */
+.sav-chart { position: relative; margin-top: 14px; }
+.sav-chart svg { display: block; width: 100%; height: 76px; overflow: visible; }
+.sav-dot { position: absolute; width: 9px; height: 9px; margin: -4.5px 0 0 -4.5px; border-radius: 50%; background: var(--accent); box-shadow: 0 0 0 2px var(--bg); }
+.sav-ax { display: flex; justify-content: space-between; color: var(--muted); font-size: 0.72rem; font-weight: 600; margin-top: 6px; }
+/* Metas: encabezado y ordenar */
+.gv-mrow { display: flex; align-items: center; justify-content: space-between; margin: 6px 0 12px; }
+.gv-mrow .gv-mh { margin: 0 !important; }
+.gs-btn { display: inline-flex; align-items: center; gap: 6px; height: 34px; padding: 0 14px; border-radius: 999px; border: 0; background: var(--fill); color: var(--ink); font: inherit; font-size: 0.84rem; font-weight: 600; cursor: pointer; }
+.gs-btn[hidden] { display: none; }
+.gs-btn svg { width: 15px; height: 15px; }
+.gs-list { list-style: none; margin: 0 0 16px; padding: 0; }
+.gs-list li { display: flex; align-items: center; gap: 12px; padding: 10px 0; border-top: 1px solid var(--line); }
+.gs-list li:first-child { border-top: 0; }
+.gs-list i { width: 10px; height: 10px; border-radius: 50%; flex: none; }
+.gs-list span { flex: 1; font-weight: 600; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.gs-list button { width: 36px; height: 36px; border-radius: 50%; border: 0; background: var(--fill); color: var(--ink); display: inline-flex; align-items: center; justify-content: center; cursor: pointer; }
+.gs-list button:disabled { opacity: 0.3; cursor: default; }
+.gs-list button svg { width: 17px; height: 17px; }
+.gv-hero { margin-bottom: 18px !important; }
+.acc-sum { margin-bottom: 10px; }
+.acc-sum { grid-template-columns: 1fr; justify-content: stretch !important; }
+.rleg-i b span { color: inherit; font-size: inherit; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .type-seg button[aria-pressed="true"] { color: #14121f !important; } }
+:root[data-theme="dark"] .type-seg button[aria-pressed="true"] { color: #14121f !important; }
 </style>
 </head>
 <body>
@@ -1707,7 +1733,7 @@ main > .panel::before, main > .panel::after, .bal-hero::before, .bal-hero::after
   <section class="panel bal-hero" aria-labelledby="h-bal">
     <div class="balance-head">
       <div>
-        <div class="balance-label" id="h-bal">Disponible del mes</div>
+        <div class="balance-label" id="h-bal">Saldo disponible</div>
         <div class="balance-amount fit" id="balance">$0,00</div>
         <div class="bal-note" id="bal-note" hidden></div>
       </div>
@@ -1806,7 +1832,7 @@ main > .panel::before, main > .panel::after, .bal-hero::before, .bal-hero::after
       </div>
       </div>
     </section>
-    <h2 class="gv-h2 gv-mh" id="gv-metas-h">Metas</h2>
+    <div class="gv-mrow"><h2 class="gv-h2 gv-mh" id="gv-metas-h">Metas</h2><button type="button" class="gs-btn" id="goal-sort" hidden><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 4v16M3 8l4-4 4 4M17 20V4M13 16l4 4 4-4"></path></svg>Ordenar</button></div>
     <div class="gv-hero" id="gv-hero">
       <div id="hero-ring"></div>
       <div class="hero-main">
@@ -2127,7 +2153,7 @@ main > .panel::before, main > .panel::after, .bal-hero::before, .bal-hero::after
   <nav class="tabbar" id="tabbar" aria-label="Navegación" style="--i:0">
     <span class="tab-lens" aria-hidden="true"></span>
     <button type="button" class="tab" data-tab="0" aria-current="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 11l8-7 8 7v8a2 2 0 0 1-2 2h-3.5v-6h-5v6H6a2 2 0 0 1-2-2z"></path></svg><span>Inicio</span></button>
-    <button type="button" class="tab" data-tab="1" aria-current="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4.5 11.5a6.5 5.5 0 0 1 11.6-3.4H19l-.6 2.6 2.1 1.1v3.4l-2.2.5-1.6 2.8h-2.2l-.5-1.7H9.8l-.5 1.7H7.1l-1.4-2.6c-.8-1.1-1.2-2.6-1.2-4.4z"></path><path d="M15 11.5h.01M10 7.5h3"></path></svg><span>Ahorro</span></button>
+    <button type="button" class="tab" data-tab="1" aria-current="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><g transform="translate(0 -1.2)"><path d="M4.5 11.5a6.5 5.5 0 0 1 11.6-3.4H19l-.6 2.6 2.1 1.1v3.4l-2.2.5-1.6 2.8h-2.2l-.5-1.7H9.8l-.5 1.7H7.1l-1.4-2.6c-.8-1.1-1.2-2.6-1.2-4.4z"></path><path d="M15 11.5h.01M10 7.5h3"></path></g></svg><span>Ahorro</span></button>
     <button type="button" class="tab" data-tab="2" aria-current="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="3"></rect><path d="M8 3v4M16 3v4M3 10h18M9 15.5l2 2 4-4"></path></svg><span>Pagos</span></button>
     <button type="button" class="tab" data-tab="3" aria-current="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6h11M9 12h11M9 18h11M4.5 6h.01M4.5 12h.01M4.5 18h.01"></path></svg><span>Historial</span></button>
   </nav>
@@ -2173,6 +2199,13 @@ main > .panel::before, main > .panel::after, .bal-hero::before, .bal-hero::after
       </div>
       <p class="error" id="pg-err" role="alert"></p>
       <button type="button" class="primary" id="pg-save">Programar pago</button>
+    </section>
+  </div>
+  <div class="sheet-backdrop" id="gs-sheet" hidden>
+    <section class="panel sheet" role="dialog" aria-modal="true" aria-labelledby="h-gs">
+      <div class="sheet-head"><h2 id="h-gs">Ordenar metas</h2><button type="button" class="del" id="gs-close" aria-label="Cerrar">✕</button></div>
+      <ul class="gs-list" id="gs-list"></ul>
+      <button type="button" class="primary" id="gs-done">Listo</button>
     </section>
   </div>
   <div class="sheet-backdrop" id="ge-sheet" hidden>
@@ -2536,7 +2569,7 @@ main > .panel::before, main > .panel::after, .bal-hero::before, .bal-hero::after
     gasto: ["Alimentación", "Vivienda", "Transporte", "Servicios", "Salud", "Educación", "Ocio", "Negocio", "Otros"],
     ingreso: ["Ventas", "Sueldo", "Otros ingresos"]
   };
-  var COLORS = ["#1f4fff", "#e08a00", "#0e9aa7", "#8a3ffc", "#e5133f", "#00a651", "#6b7b86", "#d6502b", "#9a7b00"];
+  var COLORS = ["#5b4cff", "#e08a00", "#0e9aa7", "#8a3ffc", "#e5133f", "#00a651", "#6b7b86", "#d6502b", "#9a7b00"];
 
   var state = { items: [], rate: 0, disp: "USD", type: "gasto", month: "", sel: null, selIn: null, collapsed: {}, paySeries: [], earn: [], rateHist: {}, rateHistAt: 0, theme: "auto", pin: null, backupAt: 0, onb: false, bn: { done: {}, apr: 5, hide: false, opened: {}, v: 2 }, templates: [], showAll: false, hideSav: false, rateManual: "", rateAutoAt: 0, rateLoading: false, rateFail: false, rateErr: "", accounts: [], rateEur: 0, rateEurDate: "", rateEurManual: "", rateUsdt: 0, rateUsdtDate: "", rateUsdtManual: "", rateUsdtSrc: "", goals: [], payments: [], lastAcc: null, rateDate: "", fsav: { on: false, pct: 10 }, sav: { on: false, pct: 10 } };
 
@@ -2976,7 +3009,7 @@ main > .panel::before, main > .panel::after, .bal-hero::before, .bal-hero::after
   function goalById(id) {
     return state.goals.filter(function (g) { return String(g.id) === String(id); })[0] || null;
   }
-  var GOAL_COLORS = ["#1f4fff", "#8a3ffc", "#0e9aa7", "#e08a00", "#e5133f", "#00a651"];
+  var GOAL_COLORS = ["#5b4cff", "#8a3ffc", "#0e9aa7", "#e08a00", "#e5133f", "#00a651"];
   var goalsOpen = {};
   var gcRange = 0;
   function goalColor(g) {
@@ -3050,6 +3083,7 @@ main > .panel::before, main > .panel::after, .bal-hero::before, .bal-hero::after
   function order0(info) { return info.slice().sort(function (a, b) { return (a.done ? 1 : 0) - (b.done ? 1 : 0); }); }
   function renderGoals() {
     var list = $("goal-list"), has = state.goals.length > 0, D = state.disp;
+    if ($("goal-sort")) $("goal-sort").hidden = state.goals.length < 2;
     $("goal-empty").style.display = has ? "none" : "";
     $("gv-hero").style.display = has ? "" : "none";
     var bals = goalMap();
@@ -3574,7 +3608,7 @@ main > .panel::before, main > .panel::after, .bal-hero::before, .bal-hero::after
   }
 
   function colorForIn(cat) {
-    var IN_COLORS = ["#00994f", "#0e9aa7", "#1f4fff", "#e08a00", "#8a3ffc"];
+    var IN_COLORS = ["#12a37a", "#0e9aa7", "#5b4cff", "#e08a00", "#8a3ffc"];
     var i = CATS.ingreso.indexOf(cat);
     return IN_COLORS[(i < 0 ? IN_COLORS.length - 1 : i) % IN_COLORS.length];
   }
@@ -3997,7 +4031,7 @@ main > .panel::before, main > .panel::after, .bal-hero::before, .bal-hero::after
     star: '<path d="M12 4l2.4 5 5.4.6-4 3.7 1.1 5.3L12 16l-4.9 2.6 1.1-5.3-4-3.7 5.4-.6z"></path>'
   };
   var ACC_ICONS = ["", "bank", "card", "cash", "wallet", "coin", "phone", "home", "cart", "plane", "bag", "star"];
-  var ACC_COLORS = ["#1f4fff", "#00994f", "#e08a00", "#8a3ffc", "#e5133f", "#0e9aa7", "#d6502b"];
+  var ACC_COLORS = ["#5b4cff", "#00994f", "#e08a00", "#8a3ffc", "#e5133f", "#0e9aa7", "#d6502b"];
   function accSvg(k) { return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' + ACC_SVG[k] + "</svg>"; }
   function accColor(a) { return a.color || (ACC_CUR[a.moneda] || ACC_CUR.USD).c; }
   function accAvatar(a, big) {
@@ -4039,13 +4073,13 @@ main > .panel::before, main > .panel::after, .bal-hero::before, .bal-hero::after
         (state.accounts.length > 1 ? '<span class="acc-share" style="--c:' + accColor(a) + '" title="' + Math.round(share) + '% de tu dinero"><i style="width:' + share.toFixed(1) + '%"></i></span>' : "") + "</button></li>";
     }).join("");
     var sum = $("acc-sum");
-    sum.hidden = !state.accounts.length;
+    sum.hidden = !(state.accounts.length > 1 && posUsd > 0);
     if (state.accounts.length) {
       var segs = state.accounts.length > 1 && posUsd > 0 ? '<div class="acc-seg" aria-hidden="true">' + state.accounts.map(function (a) {
         var u = conv(accBalance(a), a.moneda, "USD");
         return u > 0 ? '<i style="flex:' + (u / posUsd).toFixed(4) + " 1 0;background:" + accColor(a) + '"></i>' : "";
       }).join("") + "</div>" : "";
-      var sh = '<div class="acc-tot"><span class="l">Total ≈</span><strong>' + mask(money(tot, D)) + (miss ? "*" : "") + "</strong></div>" + segs;
+      var sh = segs;
       if (sum._h !== sh) { sum.innerHTML = sh; sum._h = sh; }
     }
     var ah = $("acc-head");
@@ -4058,6 +4092,37 @@ main > .panel::before, main > .panel::after, .bal-hero::before, .bal-hero::after
     if (typeof window.__nudge === "function") window.__nudge();
   }
 
+  function savChart(D) {
+    var ev = [];
+    state.items.forEach(function (it) {
+      if (it.cat === "Binance Earn") return;
+      var v = null;
+      if (it.tipo === "ahorro") v = conv(it.monto, it.moneda, D);
+      else if (it.tipo === "retiro") { v = conv(it.monto, it.moneda, D); if (v !== null) v = -v; }
+      else if (it.tipo === "traspaso") {
+        if (it.hacia.k === "ahorro") v = conv(it.hacia.monto, it.hacia.moneda, D);
+        if (it.desde.k === "ahorro") { var o = conv(it.desde.monto, it.desde.moneda, D); if (o !== null) v = (v || 0) - o; }
+      }
+      if (v !== null && Math.abs(v) > 0.004) ev.push([it.fecha, v]);
+    });
+    if (!ev.length) return "";
+    ev.sort(function (a, b) { return a[0] < b[0] ? -1 : a[0] > b[0] ? 1 : 0; });
+    var td = today(), d0 = new Date(ev[0][0] + "T12:00:00"), d1 = new Date(td + "T12:00:00"), min30 = new Date(d1.getTime() - 29 * 864e5);
+    if (d0 > min30) d0 = min30;
+    var days = Math.max(1, Math.round((d1 - d0) / 864e5)), n = Math.min(days, 90), pts = [], acc = 0, j = 0;
+    for (var i = 0; i <= n; i++) {
+      var dt = new Date(d0.getTime() + Math.round(i * days / n) * 864e5), ds = dt.getFullYear() + "-" + pad2(dt.getMonth() + 1) + "-" + pad2(dt.getDate());
+      while (j < ev.length && ev[j][0] <= ds) { acc += ev[j][1]; j++; }
+      pts.push(acc);
+    }
+    var mx = Math.max.apply(null, pts.concat([0])), mn = Math.min.apply(null, pts.concat([0])), W = 300, H = 76, rg = mx - mn || 1;
+    var xy = pts.map(function (v, k) { return [(k / n * W).toFixed(1), (H - 4 - (v - mn) / rg * (H - 12)).toFixed(1)]; });
+    var dd = "M" + xy.map(function (p) { return p.join(" "); }).join(" L"), last = xy[xy.length - 1];
+    var f = function (d) { return d.getDate() + " " + MESES_C[d.getMonth()].toLowerCase(); };
+    return '<div class="sav-chart"><svg viewBox="0 0 ' + W + " " + H + '" preserveAspectRatio="none" aria-hidden="true"><defs><linearGradient id="svg-sav" x1="0" y1="0" x2="0" y2="1"><stop offset="0" style="stop-color:var(--accent);stop-opacity:.22"></stop><stop offset="1" style="stop-color:var(--accent);stop-opacity:0"></stop></linearGradient></defs>' +
+      '<path d="' + dd + " L" + W + " " + H + " L0 " + H + 'Z" fill="url(#svg-sav)"></path><path d="' + dd + '" fill="none" style="stroke:var(--accent)" stroke-width="2.2" stroke-linejoin="round" stroke-linecap="round" vector-effect="non-scaling-stroke"></path></svg>' +
+      '<i class="sav-dot" style="left:' + (last[0] / W * 100) + "%;top:" + (last[1] / H * 100) + '%"></i><div class="sav-ax"><span>' + f(d0) + "</span><span>Hoy</span></div></div>";
+  }
   function renderSavings() {
     var m = savMap(), rows = [], D = state.disp, tot = 0, mon = 0, ym = state.month;
     state.accounts.forEach(function (a) {
@@ -4076,10 +4141,10 @@ main > .panel::before, main > .panel::after, .bal-hero::before, .bal-hero::after
       if (v !== null) mon += v;
     });
     var dl = Math.abs(mon) > 0.004 ? '<span class="sav-delta ' + (mon >= 0 ? "up" : "down") + '">' + (mon >= 0 ? "▲ " : "▼ ") + mask(money(Math.abs(mon), D)) + " este mes</span>" : "";
-    $("sav-hero").innerHTML = '<span class="l">Ahorro libre</span><div class="sav-big fit">' + mask(moneyH(tot, D)) + "</div>" + dl;
-    $("sav-buckets").innerHTML = rows.length > 1 ? rows.map(function (r) {
+    $("sav-hero").innerHTML = '<span class="l">Ahorro libre</span><div class="sav-big fit">' + mask(moneyH(tot, D)) + "</div>" + dl + savChart(D);
+    $("sav-buckets").innerHTML = rows.length ? rows.map(function (r) {
       return '<div class="bk">' + accAvatar(r[0]) + '<span class="l">' + esc(r[0].nombre) + '</span><span class="v">' + mask(money(r[1], r[0].moneda)) + "</span></div>";
-    }).join("") : rows.length ? "" : '<p class="empty" style="grid-column:1/-1">Aún no tienes ahorros. Toca Ahorrar o actívalo al registrar un ingreso.</p>';
+    }).join("") : '<p class="empty" style="grid-column:1/-1">Aún no tienes ahorros. Toca Ahorrar o actívalo al registrar un ingreso.</p>';
     renderEarn();
     renderEye();
   }
@@ -5757,6 +5822,25 @@ main > .panel::before, main > .panel::after, .bal-hero::before, .bal-hero::after
       li.classList.add("pulse");
       try { li.scrollIntoView({ behavior: "smooth", block: "center" }); } catch (e) {}
     }
+    function renderGs() {
+      var up = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 15l6-6 6 6"></path></svg>';
+      var dn = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"></path></svg>';
+      $("gs-list").innerHTML = state.goals.map(function (g, i) {
+        return '<li><i style="background:' + goalColor(g) + '"></i><span>' + esc(g.nombre) + '</span><button type="button" data-gs="' + i + '" data-d="-1" aria-label="Subir ' + esc(g.nombre) + '"' + (i ? "" : " disabled") + ">" + up + '</button><button type="button" data-gs="' + i + '" data-d="1" aria-label="Bajar ' + esc(g.nombre) + '"' + (i < state.goals.length - 1 ? "" : " disabled") + ">" + dn + "</button></li>";
+      }).join("");
+    }
+    function closeGs() { $("gs-sheet").hidden = true; }
+    $("goal-sort").addEventListener("click", function () { renderGs(); $("gs-sheet").hidden = false; });
+    $("gs-close").addEventListener("click", closeGs);
+    $("gs-done").addEventListener("click", closeGs);
+    $("gs-sheet").addEventListener("click", function (e) { if (e.target === $("gs-sheet")) closeGs(); });
+    $("gs-list").addEventListener("click", function (e) {
+      var b = e.target.closest("[data-gs]"); if (!b) return;
+      var i = Number(b.getAttribute("data-gs")), j = i + Number(b.getAttribute("data-d"));
+      if (j < 0 || j >= state.goals.length) return;
+      var t = state.goals[i]; state.goals[i] = state.goals[j]; state.goals[j] = t;
+      save(); renderGs(); renderGoals();
+    });
     $("hero-share").addEventListener("click", function (e) {
       var b = e.target.closest("[data-goal-focus]");
       if (b) focusGoal(b.getAttribute("data-goal-focus"));
