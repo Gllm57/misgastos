@@ -1751,8 +1751,8 @@ body.booted main > * { animation: none !important; }
 @keyframes navInR { from { opacity: 0; transform: translateX(36px); } to { opacity: 1; transform: translateX(0); } }
 @keyframes navInL { from { opacity: 0; transform: translateX(-36px); } to { opacity: 1; transform: translateX(0); } }
 @media (prefers-reduced-motion: no-preference) {
-  body.nav-fwd .goals-view, body.nav-fwd .pay-view, body.nav-fwd .hist-view, body.nav-fwd .bn-view, body.nav-fwd .set-view, body.nav-fwd .accd-view { animation: navInR 0.42s cubic-bezier(0.32, 0.72, 0, 1) both !important; }
-  body.nav-back .goals-view, body.nav-back .pay-view, body.nav-back .hist-view, body.nav-back .bn-view, body.nav-back .set-view, body.nav-back .accd-view, body.nav-back main { animation: navInL 0.42s cubic-bezier(0.32, 0.72, 0, 1) both !important; }
+  body.nav-fwd .goals-view, body.nav-fwd .pay-view, body.nav-fwd .hist-view, body.nav-fwd .bn-view, body.nav-fwd .set-view, body.nav-fwd .accd-view { animation: navInR 0.42s cubic-bezier(0.32, 0.72, 0, 1) backwards !important; }
+  body.nav-back .goals-view, body.nav-back .pay-view, body.nav-back .hist-view, body.nav-back .bn-view, body.nav-back .set-view, body.nav-back .accd-view, body.nav-back main { animation: navInL 0.42s cubic-bezier(0.32, 0.72, 0, 1) backwards !important; }
   .tab-lens { transition: transform 0.42s cubic-bezier(0.32, 0.72, 0, 1), border-radius 0.45s var(--spring) !important; }
   .tab { transition: color 0.25s ease; }
   .tab svg { transition: transform 0.3s cubic-bezier(0.32, 0.72, 0, 1); }
@@ -1765,13 +1765,15 @@ html { -webkit-tap-highlight-color: transparent; }
 @keyframes svFade { from { opacity: 0; } }
 @media (prefers-reduced-motion: no-preference) {
   .rings .rg { animation: rgDraw 1s cubic-bezier(0.32, 0.72, 0, 1) both; }
-  .acc-seg, .cv-seg { transform-origin: left center; animation: segIn 0.8s cubic-bezier(0.32, 0.72, 0, 1) both; }
+  .acc-seg, .cv-seg { transform-origin: left center; animation: segIn 0.8s cubic-bezier(0.32, 0.72, 0, 1) backwards; }
   .sav-chart .sv-ln { stroke-dasharray: 1 1; animation: lnDraw 1s cubic-bezier(0.3, 0.7, 0.2, 1) both; }
   .sav-chart .sv-area { animation: svFade 0.9s ease 0.2s both; }
   .sav-dot { animation: svFade 0.3s ease 0.9s both; }
-  .cv-bar i, .bn-track i, .gbar span, .hero-bar { transform-origin: left center; animation: segIn 0.8s cubic-bezier(0.32, 0.72, 0, 1) both; }
+  .cv-bar i, .bn-track i, .gbar span, .hero-bar { transform-origin: left center; animation: segIn 0.8s cubic-bezier(0.32, 0.72, 0, 1) backwards; }
 }
 .sav-plot { position: relative; }
+/* iOS: la barra en su propia capa para que no se quede a mitad de pantalla al desplazarse */
+.tabbar { -webkit-transform: translateZ(0); transform: translateZ(0); -webkit-backface-visibility: hidden; backface-visibility: hidden; }
 </style>
 </head>
 <body>
