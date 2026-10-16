@@ -1774,6 +1774,9 @@ html { -webkit-tap-highlight-color: transparent; }
 .sav-plot { position: relative; }
 /* iOS: la barra en su propia capa para que no se quede a mitad de pantalla al desplazarse */
 .tabbar { -webkit-transform: translateZ(0); transform: translateZ(0); -webkit-backface-visibility: hidden; backface-visibility: hidden; }
+/* Etiquetas de la barra: espacio para letras con cola (g, p) */
+.tab span, .tab > :not(svg) { max-height: 1.6em; line-height: 1.35; padding-bottom: 1px; }
+body.tb-min .tab > :not(svg) { max-height: 0; padding-bottom: 0; }
 </style>
 </head>
 <body>
