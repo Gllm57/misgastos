@@ -1744,6 +1744,20 @@ main > .panel::before, main > .panel::after, .bal-hero::before, .bal-hero::after
 .cv-tot b { font-size: 1.35rem; letter-spacing: -0.03em; font-variant-numeric: tabular-nums; }
 .cv-seg { margin-bottom: 6px; }
 .cv-rest { border-top: 0 !important; margin-top: 6px !important; }
+/* Transiciones entre páginas: deslizan según la dirección, estilo iOS */
+@keyframes navInR { from { opacity: 0; transform: translate3d(36px, 0, 0); } to { opacity: 1; transform: none; } }
+@keyframes navInL { from { opacity: 0; transform: translate3d(-36px, 0, 0); } to { opacity: 1; transform: none; } }
+@media (prefers-reduced-motion: no-preference) {
+  body.nav-fwd .goals-view, body.nav-fwd .pay-view, body.nav-fwd .hist-view, body.nav-fwd .bn-view, body.nav-fwd .set-view, body.nav-fwd .accd-view { animation: navInR 0.42s cubic-bezier(0.32, 0.72, 0, 1) both !important; will-change: transform, opacity; }
+  body.nav-back .goals-view, body.nav-back .pay-view, body.nav-back .hist-view, body.nav-back .bn-view, body.nav-back .set-view, body.nav-back .accd-view, body.nav-back main { animation: navInL 0.42s cubic-bezier(0.32, 0.72, 0, 1) both !important; will-change: transform, opacity; }
+  body.nav-back main > * { animation: none !important; }
+  .tab-lens { transition: transform 0.42s cubic-bezier(0.32, 0.72, 0, 1), border-radius 0.45s var(--spring) !important; }
+  .tab { transition: color 0.25s ease; }
+  .tab svg { transition: transform 0.3s cubic-bezier(0.32, 0.72, 0, 1); }
+  .tab:active svg { transform: scale(0.88); }
+  .sheet-backdrop:not([hidden]) .sheet { will-change: transform; }
+}
+html { -webkit-tap-highlight-color: transparent; }
 </style>
 </head>
 <body>
@@ -1814,7 +1828,7 @@ main > .panel::before, main > .panel::after, .bal-hero::before, .bal-hero::after
   </div>
 
   <section class="panel" data-panel="acc" aria-labelledby="h-acc">
-    <div class="phead"><h2 id="h-acc">Cuentas</h2><button type="button" class="eye acc-eye" id="acc-eye" aria-pressed="false" aria-label="Ocultar saldos"></button></div>
+    <div class="phead"><h2 id="h-acc">Cuentas</h2></div>
     <div class="cbody" id="b-acc"><div class="cbody-in">
     <div class="acc-sum" id="acc-sum" hidden></div>
     <div class="acc-head" id="acc-head" hidden></div>
@@ -2627,7 +2641,6 @@ main > .panel::before, main > .panel::after, .bal-hero::before, .bal-hero::after
         if (d && typeof d.rate === "number") state.rate = d.rate;
         if (d && typeof d.rateDate === "string") state.rateDate = d.rateDate;
         if (d && typeof d.hideSav === "boolean") state.hideSav = d.hideSav;
-        if (d && typeof d.hideAcc === "boolean") state.hideAcc = d.hideAcc;
         if (d && typeof d.rateManual === "string") state.rateManual = d.rateManual;
         if (d && typeof d.rateAutoAt === "number") state.rateAutoAt = d.rateAutoAt;
         if (d && Array.isArray(d.accounts)) state.accounts = d.accounts;
@@ -2659,7 +2672,7 @@ main > .panel::before, main > .panel::after, .bal-hero::before, .bal-hero::after
   }
   function save() {
     try {
-      localStorage.setItem(KEY, JSON.stringify({ items: state.items, rate: state.rate, rateDate: state.rateDate, hideSav: state.hideSav, hideAcc: state.hideAcc, rateManual: state.rateManual, rateAutoAt: state.rateAutoAt, accounts: state.accounts, templates: state.templates, goals: state.goals, payments: state.payments, paySeries: state.paySeries, earn: state.earn, rateHist: state.rateHist, rateHistAt: state.rateHistAt, theme: state.theme, pin: state.pin, backupAt: state.backupAt, onb: state.onb, bn: state.bn, btcUsd: state.btcUsd, btcAt: state.btcAt, rateEur: state.rateEur, rateEurDate: state.rateEurDate, rateEurManual: state.rateEurManual, rateUsdt: state.rateUsdt, rateUsdtDate: state.rateUsdtDate, rateUsdtManual: state.rateUsdtManual, rateUsdtSrc: state.rateUsdtSrc, collapsed: state.collapsed, disp: state.disp, sav: state.sav }));
+      localStorage.setItem(KEY, JSON.stringify({ items: state.items, rate: state.rate, rateDate: state.rateDate, hideSav: state.hideSav, rateManual: state.rateManual, rateAutoAt: state.rateAutoAt, accounts: state.accounts, templates: state.templates, goals: state.goals, payments: state.payments, paySeries: state.paySeries, earn: state.earn, rateHist: state.rateHist, rateHistAt: state.rateHistAt, theme: state.theme, pin: state.pin, backupAt: state.backupAt, onb: state.onb, bn: state.bn, btcUsd: state.btcUsd, btcAt: state.btcAt, rateEur: state.rateEur, rateEurDate: state.rateEurDate, rateEurManual: state.rateEurManual, rateUsdt: state.rateUsdt, rateUsdtDate: state.rateUsdtDate, rateUsdtManual: state.rateUsdtManual, rateUsdtSrc: state.rateUsdtSrc, collapsed: state.collapsed, disp: state.disp, sav: state.sav }));
     } catch (e) {}
   }
 
@@ -4118,15 +4131,7 @@ main > .panel::before, main > .panel::after, .bal-hero::before, .bal-hero::after
     });
     return any ? n : null;
   }
-  function renderAccEye() {
-    var b = $("acc-eye"); if (!b) return;
-    b.innerHTML = state.hideAcc ? EYE_OFF : EYE_ON;
-    b.setAttribute("aria-pressed", state.hideAcc ? "true" : "false");
-    b.setAttribute("aria-label", state.hideAcc ? "Mostrar saldos" : "Ocultar saldos");
-    b.title = state.hideAcc ? "Mostrar saldos" : "Ocultar saldos";
-  }
   function renderAccounts() {
-    renderAccEye();
     var list = $("acc-list"), m = savMap(), D = state.disp, tot = 0, miss = false, posUsd = 0;
     $("acc-empty").style.display = state.accounts.length ? "none" : "";
     state.accounts.forEach(function (a) { var u = conv(accBalance(a), a.moneda, "USD"); if (u > 0) posUsd += u; });
@@ -4139,7 +4144,7 @@ main > .panel::before, main > .panel::after, .bal-hero::before, .bal-hero::after
         (sv > 0.004 ? ' · <span class="acc-sv-in">Ahorro ' + mask(money(sv, a.moneda)) + "</span>" : "");
       return '<li><button type="button" class="acc-row" data-acc-open="' + a.id + '" aria-label="Ver la cuenta ' + esc(a.nombre) + '">' + accAvatar(a) +
         '<span class="acc-mid"><span class="acc-name">' + esc(a.nombre) + "</span></span>" +
-        '<span class="acc-right"><span class="acc-bal fit' + (bal < 0 ? " neg" : "") + '">' + (state.hideAcc ? '<span class="masked">••••</span>' : money(bal, a.moneda)) + "</span>" +
+        '<span class="acc-right"><span class="acc-bal fit' + (bal < 0 ? " neg" : "") + '">' + money(bal, a.moneda) + "</span>" +
         "</span>" +
         '<svg class="acc-chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 5l7 7-7 7"></path></svg>' +
         (state.accounts.length > 1 ? '<span class="acc-share" style="--c:' + accColor(a) + '" title="' + Math.round(share) + '% de tu dinero"><i style="width:' + share.toFixed(1) + '%"></i></span>' : "") + "</button></li>";
@@ -4688,7 +4693,6 @@ main > .panel::before, main > .panel::after, .bal-hero::before, .bal-hero::after
       document.querySelectorAll(".menu").forEach(function (m) { m.hidden = true; });
       document.querySelectorAll(".dots").forEach(function (d) { d.setAttribute("aria-expanded", "false"); });
     }
-    $("acc-eye").addEventListener("click", function () { state.hideAcc = !state.hideAcc; save(); renderAccounts(); });
     $("acc-sum").addEventListener("click", function (e) {
       var b = e.target.closest("[data-acc-open]");
       if (b) openAccd(b.getAttribute("data-acc-open"));
@@ -6186,7 +6190,19 @@ main > .panel::before, main > .panel::after, .bal-hero::before, .bal-hero::after
       var c = document.body.classList;
       return c.contains("view-goals") ? "goals" : c.contains("view-pay") ? "pay" : c.contains("view-hist") ? "hist" : c.contains("view-bn") ? "bn" : c.contains("view-set") ? "set" : c.contains("view-accd") ? "accd" : null;
     }
+    var navIdx = 0, navT = 0;
+    var NAV_I = { goals: 1, pay: 2, hist: 3, accd: 4, bn: 4, set: 4 };
+    function navDir(n) {
+      var b = document.body;
+      b.classList.remove("nav-fwd", "nav-back");
+      void b.offsetWidth;
+      b.classList.add(n >= navIdx ? "nav-fwd" : "nav-back");
+      navIdx = n;
+      clearTimeout(navT);
+      navT = setTimeout(function () { b.classList.remove("nav-fwd", "nav-back"); }, 520);
+    }
     function closeViews() {
+      if (activeView()) navDir(0);
       document.body.classList.remove("view-goals", "view-pay", "view-hist", "view-bn", "view-set", "view-accd");
       $("set-view").setAttribute("aria-hidden", "true");
       $("accd-view").setAttribute("aria-hidden", "true");
@@ -6202,6 +6218,7 @@ main > .panel::before, main > .panel::after, .bal-hero::before, .bal-hero::after
       try {
         closeDial();
         if (!activeView()) viewReturnY = window.scrollY || 0;
+        if (activeView() !== name) navDir(NAV_I[name] || 4);
         document.body.classList.remove("view-goals", "view-pay", "view-hist", "view-bn", "view-set", "view-accd");
         document.body.classList.add("view-" + name);
         $("accd-view").setAttribute("aria-hidden", name === "accd" ? "false" : "true");
