@@ -1744,13 +1744,15 @@ main > .panel::before, main > .panel::after, .bal-hero::before, .bal-hero::after
 .cv-tot b { font-size: 1.35rem; letter-spacing: -0.03em; font-variant-numeric: tabular-nums; }
 .cv-seg { margin-bottom: 6px; }
 .cv-rest { border-top: 0 !important; margin-top: 6px !important; }
+/* Una sola animación de entrada por página: se desactivan las antiguas */
+body.view-goals .goals-view, body.view-pay .pay-view, body.view-hist .hist-view, body.view-bn .bn-view, body.view-set .set-view, body.view-accd .accd-view { animation: none; }
+body.booted main > * { animation: none !important; }
 /* Transiciones entre páginas: deslizan según la dirección, estilo iOS */
 @keyframes navInR { from { opacity: 0; transform: translateX(36px); } to { opacity: 1; transform: translateX(0); } }
 @keyframes navInL { from { opacity: 0; transform: translateX(-36px); } to { opacity: 1; transform: translateX(0); } }
 @media (prefers-reduced-motion: no-preference) {
   body.nav-fwd .goals-view, body.nav-fwd .pay-view, body.nav-fwd .hist-view, body.nav-fwd .bn-view, body.nav-fwd .set-view, body.nav-fwd .accd-view { animation: navInR 0.42s cubic-bezier(0.32, 0.72, 0, 1) both !important; }
   body.nav-back .goals-view, body.nav-back .pay-view, body.nav-back .hist-view, body.nav-back .bn-view, body.nav-back .set-view, body.nav-back .accd-view, body.nav-back main { animation: navInL 0.42s cubic-bezier(0.32, 0.72, 0, 1) both !important; }
-  body.nav-back main > * { animation: none !important; }
   .tab-lens { transition: transform 0.42s cubic-bezier(0.32, 0.72, 0, 1), border-radius 0.45s var(--spring) !important; }
   .tab { transition: color 0.25s ease; }
   .tab svg { transition: transform 0.3s cubic-bezier(0.32, 0.72, 0, 1); }
@@ -4268,6 +4270,7 @@ html { -webkit-tap-highlight-color: transparent; }
   }
 
   function init() {
+    setTimeout(function () { document.body.classList.add("booted"); }, 1100);
     load();
     state.rateManual = ""; state.rateEurManual = ""; state.rateUsdtManual = "";
     if (!state.rate) { state.rate = 875.67; state.rateDate = "2026-10-08"; save(); }
@@ -6210,8 +6213,6 @@ html { -webkit-tap-highlight-color: transparent; }
       void b.offsetWidth;
       b.classList.add(n >= navIdx ? "nav-fwd" : "nav-back");
       navIdx = n;
-      clearTimeout(navT);
-      navT = setTimeout(function () { b.classList.remove("nav-fwd", "nav-back"); }, 520);
     }
     function closeViews() {
       if (activeView()) navDir(0);
