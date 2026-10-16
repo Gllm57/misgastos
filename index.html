@@ -1777,6 +1777,9 @@ html { -webkit-tap-highlight-color: transparent; }
 /* Etiquetas de la barra: espacio para letras con cola (g, p) */
 .tab span, .tab > :not(svg) { max-height: 1.6em; line-height: 1.35; padding-bottom: 1px; }
 body.tb-min .tab > :not(svg) { max-height: 0; padding-bottom: 0; }
+main > .bk-nudge { margin: 6px 0 0; }
+.bk-nudge.ok { border-color: var(--line) !important; }
+.bk-nudge.ok .bk-ic { color: var(--in); background: color-mix(in srgb, var(--in) 14%, transparent); }
 </style>
 </head>
 <body>
@@ -1833,12 +1836,6 @@ body.tb-min .tab > :not(svg) { max-height: 0; padding-bottom: 0; }
     </div>
   </section>
 
-  <div class="bk-nudge" id="bk-nudge" hidden>
-    <span class="bk-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l8 3v6c0 4.5-3.4 8.3-8 9-4.6-.7-8-4.5-8-9V6z"></path><path d="M12 8v6M9.5 11.5L12 14l2.5-2.5"></path></svg></span>
-    <span class="bk-tx"><b>Protege tus datos</b><small id="bk-nudge-s"></small></span>
-    <button type="button" class="bk-go" id="bk-nudge-go">Guardar copia</button>
-    <button type="button" class="bn-x" id="bk-nudge-x" aria-label="Recordármelo más tarde">✕</button>
-  </div>
   <div class="bn-entry" id="bn-entry" role="button" tabindex="0" aria-label="Abrir la guía para ahorrar en Binance" hidden>
     <span class="bn-ic" aria-hidden="true">₮</span>
     <span><b id="bn-entry-t">Pon tu ahorro a trabajar</b><small id="bn-entry-s"></small></span>
@@ -1881,6 +1878,12 @@ body.tb-min .tab > :not(svg) { max-height: 0; padding-bottom: 0; }
     </div></div>
   </section>
 
+  <div class="bk-nudge" id="bk-nudge" hidden>
+    <span class="bk-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l8 3v6c0 4.5-3.4 8.3-8 9-4.6-.7-8-4.5-8-9V6z"></path><path d="M12 8v6M9.5 11.5L12 14l2.5-2.5"></path></svg></span>
+    <span class="bk-tx"><b>Protege tus datos</b><small id="bk-nudge-s"></small></span>
+    <button type="button" class="bk-go" id="bk-nudge-go">Guardar copia</button>
+    <button type="button" class="bn-x" id="bk-nudge-x" aria-label="Recordármelo más tarde">✕</button>
+  </div>
 </main>
 
   <button class="fab" id="fab" type="button" aria-label="Abrir menú de acciones" aria-haspopup="menu" aria-expanded="false">+</button>
@@ -5452,11 +5455,14 @@ body.tb-min .tab > :not(svg) { max-height: 0; padding-bottom: 0; }
     var nudgeOff = false;
     function renderNudge() {
       var el = $("bk-nudge"), n = state.items.length;
-      var due = !nudgeOff && n >= 5 && (!state.backupAt || Date.now() - state.backupAt > 30 * 86400000);
-      el.hidden = !due;
-      if (!due) return;
+      el.hidden = nudgeOff;
+      if (nudgeOff) return;
+      var due = n >= 5 && (!state.backupAt || Date.now() - state.backupAt > 30 * 86400000);
       var d = state.backupAt ? Math.floor((Date.now() - state.backupAt) / 86400000) : 0;
-      $("bk-nudge-s").textContent = state.backupAt ? "Hace " + d + " días que no guardas una copia de tus " + n + " movimientos." : "Tienes " + n + " movimientos sin copia. Si pierdes el teléfono o borras Safari, se pierden.";
+      el.classList.toggle("ok", !due);
+      $("bk-nudge-s").textContent = due
+        ? (state.backupAt ? "Hace " + d + " días que no guardas una copia de tus " + n + " movimientos." : "Tienes " + n + " movimientos sin copia. Si pierdes el teléfono o borras Safari, se pierden.")
+        : (state.backupAt ? "Última copia " + (d === 0 ? "hoy" : d === 1 ? "ayer" : "hace " + d + " días") + ". Guarda otra de vez en cuando." : "Guarda una copia para no perder tus datos si cambias de teléfono.");
     }
     $("bk-nudge-go").addEventListener("click", function () { $("bk-save").click(); setTimeout(renderNudge, 500); });
     $("bk-nudge-x").addEventListener("click", function () { nudgeOff = true; renderNudge(); showToast("Te lo recordaremos la próxima vez que abras la app."); });
