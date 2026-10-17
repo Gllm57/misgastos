@@ -23,11 +23,11 @@
   --ink: #1a1733;
   --muted: #625f7d;
   --line: #dedcf0;
-  --accent: #5b4cff;
+  --accent: #8f84ff;
   --accent-ink: #ffffff;
   --in: #12a37a;
   --out: #e8436a;
-  --focus: #5b4cff;
+  --focus: #8f84ff;
   box-sizing: border-box;
   padding-top: env(safe-area-inset-top, 0px);
   padding-bottom: env(safe-area-inset-bottom, 0px); }
@@ -1747,7 +1747,7 @@ html.sheet-open body::after { opacity: 0; }
 .amt-ops .amt-res { min-width: 0 !important; max-width: 0; opacity: 0; overflow: hidden; white-space: nowrap; margin-left: 0; transition: max-width 0.4s cubic-bezier(.2,.8,.2,1), opacity 0.3s ease, margin 0.4s cubic-bezier(.2,.8,.2,1); }
 .amt-ops.has .amt-res { max-width: 180px; opacity: 1; margin-left: 14px; }
 .dial-item[data-dial="bn"] .ic { background: #f0b90b !important; color: #1a1400 !important; }
-.dial-item[data-dial="bn"] > span:first-child { color: #f0b90b; }
+.dial-item[data-dial="bn"] > span:first-child { color: color-mix(in srgb, #f0b90b 72%, var(--ink)); }
 .tpl { grid-template-columns: auto 1fr auto !important; }
 .tpl-ic { width: 38px; height: 38px; border-radius: 50%; display: grid; place-items: center; background: color-mix(in srgb, var(--c) 20%, transparent); color: var(--c); box-shadow: inset 0 0 0 2px var(--c); }
 .tpl-ic .ci { width: 18px; height: 18px; }
@@ -1768,6 +1768,8 @@ html.sheet-open body::after { opacity: 0; }
 /* Sin zoom con doble toque */
 html, body, button, a, input, select, textarea, label, [role="button"] { touch-action: manipulation; }
 .lim-list input { text-align: center !important; }
+.lock, .keypad, .keypad button { touch-action: none; -webkit-user-select: none; user-select: none; -webkit-touch-callout: none; }
+.keypad button.kp-on { transform: scale(0.92); background: color-mix(in srgb, var(--accent) 22%, var(--fill)) !important; }
 </style>
 </head>
 <body>
@@ -6892,7 +6894,16 @@ html, body, button, a, input, select, textarea, label, [role="button"] { touch-a
         else lockMsg("Código incorrecto.", true);
       });
     }
-    $("keypad").addEventListener("click", function (e) { var b = e.target.closest("[data-k]"); if (b) lockInput(b.getAttribute("data-k")); });
+    // Teclas al tocar (no al soltar): rápido y sin zoom por doble toque en iPhone
+    var kpTouch = 0;
+    $("keypad").addEventListener("touchstart", function (e) {
+      var b = e.target.closest("[data-k]"); if (!b) return;
+      e.preventDefault(); kpTouch = Date.now();
+      b.classList.add("kp-on"); setTimeout(function () { b.classList.remove("kp-on"); }, 140);
+      lockInput(b.getAttribute("data-k"));
+    }, { passive: false });
+    $("keypad").addEventListener("dblclick", function (e) { e.preventDefault(); });
+    $("keypad").addEventListener("click", function (e) { if (Date.now() - kpTouch < 800) return; var b = e.target.closest("[data-k]"); if (b) lockInput(b.getAttribute("data-k")); });
     document.addEventListener("keydown", function (e) {
       if ($("lock").hidden) return;
       if (/^[0-9]$/.test(e.key)) { e.preventDefault(); lockInput(e.key); }
