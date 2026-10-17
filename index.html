@@ -4747,23 +4747,13 @@ html.sheet-open body::after { opacity: 0; }
     $("fab").addEventListener("click", function () { if ($("dial").hidden) openDial(); else closeDial(); });
     (function () {
       var fab = $("fab"), tmr = 0, fired = false;
-      function lastMov() {
-        var it = null;
-        state.items.forEach(function (x) { if ((x.tipo === "gasto" || x.tipo === "ingreso") && (!it || x.id > it.id)) it = x; });
-        return it;
-      }
       function start() {
         fired = false; clearTimeout(tmr);
         tmr = setTimeout(function () {
-          var last = lastMov();
           fired = true;
-          if (!last) { showToast("Aún no hay un movimiento para repetir."); return; }
           if (navigator.vibrate) try { navigator.vibrate(15); } catch (e) {}
-          var copy = { id: Date.now(), tipo: last.tipo, cat: last.cat, monto: last.monto, moneda: last.moneda, cuenta: last.cuenta, fecha: today(), nota: last.nota || "" };
-          state.items.push(copy);
-          state.month = today().slice(0, 7); $("mes").value = state.month;
-          save(); render();
-          showToast("Repetido: " + last.cat + " " + (last.tipo === "gasto" ? "−" : "+") + money(last.monto, last.moneda) + ". Lo puedes borrar en el Historial.");
+          if (!$("dial").hidden) closeDial();
+          openTpl();
         }, 550);
       }
       function stop() { clearTimeout(tmr); }
