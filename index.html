@@ -123,9 +123,6 @@ input, select {
 .acc-list { list-style: none; margin: 0; padding: 0; }
 .acc { display: grid; grid-template-columns: 1fr auto; gap: 12px; align-items: center; padding: 12px 0; border-top: 1px solid var(--line); }
 .acc:first-child { border-top: 0; }
-.acc-name { font-weight: 600; display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
-.acc-bal { font-family: var(--display); font-weight: 700; font-size: 1.15rem; }
-.acc-bal.neg { color: var(--out); }
 .pick { display: flex; align-items: center; justify-content: space-between; gap: 10px; width: 100%; min-height: 44px; font: inherit; color: var(--ink); background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 10px 12px; cursor: pointer; text-align: left; }
 .pick svg { flex: none; width: 18px; height: 18px; color: var(--accent); }
 .pick:hover { border-color: var(--accent); }
@@ -242,8 +239,6 @@ input, select {
 .cc-ic.cc-usdt { --cc: #0e9aa7; }
 .cc-ic.cc-btc { --cc: #e8890c; }
 .cc-ic.cc-ves { --cc: var(--muted); font-size: 0.78rem; letter-spacing: -0.02em; }
-.acc-actions { display: flex; gap: 10px; margin-bottom: 8px; }
-.acc-actions button { flex: 1; }
 .fab[aria-expanded="true"] { transform: rotate(45deg); }
 .dial { position: fixed; inset: 0; z-index: 19; background: rgba(8, 20, 24, 0.45); }
 .dial-menu { position: absolute; right: 16px; display: flex; flex-direction: column-reverse; align-items: flex-end; gap: 12px; }
@@ -827,20 +822,8 @@ html.sheet-open .tabbar, html.sheet-open .fab, html.sheet-open .ai-fab, html.she
 .acc-sum strong { display: block; font-family: var(--display); font-size: 1.45rem; line-height: 1.2; font-variant-numeric: tabular-nums; }
 .acc-n { flex: none; font-size: 0.78rem; font-weight: 600; color: var(--muted); padding: 4px 10px; border-radius: 999px; border: 1px solid var(--line); }
 .acc-list li { list-style: none; }
-.acc-row { width: 100%; display: grid; gap: 12px; border: 0; border-top: 1px solid var(--line); background: none; font: inherit; color: var(--ink); text-align: left; cursor: pointer; border-radius: 0; }
-.acc-list li:first-child .acc-row { border-top: 0; }
-.acc-row:active { background: var(--bg); }
 .acc-av { --c: var(--accent); width: 42px; height: 42px; display: flex; align-items: center; justify-content: center; font-family: var(--display); font-weight: 700; font-size: 0.95rem; color: var(--c); flex: none; }
 .acc-av.big { width: 56px; height: 56px; border-radius: 18px; font-size: 1.2rem; }
-.acc-mid { min-width: 0; display: grid; }
-.acc-mid .acc-name { display: block; font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.acc-sv-in { color: var(--accent); }
-.acc-right { display: grid; justify-items: end; min-width: 0; max-width: 46vw; }
-.acc-row .acc-bal { font-family: var(--display); font-weight: 700; font-size: 1.05rem; font-variant-numeric: tabular-nums; max-width: 100%; }
-.acc-chev { width: 18px; height: 18px; color: var(--muted); }
-.acc-actions { margin: 10px 0 0; }
-.acc-actions button { display: inline-flex; align-items: center; justify-content: center; gap: 8px; }
-.acc-actions svg { width: 17px; height: 17px; }
 
 /* ---------- Detalle de cuenta ---------- */
 .accd-view { display: none; max-width: 760px; margin: 0 auto; padding: 20px 16px 160px; }
@@ -967,7 +950,6 @@ body.view-accd .fab, body.view-accd .ai-fab { opacity: 0; pointer-events: none; 
 .bk-go { font: inherit; font-weight: 700; font-size: 0.82rem; color: var(--accent-ink); background: var(--accent); border: 0; border-radius: 999px; padding: 0 14px; min-height: 36px; cursor: pointer; white-space: nowrap; }
 .bk-go { grid-column: 2; justify-self: start; }
 .bk-ic { align-self: start; }
-.acc-actions button { white-space: nowrap; }
 /* Binance Earn en Ahorros */
 .earn-box { display: grid; gap: 10px; margin-top: 12px; }
 .earn-box[hidden] { display: none; }
@@ -1030,9 +1012,6 @@ body.view-accd .fab, body.view-accd .ai-fab { opacity: 0; pointer-events: none; 
 .chev { border-radius: 50%; width: 40px; height: 40px; min-width: 40px; min-height: 40px; background: var(--surface); box-shadow: inset 0 1px 0 var(--glass-hi); }
 .chev svg { width: 18px; height: 18px; }
 .phead .eye { border-radius: 50%; width: 40px; height: 40px; min-width: 40px; min-height: 40px; }
-
-/* Mis cuentas */
-.acc-row { grid-template-columns: auto minmax(0, 1fr) auto auto; }
 .acc-head { display: flex; justify-content: space-between; align-items: baseline; gap: 10px; margin: 2px 4px 2px; color: var(--muted); font-size: 0.78rem; }
 .acc-head b { font-weight: 600; color: var(--ink); }
 .acc-head[hidden] { display: none; }
@@ -1166,8 +1145,6 @@ body.view-accd .fab, body.view-accd .ai-fab { opacity: 0; pointer-events: none; 
 .cv-amt b { font-size: 0.98rem; }
 .bal-note { color: var(--muted); font-size: 0.78rem; margin-top: 2px; }
 .bal-note[hidden] { display: none; }
-.acc-row { padding: 12px 6px 12px 4px; align-items: center; }
-.acc-mid .acc-name { font-size: 1rem; }
 .acc-look { display: grid; align-items: start; }
 .acc-prev .acc-av { font-size: 1.2rem; }
 .acc-pick { display: grid; gap: 10px; min-width: 0; }
@@ -1273,14 +1250,8 @@ main > .panel::before, main > .panel::after, .bal-hero::before, .bal-hero::after
 .sheet input:focus, .sheet select:focus { box-shadow: 0 0 0 2px color-mix(in srgb, var(--accent) 45%, transparent) !important; }
 .sheet .primary { min-height: 50px; }
 .panel.sheet { border: 0; }
-/* Anillos y leyenda */
-.rw { display: flex; align-items: center; gap: 18px; }
 .rings { flex: none; display: block; }
 .rleg { display: grid; gap: 8px; flex: 1; min-width: 0; }
-.rleg-i { all: unset; display: grid; cursor: pointer; min-width: 0; -webkit-tap-highlight-color: transparent; }
-.rleg-i > span { color: var(--c); font-size: 0.78rem; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.rleg-i b { font-family: var(--display); font-size: 1.05rem; letter-spacing: -0.02em; font-variant-numeric: tabular-nums; white-space: nowrap; }
-.rleg-i b small { color: var(--muted); font-size: 0.74em; font-weight: 600; letter-spacing: 0; }
 .rleg-tot { display: grid; padding-bottom: 6px; border-bottom: 1px solid var(--line); }
 .rleg-tot span { color: var(--muted); font-size: 0.74rem; font-weight: 600; }
 .rleg-tot b { font-size: 1.25rem; letter-spacing: -0.03em; font-variant-numeric: tabular-nums; }
@@ -1292,7 +1263,6 @@ main > .panel::before, main > .panel::after, .bal-hero::before, .bal-hero::after
 .acc-sum[hidden] { display: none !important; }
 .acc-seg { display: flex; gap: 3px; height: 8px; }
 .acc-seg i { display: block; height: 100%; border-radius: 999px; min-width: 6px; }
-.acc-row { padding-top: 12px !important; padding-bottom: 12px !important; }
 /* Ahorro */
 .sav-hero { display: grid; gap: 4px; margin-bottom: 16px; }
 .sav-hero .l { color: var(--muted); font-size: 0.85rem; font-weight: 600; }
@@ -1328,9 +1298,6 @@ main > .panel::before, main > .panel::after, .bal-hero::before, .bal-hero::after
 .ph-main { min-width: 0; flex: 1; }
 .ph-v { font-weight: 700; letter-spacing: -0.04em; }
 .pay-cal .cal-nav { width: 34px; height: 34px; }
-/* Pulido */
-.rleg-i b { color: var(--ink); }
-.rleg-i b small { display: inline; }
 .dots { border: 0 !important; background: var(--fill) !important; width: 34px !important; height: 34px !important; min-width: 34px !important; min-height: 34px !important; border-radius: 50% !important; }
 .hic { border-radius: 50% !important; width: 36px; height: 36px; }
 .hic.k-tr { background: var(--fill) !important; }
@@ -1393,8 +1360,6 @@ main > .panel::before, main > .panel::after, .bal-hero::before, .bal-hero::after
 .hist-cat-sum .s { font-size: 0.8rem !important; }
 .hist-cats button { background: var(--fill) !important; border: 0 !important; }
 .hist-cats button[aria-pressed="true"] { background: var(--c) !important; }
-/* Calculadora */
-.cx-in { background: none !important; border: 0 !important; box-shadow: none !important; }
 /* Binance */
 .bn-prog, .bn-steps { background: none !important; border: 0 !important; box-shadow: none !important; border-radius: 0 !important; padding-left: 0 !important; padding-right: 0 !important; }
 .bn-prog { border-bottom: 1px solid var(--line) !important; padding-bottom: 16px !important; margin-bottom: 4px; }
@@ -1493,7 +1458,6 @@ main > .panel::before, main > .panel::after, .bal-hero::before, .bal-hero::after
 .gv-hero { margin-bottom: 18px !important; }
 .acc-sum { margin-bottom: 10px; }
 .acc-sum { grid-template-columns: 1fr; justify-content: stretch !important; }
-.rleg-i b span { color: inherit; font-size: inherit; }
 @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .type-seg button[aria-pressed="true"] { color: #14121f !important; } }
 :root[data-theme="dark"] .type-seg button[aria-pressed="true"] { color: #14121f !important; }
 /* Menú de la meta: se abre hacia arriba, junto al botón */
@@ -1530,9 +1494,6 @@ main > .panel::before, main > .panel::after, .bal-hero::before, .bal-hero::after
   .trend .now-l { animation: lnFade 0.4s ease 0.85s both; }
   .trend .ln, .trend .now, .trend-cap .tk i { transition: stroke 0.4s ease, fill 0.4s ease, background 0.4s ease; }
 }
-/* Cuentas con anillos; categorías con barra */
-#acc-sum .rw { padding: 2px 0 8px; }
-#acc-sum .rleg-i b small { font-size: 0.72em; }
 .cv-tot { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 10px; }
 .cv-tot span { color: var(--muted); font-size: 0.8rem; font-weight: 600; }
 .cv-tot b { font-size: 1.35rem; letter-spacing: -0.03em; font-variant-numeric: tabular-nums; }
@@ -1577,9 +1538,6 @@ main > .bk-nudge { margin: 6px 0 0; }
 /* ===== Revisión: cuentas, metas, pagos, límites, avisos ===== */
 
 .acc-share2 { grid-column: 2 / -1; display: block; height: 4px; border-radius: 99px; background: color-mix(in srgb, var(--ink) 8%, transparent); overflow: hidden; margin-top: 2px; }
-.acc-share2 i { display: block; height: 100%; border-radius: inherit; background: var(--c); transform-origin: left center; animation: segIn 0.8s cubic-bezier(0.32, 0.72, 0, 1) backwards; }
-.acc-pct { grid-column: 2 / -1; color: var(--muted); font-size: 0.74rem; font-weight: 500; }
-.acc-row { row-gap: 4px !important; }
 .earn-add.by-bn { display: none !important; }
 .goals-view .bn-entry { margin: 0 0 18px; }
 .rleg-of { color: var(--muted); font-size: 0.8rem; font-weight: 600; }
@@ -1617,7 +1575,7 @@ main > .bk-nudge { margin: 6px 0 0; }
 .lim-list li:first-child { border-top: 0; }
 .lim-list label { margin: 0; font-weight: 600; color: var(--ink); }
 .lim-cur { color: var(--muted); font-size: 0.85rem; }
-.lim-list input { text-align: right; min-height: 40px !important; }
+.lim-list input { min-height: 40px !important; }
 .pay-alert { display: flex; align-items: center; gap: 10px; width: 100%; border: 0; font: inherit; text-align: left; color: var(--ink); background: color-mix(in srgb, var(--accent) 10%, var(--surface)); border-radius: 16px; padding: 12px 14px; margin: 0 0 14px; cursor: pointer; }
 .pay-alert[hidden] { display: none; }
 .pay-alert.late { background: color-mix(in srgb, var(--out) 10%, var(--surface)); }
@@ -1770,6 +1728,29 @@ html, body, button, a, input, select, textarea, label, [role="button"] { touch-a
 .lim-list input { text-align: center !important; }
 .lock, .keypad, .keypad button { touch-action: none; -webkit-user-select: none; user-select: none; -webkit-touch-callout: none; }
 .keypad button.kp-on { transform: scale(0.92); background: color-mix(in srgb, var(--accent) 22%, var(--fill)) !important; }
+
+/* ===== Cuentas: anillo + lista compacta ===== */
+.acc-hb { display: flex; gap: 6px; }
+.acc-hb button { width: 36px; height: 36px; border-radius: 50%; border: 0; display: grid; place-items: center; background: var(--fill); color: var(--ink); cursor: pointer; transition: transform 0.15s ease; }
+.acc-hb button:active { transform: scale(0.92); }
+.acc-hb svg { width: 17px; height: 17px; }
+[data-panel="acc"] .phead { margin-bottom: 8px; }
+.acc3 { display: grid; grid-template-columns: 104px minmax(0, 1fr); gap: 16px; align-items: center; }
+.acc3[hidden] { display: none; }
+.acc3 .acc-sum { position: relative; width: 104px; height: 104px; margin: 0; padding: 0; }
+.acc3 .acc-sum svg { width: 104px; height: 104px; display: block; animation: donutIn 0.6s cubic-bezier(0.2, 0.8, 0.2, 1) backwards; }
+.ar-c { position: absolute; inset: 0; display: grid; place-content: center; justify-items: center; text-align: center; }
+.ar-c small { font-size: 0.64rem; font-weight: 600; color: var(--muted); }
+.ar-c b { font-size: 0.95rem; font-weight: 700; letter-spacing: -0.03em; max-width: 80px; white-space: nowrap; overflow: hidden; font-variant-numeric: tabular-nums; }
+.acc3 .acc-list { margin: 0; padding: 0; min-width: 0; }
+.acc3 .acc-list li + li .acc-r { border-top: 1px solid var(--line); }
+.acc-r { width: 100%; display: flex; align-items: center; gap: 10px; padding: 9px 0; border: 0; background: none; font: inherit; color: var(--ink); text-align: left; cursor: pointer; }
+.acc-r i { width: 9px; height: 9px; border-radius: 50%; background: var(--c); flex: none; }
+.ar-n { flex: 1; min-width: 0; display: grid; line-height: 1.25; }
+.ar-n b { font-weight: 600; font-size: 0.92rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.ar-n small { font-size: 0.72rem; font-weight: 500; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.ar-v { font-weight: 700; font-size: 0.92rem; font-variant-numeric: tabular-nums; white-space: nowrap; flex: none; }
+.ar-v.neg { color: var(--out); }
 </style>
 </head>
 <body>
@@ -1831,16 +1812,17 @@ html, body, button, a, input, select, textarea, label, [role="button"] { touch-a
 
 
   <section class="panel" data-panel="acc" aria-labelledby="h-acc">
-    <div class="phead"><h2 id="h-acc">Cuentas</h2></div>
+    <div class="phead"><h2 id="h-acc">Cuentas</h2><div class="acc-hb">
+      <button type="button" id="acc-transfer" aria-label="Transferir entre cuentas" title="Transferir"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 7h13M16 3l4 4-4 4M17 17H4M8 13l-4 4 4 4"></path></svg></button>
+      <button type="button" id="acc-add" aria-label="Agregar cuenta" title="Agregar cuenta"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5v14M5 12h14"></path></svg></button>
+    </div></div>
     <div class="cbody" id="b-acc"><div class="cbody-in">
-    <div class="acc-sum" id="acc-sum" hidden></div>
-    <div class="acc-head" id="acc-head" hidden></div>
-    <ul class="acc-list" id="acc-list"></ul>
-    <p class="empty" id="acc-empty">Agrega tus cuentas (por ejemplo, Banco de Venezuela en bolívares o Binance en dólares) para saber en cuál entra y sale tu dinero.</p>
-    <div class="acc-actions">
-      <button type="button" class="secondary" id="acc-transfer"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 7h13M16 3l4 4-4 4M17 17H4M8 13l-4 4 4 4"></path></svg>Transferir</button>
-      <button type="button" class="secondary" id="acc-add"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5v14M5 12h14"></path></svg>Agregar cuenta</button>
+    <div class="acc3" id="acc3">
+      <div class="acc-sum" id="acc-sum"></div>
+      <ul class="acc-list" id="acc-list"></ul>
     </div>
+    <div class="acc-head" id="acc-head" hidden></div>
+    <p class="empty" id="acc-empty">Agrega tus cuentas (por ejemplo, Banco de Venezuela en bolívares o Binance en dólares) para saber en cuál entra y sale tu dinero.</p>
     </div></div>
   </section>
 
@@ -4324,29 +4306,26 @@ html, body, button, a, input, select, textarea, label, [role="button"] { touch-a
     state.accounts.forEach(function (a) { var u = conv(accBalance(a), a.moneda, "USD"); if (u > 0) posUsd += u; });
     var mName = MESES[Number(state.month.slice(5, 7)) - 1];
     list.innerHTML = state.accounts.map(function (a) {
-      var bal = accBalance(a), sv = m["a" + a.id] || 0, cv = conv(bal, a.moneda, D);
+      var bal = accBalance(a), cv = conv(bal, a.moneda, D);
       if (cv === null) miss = true; else tot += cv;
-      var net = accMonthNet(a, state.month), u = conv(bal, a.moneda, "USD"), share = posUsd > 0 && u > 0 ? u / posUsd * 100 : 0;
-      var meta = (net !== null && Math.abs(net) >= 0.005 ? '<span class="' + (net >= 0 ? "up" : "down") + '">' + (net >= 0 ? "+" : "−") + money(Math.abs(net), a.moneda) + "</span> este mes" : (ACC_CUR[a.moneda] || { n: a.moneda }).n) +
-        (sv > 0.004 ? ' · <span class="acc-sv-in">Ahorro ' + mask(money(sv, a.moneda)) + "</span>" : "");
-      return '<li><button type="button" class="acc-row" data-acc-open="' + a.id + '" aria-label="Ver la cuenta ' + esc(a.nombre) + '">' + accAvatar(a) +
-        '<span class="acc-mid"><span class="acc-name">' + esc(a.nombre) + "</span></span>" +
-        '<span class="acc-right"><span class="acc-bal fit' + (bal < 0 ? " neg" : "") + '">' + money(bal, a.moneda) + "</span>" +
-        "</span>" +
-        '<svg class="acc-chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 5l7 7-7 7"></path></svg>' +
-        (state.accounts.length > 1 ? '<span class="acc-share2" style="--c:' + accColor(a) + '"><i style="width:' + Math.max(share, 0.5).toFixed(1) + '%"></i></span><span class="acc-pct">' + (share > 0 && share < 1 ? "<1" : Math.round(share)) + "% de tu dinero</span>" : "") + "</button></li>";
+      var u = conv(bal, a.moneda, "USD"), share = posUsd > 0 && u > 0 ? u / posUsd * 100 : 0;
+      var sub = (share > 0 && share < 1 ? "<1" : Math.round(share)) + "%" + (a.moneda !== D && cv !== null ? " · ≈ " + money(cv, D) : "");
+      return '<li><button type="button" class="acc-r" data-acc-open="' + a.id + '" style="--c:' + accColor(a) + '" aria-label="Ver la cuenta ' + esc(a.nombre) + '"><i></i>' +
+        '<span class="ar-n"><b>' + esc(a.nombre) + "</b><small>" + sub + "</small></span>" +
+        '<span class="ar-v' + (bal < 0 ? " neg" : "") + '">' + money(bal, a.moneda) + "</span></button></li>";
     }).join("");
+    $("acc3").hidden = !state.accounts.length;
     var sum = $("acc-sum");
-    sum.hidden = true;
     if (state.accounts.length) {
-      var ra = state.accounts.map(function (a) { return { a: a, u: conv(accBalance(a), a.moneda, "USD") || 0 }; })
-        .filter(function (o) { return o.u > 0; }).sort(function (x, y) { return y.u - x.u; }).slice(0, 4);
-      var segs = ra.length ? '<div class="rw">' + ringsSvg(ra.map(function (o) { return { p: o.u / posUsd, c: accColor(o.a) }; }), 112, 10, 4) +
-        '<div class="rleg">' + ra.map(function (o) {
-          var q = o.u / posUsd * 100;
-          return '<button type="button" class="rleg-i" data-acc-open="' + o.a.id + '" style="--c:' + accColor(o.a) + '"><span>' + esc(o.a.nombre) + "</span><b>" + (q < 1 ? "<1" : Math.round(q)) + "% <small>de tu dinero</small></b></button>";
-        }).join("") + "</div></div>" : "";
-      var sh = segs;
+      var segs = state.accounts.map(function (a) { return { a: a, u: Math.max(0, conv(accBalance(a), a.moneda, "USD") || 0) }; }).filter(function (o) { return o.u > 0; });
+      var gap = segs.length > 1 ? 2.5 : 0, at = 0, C = 2 * Math.PI * 44;
+      var arcs = segs.map(function (o) {
+        var len = o.u / posUsd * 100, d = Math.max(0.6, len - gap);
+        var el = '<circle cx="52" cy="52" r="44" fill="none" stroke="' + accColor(o.a) + '" stroke-width="10" stroke-linecap="round" pathLength="100" stroke-dasharray="' + d.toFixed(2) + " " + (100 - d).toFixed(2) + '" stroke-dashoffset="' + (-(at + gap / 2)).toFixed(2) + '" transform="rotate(-90 52 52)"></circle>';
+        at += len; return el;
+      }).join("");
+      var sh = '<svg viewBox="0 0 104 104" aria-hidden="true"><circle cx="52" cy="52" r="44" fill="none" stroke="var(--fill)" stroke-width="10"></circle>' + arcs + "</svg>" +
+        '<div class="ar-c"><small>Total</small><b class="fit">' + money(tot, D) + (miss ? "*" : "") + "</b></div>";
       if (sum._h !== sh) { sum.innerHTML = sh; sum._h = sh; }
     }
     var ah = $("acc-head");
