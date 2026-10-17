@@ -1845,6 +1845,23 @@ main > .bk-nudge { margin: 6px 0 0; }
 .goals-view .goal-list .goal { height: auto !important; min-height: 0 !important; }
 .goals-view .goal-list .goal .goal-head { height: auto !important; min-height: 0 !important; }
 #hero-share .rleg-tot b * { color: var(--ink) !important; }
+/* Títulos de Ahorro, Pagos e Historial a la altura de los botones */
+.goals-view, .pay-view, .hist-view { position: relative; }
+.goals-view > .gv-head, .pay-view > .gv-head, .hist-view > .gv-head { position: absolute; top: 20px; right: 16px; height: 44px; z-index: 2; }
+.goals-view > .gv-head .gv-back, .pay-view > .gv-head .gv-back, .hist-view > .gv-head .gv-back { display: none !important; }
+.goals-view > .gv-title, .pay-view > .gv-title, .hist-view > .gv-title { margin: 0 0 6px !important; line-height: 44px !important; padding-right: 110px; }
+/* Barra de abajo más cerca del borde y desenfoque detrás */
+:root { --tbb: max(8px, calc(env(safe-area-inset-bottom, 0px) - 12px)); }
+.tabbar { bottom: var(--tbb) !important; }
+.fab { bottom: calc(var(--tbb) + var(--tbh) + 12px) !important; }
+.ai-fab { bottom: calc(var(--tbb) + var(--tbh) + 12px + 58px + 12px) !important; }
+.dial-menu { bottom: calc(var(--tbb) + var(--tbh) + 12px + 58px + 14px) !important; }
+.toast { bottom: calc(var(--tbb) + var(--tbh) + 12px) !important; }
+body::after { content: ""; position: fixed; left: 0; right: 0; bottom: 0; height: calc(var(--tbb) + var(--tbh) + 28px); z-index: 16; pointer-events: none;
+  background: linear-gradient(to top, color-mix(in srgb, var(--bg) 88%, transparent) 30%, color-mix(in srgb, var(--bg) 0%, transparent));
+  -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px);
+  -webkit-mask-image: linear-gradient(to top, #000 45%, transparent); mask-image: linear-gradient(to top, #000 45%, transparent); }
+html.sheet-open body::after { opacity: 0; }
 </style>
 </head>
 <body>
