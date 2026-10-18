@@ -1751,6 +1751,8 @@ html, body, button, a, input, select, textarea, label, [role="button"] { touch-a
 .ar-n small { font-size: 0.72rem; font-weight: 500; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .ar-v { font-weight: 700; font-size: 0.92rem; font-variant-numeric: tabular-nums; white-space: nowrap; flex: none; }
 .ar-v.neg { color: var(--out); }
+.ar-v small { font-size: 0.72em; font-weight: 600; color: var(--muted); margin-right: 2px; }
+.ar-v small:last-child:not(:first-child) { margin: 0 0 0 2px; }
 </style>
 </head>
 <body>
@@ -3989,8 +3991,7 @@ html, body, button, a, input, select, textarea, label, [role="button"] { touch-a
 
     var open = accOpening(state.month), bal = tin - tout - tsv + open.tot;
     var bn = $("bal-note");
-    bn.hidden = !(Math.abs(open.tot) > 0.004);
-    if (!bn.hidden) bn.textContent = "Incluye " + money(open.tot, D) + " de saldo inicial de " + (open.n === 1 ? "tu cuenta nueva" : "tus cuentas nuevas");
+    bn.hidden = true;
     var b = $("balance");
     setMoney(b, bal, function (v) { return moneyH(v, D); }, D);
     b.className = "balance-amount fit" + (bal < 0 ? " neg" : "");
@@ -4300,6 +4301,14 @@ html, body, button, a, input, select, textarea, label, [role="button"] { touch-a
     });
     return any ? n : null;
   }
+  // Saldo compacto para la lista de cuentas: moneda en pequeño, sin decimales en montos grandes (Bs 41.800, Bs 1,25 M)
+  function accAmt(n, cur) {
+    var x = Math.abs(n), sign = n < 0 ? "−" : "", v;
+    if (x >= 1e6) v = num(x / 1e6, x >= 1e8 ? 0 : x >= 1e7 ? 1 : 2) + " M";
+    else v = num(x, x >= 1000 ? 0 : 2);
+    var sym = cur === "USD" ? "$" : cur === "EUR" ? "€" : cur === "USDT" ? "USDT" : "Bs";
+    return cur === "USDT" ? sign + v + ' <small>' + sym + "</small>" : '<small>' + sign + sym + "</small>" + v;
+  }
   function renderAccounts() {
     var list = $("acc-list"), m = savMap(), D = state.disp, tot = 0, miss = false, posUsd = 0;
     $("acc-empty").style.display = state.accounts.length ? "none" : "";
@@ -4312,7 +4321,7 @@ html, body, button, a, input, select, textarea, label, [role="button"] { touch-a
       var sub = (share > 0 && share < 1 ? "<1" : Math.round(share)) + "%" + (a.moneda !== D && cv !== null ? " · ≈ " + money(cv, D) : "");
       return '<li><button type="button" class="acc-r" data-acc-open="' + a.id + '" style="--c:' + accColor(a) + '" aria-label="Ver la cuenta ' + esc(a.nombre) + '"><i></i>' +
         '<span class="ar-n"><b>' + esc(a.nombre) + "</b><small>" + sub + "</small></span>" +
-        '<span class="ar-v' + (bal < 0 ? " neg" : "") + '">' + money(bal, a.moneda) + "</span></button></li>";
+        '<span class="ar-v' + (bal < 0 ? " neg" : "") + '">' + accAmt(bal, a.moneda) + "</span></button></li>";
     }).join("");
     $("acc3").hidden = !state.accounts.length;
     var sum = $("acc-sum");
