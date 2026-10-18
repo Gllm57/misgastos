@@ -752,16 +752,10 @@ html.locked body > *:not(#lock):not(#cf-sheet):not(#toast):not(#onb):not(#lg-she
 .onb-skip[hidden] { display: inline-block; visibility: hidden; }
 .onb-track { flex: 1; overflow: hidden; max-width: 520px; width: 100%; margin: 0 auto; }
 .onb-slides { display: flex; height: 100%; transition: transform 0.4s cubic-bezier(0.2, 0.8, 0.2, 1); }
-.onb-slide { flex: 0 0 100%; min-width: 0; display: flex; flex-direction: column; justify-content: center; gap: 14px; padding: 8px 4px; overflow-y: auto; }
-.onb-art { --c: var(--accent); width: 112px; height: 112px; border-radius: 34px; display: flex; align-items: center; justify-content: center; color: var(--c); background: color-mix(in srgb, var(--c) 14%, var(--surface)); border: 1px solid color-mix(in srgb, var(--c) 30%, var(--line)); margin-bottom: 8px; }
-.onb-art svg { width: 54px; height: 54px; }
-.onb-slide h2 { font-family: var(--display); font-size: clamp(1.6rem, 7vw, 2.1rem); line-height: 1.1; letter-spacing: -0.02em; margin: 0; text-wrap: balance; }
-.onb-slide > p { color: var(--muted); font-size: 1.02rem; margin: 0; max-width: 36ch; }
-.onb-tips { list-style: none; margin: 4px 0 0; padding: 0; display: grid; gap: 10px; }
-.onb-tips li { display: grid; grid-template-columns: 28px 1fr; gap: 10px; align-items: start; font-size: 0.94rem; }
-.onb-tips li i { width: 28px; height: 28px; border-radius: 9px; display: flex; align-items: center; justify-content: center; font-style: normal; font-weight: 700; font-size: 0.8rem; color: var(--accent); background: color-mix(in srgb, var(--accent) 12%, transparent); }
-.onb-tips b { font-weight: 600; }
-.onb-legal { font-size: 0.82rem; color: var(--muted); line-height: 1.45; margin: 6px 0 0; }
+.onb-slide { flex: 0 0 100%; min-width: 0; display: flex; flex-direction: column; padding: 8px 4px; overflow-y: auto; }
+.onb-slide h2 { font-family: var(--display); line-height: 1.1; letter-spacing: -0.02em; margin: 0; text-wrap: balance; }
+.onb-slide > p { color: var(--muted); }
+.onb-legal { font-size: 0.82rem; color: var(--muted); line-height: 1.45; }
 .onb-legal button { font: inherit; color: var(--accent); background: none; border: 0; padding: 0; text-decoration: underline; cursor: pointer; }
 .onb-foot { display: grid; gap: 16px; max-width: 520px; width: 100%; margin: 0 auto; }
 .onb-dots { display: flex; justify-content: center; gap: 7px; }
@@ -1752,6 +1746,90 @@ html, body, button, a, input, select, textarea, label, [role="button"] { touch-a
 .ar-v { font-weight: 700; font-size: 0.92rem; font-variant-numeric: tabular-nums; white-space: nowrap; flex: none; }
 .ar-v.neg { color: var(--out); }
 .ar-c b small { font-size: 0.68em; font-weight: 600; color: var(--muted); margin-right: 2px; }
+
+/* ===== Introducción con ilustraciones ===== */
+.onb-slide { justify-content: center; gap: 12px !important; text-align: center; align-items: center; }
+.onb-slide h2 { font-size: clamp(1.55rem, 6.6vw, 1.95rem) !important; max-width: 16ch; }
+.onb-slide > p { font-size: 0.98rem !important; max-width: 32ch; margin: 0 auto !important; }
+.onb-art2 { height: 230px; width: 100%; display: grid; place-items: center; margin-bottom: 6px; }
+.onb-slide[aria-hidden="false"] .onb-art2 > * { animation: fadeUp 0.5s cubic-bezier(0.2, 0.8, 0.2, 1) backwards; }
+.oa-arc { stroke-dashoffset: 0; }
+.onb-slide[aria-hidden="false"] .oa-arc { animation: oaDraw 1s cubic-bezier(0.2, 0.8, 0.2, 1) var(--d, 0s) backwards; }
+@keyframes oaDraw { from { stroke-dasharray: 0 999; } }
+.oa-rings { width: 170px; height: 170px; }
+.onb-art2 > .oa-rings { margin-top: -10px; }
+.oa-pills { display: flex; gap: 6px; justify-content: center; margin-top: -18px; }
+.onb-art2:has(.oa-pills) { grid-template-rows: 1fr auto; }
+.oa-pills span { font-size: 0.78rem; font-weight: 700; padding: 5px 12px; border-radius: 99px; background: var(--fill); color: var(--ink); }
+.oa-form { width: min(280px, 100%); display: grid; justify-items: center; gap: 8px; padding: 18px 16px; border-radius: 26px; background: var(--fill); }
+.oa-form > small { color: var(--muted); font-weight: 600; font-size: 0.78rem; }
+.oa-form > b { font-size: 2.2rem; letter-spacing: -0.04em; line-height: 1; }
+.oa-ops { display: flex; gap: 6px; align-items: center; }
+.oa-ops i { font-style: normal; width: 34px; height: 30px; border-radius: 99px; display: grid; place-items: center; background: var(--surface); color: var(--accent); font-weight: 700; }
+.oa-ops em { font-style: normal; font-weight: 700; margin-left: 8px; }
+.oa-cats { display: flex; gap: 6px; flex-wrap: wrap; justify-content: center; margin-top: 4px; }
+.oa-cats span { display: inline-flex; align-items: center; gap: 5px; font-size: 0.78rem; font-weight: 600; padding: 6px 10px; border-radius: 99px; color: var(--c); background: color-mix(in srgb, var(--c) 15%, transparent); }
+.oa-cats span:first-child { background: var(--c); color: #fff; }
+.oa-cats .ci { width: 14px; height: 14px; }
+.oa-acc { width: min(300px, 100%); display: grid; grid-template-columns: 104px 1fr; gap: 14px; align-items: center; text-align: left; }
+.oa-ring { position: relative; width: 104px; height: 104px; }
+.oa-ring svg { width: 104px; height: 104px; }
+.oa-ring > div { position: absolute; inset: 0; display: grid; place-content: center; justify-items: center; }
+.oa-ring small { font-size: 0.62rem; color: var(--muted); font-weight: 600; }
+.oa-ring b { font-size: 1rem; }
+.oa-rows { display: grid; gap: 7px; font-size: 0.82rem; }
+.oa-rows div, .oa-gl div { display: flex; align-items: center; gap: 7px; }
+.oa-rows i, .oa-gl i, .oa-pp i { width: 8px; height: 8px; border-radius: 50%; background: var(--c); flex: none; }
+.oa-rows span { flex: 1; color: var(--muted); font-weight: 500; }
+.oa-rows b { font-weight: 700; }
+.oa-cat { padding-top: 7px; border-top: 1px solid var(--line); }
+.oa-cat em { font-style: normal; font-weight: 700; font-size: 0.74rem; padding: 2px 7px; border-radius: 99px; color: var(--out); background: color-mix(in srgb, var(--out) 14%, transparent); }
+.oa-goal { display: flex; align-items: center; gap: 12px; }
+.oa-goal .oa-rings { width: 150px; height: 150px; }
+.oa-gl { display: grid; gap: 9px; font-size: 0.84rem; font-weight: 600; text-align: left; }
+.oa-gl b { margin-left: auto; padding-left: 10px; color: var(--muted); font-weight: 700; }
+.oa-pay { width: min(300px, 100%); display: grid; gap: 7px; }
+.oa-week { display: grid; grid-template-columns: repeat(7, 1fr); gap: 2px; margin-bottom: 6px; }
+.oa-week span { display: grid; justify-items: center; gap: 2px; font-weight: 600; font-size: 0.9rem; padding: 6px 0 10px; border-radius: 99px; position: relative; }
+.oa-week small { font-size: 0.62rem; color: var(--muted); }
+.oa-week .oa-on { background: var(--accent); color: #fff; }
+.oa-week .oa-on small { color: inherit; opacity: 0.8; }
+.oa-week .oa-d::after { content: ""; position: absolute; bottom: 3px; left: 50%; width: 5px; height: 5px; margin-left: -2.5px; border-radius: 50%; background: var(--accent); }
+.oa-week .oa-l::after { background: var(--out); }
+.oa-week .oa-i::after { background: var(--in); }
+.oa-pp { --c: var(--accent); display: flex; align-items: center; gap: 9px; padding: 9px 12px; border-radius: 99px; background: var(--fill); font-size: 0.84rem; text-align: left; }
+.oa-pp.late { --c: var(--out); background: color-mix(in srgb, var(--out) 12%, transparent); }
+.oa-pp.in { --c: var(--in); }
+.oa-pp span { flex: 1; color: var(--muted); }
+.oa-pp b { color: var(--ink); font-weight: 600; }
+.oa-pp em { font-style: normal; font-weight: 700; color: var(--ink); }
+.oa-pp.in em { color: var(--in); }
+.oa-safe { position: relative; display: grid; place-items: center; }
+.oa-safe .oa-shield { position: absolute; width: 56px; height: 56px; color: var(--in); top: 50px; }
+.oa-dots { position: absolute; bottom: -4px; display: flex; gap: 10px; }
+.oa-dots i { width: 12px; height: 12px; border-radius: 50%; background: var(--ink); opacity: 0.85; }
+.onb-tour { display: inline-flex; align-items: center; gap: 10px; margin: 6px auto 0; border: 0; border-radius: 99px; padding: 10px 16px; font: inherit; font-size: 0.88rem; font-weight: 600; color: var(--ink); background: var(--fill); cursor: pointer; }
+.onb-tour i { width: 20px; height: 20px; border-radius: 50%; box-shadow: inset 0 0 0 2px var(--muted); display: grid; place-items: center; transition: background 0.2s, box-shadow 0.2s; }
+.onb-tour[aria-pressed="true"] i { background: var(--accent); box-shadow: none; }
+.onb-tour[aria-pressed="true"] i::after { content: ""; width: 9px; height: 5px; border: 2px solid #fff; border-top: 0; border-right: 0; transform: translateY(-1px) rotate(-45deg); }
+.onb-legal { text-align: center; max-width: 34ch; margin: 4px auto 0 !important; }
+
+/* ===== Recorrido guiado ===== */
+.tour { position: fixed; inset: 0; z-index: 96; opacity: 0; transition: opacity 0.3s ease; touch-action: none; }
+.tour[hidden] { display: none; }
+.tour.on { opacity: 1; }
+.tour-hole { position: fixed; border-radius: 22px; box-shadow: 0 0 0 200vmax rgba(6, 5, 14, 0.66), 0 0 0 2px color-mix(in srgb, var(--accent) 70%, transparent); transition: top 0.45s cubic-bezier(0.2, 0.8, 0.2, 1), left 0.45s cubic-bezier(0.2, 0.8, 0.2, 1), width 0.45s cubic-bezier(0.2, 0.8, 0.2, 1), height 0.45s cubic-bezier(0.2, 0.8, 0.2, 1), border-radius 0.45s ease; pointer-events: none; }
+.tour-tip { position: fixed; left: max(16px, env(safe-area-inset-left, 0px)); right: max(16px, env(safe-area-inset-right, 0px)); max-width: 420px; margin: 0 auto; background: var(--surface); color: var(--ink); border-radius: 24px; padding: 14px 16px 16px; display: grid; gap: 6px; box-shadow: 0 18px 50px rgba(0, 0, 0, 0.35); transition: top 0.45s cubic-bezier(0.2, 0.8, 0.2, 1), bottom 0.45s cubic-bezier(0.2, 0.8, 0.2, 1); }
+.tour-tip.in { animation: fadeUp 0.35s cubic-bezier(0.2, 0.8, 0.2, 1) backwards; }
+.tt-top { display: flex; justify-content: space-between; align-items: center; }
+.tt-top span { font-size: 0.74rem; font-weight: 700; color: var(--accent); font-variant-numeric: tabular-nums; }
+.tt-top button { border: 0; background: none; font: inherit; font-size: 0.84rem; font-weight: 600; color: var(--muted); padding: 4px 2px; cursor: pointer; }
+.tour-tip > b { font-size: 1.1rem; letter-spacing: -0.02em; }
+.tour-tip > p { margin: 0; color: var(--muted); font-size: 0.92rem; line-height: 1.45; }
+.tt-btns { display: flex; gap: 8px; margin-top: 8px; }
+.tt-btns button { flex: 1; min-height: 44px; border-radius: 99px !important; margin: 0 !important; }
+.tt-btns button[hidden] { display: none; }
+@media (prefers-reduced-motion: reduce) { .tour-hole, .tour-tip { transition: none; } }
 </style>
 </head>
 <body>
@@ -2023,7 +2101,8 @@ html, body, button, a, input, select, textarea, label, [role="button"] { touch-a
 
     <div class="set-h">Ayuda</div>
     <div class="set-group">
-      <button type="button" class="set-row" id="onb-replay"><span class="tx"><b>Ver el tutorial</b><small>Un repaso rápido de cómo usar la app.</small></span><svg class="chev-r" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 5l7 7-7 7"></path></svg></button>
+      <button type="button" class="set-row" id="tour-replay"><span class="tx"><b>Recorrido guiado</b><small>Te mostramos cada parte de la app, paso a paso.</small></span><svg class="chev-r" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 5l7 7-7 7"></path></svg></button>
+      <button type="button" class="set-row" id="onb-replay"><span class="tx"><b>Ver la introducción</b><small>Las pantallas de bienvenida.</small></span><svg class="chev-r" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 5l7 7-7 7"></path></svg></button>
     </div>
 
     <div class="set-h">Información legal</div>
@@ -2116,6 +2195,15 @@ html, body, button, a, input, select, textarea, label, [role="button"] { touch-a
       <button type="button" class="primary btn-danger" id="cf-ok" style="margin-top:14px"></button>
       <button type="button" class="secondary" id="cf-cancel" style="width:100%;margin-top:8px">Cancelar</button>
     </section>
+  </div>
+  <div class="tour" id="tour" hidden>
+    <div class="tour-hole" id="tour-hole"></div>
+    <div class="tour-tip" id="tour-tip" role="dialog" aria-modal="true" aria-labelledby="tour-t">
+      <div class="tt-top"><span id="tour-n"></span><button type="button" id="tour-skip">Saltar</button></div>
+      <b id="tour-t"></b>
+      <p id="tour-p"></p>
+      <div class="tt-btns"><button type="button" class="secondary" id="tour-prev">Atrás</button><button type="button" class="primary" id="tour-next">Siguiente</button></div>
+    </div>
   </div>
   <div class="onb" id="onb" hidden role="dialog" aria-modal="true" aria-label="Cómo usar Mis gastos">
     <div class="onb-top"><span class="onb-count" id="onb-count"></span><button type="button" class="onb-skip" id="onb-skip">Saltar</button></div>
@@ -6846,7 +6934,7 @@ html, body, button, a, input, select, textarea, label, [role="button"] { touch-a
       lk.mode = mode; lk.buf = ""; lk.first = ""; lk.onDone = onDone || null; lk.onb = !!opts.onb;
       lk.n = mode === "set" ? PIN_LEN : (state.pin && state.pin.n) || 4;
       $("lock-k").hidden = !lk.onb;
-      $("lock-k").textContent = lk.onb ? "Bienvenido a Mis gastos" : "";
+      $("lock-k").textContent = lk.onb ? "Último paso" : "";
       $("lock-t").textContent = mode === "unlock" ? "Escribe tu código" : mode === "verify" ? "Escribe tu código actual" : setTitle();
       lockMsg(mode === "set" ? (lk.onb ? "Elige " + PIN_LEN + " números. La pediremos cada vez que abras la app para proteger tus datos." : "Lo pediremos cada vez que abras la app.") : "");
       $("kp-cancel").style.visibility = mode === "unlock" || lk.onb ? "hidden" : "visible";
@@ -6918,34 +7006,22 @@ html, body, button, a, input, select, textarea, label, [role="button"] { touch-a
     /* ---------- Tutorial ---------- */
     var SVG = function (d) { return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' + d + "</svg>"; };
     var ONB = [
-      { c: "var(--accent)", ic: SVG('<path d="M12 5v14M5 12h14"></path>'), t: "Anota cada movimiento",
-        p: "Todo empieza con el botón + de abajo a la derecha.",
-        tips: [["+", "<b>Nuevo movimiento:</b> elige ingreso o gasto, el monto, la categoría y la cuenta."], ["⚡", "<b>Plantillas:</b> guarda los gastos que repites para anotarlos con un toque."]] },
-      { c: "var(--in)", ic: SVG('<rect x="3" y="6" width="18" height="13" rx="3"></rect><path d="M3 10h18M7 15h3"></path>'), t: "Tus cuentas y las tasas del día",
-        p: "Agrega tus cuentas en bolívares, dólares o euros y mira cuánto tienes en cada una.",
-        tips: [["$", "<b>Tasas BCV, euro y USDT:</b> se actualizan solas arriba en el Inicio."], ["⇄", "<b>Calculadora:</b> convierte entre Bs, $, €, USDT y bitcoin desde el botón +."]] },
-      { c: "#8a3ffc", ic: SVG('<path d="M4 20V10M10 20V4M16 20v-7M22 20H2"></path>'), t: "Ahorra y cumple tus metas",
-        p: "Aparta una parte de cada ingreso sin pensarlo y ponle nombre a lo que quieres lograr.",
-        tips: [["%", "<b>Ahorro automático:</b> al registrar un ingreso decides qué porcentaje guardar."], ["◎", "<b>Metas:</b> crea una meta y mira cuánto te falta y cuándo llegarías."]] },
-      { c: "#e08a00", ic: SVG('<rect x="3" y="5" width="18" height="16" rx="3"></rect><path d="M8 3v4M16 3v4M3 10h18M9 15l2 2 4-4"></path>'), t: "Que no se te pase ningún pago",
-        p: "En Pagos programas lo que tienes que pagar y lo ves en un calendario.",
-        tips: [["↻", "<b>Una sola vez o todos los meses:</b> el alquiler o el internet se repiten solos."], ["✓", "<b>Márcalo como pagado</b> y la app te avisa de lo que está vencido."]] },
-      { c: "var(--out)", ic: SVG('<path d="M4 6h16M4 12h10M4 18h6"></path><circle cx="18" cy="16" r="3"></circle><path d="M20.5 18.5L22 20"></path>'), t: "Mira en qué se va tu dinero",
-        p: "El Inicio te muestra tus gastos por categoría y el Historial guarda todo.",
-        tips: [["▤", "<b>Historial:</b> busca cualquier movimiento y filtra por ingresos, gastos o ahorro."], ["◐", "<b>Por categoría:</b> mira cuánto gastaste solo en alimentación, transporte o lo que quieras."]] },
-      { c: "var(--in)", ic: SVG('<path d="M12 3l8 3v6c0 4.5-3.4 8.3-8 9-4.6-.7-8-4.5-8-9V6z"></path><path d="M9 12l2 2 4-4"></path>'), t: "Tus datos son solo tuyos",
-        p: "Todo se guarda únicamente en este teléfono. No hay servidores ni cuentas, y nadie más puede verlo.",
-        tips: [["⚙", "<b>Ajustes:</b> el engranaje junto al nombre. Ahí cambias el tema, la moneda y tu clave."], ["⤓", "<b>Guarda una copia</b> de vez en cuando. Si cambias de teléfono o borras el navegador, es la única forma de recuperar tus datos."]],
-        legal: true }
+      { art: '<svg class="oa-rings" viewBox="0 0 180 180" aria-hidden="true"><circle cx="90" cy="90" r="80" fill="none" stroke="var(--fill)" stroke-width="13"></circle><circle class="oa-arc" cx="90" cy="90" r="80" fill="none" stroke="var(--accent)" stroke-width="13" stroke-linecap="round" stroke-dasharray="392.1 502.7" style="--len:392.1" transform="rotate(-90 90 90)"></circle><circle cx="90" cy="90" r="60" fill="none" stroke="var(--fill)" stroke-width="13"></circle><circle class="oa-arc" cx="90" cy="90" r="60" fill="none" stroke="var(--in)" stroke-width="13" stroke-linecap="round" stroke-dasharray="218.7 377.0" style="--len:218.7;--d:.12s" transform="rotate(-90 90 90)"></circle><circle cx="90" cy="90" r="40" fill="none" stroke="var(--fill)" stroke-width="13"></circle><circle class="oa-arc" cx="90" cy="90" r="40" fill="none" stroke="#f0a020" stroke-width="13" stroke-linecap="round" stroke-dasharray="216.1 251.3" style="--len:216.1;--d:.24s" transform="rotate(-90 90 90)"></circle></svg><div class="oa-pills"><span>Bs</span><span>$</span><span>€</span><span>USDT</span></div>', t: "Tu dinero, claro y en un solo lugar", p: "Gastos, ingresos, ahorro y pagos en bolívares, dólares, euros y USDT." },
+      { art: '<div class="oa-form"><small>Monto</small><b>12+8,50</b><div class="oa-ops"><i>+</i><i>−</i><i>×</i><em>= 20,50</em></div><div class="oa-cats"><span style="--c:#5b4cff">'+catSvg("Alimentación")+'Alimentación</span><span style="--c:#f0567e">'+catSvg("Restaurantes")+'Restaurantes</span></div></div>', t: "Anota en segundos", p: "Toca + para anotar. Suma montos mientras escribes y mantén presionado + para usar tus plantillas." },
+      { art: '<div class="oa-acc"><div class="oa-ring"><svg viewBox="0 0 104 104" aria-hidden="true"><circle cx="52" cy="52" r="44" fill="none" stroke="var(--fill)" stroke-width="10"></circle><circle class="oa-arc" cx="52" cy="52" r="44" fill="none" stroke="#00994f" stroke-width="10" stroke-linecap="round" stroke-dasharray="153.6 276.5" stroke-dashoffset="-7.5" style="--len:153.6;--d:0s" transform="rotate(-90 52 52)"></circle><circle class="oa-arc" cx="52" cy="52" r="44" fill="none" stroke="#f0a020" stroke-width="10" stroke-linecap="round" stroke-dasharray="62.4 276.5" stroke-dashoffset="-176.1" style="--len:62.4;--d:0.12s" transform="rotate(-90 52 52)"></circle><circle class="oa-arc" cx="52" cy="52" r="44" fill="none" stroke="#0e9aa7" stroke-width="10" stroke-linecap="round" stroke-dasharray="15.4 276.5" stroke-dashoffset="-253.5" style="--len:15.4;--d:0.24s" transform="rotate(-90 52 52)"></circle></svg><div><small>Total</small><b>$429</b></div></div><div class="oa-rows"><div style="--c:#00994f"><i></i><span>Zinli</span><b>$262</b></div><div style="--c:#f0a020"><i></i><span>Binance</span><b>USDT 120</b></div><div style="--c:#0e9aa7"><i></i><span>Banco</span><b>Bs 41.800</b></div><div class="oa-cat" style="--c:#5b4cff"><i></i><span>Alimentación</span><em class="b">▲ 12%</em></div></div></div>', t: "Mira a dónde va tu dinero", p: "Tus cuentas, tus categorías y lo que cambió desde el mes pasado." },
+      { art: '<div class="oa-goal"><svg class="oa-rings" viewBox="0 0 180 180" aria-hidden="true"><circle cx="90" cy="90" r="80" fill="none" stroke="var(--fill)" stroke-width="14"></circle><circle class="oa-arc" cx="90" cy="90" r="80" fill="none" stroke="#8a3ffc" stroke-width="14" stroke-linecap="round" stroke-dasharray="311.6 502.7" style="--len:311.6" transform="rotate(-90 90 90)"></circle><circle cx="90" cy="90" r="58" fill="none" stroke="var(--fill)" stroke-width="14"></circle><circle class="oa-arc" cx="90" cy="90" r="58" fill="none" stroke="var(--accent)" stroke-width="14" stroke-linecap="round" stroke-dasharray="109.3 364.4" style="--len:109.3;--d:.12s" transform="rotate(-90 90 90)"></circle><circle cx="90" cy="90" r="36" fill="none" stroke="var(--fill)" stroke-width="14"></circle><circle class="oa-arc" cx="90" cy="90" r="36" fill="none" stroke="#0e9aa7" stroke-width="14" stroke-linecap="round" stroke-dasharray="181.0 226.2" style="--len:181.0;--d:.24s" transform="rotate(-90 90 90)"></circle></svg><div class="oa-gl"><div style="--c:#8a3ffc"><i></i>Viaje<b>62%</b></div><div style="--c:var(--accent)"><i></i>Celular<b>30%</b></div><div style="--c:#0e9aa7"><i></i>Emergencia<b>80%</b></div></div></div>', t: "Ahorra y cumple tus metas", p: "Aparta parte de cada ingreso y mira cuánto te falta para cada meta." },
+      { art: '<div class="oa-pay"><div class="oa-week"><span class=""><small>L</small>13</span><span class="oa-d"><small>M</small>14</span><span class=""><small>M</small>15</span><span class="oa-d oa-l"><small>J</small>16</span><span class="oa-on"><small>V</small>17</span><span class=""><small>S</small>18</span><span class="oa-d oa-i"><small>D</small>19</span></div><div class="oa-pp late"><i></i><span><b>Internet</b> venció</span><em>$25</em></div><div class="oa-pp"><i></i><span><b>Netflix</b> en 3 días</span><em>$15</em></div><div class="oa-pp in"><i></i><span><b>Cliente</b> por cobrar</span><em>$350</em></div></div>', t: "Que no se te pase ningún pago", p: "Programa pagos y cobros. La app te avisa lo que vence." },
+      { art: '<div class="oa-safe"><svg class="oa-rings" viewBox="0 0 180 180" aria-hidden="true"><circle cx="90" cy="90" r="70" fill="none" stroke="var(--fill)" stroke-width="12"></circle><circle class="oa-arc" cx="90" cy="90" r="70" fill="none" stroke="var(--in)" stroke-width="12" stroke-linecap="round" stroke-dasharray="439.8 439.8" style="--len:439.8" transform="rotate(-90 90 90)"></circle></svg><svg class="oa-shield" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l8 3v6c0 4.5-3.4 8.3-8 9-4.6-.7-8-4.5-8-9V6z"></path><path d="M9 12l2 2 4-4"></path></svg><div class="oa-dots"><i></i><i></i><i></i><i></i></div></div>', t: "Tus datos se quedan aquí", p: "Todo se guarda solo en este teléfono, protegido con tu clave. Guarda una copia de vez en cuando.", last: true }
     ];
-    var onb = { i: 0 };
+    var onb = { i: 0, first: false };
     function buildOnb() {
       $("onb-slides").innerHTML = ONB.map(function (s, k) {
-        return '<section class="onb-slide" aria-hidden="' + (k ? "true" : "false") + '"><div class="onb-art" style="--c:' + s.c + '">' + s.ic + "</div><h2>" + s.t + "</h2><p>" + s.p + '</p><ul class="onb-tips">' +
-          s.tips.map(function (t) { return "<li><i>" + t[0] + "</i><span>" + t[1] + "</span></li>"; }).join("") + "</ul>" +
-          (s.legal ? '<p class="onb-legal">Al continuar aceptas los <button type="button" data-onb-lg="terms">Términos de uso</button> y la <button type="button" data-onb-lg="priv">Política de privacidad</button>. Mis gastos no da asesoría financiera.</p>' : "") + "</section>";
+        return '<section class="onb-slide" aria-hidden="' + (k ? "true" : "false") + '"><div class="onb-art2">' + s.art + "</div><h2>" + s.t + "</h2><p>" + s.p + "</p>" +
+          (s.last ? '<button type="button" class="onb-tour" id="onb-tour" aria-pressed="true"><i></i>Hacer un recorrido guiado al empezar</button>' +
+            '<p class="onb-legal">Al continuar aceptas los <button type="button" data-onb-lg="terms">Términos de uso</button> y la <button type="button" data-onb-lg="priv">Política de privacidad</button>. Mis gastos no da asesoría financiera.</p>' : "") + "</section>";
       }).join("");
       $("onb-dots").innerHTML = new Array(ONB.length + 1).join("<i></i>");
+      $("onb-tour").addEventListener("click", function () { var b = $("onb-tour"); b.setAttribute("aria-pressed", b.getAttribute("aria-pressed") === "true" ? "false" : "true"); });
     }
     function goOnb(i) {
       onb.i = Math.max(0, Math.min(ONB.length - 1, i));
@@ -6954,27 +7030,34 @@ html, body, button, a, input, select, textarea, label, [role="button"] { touch-a
       Array.prototype.forEach.call($("onb-dots").children, function (el, k) { el.classList.toggle("on", k === onb.i); });
       $("onb-count").textContent = (onb.i + 1) + " de " + ONB.length;
       var last = onb.i === ONB.length - 1;
-      $("onb-next").textContent = last ? "Empezar a usar Mis gastos" : "Siguiente";
+      $("onb-next").textContent = last ? "Empezar" : "Siguiente";
       $("onb-prev").hidden = onb.i === 0;
       $("onb-skip").hidden = last;
     }
-    function showOnb() {
+    function showOnb(first) {
+      onb.first = !!first;
       if (!$("onb-slides").children.length) buildOnb();
       $("onb").hidden = false;
       goOnb(0);
       $("onb-next").focus();
     }
     function endOnb() {
+      var tour = $("onb-tour") && $("onb-tour").getAttribute("aria-pressed") === "true";
       $("onb").hidden = true;
-      state.onb = true; save();
-      document.documentElement.classList.remove("locked");
-      scheduleFit();
-      try { drawTrend(); } catch (e) {}
+      function done() {
+        state.onb = true; save();
+        document.documentElement.classList.remove("locked");
+        scheduleFit();
+        try { drawTrend(); } catch (e) {}
+        if (tour) setTimeout(startTour, 450);
+      }
+      if (onb.first && !(state.pin && state.pin.h)) openLock("set", done, { onb: true });
+      else done();
     }
     function startOnb() {
       document.documentElement.classList.add("locked");
-      if (state.pin && state.pin.h) openLock("unlock", showOnb);
-      else openLock("set", showOnb, { onb: true });
+      if (state.pin && state.pin.h) openLock("unlock", function () { showOnb(true); });
+      else showOnb(true);
     }
     $("onb-next").addEventListener("click", function () { if (onb.i >= ONB.length - 1) endOnb(); else goOnb(onb.i + 1); });
     $("onb-prev").addEventListener("click", function () { goOnb(onb.i - 1); });
@@ -6995,7 +7078,92 @@ html, body, button, a, input, select, textarea, label, [role="button"] { touch-a
       if (e.key === "ArrowRight") goOnb(onb.i + 1);
       else if (e.key === "ArrowLeft") goOnb(onb.i - 1);
     });
-    $("onb-replay").addEventListener("click", function () { showOnb(); });
+    $("onb-replay").addEventListener("click", function () { showOnb(false); });
+    $("tour-replay").addEventListener("click", function () { startTour(); });
+
+    /* ---------- Recorrido guiado ---------- */
+    var TOUR = [
+      { tab: 0, sel: ".rate-card", all: true, t: "Tasas del día", p: "Dólar BCV, euro y USDT. Se actualizan solas y te muestran si subieron ▲ o bajaron ▼." },
+      { tab: 0, sel: ".bal-hero", t: "Saldo disponible", p: "Lo que te queda este mes, en dólares, bolívares o euros. El gráfico te dice a dónde llegarías si sigues así." },
+      { tab: 0, sel: '[data-panel="acc"]', t: "Tus cuentas", p: "El total y cuánto hay en cada cuenta. Toca una para ver sus movimientos. Con ⇄ transfieres y con + agregas otra." },
+      { tab: 0, sel: '[data-panel="cat"]', t: "En qué se va el dinero", p: "Tus gastos por categoría, comparados con el mes pasado. En Límites pones un máximo para cada una." },
+      { tab: 0, sel: "#fab", t: "El botón +", p: "Tócalo para anotar un gasto, un ingreso o un ahorro. Mantenlo presionado para usar tus plantillas.", round: true },
+      { tab: 0, sel: "#tabbar", t: "Secciones", p: "Muévete entre Inicio, Ahorro, Pagos e Historial. Desliza de lado para cambiar de mes.", round: true },
+      { tab: 1, sel: '#goals-view [data-panel="sav"]', t: "Tu ahorro", p: "Lo que tienes apartado. Desde aquí ahorras, retiras o cambias de moneda." },
+      { tab: 1, sel: "#gv-hero", alt: "#goal-empty", t: "Metas", p: "Crea metas con el + de arriba y mira cuánto llevas de cada una." },
+      { tab: 2, sel: ".pay-tabs", t: "Pagos y cobros", p: "Por pagar es lo que debes. Por cobrar es lo que esperas recibir, y también cuenta en tu proyección." },
+      { tab: 2, sel: "#pay-cal", t: "Calendario", p: "Cada punto es un pago. Lo vencido se marca en rojo y te avisamos en el Inicio." },
+      { tab: 3, sel: "#hist-stats", t: "Historial", p: "Todos tus movimientos del mes. Busca, filtra y mira cómo cerró cada mes." },
+      { tab: 0, sel: "#set-open", t: "Ajustes", p: "Tema, tu clave, copias de seguridad y este recorrido cuando quieras repetirlo.", round: true }
+    ];
+    var tour = { i: -1, t: 0 };
+    function tourRect(st, el) {
+      if (!st.all) return el.getBoundingClientRect();
+      var L = 1e9, T = 1e9, R = -1e9, B = -1e9;
+      document.querySelectorAll(st.sel).forEach(function (x) { var r = x.getBoundingClientRect(); if (!r.width) return; L = Math.min(L, r.left); T = Math.min(T, r.top); R = Math.max(R, r.right); B = Math.max(B, r.bottom); });
+      return { left: L, top: T, right: R, bottom: B, width: R - L, height: B - T };
+    }
+    function tourTarget(st) {
+      var el = document.querySelector(st.sel);
+      if ((!el || !el.getClientRects().length || el.closest("[hidden]")) && st.alt) el = document.querySelector(st.alt);
+      return el && el.getClientRects().length && !el.closest("[hidden]") ? el : null;
+    }
+    function tourPlace() {
+      if (tour.i < 0) return;
+      var st = TOUR[tour.i], el = tourTarget(st), hole = $("tour-hole"), tip = $("tour-tip");
+      if (!el) return;
+      var r = tourRect(st, el), pad = st.round ? 6 : 8, H = window.innerHeight;
+      var top = Math.max(8, r.top - pad), bot = Math.min(H - 8, r.bottom + pad);
+      hole.style.left = (r.left - pad) + "px"; hole.style.width = (r.width + pad * 2) + "px";
+      hole.style.top = top + "px"; hole.style.height = Math.max(0, bot - top) + "px";
+      hole.style.borderRadius = st.round ? "999px" : "22px";
+      var th = tip.offsetHeight || 170, below = H - bot, above = top;
+      tip.style.top = ""; tip.style.bottom = "";
+      if (below >= th + 24 || below >= above) tip.style.top = Math.min(H - th - 12, bot + 14) + "px";
+      else tip.style.bottom = Math.min(H - th - 12, H - top + 14) + "px";
+    }
+    function tourGo(i) {
+      if (i < 0) return;
+      if (i >= TOUR.length) { endTour(); return; }
+      tour.i = i;
+      var st = TOUR[i], tab = document.querySelector('.tab[data-tab="' + st.tab + '"]');
+      var cur = document.querySelector(".tab[aria-current='true']");
+      var needNav = !cur || cur !== tab || document.body.classList.contains("view-set");
+      if (needNav && tab) tab.click();
+      $("tour-n").textContent = (i + 1) + " de " + TOUR.length;
+      $("tour-t").textContent = st.t; $("tour-p").textContent = st.p;
+      $("tour-prev").hidden = i === 0;
+      $("tour-next").textContent = i === TOUR.length - 1 ? "Listo" : "Siguiente";
+      var tip = $("tour-tip"); tip.classList.remove("in"); void tip.offsetWidth; tip.classList.add("in");
+      clearTimeout(tour.t);
+      tour.t = setTimeout(function () {
+        var el = tourTarget(st);
+        if (!el) { tourGo(i + (tour.back ? -1 : 1)); return; }
+        var r = el.getBoundingClientRect();
+        if (r.top < 70 || r.bottom > window.innerHeight - 110) el.scrollIntoView({ block: "center", behavior: "smooth" });
+        setTimeout(tourPlace, r.top < 70 || r.bottom > window.innerHeight - 110 ? 420 : 0);
+      }, needNav ? 480 : 60);
+    }
+    function startTour() {
+      closeDial();
+      document.querySelectorAll(".sheet-backdrop").forEach(function (x) { x.hidden = true; });
+      var t = $("tour"); t.hidden = false; tour.back = false;
+      requestAnimationFrame(function () { t.classList.add("on"); });
+      tourGo(0);
+    }
+    function endTour() {
+      var t = $("tour"); t.classList.remove("on"); tour.i = -1; clearTimeout(tour.t);
+      setTimeout(function () { t.hidden = true; }, 300);
+      var home = document.querySelector('.tab[data-tab="0"]'); if (home && document.body.className.indexOf("view-") >= 0) home.click();
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+    $("tour-next").addEventListener("click", function () { tour.back = false; tourGo(tour.i + 1); });
+    $("tour-prev").addEventListener("click", function () { tour.back = true; tourGo(tour.i - 1); });
+    $("tour-skip").addEventListener("click", endTour);
+    window.addEventListener("resize", tourPlace);
+    window.addEventListener("scroll", function () { if (tour.i >= 0) requestAnimationFrame(tourPlace); }, { passive: true });
+    document.addEventListener("scroll", function () { if (tour.i >= 0) requestAnimationFrame(tourPlace); }, { passive: true, capture: true });
+    document.addEventListener("keydown", function (e) { if (tour.i >= 0 && e.key === "Escape") endTour(); });
     var hiddenAt = 0;
     document.addEventListener("visibilitychange", function () {
       if (document.hidden) { hiddenAt = Date.now(); return; }
