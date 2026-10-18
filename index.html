@@ -1751,8 +1751,7 @@ html, body, button, a, input, select, textarea, label, [role="button"] { touch-a
 .ar-n small { font-size: 0.72rem; font-weight: 500; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .ar-v { font-weight: 700; font-size: 0.92rem; font-variant-numeric: tabular-nums; white-space: nowrap; flex: none; }
 .ar-v.neg { color: var(--out); }
-.ar-v small { font-size: 0.72em; font-weight: 600; color: var(--muted); margin-right: 2px; }
-.ar-v small:last-child:not(:first-child) { margin: 0 0 0 2px; }
+.ar-c b small { font-size: 0.68em; font-weight: 600; color: var(--muted); margin-right: 2px; }
 </style>
 </head>
 <body>
@@ -4305,9 +4304,9 @@ html, body, button, a, input, select, textarea, label, [role="button"] { touch-a
   function accAmt(n, cur) {
     var x = Math.abs(n), sign = n < 0 ? "−" : "", v;
     if (x >= 1e6) v = num(x / 1e6, x >= 1e8 ? 0 : x >= 1e7 ? 1 : 2) + " M";
-    else v = num(x, x >= 1000 ? 0 : 2);
+    else v = num(x, x >= 10000 ? 0 : 2);
     var sym = cur === "USD" ? "$" : cur === "EUR" ? "€" : cur === "USDT" ? "USDT" : "Bs";
-    return cur === "USDT" ? sign + v + ' <small>' + sym + "</small>" : '<small>' + sign + sym + "</small>" + v;
+    return '<small>' + sign + sym + "</small>" + v;
   }
   function renderAccounts() {
     var list = $("acc-list"), m = savMap(), D = state.disp, tot = 0, miss = false, posUsd = 0;
@@ -4318,10 +4317,10 @@ html, body, button, a, input, select, textarea, label, [role="button"] { touch-a
       var bal = accBalance(a), cv = conv(bal, a.moneda, D);
       if (cv === null) miss = true; else tot += cv;
       var u = conv(bal, a.moneda, "USD"), share = posUsd > 0 && u > 0 ? u / posUsd * 100 : 0;
-      var sub = (share > 0 && share < 1 ? "<1" : Math.round(share)) + "%" + (a.moneda !== D && cv !== null ? " · ≈ " + money(cv, D) : "");
+      var sub = (share > 0 && share < 1 ? "<1" : Math.round(share)) + "%" + (a.moneda !== D && cv !== null ? " · ≈ " + money(cv, D, Math.abs(cv) >= 10000 ? 0 : 2) : "");
       return '<li><button type="button" class="acc-r" data-acc-open="' + a.id + '" style="--c:' + accColor(a) + '" aria-label="Ver la cuenta ' + esc(a.nombre) + '"><i></i>' +
         '<span class="ar-n"><b>' + esc(a.nombre) + "</b><small>" + sub + "</small></span>" +
-        '<span class="ar-v' + (bal < 0 ? " neg" : "") + '">' + accAmt(bal, a.moneda) + "</span></button></li>";
+        '<span class="ar-v' + (bal < 0 ? " neg" : "") + '">' + (a.moneda === "USDT" ? (bal < 0 ? "-" : "") + "USDT " + num(Math.abs(bal)) : money(bal, a.moneda)) + "</span></button></li>";
     }).join("");
     $("acc3").hidden = !state.accounts.length;
     var sum = $("acc-sum");
@@ -4336,7 +4335,7 @@ html, body, button, a, input, select, textarea, label, [role="button"] { touch-a
         at += len; return el;
       }).join("");
       var sh = '<svg viewBox="0 0 104 104" aria-hidden="true"><circle cx="52" cy="52" r="44" fill="none" stroke="var(--fill)" stroke-width="10"></circle>' + arcs + "</svg>" +
-        '<div class="ar-c"><small>Total</small><b class="fit">' + money(tot, D) + (miss ? "*" : "") + "</b></div>";
+        '<div class="ar-c"><small>Total</small><b class="fit">' + accAmt(tot, D) + (miss ? "*" : "") + "</b></div>";
       if (sum._h !== sh) { sum.innerHTML = sh; sum._h = sh; }
     }
     var ah = $("acc-head");
