@@ -1864,6 +1864,37 @@ html, body, button, a, input, select, textarea, label, [role="button"] { touch-a
 .hh-card, .ad-bal-wrap { min-width: 0; }
 #goal-list, #goal-list * { min-width: 0; overflow-wrap: anywhere; }
 .menu.up { top: auto; bottom: calc(100% + 6px); }
+
+/* ===== Recorrido: animaciones ===== */
+.tour { transition: opacity 0.35s ease; }
+.tour-hole { transition: top 0.55s cubic-bezier(0.32, 0.72, 0, 1), left 0.55s cubic-bezier(0.32, 0.72, 0, 1), width 0.55s cubic-bezier(0.32, 0.72, 0, 1), height 0.55s cubic-bezier(0.32, 0.72, 0, 1), border-radius 0.45s ease, box-shadow 0.35s ease !important; }
+.tour-hole::after { content: ""; position: absolute; inset: -5px; border-radius: inherit; border: 2px solid var(--accent); opacity: 0; animation: tourPulse 1.8s cubic-bezier(0.2, 0.8, 0.2, 1) 0.6s infinite; }
+@keyframes tourPulse { 0% { opacity: 0.75; transform: scale(1); } 70%, 100% { opacity: 0; transform: scale(1.06); } }
+.tour.nav .tour-hole::after, .tour.bye .tour-hole::after { animation: none; opacity: 0; }
+.tour.track .tour-hole, .tour.track .tour-tip { transition: none !important; }
+.tour-tip { transition: top 0.55s cubic-bezier(0.32, 0.72, 0, 1), opacity 0.3s ease, transform 0.45s cubic-bezier(0.32, 0.72, 0, 1) !important; opacity: 0; transform: translateY(18px) scale(0.97); animation: none !important; }
+.tour.on .tour-tip { opacity: 1; transform: none; }
+.tour.bye .tour-tip { opacity: 0; transform: translateY(14px) scale(0.97); }
+.tour.nav .tour-tip { opacity: 0.55; }
+.tt-prog { height: 3px; border-radius: 99px; background: var(--fill); overflow: hidden; margin-bottom: 4px; }
+.tt-prog i { display: block; height: 100%; width: 0; border-radius: 99px; background: var(--accent); transition: width 0.5s cubic-bezier(0.32, 0.72, 0, 1); }
+.tt-body { display: grid; gap: 6px; }
+.tt-body b { font-size: 1.1rem; letter-spacing: -0.02em; }
+.tt-body p { margin: 0; color: var(--muted); font-size: 0.92rem; line-height: 1.45; }
+.tt-body.out { transition: opacity 0.16s ease, transform 0.16s ease; opacity: 0; }
+.tt-body.out.f { transform: translateX(-14px); }
+.tt-body.out.b { transform: translateX(14px); }
+.tt-body.in { animation: ttInF 0.34s cubic-bezier(0.32, 0.72, 0, 1) both; }
+.tt-body.in.b { animation-name: ttInB; }
+@keyframes ttInF { from { opacity: 0; transform: translateX(16px); } }
+@keyframes ttInB { from { opacity: 0; transform: translateX(-16px); } }
+@media (prefers-reduced-motion: reduce) { .tour-hole::after { animation: none; } .tt-body.in { animation: none; } }
+
+/* ===== Cuentas: anillo más grande en el mismo espacio ===== */
+.acc3 { grid-template-columns: 128px minmax(0, 1fr) !important; gap: 12px !important; }
+.acc3 .acc-sum, .acc3 .acc-sum svg { width: 128px !important; height: 128px !important; }
+.ar-c small { font-size: 0.68rem !important; }
+.ar-c b { font-size: 1.08rem !important; max-width: 100px !important; }
 </style>
 </head>
 <body>
@@ -2233,9 +2264,9 @@ html, body, button, a, input, select, textarea, label, [role="button"] { touch-a
   <div class="tour" id="tour" hidden>
     <div class="tour-hole" id="tour-hole"></div>
     <div class="tour-tip" id="tour-tip" role="dialog" aria-modal="true" aria-labelledby="tour-t">
+      <div class="tt-prog" aria-hidden="true"><i id="tour-bar"></i></div>
       <div class="tt-top"><span id="tour-n"></span><button type="button" id="tour-skip">Saltar</button></div>
-      <b id="tour-t"></b>
-      <p id="tour-p"></p>
+      <div class="tt-body" id="tour-body"><b id="tour-t"></b><p id="tour-p"></p></div>
       <div class="tt-btns"><button type="button" class="secondary" id="tour-prev">Atrás</button><button type="button" class="primary" id="tour-next">Siguiente</button></div>
     </div>
   </div>
@@ -7297,61 +7328,87 @@ html, body, button, a, input, select, textarea, label, [role="button"] { touch-a
       if ((!el || !el.getClientRects().length || el.closest("[hidden]")) && st.alt) el = document.querySelector(st.alt);
       return el && el.getClientRects().length && !el.closest("[hidden]") ? el : null;
     }
-    function tourPlace() {
+    function tourPlace(instant) {
       if (tour.i < 0) return;
-      var st = TOUR[tour.i], el = tourTarget(st), hole = $("tour-hole"), tip = $("tour-tip");
+      var st = TOUR[tour.i], el = tourTarget(st), hole = $("tour-hole"), tip = $("tour-tip"), T = $("tour");
       if (!el) return;
       var r = tourRect(st, el), pad = st.round ? 6 : 8, H = window.innerHeight;
       var top = Math.max(8, r.top - pad), bot = Math.min(H - 8, r.bottom + pad);
+      T.classList.toggle("track", instant === true);
       hole.style.left = (r.left - pad) + "px"; hole.style.width = (r.width + pad * 2) + "px";
       hole.style.top = top + "px"; hole.style.height = Math.max(0, bot - top) + "px";
       hole.style.borderRadius = st.round ? "999px" : "22px";
-      var th = tip.offsetHeight || 170, below = H - bot, above = top;
-      tip.style.top = ""; tip.style.bottom = "";
-      if (below >= th + 24 || below >= above) tip.style.top = Math.min(H - th - 12, bot + 14) + "px";
-      else tip.style.bottom = Math.min(H - th - 12, H - top + 14) + "px";
+      T.classList.remove("nav");
+      // El globo siempre se ubica con «top», así se desliza suave entre pasos
+      var th = tip.offsetHeight || 170, below = H - bot, above = top, y;
+      if (below >= th + 24 || below >= above) y = Math.min(H - th - 12, bot + 14);
+      else y = Math.max(12, top - 14 - th);
+      tip.style.bottom = ""; tip.style.top = y + "px";
     }
-    function tourGo(i) {
-      if (i < 0) return;
-      if (i >= TOUR.length) { endTour(); return; }
-      tour.i = i;
-      var st = TOUR[i], tab = document.querySelector('.tab[data-tab="' + st.tab + '"]');
-      var cur = document.querySelector(".tab[aria-current='true']");
-      var needNav = !cur || cur !== tab || document.body.classList.contains("view-set");
-      if (needNav && tab) tab.click();
+    function tourFill(st, i) {
       $("tour-n").textContent = (i + 1) + " de " + TOUR.length;
       $("tour-t").textContent = st.t; $("tour-p").textContent = st.p;
       $("tour-prev").hidden = i === 0;
       $("tour-next").textContent = i === TOUR.length - 1 ? "Listo" : "Siguiente";
-      var tip = $("tour-tip"); tip.classList.remove("in"); void tip.offsetWidth; tip.classList.add("in");
+      $("tour-bar").style.width = ((i + 1) / TOUR.length * 100) + "%";
+    }
+    function tourGo(i) {
+      if (i < 0) return;
+      if (i >= TOUR.length) { endTour(); return; }
+      var first = tour.i < 0;
+      tour.i = i;
+      var st = TOUR[i], tab = document.querySelector('.tab[data-tab="' + st.tab + '"]');
+      var cur = document.querySelector(".tab[aria-current='true']");
+      var needNav = !cur || cur !== tab || document.body.classList.contains("view-set");
+      if (needNav && tab) { $("tour").classList.add("nav"); tab.click(); }
+      // Cambio de contenido: sale hacia un lado y entra desde el otro
+      var tip = $("tour-tip"), body = $("tour-body");
+      if (first) tourFill(st, i);
+      else {
+        body.className = "tt-body out " + (tour.back ? "b" : "f");
+        setTimeout(function () { tourFill(st, i); body.className = "tt-body in " + (tour.back ? "b" : "f"); }, 170);
+      }
       clearTimeout(tour.t);
       tour.t = setTimeout(function () {
         var el = tourTarget(st);
         if (!el) { tourGo(i + (tour.back ? -1 : 1)); return; }
-        var r = el.getBoundingClientRect();
-        if (r.top < 70 || r.bottom > window.innerHeight - 110) el.scrollIntoView({ block: "center", behavior: "smooth" });
-        setTimeout(tourPlace, r.top < 70 || r.bottom > window.innerHeight - 110 ? 420 : 0);
-      }, needNav ? 480 : 60);
+        var r = el.getBoundingClientRect(), far = r.top < 70 || r.bottom > window.innerHeight - 110;
+        if (far) el.scrollIntoView({ block: "center", behavior: "smooth" });
+        setTimeout(function () { tourPlace(false); }, far ? 420 : 0);
+      }, needNav ? 480 : 40);
     }
     function startTour() {
       closeDial();
       document.querySelectorAll(".sheet-backdrop").forEach(function (x) { x.hidden = true; });
-      var t = $("tour"); t.hidden = false; tour.back = false;
-      requestAnimationFrame(function () { t.classList.add("on"); });
+      var t = $("tour"), hole = $("tour-hole"); tour.back = false; tour.i = -1;
+      t.classList.add("track"); t.classList.remove("on", "bye");
+      hole.style.left = (window.innerWidth / 2) + "px"; hole.style.top = (window.innerHeight / 2) + "px"; hole.style.width = "0px"; hole.style.height = "0px";
+      $("tour-tip").style.top = (window.innerHeight - 240) + "px";
+      t.hidden = false;
+      requestAnimationFrame(function () { requestAnimationFrame(function () { t.classList.remove("track"); t.classList.add("on"); }); });
       tourGo(0);
     }
     function endTour() {
-      var t = $("tour"); t.classList.remove("on"); tour.i = -1; clearTimeout(tour.t);
-      setTimeout(function () { t.hidden = true; }, 300);
+      var t = $("tour"), hole = $("tour-hole"); tour.i = -1; clearTimeout(tour.t);
+      t.classList.remove("track"); t.classList.add("bye");
+      hole.style.left = "-40px"; hole.style.top = "-40px"; hole.style.width = (window.innerWidth + 80) + "px"; hole.style.height = (window.innerHeight + 80) + "px"; hole.style.borderRadius = "60px";
+      setTimeout(function () { t.classList.remove("on"); }, 260);
+      setTimeout(function () { t.hidden = true; t.classList.remove("bye"); }, 620);
       var home = document.querySelector('.tab[data-tab="0"]'); if (home && document.body.className.indexOf("view-") >= 0) home.click();
       window.scrollTo({ top: 0, behavior: "smooth" });
     }
     $("tour-next").addEventListener("click", function () { tour.back = false; tourGo(tour.i + 1); });
     $("tour-prev").addEventListener("click", function () { tour.back = true; tourGo(tour.i - 1); });
     $("tour-skip").addEventListener("click", endTour);
-    window.addEventListener("resize", tourPlace);
-    window.addEventListener("scroll", function () { if (tour.i >= 0) requestAnimationFrame(tourPlace); }, { passive: true });
-    document.addEventListener("scroll", function () { if (tour.i >= 0) requestAnimationFrame(tourPlace); }, { passive: true, capture: true });
+    window.addEventListener("resize", function () { tourPlace(true); });
+    var tourScrollT = 0;
+    function tourScroll() {
+      if (tour.i < 0 || $("tour").classList.contains("nav")) return;
+      requestAnimationFrame(function () { tourPlace(true); });
+      clearTimeout(tourScrollT); tourScrollT = setTimeout(function () { $("tour").classList.remove("track"); }, 160);
+    }
+    window.addEventListener("scroll", tourScroll, { passive: true });
+    document.addEventListener("scroll", tourScroll, { passive: true, capture: true });
     document.addEventListener("keydown", function (e) { if (tour.i >= 0 && e.key === "Escape") endTour(); });
     var hiddenAt = 0;
     document.addEventListener("visibilitychange", function () {
