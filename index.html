@@ -1830,6 +1830,32 @@ html, body, button, a, input, select, textarea, label, [role="button"] { touch-a
 .tt-btns button { flex: 1; min-height: 44px; border-radius: 99px !important; margin: 0 !important; }
 .tt-btns button[hidden] { display: none; }
 @media (prefers-reduced-motion: reduce) { .tour-hole, .tour-tip { transition: none; } }
+
+/* ===== Detalle de movimiento ===== */
+.hrow[data-hid] { cursor: pointer; }
+.hrow[data-hid]:active { background: var(--fill); border-radius: 14px; }
+.hd-top { display: grid; justify-items: center; text-align: center; gap: 4px; padding: 4px 0 14px; }
+.hd-ic { width: 54px; height: 54px; border-radius: 50%; display: grid; place-items: center; color: var(--c); background: color-mix(in srgb, var(--c) 18%, transparent); margin-bottom: 4px; animation: dotPop 0.45s cubic-bezier(0.2, 0.8, 0.2, 1) backwards; }
+.hd-ic svg { width: 26px; height: 26px; }
+.hd-t { font-weight: 600; color: var(--muted); }
+.hd-v { font-size: 2.3rem; font-weight: 700; letter-spacing: -0.045em; line-height: 1.05; font-variant-numeric: tabular-nums; }
+.hd-v.in { color: var(--in); } .hd-v.out { color: var(--out); } .hd-v.sv { color: var(--accent); }
+.hd-eq { color: var(--muted); font-size: 0.84rem; font-weight: 600; }
+.hd-ctx { display: flex; align-items: center; gap: 12px; padding: 12px 14px; border-radius: 20px; background: color-mix(in srgb, var(--c) 10%, var(--fill)); margin-bottom: 8px; }
+.hd-ctx svg { width: 54px; height: 54px; flex: none; }
+.hd-ctx div { display: grid; gap: 1px; min-width: 0; }
+.hd-ctx b { font-size: 0.92rem; }
+.hd-ctx span { font-size: 0.8rem; color: var(--muted); }
+.hd-rows { display: grid; margin-bottom: 14px; }
+.hd-r { display: flex; justify-content: space-between; gap: 16px; padding: 11px 0; border-top: 1px solid var(--line); font-size: 0.92rem; }
+.hd-r:first-child { border-top: 0; }
+.hd-r span { color: var(--muted); flex: none; }
+.hd-r b { font-weight: 600; text-align: right; min-width: 0; overflow-wrap: anywhere; }
+.hd-btns { display: flex; gap: 8px; }
+.hd-btns button { flex: 1; margin: 0 !important; min-height: 46px; border-radius: 99px !important; }
+.hd-btns button[hidden] { display: none; }
+.hd-btns .hd-del { color: var(--out); }
+.hd-btns .hd-del.sure { background: var(--out) !important; color: #fff; flex: 2; }
 </style>
 </head>
 <body>
@@ -2351,6 +2377,13 @@ html, body, button, a, input, select, textarea, label, [role="button"] { touch-a
       </div>
       <p class="error" id="pg-err" role="alert"></p>
       <button type="button" class="primary" id="pg-save">Programar pago</button>
+    </section>
+  </div>
+  <div class="sheet-backdrop" id="hd-sheet" hidden>
+    <section class="panel sheet" role="dialog" aria-modal="true" aria-label="Detalle del movimiento">
+      <div class="sheet-head"><h2>Detalle</h2><button type="button" class="del" id="hd-close" aria-label="Cerrar">✕</button></div>
+      <div id="hd-body"></div>
+      <div class="hd-btns"><button type="button" class="secondary" id="hd-edit">Editar</button><button type="button" class="secondary" id="hd-dup">Duplicar</button><button type="button" class="secondary hd-del" id="hd-del">Eliminar</button></div>
     </section>
   </div>
   <div class="sheet-backdrop" id="ms-sheet" hidden>
@@ -3750,7 +3783,7 @@ html, body, button, a, input, select, textarea, label, [role="button"] { touch-a
       '<button type="button" role="menuitem" class="danger" data-h-del="' + it.id + '">Eliminar movimiento</button></div></div>';
     var hgo = histGoal(it), gstyle = hgo && hgo.g ? ' style="--gc:' + goalColor(hgo.g) + '"' : "", catIc = (it.tipo === "gasto" || it.tipo === "ingreso") && CAT_ICON[it.cat];
     if (catIc) gstyle = ' style="--gc:' + (it.tipo === "gasto" ? colorFor(it.cat) : colorForIn(it.cat)) + '"';
-    return '<li class="hrow' + (fresh ? "@@F@@" : "") + '"><span class="hic k-' + (hgo || catIc ? "goal" : k) + '"' + gstyle + '><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' + (hgo ? '<path d="M6.5 21V4M6.5 4h11l-2 4 2 4H6.5"></path>' : catIc || H_ICONS[k]) + "</svg></span>" +
+    return '<li class="hrow' + (fresh ? "@@F@@" : "") + '" data-hid="' + it.id + '"><span class="hic k-' + (hgo || catIc ? "goal" : k) + '"' + gstyle + '><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' + (hgo ? '<path d="M6.5 21V4M6.5 4h11l-2 4 2 4H6.5"></path>' : catIc || H_ICONS[k]) + "</svg></span>" +
       '<div class="hmain"><div class="ht">' + esc(histTitle(it)) + '</div><div class="hs">' + esc(histSub(it)) + '</div></div><div class="ha ' + cls + '">' + amt + "</div>" + menu + "</li>";
   }
   function renderHistory() {
@@ -6654,7 +6687,84 @@ html, body, button, a, input, select, textarea, label, [role="button"] { touch-a
         state.items = state.items.filter(function (it) { return it.id !== did && it.linkId !== did; });
         save(); render();
         showToast("Movimiento eliminado.");
+        return;
       }
+      var row = e.target.closest(".hrow[data-hid]");
+      if (row && !e.target.closest(".menu-wrap")) openHd(Number(row.getAttribute("data-hid")));
+    });
+
+    /* ---------- Detalle de un movimiento ---------- */
+    var hdId = null;
+    function hdRow(l, v) { return v ? '<div class="hd-r"><span>' + l + "</span><b>" + v + "</b></div>" : ""; }
+    function openHd(id) {
+      var it = state.items.filter(function (x) { return x.id === id; })[0];
+      if (!it) return;
+      hdId = id;
+      var k = histKind(it), D = state.disp, isTr = it.tipo === "traspaso", hg = histGoal(it);
+      var col = it.tipo === "gasto" ? colorFor(it.cat) : it.tipo === "ingreso" ? colorForIn(it.cat) : hg && hg.g ? goalColor(hg.g) : "var(--accent)";
+      var ic = (it.tipo === "gasto" || it.tipo === "ingreso") && CAT_ICON[it.cat] ? CAT_ICON[it.cat] : hg ? '<path d="M6.5 21V4M6.5 4h11l-2 4 2 4H6.5"></path>' : H_ICONS[k];
+      var plus = it.tipo === "ingreso" || it.tipo === "retiro", sign = isTr || it.tipo === "ahorro" ? "" : plus ? "+" : "−";
+      var cur = isTr ? it.desde.moneda : it.moneda, val = isTr ? it.desde.monto : it.monto;
+      var hide = k === "sv" && state.hideSav;
+      var big = hide ? "••••" : sign + money(val, cur);
+      var eq = ["USD", "VES", "EUR"].filter(function (c) { return c !== cur; }).map(function (c) { var x = conv(val, cur, c); return x === null ? "" : "≈ " + money(x, c); }).filter(Boolean).join(" · ");
+      var tipoTxt = { gasto: "Gasto", ingreso: "Ingreso", ahorro: "Ahorro", retiro: "Retiro de ahorro", traspaso: hg ? (hg.dep ? "Depósito a meta" : "Retiro de meta") : k === "sv" ? "Movimiento de ahorro" : "Transferencia" }[it.tipo];
+      var d = new Date(it.fecha + "T12:00:00"), fecha = d.toLocaleDateString("es-VE", { weekday: "long", day: "numeric", month: "long", year: "numeric" });
+      var rows = hdRow("Tipo", tipoTxt) + hdRow("Fecha", fecha.charAt(0).toUpperCase() + fecha.slice(1));
+      if (isTr) {
+        var place = function (o) { if (!o) return ""; if (o.k === "meta") { var g = state.goals.filter(function (x) { return x.id === o.id; })[0]; return "Meta " + (g ? esc(g.nombre) : ""); } var a = accById(o.id); return (o.k === "ahorro" ? "Ahorros de " : "") + (a ? esc(a.nombre) : "una cuenta"); };
+        rows += hdRow("Sale de", place(it.desde) + " · " + (hide ? "••••" : money(it.desde.monto, it.desde.moneda)));
+        rows += hdRow("Llega a", place(it.hacia) + " · " + (hide ? "••••" : money(it.hacia.monto, it.hacia.moneda)));
+        if (it.tasa > 0) rows += hdRow("Tasa usada", num(it.tasa, it.tasa < 10 ? 4 : 2));
+      } else {
+        var acc = accById(it.cuenta);
+        if (it.tipo === "gasto" || it.tipo === "ingreso") rows += hdRow("Categoría", esc(it.cat));
+        rows += hdRow("Cuenta", acc ? esc(acc.nombre) + " (" + curLabel(acc.moneda) + ")" : "Sin cuenta");
+      }
+      if (it.nota && !(isTr && !hg && k !== "sv")) rows += hdRow("Nota", esc(it.nota));
+      if (isTr && !hg && it.nota) rows += hdRow("Nota", esc(it.nota));
+      var linked = state.items.filter(function (x) { return x.linkId === it.id; })[0];
+      if (linked && linked.tipo === "ahorro") rows += hdRow("Apartaste para ahorro", money(linked.monto, linked.moneda));
+      if (it.auto) rows += hdRow("Origen", "Creado por la app");
+      // Contexto del mes
+      var ctx = "";
+      if (it.tipo === "gasto" || it.tipo === "ingreso") {
+        var m = it.fecha.slice(0, 7), totC = 0, totT = 0, n = 0;
+        state.items.forEach(function (x) {
+          if (x.tipo !== it.tipo || x.fecha.slice(0, 7) !== m) return;
+          var v = conv(x.monto, x.moneda, D); if (v === null) return;
+          totT += v; if (x.cat === it.cat) { totC += v; n++; }
+        });
+        var mine = conv(it.monto, it.moneda, D) || 0, pc = totC > 0 ? Math.round(mine / totC * 100) : 0, pt = totT > 0 ? Math.round(mine / totT * 100) : 0;
+        var mesN = MESES[Number(m.slice(5, 7)) - 1];
+        ctx = '<div class="hd-ctx" style="--c:' + col + '">' + ringsSvg([{ p: totT > 0 ? mine / totT : 0, c: col }], 54, 7, 0) +
+          "<div><b>" + pt + "% de tus " + (it.tipo === "gasto" ? "gastos" : "ingresos") + " de " + mesN + "</b><span>" + n + (n === 1 ? " movimiento" : " movimientos") + " en " + esc(it.cat) + " · " + money(totC, D) + (n > 1 ? " (este es el " + pc + "%)" : "") + "</span></div></div>";
+      }
+      var canEdit = !it.auto && (it.tipo === "gasto" || it.tipo === "ingreso");
+      $("hd-body").innerHTML = '<div class="hd-top" style="--c:' + col + '"><span class="hd-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' + ic + "</svg></span>" +
+        '<div class="hd-t">' + esc(histTitle(it)) + '</div><div class="hd-v ' + (k === "sv" ? "sv" : plus ? "in" : it.tipo === "gasto" ? "out" : "") + '">' + big + "</div>" + (hide || !eq ? "" : '<div class="hd-eq">' + eq + "</div>") + "</div>" +
+        ctx + '<div class="hd-rows">' + rows + "</div>";
+      $("hd-edit").hidden = !canEdit; $("hd-dup").hidden = !canEdit; $("hd-del").hidden = !!it.auto;
+      $("hd-del").textContent = "Eliminar"; $("hd-del").classList.remove("sure");
+      $("hd-sheet").hidden = false;
+    }
+    function closeHd() { $("hd-sheet").hidden = true; hdId = null; }
+    $("hd-close").addEventListener("click", closeHd);
+    $("hd-sheet").addEventListener("click", function (e) { if (e.target === $("hd-sheet")) closeHd(); });
+    $("hd-edit").addEventListener("click", function () { var it = state.items.filter(function (x) { return x.id === hdId; })[0]; closeHd(); if (it) openSheet(it); });
+    $("hd-dup").addEventListener("click", function () {
+      var it = state.items.filter(function (x) { return x.id === hdId; })[0]; if (!it) return;
+      var c = JSON.parse(JSON.stringify(it)); c.id = Date.now(); c.fecha = today(); delete c.linkId; delete c.auto;
+      state.items.push(c); save(); render(); closeHd();
+      showToast("Movimiento duplicado con fecha de hoy.");
+    });
+    $("hd-del").addEventListener("click", function () {
+      var b = $("hd-del");
+      if (!b.classList.contains("sure")) { b.classList.add("sure"); b.textContent = "Toca otra vez para eliminar"; return; }
+      var did = hdId;
+      state.items = state.items.filter(function (it) { return it.id !== did && it.linkId !== did; });
+      save(); render(); closeHd();
+      showToast("Movimiento eliminado.");
     });
 
     /* ---------- Pantalla de metas ---------- */
