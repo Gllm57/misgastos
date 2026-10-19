@@ -7508,7 +7508,7 @@ html.loc-none [data-disp="VES"], html.loc-none .rc-usd { display: none !importan
     /* ---------- Recorrido guiado ---------- */
     var TOUR = [
       { tab: 0, sel: ".rate-card", all: true, t: "Tasas del día", p: "Dólar BCV, euro y USDT. Se actualizan solas y te muestran si subieron ▲ o bajaron ▼." },
-      { tab: 0, sel: ".bal-hero", t: "Te queda este mes", p: "Lo que te queda este mes, en dólares, bolívares o euros. El gráfico te dice a dónde llegarías si sigues así." },
+      { tab: 0, sel: ".bal-hero", t: "Te queda este mes", p: "" },
       { tab: 0, sel: '[data-panel="acc"]', t: "Tus cuentas", p: "El total y cuánto hay en cada cuenta. Toca una para ver sus movimientos. Con ⇄ transfieres y con + agregas otra." },
       { tab: 0, sel: '[data-panel="cat"]', t: "En qué se va el dinero", p: "Tus gastos por categoría, comparados con el mes pasado. En Límites pones un máximo para cada una." },
       { tab: 0, sel: "#fab", t: "El botón +", p: "Tócalo para anotar un gasto, un ingreso o un ahorro. Mantenlo presionado para usar tus plantillas.", round: true },
@@ -7583,7 +7583,7 @@ html.loc-none [data-disp="VES"], html.loc-none .rc-usd { display: none !importan
     }
     function startTour() {
       TOUR[0].p = (LOC.none ? "Euro" : "Dólar" + (LOC.src ? " " + LOC.src : "") + ", euro") + " y USDT. Se actualizan solas y te muestran si subieron ▲ o bajaron ▼.";
-      TOUR[1].p = "Lo que te queda este mes, en " + (LOC.none ? "dólares o euros" : "dólares, " + LOC.name + " o euros") + ". El gráfico te dice a dónde llegarías si sigues así.";
+      TOUR[1].p = "Lo que entró este mes menos lo que gastaste y ahorraste. Empieza de cero cada día 1. Debajo, «En tus cuentas» es todo el dinero que tienes hoy, sumando los meses anteriores.";
       closeDial();
       document.querySelectorAll(".sheet-backdrop").forEach(function (x) { x.hidden = true; });
       var t = $("tour"), hole = $("tour-hole"); tour.back = false; tour.i = -1;
