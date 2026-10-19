@@ -1895,6 +1895,8 @@ html, body, button, a, input, select, textarea, label, [role="button"] { touch-a
 .acc3 .acc-sum, .acc3 .acc-sum svg { width: 128px !important; height: 128px !important; }
 .ar-c small { font-size: 0.68rem !important; }
 .ar-c b { font-size: 1.08rem !important; max-width: 100px !important; }
+.bal-note { font-size: 0.8rem !important; font-weight: 500; margin-top: 4px !important; }
+.bal-note b { color: var(--ink); font-weight: 600; font-variant-numeric: tabular-nums; }
 </style>
 </head>
 <body>
@@ -1932,7 +1934,7 @@ html, body, button, a, input, select, textarea, label, [role="button"] { touch-a
   <section class="panel bal-hero" aria-labelledby="h-bal">
     <div class="balance-head">
       <div>
-        <div class="balance-label" id="h-bal">Saldo disponible</div>
+        <div class="balance-label" id="h-bal">Te queda este mes</div>
         <div class="balance-amount fit" id="balance">$0,00</div>
         <div class="bal-note" id="bal-note" hidden></div>
       </div>
@@ -3192,7 +3194,7 @@ html, body, button, a, input, select, textarea, label, [role="button"] { touch-a
     var line = bal.map(function (v, i) { return (i ? "L" : "M") + X(i + 1).toFixed(1) + " " + Y(v).toFixed(1); }).join(" ");
     var y0 = Y(0), tdir = trendDir(bal);
     wrap.parentNode.classList.toggle("t-down", tdir === "down");
-    var svg = '<svg viewBox="0 0 ' + W + " " + H + '" role="img" aria-label="Saldo disponible día a día">' +
+    var svg = '<svg viewBox="0 0 ' + W + " " + H + '" role="img" aria-label="Lo que te queda día a día">' +
       '<defs><linearGradient id="trg-bal" x1="0" y1="0" x2="0" y2="1"><stop offset="0" style="stop-color:var(--tc);stop-opacity:0.22"></stop><stop offset="1" style="stop-color:var(--tc);stop-opacity:0"></stop></linearGradient></defs>' +
       [0.33, 0.66].map(function (f) { var gy = (top + f * (bot - top)).toFixed(1); return '<line class="grid" x1="0" x2="' + W + '" y1="' + gy + '" y2="' + gy + '"></line>'; }).join("") +
       (mn < 0 ? '<line class="zero" x1="0" x2="' + W + '" y1="' + y0.toFixed(1) + '" y2="' + y0.toFixed(1) + '"></line>' : '<line class="base" x1="0" x2="' + W + '" y1="' + bot + '" y2="' + bot + '"></line>');
@@ -4196,8 +4198,11 @@ html, body, button, a, input, select, textarea, label, [role="button"] { touch-a
     });
 
     var open = accOpening(state.month), bal = tin - tout - tsv + open.tot;
-    var bn = $("bal-note");
-    bn.hidden = true;
+    // Debajo: el total que hay hoy en todas las cuentas, para no confundirlo con lo del mes
+    var bn = $("bal-note"), accTot = 0, accOk = false;
+    state.accounts.forEach(function (a) { var v = conv(accBalance(a), a.moneda, D); if (v !== null) { accTot += v; accOk = true; } });
+    bn.hidden = !accOk;
+    if (accOk) bn.innerHTML = 'En tus cuentas: <b>' + money(accTot, D) + "</b>";
     var b = $("balance");
     setMoney(b, bal, function (v) { return moneyH(v, D); }, D);
     b.className = "balance-amount fit" + (bal < 0 ? " neg" : "");
@@ -7304,7 +7309,7 @@ html, body, button, a, input, select, textarea, label, [role="button"] { touch-a
     /* ---------- Recorrido guiado ---------- */
     var TOUR = [
       { tab: 0, sel: ".rate-card", all: true, t: "Tasas del día", p: "Dólar BCV, euro y USDT. Se actualizan solas y te muestran si subieron ▲ o bajaron ▼." },
-      { tab: 0, sel: ".bal-hero", t: "Saldo disponible", p: "Lo que te queda este mes, en dólares, bolívares o euros. El gráfico te dice a dónde llegarías si sigues así." },
+      { tab: 0, sel: ".bal-hero", t: "Te queda este mes", p: "Lo que te queda este mes, en dólares, bolívares o euros. El gráfico te dice a dónde llegarías si sigues así." },
       { tab: 0, sel: '[data-panel="acc"]', t: "Tus cuentas", p: "El total y cuánto hay en cada cuenta. Toca una para ver sus movimientos. Con ⇄ transfieres y con + agregas otra." },
       { tab: 0, sel: '[data-panel="cat"]', t: "En qué se va el dinero", p: "Tus gastos por categoría, comparados con el mes pasado. En Límites pones un máximo para cada una." },
       { tab: 0, sel: "#fab", t: "El botón +", p: "Tócalo para anotar un gasto, un ingreso o un ahorro. Mantenlo presionado para usar tus plantillas.", round: true },
