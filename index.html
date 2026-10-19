@@ -2848,7 +2848,8 @@ html, body, button, a, input, select, textarea, label, [role="button"] { touch-a
   }
   function curLabel(c) { return c === "USD" ? "$" : c === "EUR" ? "€" : c === "USDT" ? "USDT" : "Bs"; }
   // Monedas que solo se mueven entre cuentas de la misma moneda en ahorros y metas
-  function curCompat(x, y) { return (x === "EUR" || x === "USDT" || y === "EUR" || y === "USDT") ? x === y : true; }
+  // Se puede mover dinero entre cualquier par de monedas; si son distintas se pide la tasa
+  function curCompat(x, y) { return !!x && !!y; }
   function accById(id) {
     if (id === undefined || id === null || id === "") return null;
     return state.accounts.filter(function (a) { return String(a.id) === String(id); })[0] || null;
@@ -4626,6 +4627,15 @@ html, body, button, a, input, select, textarea, label, [role="button"] { touch-a
       var d = conv(1, a, b);
       return { label: "Tasa (" + curLabel(b) + " por " + u1 + ")", def: d, hint: "{r} " + curLabel(b) + " por " + u1, chips: false };
     }
+    // Ajusta la etiqueta, los atajos y la tasa sugerida del campo de tasa según el par de monedas
+    var ratePair = {};
+    function rateUI(pfx, a, b) {
+      var info = trRateInfo(a, b), pair = a + ">" + b, w = $(pfx + "-rate-wrap");
+      w.querySelector("label").textContent = info.label;
+      var ch = w.querySelector(".rate-chips"); if (ch) ch.style.display = info.chips ? "" : "none";
+      if (ratePair[pfx] !== pair) { $(pfx + "-rate").value = info.def > 0 ? fmtIn(Math.round(info.def * 10000) / 10000) : ""; ratePair[pfx] = pair; }
+    }
+    function rateUsed(a, b, r) { return trRateInfo(a, b).hint.replace("{r}", num(r, r < 10 ? 4 : 2)); }
     function fillMvFrom() {
       var from = $("mv-from"), prev = from.value, m = savMap(), opts = [];
       function label(name, cur, v) { return state.hideSav ? name + " (" + curLabel(cur) + ")" : name + " · " + money(v, cur); }
@@ -4666,6 +4676,7 @@ html, body, button, a, input, select, textarea, label, [role="button"] { touch-a
       var rate = mvNeedsRate();
       $("mv-rate-wrap").style.display = rate ? "" : "none";
       $("mv-rate-hint").style.display = rate ? "" : "none";
+      if (rate) rateUI("mv", parseSrc($("mv-from").value).cur, mvDest().moneda);
       renderMvPrev();
     }
     function renderMvPrev() {
@@ -4688,7 +4699,7 @@ html, body, button, a, input, select, textarea, label, [role="button"] { touch-a
       mv.mode = mode;
       setPressed("[data-mv]", "data-mv", mode);
       $("mv-monto").value = "";
-      $("mv-rate").value = state.rate > 0 ? fmtIn(state.rate) : "";
+      ratePair.mv = "";
       $("mv-err").textContent = "";
       fillMvFrom();
       $("mv-sheet").hidden = false;
@@ -5242,6 +5253,7 @@ html, body, button, a, input, select, textarea, label, [role="button"] { touch-a
       var rate = svNeedsRate();
       $("sv-rate-wrap").style.display = rate ? "" : "none";
       $("sv-rate-hint").style.display = rate ? "" : "none";
+      if (rate) rateUI("sv", svSrc().moneda, svDst().moneda);
       renderSvPrev();
     }
     function renderSvPrev() {
@@ -5259,7 +5271,7 @@ html, body, button, a, input, select, textarea, label, [role="button"] { touch-a
     function openSv() {
       if (!state.accounts.length) { showToast("Primero agrega una cuenta."); openAccSheet(null); return; }
       $("sv-monto").value = "";
-      $("sv-rate").value = state.rate > 0 ? fmtIn(state.rate) : "";
+      ratePair.sv = "";
       $("sv-err").textContent = "";
       fillSvFrom();
       $("sv-sheet").hidden = false;
@@ -6187,6 +6199,7 @@ html, body, button, a, input, select, textarea, label, [role="button"] { touch-a
       var c = gmCurs(), rate = !!c && c.from !== c.to;
       $("gm-rate-wrap").style.display = rate ? "" : "none";
       $("gm-rate-hint").style.display = rate ? "" : "none";
+      if (rate) rateUI("gm", c.from, c.to);
       $("gm-monto-label").textContent = "Monto" + (c ? " (" + curLabel(c.from) + ")" : "");
       renderGmPrev();
     }
@@ -6200,7 +6213,7 @@ html, body, button, a, input, select, textarea, label, [role="button"] { touch-a
       var right = gm.mode === "dep" ? "Entra a la meta" : "Llega a " + c.o.label;
       p.innerHTML = '<div class="pv"><span>' + esc(left) + "</span><strong>" + money(v, c.from) + "</strong></div>" +
         '<div class="pv"><span>' + esc(right) + "</span><strong>" + money(out, c.to) + "</strong></div>" +
-        (c.from !== c.to ? '<span class="hint">Tasa usada: Bs ' + num(r) + " por $1.</span>" : "");
+        (c.from !== c.to ? '<span class="hint">Tasa usada: ' + rateUsed(c.from, c.to, r) + ".</span>" : "");
     }
     function openGm(g, mode) {
       if (!g) return;
@@ -6209,7 +6222,7 @@ html, body, button, a, input, select, textarea, label, [role="button"] { touch-a
       setPressed("[data-gm]", "data-gm", mode);
       $("h-gm").textContent = "Meta";
       $("gm-monto").value = "";
-      $("gm-rate").value = state.rate > 0 ? fmtIn(state.rate) : "";
+      ratePair.gm = "";
       $("gm-err").textContent = "";
       fillGm();
       $("gm-sheet").hidden = false;
