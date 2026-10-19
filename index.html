@@ -1856,6 +1856,14 @@ html, body, button, a, input, select, textarea, label, [role="button"] { touch-a
 .hd-btns button[hidden] { display: none; }
 .hd-btns .hd-del { color: var(--out); }
 .hd-btns .hd-del.sure { background: var(--out) !important; color: #fff; flex: 2; }
+
+/* Correcciones de desborde */
+.sav-hero { grid-template-columns: minmax(0, 1fr); }
+.sav-hero > * { min-width: 0; }
+.hh-v, #ad-bal { max-width: 100%; overflow: hidden; white-space: nowrap; padding-bottom: 0.14em; margin-bottom: -0.14em; }
+.hh-card, .ad-bal-wrap { min-width: 0; }
+#goal-list, #goal-list * { min-width: 0; overflow-wrap: anywhere; }
+.menu.up { top: auto; bottom: calc(100% + 6px); }
 </style>
 </head>
 <body>
@@ -2972,8 +2980,8 @@ html, body, button, a, input, select, textarea, label, [role="button"] { touch-a
     var els = document.querySelectorAll(".fit");
     els.forEach(function (el) { el.style.fontSize = ""; });
     els.forEach(function (el) {
-      var size = parseFloat(getComputedStyle(el).fontSize), min = size * 0.5, n = 0;
-      while (el.scrollWidth > el.clientWidth + 1 && size > min && n++ < 40) {
+      var size = parseFloat(getComputedStyle(el).fontSize), min = size * 0.32, n = 0;
+      while (el.scrollWidth > el.clientWidth + 1 && size > min && n++ < 80) {
         size -= 0.5;
         el.style.fontSize = size + "px";
       }
@@ -3012,9 +3020,11 @@ html, body, button, a, input, select, textarea, label, [role="button"] { touch-a
     return /^-?(\d+\.?\d*|\.\d+)$/.test(t) ? parseFloat(t) : NaN;
   }
   // Puntos de miles mientras se escribe: 1500 → 1.500, 1500000 → 1.500.000
-  function fmtLive(v) {
+  function fmtLive(v, money) {
     return String(v).replace(/[^+\-−×xX*/]+/g, function (seg) {
       var k = seg.indexOf(","), ip = k >= 0 ? seg.slice(0, k) : seg, dp = k >= 0 ? seg.slice(k + 1).replace(/\D/g, "") : null;
+      // En montos no hay 3 decimales: «1,000» era un separador de miles (1.000)
+      if (money && dp !== null && dp.length > 2) { ip = ip.replace(/\D/g, "") + dp; dp = null; }
       ip = ip.replace(/\D/g, "").replace(/^0+(?=\d)/, "");
       if (!ip && dp === null) return "";
       ip = (ip || "0").replace(/\B(?=(\d{3})+(?!\d))/g, ".");
@@ -3026,7 +3036,7 @@ html, body, button, a, input, select, textarea, label, [role="button"] { touch-a
     if (!el || el.tagName !== "INPUT" || el.getAttribute("inputmode") !== "decimal") return;
     var v = el.value, pos = el.selectionStart == null ? v.length : el.selectionStart;
     if (e.data === "." && pos > 0 && v.charAt(pos - 1) === ".") v = v.slice(0, pos - 1) + "," + v.slice(pos);
-    var sig = v.slice(0, pos).replace(/\./g, "").length, out = fmtLive(v);
+    var sig = v.slice(0, pos).replace(/\./g, "").length, out = fmtLive(v, !/rate|tasa/i.test(el.id));
     if (out === el.value) return;
     el.value = out;
     var i = 0, n = 0;
@@ -3041,6 +3051,18 @@ html, body, button, a, input, select, textarea, label, [role="button"] { touch-a
     if (b.closest("[hidden]") || (b._t && now - b._t < 700)) { e.stopImmediatePropagation(); e.preventDefault(); return; }
     b._t = now;
   }, true);
+  // Si un menu ⋮ no cabe hacia abajo (o queda bajo la barra de pestañas), se abre hacia arriba
+  document.addEventListener("click", function (e) {
+    var d = e.target.closest && e.target.closest(".dots"); if (!d) return;
+    var m = d.parentNode.querySelector(".menu"); if (!m || m.hidden) return;
+    m.classList.remove("up");
+    var tb = document.getElementById("tabbar"), lim = Math.min(window.innerHeight, tb ? tb.getBoundingClientRect().top : window.innerHeight);
+    if (m.getBoundingClientRect().bottom > lim - 6) m.classList.add("up");
+  });
+  function delMov(did) {
+    state.items = state.items.filter(function (it) { return it.id !== did && it.linkId !== did; });
+    if (state.earn) state.earn = state.earn.filter(function (e) { return e.ahorroId !== did && e.id !== did; });
+  }
   function fmtIn(n) { return String(Math.round(n * 10000) / 10000).replace(".", ","); }
 
   // Gráfico principal: disponible del mes día a día y proyección hasta fin de mes
@@ -4722,7 +4744,7 @@ html, body, button, a, input, select, textarea, label, [role="button"] { touch-a
       renderMvPrev();
     }
     function renderMvPrev() {
-      var p = $("mv-prev"), v = parseNum($("mv-monto").value), src = parseSrc($("mv-from").value), d = mvDest();
+      var p = $("mv-prev"), v = amtVal($("mv-monto").value), src = parseSrc($("mv-from").value), d = mvDest();
       if (!src || !d) { p.innerHTML = ""; return; }
       if (!(v > 0)) { p.innerHTML = ""; return; }
       if (mv.mode === "retirar") {
@@ -4766,7 +4788,7 @@ html, body, button, a, input, select, textarea, label, [role="button"] { touch-a
     $("mv-monto").addEventListener("input", renderMvPrev);
     $("mv-rate").addEventListener("input", renderMvPrev);
     $("mv-go").addEventListener("click", function () {
-      var err = $("mv-err"), v = parseNum($("mv-monto").value), m = savMap();
+      var err = $("mv-err"), v = amtVal($("mv-monto").value), m = savMap();
       var src = parseSrc($("mv-from").value), d = mvDest();
       if (!src) { err.textContent = "No tienes ahorros para mover."; return; }
       if (!(v > 0)) { err.textContent = "Escribe un monto mayor a cero."; $("mv-monto").focus(); return; }
@@ -4810,7 +4832,7 @@ html, body, button, a, input, select, textarea, label, [role="button"] { touch-a
       $("f-sav-body").style.display = f.on ? "" : "none";
       var amt = amtVal($("monto").value);
       $("f-sav-hint").textContent = f.on
-        ? "Se aparta el " + f.pct + "% de este ingreso."
+        ? "Se aparta el " + String(f.pct).replace(".", ",") + "% de este ingreso."
         : "Este ingreso no genera ahorro.";
       var curr = $("moneda").value;
       var prev = $("f-sav-prev");
@@ -4993,6 +5015,12 @@ html, body, button, a, input, select, textarea, label, [role="button"] { touch-a
       if (!$("dial").hidden) closeDial();
       else if (!$("cf-sheet").hidden) closeCf();
       else if (!$("rh-sheet").hidden) closeRh();
+      else if (!$("gm-sheet").hidden) closeGm();
+      else if (!$("ge-sheet").hidden) closeGe();
+      else if (!$("hd-sheet").hidden) closeHd();
+      else if (!$("ms-sheet").hidden) $("ms-sheet").hidden = true;
+      else if (!$("lim-sheet").hidden) closeLim();
+      else if (!$("gs-sheet").hidden) closeGs();
       else if (!$("gd-sheet").hidden) closeGd();
       else if (!$("earn-sheet").hidden) closeEarn();
       else if (!$("lg-sheet").hidden) closeLg();
@@ -5217,7 +5245,7 @@ html, body, button, a, input, select, textarea, label, [role="button"] { touch-a
       renderTrPrev();
     }
     function renderTrPrev() {
-      var p = $("tr-prev"), v = parseNum($("tr-monto").value), a = trSrc(), b = trDst();
+      var p = $("tr-prev"), v = amtVal($("tr-monto").value), a = trSrc(), b = trDst();
       if (!a || !b || !(v > 0)) { p.innerHTML = ""; return; }
       var r = parseNum($("tr-rate").value);
       if (a.moneda !== b.moneda && !(r > 0)) { p.innerHTML = '<span class="hint">Escribe la tasa para ver cuánto llega.</span>'; return; }
@@ -5231,7 +5259,7 @@ html, body, button, a, input, select, textarea, label, [role="button"] { touch-a
     function openTr() {
       if (state.accounts.length < 2) { showToast("Necesitas al menos dos cuentas para transferir."); return; }
       $("tr-monto").value = "";
-      $("tr-rate").value = state.rate > 0 ? fmtIn(state.rate) : "";
+      trPair = "";
       $("tr-err").textContent = "";
       fillTrFrom();
       $("tr-sheet").hidden = false;
@@ -5246,7 +5274,7 @@ html, body, button, a, input, select, textarea, label, [role="button"] { touch-a
     $("tr-monto").addEventListener("input", renderTrPrev);
     $("tr-rate").addEventListener("input", renderTrPrev);
     $("tr-go").addEventListener("click", function () {
-      var err = $("tr-err"), v = parseNum($("tr-monto").value), a = trSrc(), b = trDst();
+      var err = $("tr-err"), v = amtVal($("tr-monto").value), a = trSrc(), b = trDst();
       if (!a) { err.textContent = "Elige la cuenta de origen."; return; }
       if (!b) { err.textContent = "Elige la cuenta que recibe el dinero."; return; }
       if (!(v > 0)) { err.textContent = "Escribe un monto mayor a cero."; $("tr-monto").focus(); return; }
@@ -5299,7 +5327,7 @@ html, body, button, a, input, select, textarea, label, [role="button"] { touch-a
       renderSvPrev();
     }
     function renderSvPrev() {
-      var p = $("sv-prev"), v = parseNum($("sv-monto").value), a = svSrc(), b = svDst();
+      var p = $("sv-prev"), v = amtVal($("sv-monto").value), a = svSrc(), b = svDst();
       if (!a || !b || !(v > 0)) { p.innerHTML = ""; return; }
       var r = parseNum($("sv-rate").value);
       if (a.moneda !== b.moneda && !(r > 0)) { p.innerHTML = '<span class="hint">Escribe la tasa para ver cuánto llega.</span>'; return; }
@@ -5327,7 +5355,7 @@ html, body, button, a, input, select, textarea, label, [role="button"] { touch-a
     $("sv-monto").addEventListener("input", renderSvPrev);
     $("sv-rate").addEventListener("input", renderSvPrev);
     $("sv-go").addEventListener("click", function () {
-      var err = $("sv-err"), v = parseNum($("sv-monto").value), a = svSrc(), b = svDst();
+      var err = $("sv-err"), v = amtVal($("sv-monto").value), a = svSrc(), b = svDst();
       if (!a) { err.textContent = "Elige la cuenta de la que sale el dinero."; return; }
       if (!b) { err.textContent = "Elige la cuenta cuyos ahorros reciben el dinero."; return; }
       if (!(v > 0)) { err.textContent = "Escribe un monto mayor a cero."; $("sv-monto").focus(); return; }
@@ -5666,7 +5694,7 @@ html, body, button, a, input, select, textarea, label, [role="button"] { touch-a
       if ((b = e.target.closest("[data-h-del]"))) {
         closeMenus();
         var did = Number(b.getAttribute("data-h-del"));
-        state.items = state.items.filter(function (it) { return it.id !== did && it.linkId !== did; });
+        delMov(did);
         save(); render();
         showToast("Movimiento eliminado.");
       }
@@ -6199,9 +6227,10 @@ html, body, button, a, input, select, textarea, label, [role="button"] { touch-a
       } else {
         state.goals.push({ id: Date.now(), nombre: nombre, meta: meta, moneda: $("ge-moneda").value });
       }
+      var wasEditG = !!geId;
       save(); render();
       closeGe();
-      showToast(geId ? "Meta actualizada." : "Meta creada.");
+      showToast(wasEditG ? "Meta actualizada." : "Meta creada.");
     });
 
     function gmOptions(g) {
@@ -6246,7 +6275,7 @@ html, body, button, a, input, select, textarea, label, [role="button"] { touch-a
       renderGmPrev();
     }
     function renderGmPrev() {
-      var p = $("gm-prev"), c = gmCurs(), v = parseNum($("gm-monto").value);
+      var p = $("gm-prev"), c = gmCurs(), v = amtVal($("gm-monto").value);
       if (!c || !(v > 0)) { p.innerHTML = ""; return; }
       var r = parseNum($("gm-rate").value);
       if (c.from !== c.to && !(r > 0)) { p.innerHTML = '<span class="hint">Escribe la tasa para ver cuánto llega.</span>'; return; }
@@ -6285,7 +6314,7 @@ html, body, button, a, input, select, textarea, label, [role="button"] { touch-a
     $("gm-monto").addEventListener("input", renderGmPrev);
     $("gm-rate").addEventListener("input", renderGmPrev);
     $("gm-go").addEventListener("click", function () {
-      var err = $("gm-err"), c = gmCurs(), v = parseNum($("gm-monto").value);
+      var err = $("gm-err"), c = gmCurs(), v = amtVal($("gm-monto").value);
       if (!c) { err.textContent = "Elige una cuenta."; return; }
       if (!(v > 0)) { err.textContent = "Escribe un monto mayor a cero."; $("gm-monto").focus(); return; }
       var r = parseNum($("gm-rate").value), diff = c.from !== c.to;
@@ -6566,7 +6595,7 @@ html, body, button, a, input, select, textarea, label, [role="button"] { touch-a
     $("pg-sheet").addEventListener("click", function (e) { if (e.target === $("pg-sheet")) closePg(); });
     $("pg-fecha-btn").addEventListener("click", function () { openCal("pago"); });
     $("pg-save").addEventListener("click", function () {
-      var titulo = $("pg-titulo").value.trim(), monto = parseNum($("pg-monto").value), fecha = $("pg-fecha").value, err = $("pg-err");
+      var titulo = $("pg-titulo").value.trim(), monto = amtVal($("pg-monto").value), fecha = $("pg-fecha").value, err = $("pg-err");
       if (!titulo) { err.textContent = "Ponle un título al pago, por ejemplo «Alquiler»."; $("pg-titulo").focus(); return; }
       if (!(monto > 0)) { err.textContent = "Escribe la cantidad a pagar."; $("pg-monto").focus(); return; }
       if (!fecha) { err.textContent = "Elige la fecha del pago."; return; }
@@ -6575,9 +6604,14 @@ html, body, button, a, input, select, textarea, label, [role="button"] { touch-a
       if (pgId) {
         var p = payById(pgId);
         if (p) {
+          var origM = p.fecha.slice(0, 7);
           p.titulo = titulo; p.monto = monto; p.moneda = moneda; p.fecha = fecha; p.cobro = pgCobro;
           var sr = p.serie ? seriesById(p.serie) : null;
-          if (sr && pgRep === "once") stopSeries(sr.id, p.id);
+          if (sr && pgRep !== "once" && fecha.slice(0, 7) !== origM) {
+            // Se pospuso solo este mes: el mes original queda sin pago y este pasa a ser un pago aparte
+            sr.skip = sr.skip || {}; sr.skip[origM] = true;
+            p.id = Date.now(); delete p.serie;
+          } else if (sr && pgRep === "once") stopSeries(sr.id, p.id);
           else if (sr) {
             sr.titulo = titulo; sr.monto = monto; sr.moneda = moneda; sr.dia = dia; sr.cobro = pgCobro;
             state.payments.forEach(function (x) {
@@ -6684,7 +6718,7 @@ html, body, button, a, input, select, textarea, label, [role="button"] { touch-a
       if ((b = e.target.closest("[data-h-del]"))) {
         closeMenus();
         var did = Number(b.getAttribute("data-h-del"));
-        state.items = state.items.filter(function (it) { return it.id !== did && it.linkId !== did; });
+        delMov(did);
         save(); render();
         showToast("Movimiento eliminado.");
         return;
@@ -6762,7 +6796,7 @@ html, body, button, a, input, select, textarea, label, [role="button"] { touch-a
       var b = $("hd-del");
       if (!b.classList.contains("sure")) { b.classList.add("sure"); b.textContent = "Toca otra vez para eliminar"; return; }
       var did = hdId;
-      state.items = state.items.filter(function (it) { return it.id !== did && it.linkId !== did; });
+      delMov(did);
       save(); render(); closeHd();
       showToast("Movimiento eliminado.");
     });
@@ -7665,7 +7699,7 @@ html, body, button, a, input, select, textarea, label, [role="button"] { touch-a
       if (state.type === "ingreso" && state.fsav.on && state.fsav.pct > 0) {
         var last = state.items[state.items.length - 1];
         var ap = Math.round(monto * state.fsav.pct) / 100;
-        state.items.push({ id: last.id + 1, tipo: "ahorro", auto: true, linkId: last.id, pct: state.fsav.pct, monto: ap, moneda: last.moneda, cuenta: last.cuenta, cat: "Ahorro automático", fecha: fecha, nota: state.fsav.pct + "% del ingreso" });
+        state.items.push({ id: last.id + 1, tipo: "ahorro", auto: true, linkId: last.id, pct: state.fsav.pct, monto: ap, moneda: last.moneda, cuenta: last.cuenta, cat: "Ahorro automático", fecha: fecha, nota: String(state.fsav.pct).replace(".", ",") + "% del ingreso" });
         ok.textContent = state.hideSav ? "Se apartó una parte a tu ahorro." : "Se apartaron " + money(ap, last.moneda) + " a tu ahorro.";
       }
       state.lastAcc = Number($("cuenta").value);
