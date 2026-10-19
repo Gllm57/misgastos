@@ -3031,9 +3031,32 @@ html, body, button, a, input, select, textarea, label, [role="button"] { touch-a
       return dp === null ? ip : ip + "," + dp;
     });
   }
+  // Montos tipo cajero: los dígitos entran por la derecha y los 2 decimales ya están puestos (1234 → 12,34)
+  function isMoneyInput(el) { return /(^|-)monto$|^acc-saldo$|^ge-meta$|^cx-amt$/.test(el.id) || el.hasAttribute("data-lim"); }
+  function fmtCents(v) {
+    return String(v).replace(/[^+\-−×xX*/]+/g, function (seg) {
+      var d = seg.replace(/\D/g, "");
+      if (!d) return "";
+      d = d.replace(/^0+/, "");
+      while (d.length < 3) d = "0" + d;
+      return d.slice(0, -2).replace(/\B(?=(\d{3})+(?!\d))/g, ".") + "," + d.slice(-2);
+    });
+  }
+  function moneyIn(n) { return (n < 0 ? "-" : "") + fmtCents(String(Math.round(Math.abs(n) * 100))); }
+  document.addEventListener("focusin", function (e) {
+    var el = e.target;
+    if (!el || el.tagName !== "INPUT" || !isMoneyInput(el) || !el.value || /[+−×xX*/]/.test(el.value.slice(1))) return;
+    var n = parseNum(el.value);
+    if (isFinite(n)) el.value = moneyIn(n);
+  });
   document.addEventListener("input", function (e) {
     var el = e.target;
     if (!el || el.tagName !== "INPUT" || el.getAttribute("inputmode") !== "decimal") return;
+    if (isMoneyInput(el)) {
+      var o = fmtCents(el.value);
+      if (o !== el.value) { el.value = o; try { el.setSelectionRange(o.length, o.length); } catch (er) {} }
+      return;
+    }
     var v = el.value, pos = el.selectionStart == null ? v.length : el.selectionStart;
     if (e.data === "." && pos > 0 && v.charAt(pos - 1) === ".") v = v.slice(0, pos - 1) + "," + v.slice(pos);
     var sig = v.slice(0, pos).replace(/\./g, "").length, out = fmtLive(v, !/rate|tasa/i.test(el.id));
@@ -4907,7 +4930,7 @@ html, body, button, a, input, select, textarea, label, [role="button"] { touch-a
       renderAccLook();
       $("acc-saldo-l").textContent = a ? "Saldo actual de la cuenta" : "¿Cuánto tienes ahora en esta cuenta? (opcional)";
       $("acc-saldo").placeholder = a ? "0,00" : "Déjalo vacío para empezar en 0";
-      $("acc-saldo").value = a ? fmtIn(accBalance(a)) : "";
+      $("acc-saldo").value = a ? moneyIn(accBalance(a)) : "";
       $("acc-err").textContent = "";
       $("acc-sheet").hidden = false;
 
@@ -4947,7 +4970,7 @@ html, body, button, a, input, select, textarea, label, [role="button"] { touch-a
         setPressed("[data-type]", "data-type", it.tipo);
         fillCats();
         fillAccounts(it.cuenta, !accById(it.cuenta));
-        $("monto").value = fmtIn(it.monto);
+        $("monto").value = moneyIn(it.monto);
         $("moneda").value = it.moneda;
         $("cat").value = it.cat;
         setFecha(it.fecha);
@@ -6206,7 +6229,7 @@ html, body, button, a, input, select, textarea, label, [role="button"] { touch-a
       $("h-ge").textContent = g ? "Editar meta" : "Nueva meta";
       $("ge-save").textContent = g ? "Guardar cambios" : "Crear meta";
       $("ge-nombre").value = g ? g.nombre : "";
-      $("ge-meta").value = g ? fmtIn(g.meta) : "";
+      $("ge-meta").value = g ? moneyIn(g.meta) : "";
       $("ge-moneda").value = g ? g.moneda : (state.disp === "VES" ? "VES" : "USD");
       $("ge-moneda").disabled = !!(g && goalUsed(g));
       $("ge-err").textContent = "";
@@ -6365,7 +6388,7 @@ html, body, button, a, input, select, textarea, label, [role="button"] { touch-a
       $("lim-hint").textContent = "Cuánto quieres gastar como máximo al mes, en " + (D === "VES" ? "bolívares" : D === "EUR" ? "euros" : "dólares") + ". Déjalo vacío para no poner límite.";
       $("lim-list").innerHTML = CATS.gasto.map(function (c, i) {
         var l = state.limits && state.limits[c] > 0 ? conv(state.limits[c], "USD", D) : null;
-        return '<li><span class="cv-dot" style="--c:' + colorFor(c) + '">' + catSvg(c) + '</span><label for="lim-' + i + '">' + esc(c) + '</label><span class="lim-cur">' + cur + '</span><input type="text" inputmode="decimal" id="lim-' + i + '" data-lim="' + esc(c) + '" placeholder="Sin límite" value="' + (l ? fmtIn(Math.round(l * 100) / 100) : "") + '" autocomplete="off"></li>';
+        return '<li><span class="cv-dot" style="--c:' + colorFor(c) + '">' + catSvg(c) + '</span><label for="lim-' + i + '">' + esc(c) + '</label><span class="lim-cur">' + cur + '</span><input type="text" inputmode="decimal" id="lim-' + i + '" data-lim="' + esc(c) + '" placeholder="Sin límite" value="' + (l ? moneyIn(l) : "") + '" autocomplete="off"></li>';
       }).join("");
       $("lim-sheet").hidden = false;
     }
@@ -6579,7 +6602,7 @@ html, body, button, a, input, select, textarea, label, [role="button"] { touch-a
       pgCobro = p ? !!p.cobro : pay.tab === "cobro";
       syncPgKind();
       $("pg-titulo").value = p ? p.titulo : "";
-      $("pg-monto").value = p ? fmtIn(p.monto) : "";
+      $("pg-monto").value = p ? moneyIn(p.monto) : "";
       $("pg-moneda").value = p ? p.moneda : (state.disp === "VES" ? "VES" : state.disp === "EUR" ? "EUR" : "USD");
       var t = today(), vm = pay.y + "-" + pad2(pay.m + 1);
       pgRep = p && p.serie && seriesById(p.serie) ? "m" : "once";
