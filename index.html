@@ -2955,6 +2955,7 @@ html, body, button, a, input, select, textarea, label, [role="button"] { touch-a
   // Acepta operaciones simples: 12+8,5-2 o 3x4
   function amtVal(str) {
     var t = String(str == null ? "" : str).replace(/\s/g, "").replace(/[×xX*]/g, "*").replace(/[÷]/g, "/").replace(/−/g, "-");
+    t = t.replace(/[+\-*/]+$/, "");
     if (!/[+\-*/]/.test(t.slice(1))) return parseNum(t);
     var parts = t.match(/[+\-*/]|[^+\-*/]+/g), vals = [], ops = [];
     if (!parts) return NaN;
@@ -2998,6 +2999,14 @@ html, body, button, a, input, select, textarea, label, [role="button"] { touch-a
     var i = 0, n = 0;
     while (i < out.length && n < sig) { if (out.charAt(i) !== ".") n++; i++; }
     try { el.setSelectionRange(i, i); } catch (er) {}
+  }, true);
+  // Evita guardar dos veces con un doble toque en los botones principales
+  document.addEventListener("click", function (e) {
+    var b = e.target.closest && e.target.closest("button.primary, #add");
+    if (!b || b.id === "onb-next" || b.id === "tour-next") return;
+    var now = Date.now();
+    if (b.closest("[hidden]") || (b._t && now - b._t < 700)) { e.stopImmediatePropagation(); e.preventDefault(); return; }
+    b._t = now;
   }, true);
   function fmtIn(n) { return String(Math.round(n * 10000) / 10000).replace(".", ","); }
 
