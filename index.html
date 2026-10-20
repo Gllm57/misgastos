@@ -814,7 +814,6 @@ html.sheet-open .tabbar, html.sheet-open .fab, html.sheet-open .ai-fab, html.she
 .acc-sum > div { min-width: 0; }
 .acc-sum .l { display: block; color: var(--muted); font-size: 0.8rem; }
 .acc-sum strong { display: block; font-family: var(--display); font-size: 1.45rem; line-height: 1.2; font-variant-numeric: tabular-nums; }
-.acc-n { flex: none; font-size: 0.78rem; font-weight: 600; color: var(--muted); padding: 4px 10px; border-radius: 999px; border: 1px solid var(--line); }
 .acc-list li { list-style: none; }
 .acc-av { --c: var(--accent); width: 42px; height: 42px; display: flex; align-items: center; justify-content: center; font-family: var(--display); font-weight: 700; font-size: 0.95rem; color: var(--c); flex: none; }
 .acc-av.big { width: 56px; height: 56px; border-radius: 18px; font-size: 1.2rem; }
@@ -1137,7 +1136,7 @@ body.view-accd .fab, body.view-accd .ai-fab { opacity: 0; pointer-events: none; 
 .cv-row { grid-template-columns: auto minmax(0, 1fr) auto auto; padding: 11px 4px; }
 .cv-pct { font-size: 0.8rem; font-weight: 600; color: var(--muted); font-variant-numeric: tabular-nums; min-width: 38px; text-align: right; }
 .cv-amt b { font-size: 0.98rem; }
-.bal-note { color: var(--muted); font-size: 0.78rem; margin-top: 2px; }
+.bal-note { color: var(--muted); }
 .bal-note[hidden] { display: none; }
 .acc-look { display: grid; align-items: start; }
 .acc-prev .acc-av { font-size: 1.2rem; }
@@ -1729,13 +1728,13 @@ html, body, button, a, input, select, textarea, label, [role="button"] { touch-a
 .acc-hb button:active { transform: scale(0.92); }
 .acc-hb svg { width: 17px; height: 17px; }
 [data-panel="acc"] .phead { margin-bottom: 8px; }
-.acc3 { display: grid; grid-template-columns: 104px minmax(0, 1fr); gap: 16px; align-items: center; }
+.acc3 { display: grid; align-items: center; }
 .acc3[hidden] { display: none; }
 .acc3 .acc-sum { position: relative; width: 104px; height: 104px; margin: 0; padding: 0; }
 .acc3 .acc-sum svg { width: 104px; height: 104px; display: block; animation: donutIn 0.6s cubic-bezier(0.2, 0.8, 0.2, 1) backwards; }
 .ar-c { position: absolute; inset: 0; display: grid; place-content: center; justify-items: center; text-align: center; }
-.ar-c small { font-size: 0.64rem; font-weight: 600; color: var(--muted); }
-.ar-c b { font-size: 0.95rem; font-weight: 700; letter-spacing: -0.03em; max-width: 80px; white-space: nowrap; overflow: hidden; font-variant-numeric: tabular-nums; }
+.ar-c small { font-weight: 600; color: var(--muted); }
+.ar-c b { font-weight: 700; letter-spacing: -0.03em; white-space: nowrap; overflow: hidden; font-variant-numeric: tabular-nums; }
 .acc3 .acc-list { margin: 0; padding: 0; min-width: 0; }
 .acc3 .acc-list li + li .acc-r { border-top: 1px solid var(--line); }
 .acc-r { width: 100%; display: flex; align-items: center; gap: 10px; padding: 9px 0; border: 0; background: none; font: inherit; color: var(--ink); text-align: left; cursor: pointer; }
@@ -1815,11 +1814,11 @@ html, body, button, a, input, select, textarea, label, [role="button"] { touch-a
 .onb-legal { text-align: center; max-width: 34ch; margin: 4px auto 0 !important; }
 
 /* ===== Recorrido guiado ===== */
-.tour { position: fixed; inset: 0; z-index: 96; opacity: 0; transition: opacity 0.3s ease; touch-action: none; }
+.tour { position: fixed; inset: 0; z-index: 96; opacity: 0; touch-action: none; }
 .tour[hidden] { display: none; }
 .tour.on { opacity: 1; }
-.tour-hole { position: fixed; border-radius: 22px; box-shadow: 0 0 0 200vmax rgba(6, 5, 14, 0.66), 0 0 0 2px color-mix(in srgb, var(--accent) 70%, transparent); transition: top 0.45s cubic-bezier(0.2, 0.8, 0.2, 1), left 0.45s cubic-bezier(0.2, 0.8, 0.2, 1), width 0.45s cubic-bezier(0.2, 0.8, 0.2, 1), height 0.45s cubic-bezier(0.2, 0.8, 0.2, 1), border-radius 0.45s ease; pointer-events: none; }
-.tour-tip { position: fixed; left: max(16px, env(safe-area-inset-left, 0px)); right: max(16px, env(safe-area-inset-right, 0px)); max-width: 420px; margin: 0 auto; background: var(--surface); color: var(--ink); border-radius: 24px; padding: 14px 16px 16px; display: grid; gap: 6px; box-shadow: 0 18px 50px rgba(0, 0, 0, 0.35); transition: top 0.45s cubic-bezier(0.2, 0.8, 0.2, 1), bottom 0.45s cubic-bezier(0.2, 0.8, 0.2, 1); }
+.tour-hole { position: fixed; border-radius: 22px; box-shadow: 0 0 0 200vmax rgba(6, 5, 14, 0.66), 0 0 0 2px color-mix(in srgb, var(--accent) 70%, transparent); pointer-events: none; }
+.tour-tip { position: fixed; left: max(16px, env(safe-area-inset-left, 0px)); right: max(16px, env(safe-area-inset-right, 0px)); max-width: 420px; margin: 0 auto; background: var(--surface); color: var(--ink); border-radius: 24px; padding: 14px 16px 16px; display: grid; gap: 6px; box-shadow: 0 18px 50px rgba(0, 0, 0, 0.35); }
 .tour-tip.in { animation: fadeUp 0.35s cubic-bezier(0.2, 0.8, 0.2, 1) backwards; }
 .tt-top { display: flex; justify-content: space-between; align-items: center; }
 .tt-top span { font-size: 0.74rem; font-weight: 700; color: var(--accent); font-variant-numeric: tabular-nums; }
@@ -2831,7 +2830,6 @@ html, body, button, a, input, select, textarea, label, [role="button"] { touch-a
         if (d && typeof d.rate === "number") state.rate = d.rate;
         if (d && typeof d.rateDate === "string") state.rateDate = d.rateDate;
         if (d && typeof d.hideSav === "boolean") state.hideSav = d.hideSav;
-        if (d && typeof d.rateManual === "string") state.rateManual = d.rateManual;
         if (d && typeof d.rateAutoAt === "number") state.rateAutoAt = d.rateAutoAt;
         if (d && Array.isArray(d.accounts)) state.accounts = d.accounts;
         if (d && Array.isArray(d.templates)) state.templates = d.templates;
@@ -2852,10 +2850,8 @@ html, body, button, a, input, select, textarea, label, [role="button"] { touch-a
         if (d && typeof d.btcUsd === "number") { state.btcUsd = d.btcUsd; state.btcAt = d.btcAt || 0; }
         if (d && typeof d.rateEur === "number") state.rateEur = d.rateEur;
         if (d && typeof d.rateEurDate === "string") state.rateEurDate = d.rateEurDate;
-        if (d && typeof d.rateEurManual === "string") state.rateEurManual = d.rateEurManual;
         if (d && typeof d.rateUsdt === "number") state.rateUsdt = d.rateUsdt;
         if (d && typeof d.rateUsdtDate === "string") state.rateUsdtDate = d.rateUsdtDate;
-        if (d && typeof d.rateUsdtManual === "string") state.rateUsdtManual = d.rateUsdtManual;
         if (d && typeof d.rateUsdtSrc === "string") state.rateUsdtSrc = d.rateUsdtSrc;
         if (d && d.collapsed && typeof d.collapsed === "object") state.collapsed = d.collapsed;
         if (d && (d.disp === "USD" || d.disp === "VES" || d.disp === "EUR")) state.disp = d.disp;
@@ -2865,7 +2861,7 @@ html, body, button, a, input, select, textarea, label, [role="button"] { touch-a
   }
   function save() {
     try {
-      localStorage.setItem(KEY, JSON.stringify({ items: state.items, rate: state.rate, rateDate: state.rateDate, hideSav: state.hideSav, rateManual: state.rateManual, rateAutoAt: state.rateAutoAt, accounts: state.accounts, templates: state.templates, goals: state.goals, payments: state.payments, paySeries: state.paySeries, earn: state.earn, limits: state.limits, rateHist: state.rateHist, rateHistAt: state.rateHistAt, theme: state.theme, pin: state.pin, backupAt: state.backupAt, onb: state.onb, msumSeen: state.msumSeen, instSeen: state.instSeen, bn: state.bn, btcUsd: state.btcUsd, btcAt: state.btcAt, rateEur: state.rateEur, rateEurDate: state.rateEurDate, rateEurManual: state.rateEurManual, rateUsdt: state.rateUsdt, rateUsdtDate: state.rateUsdtDate, rateUsdtManual: state.rateUsdtManual, rateUsdtSrc: state.rateUsdtSrc, collapsed: state.collapsed, disp: state.disp, sav: state.sav }));
+      localStorage.setItem(KEY, JSON.stringify({ items: state.items, rate: state.rate, rateDate: state.rateDate, hideSav: state.hideSav, rateAutoAt: state.rateAutoAt, accounts: state.accounts, templates: state.templates, goals: state.goals, payments: state.payments, paySeries: state.paySeries, earn: state.earn, limits: state.limits, rateHist: state.rateHist, rateHistAt: state.rateHistAt, theme: state.theme, pin: state.pin, backupAt: state.backupAt, onb: state.onb, msumSeen: state.msumSeen, instSeen: state.instSeen, bn: state.bn, btcUsd: state.btcUsd, btcAt: state.btcAt, rateEur: state.rateEur, rateEurDate: state.rateEurDate, rateUsdt: state.rateUsdt, rateUsdtDate: state.rateUsdtDate, rateUsdtSrc: state.rateUsdtSrc, collapsed: state.collapsed, disp: state.disp, sav: state.sav }));
     } catch (e) {}
   }
 
@@ -3129,19 +3125,6 @@ html, body, button, a, input, select, textarea, label, [role="button"] { touch-a
     if (Math.abs(b - a) > 0.004) return b > a ? "up" : "down";
     for (var i = n; i > 0; i--) if (Math.abs(bal[i] - bal[i - 1]) > 0.004) return bal[i] > bal[i - 1] ? "up" : "down";
     return "up";
-  }
-  function trendSegs(bal, X, Y) {
-    if (bal.length < 2) return '<path class="ln bal flat" d="M' + X(1).toFixed(1) + " " + Y(bal[0] || 0).toFixed(1) + '"></path>';
-    var out = "", cur = null, d = "";
-    for (var i = 1; i < bal.length; i++) {
-      var k = bal[i] > bal[i - 1] + 0.004 ? "up" : bal[i] < bal[i - 1] - 0.004 ? "down" : "flat";
-      if (k !== cur) {
-        if (d) out += '<path class="ln bal ' + cur + '" d="' + d + '"></path>';
-        cur = k; d = "M" + X(i).toFixed(1) + " " + Y(bal[i - 1]).toFixed(1);
-      }
-      d += " L" + X(i + 1).toFixed(1) + " " + Y(bal[i]).toFixed(1);
-    }
-    return out + '<path class="ln bal ' + cur + '" d="' + d + '"></path>';
   }
   function drawTrend() {
     var wrap = $("trend-chart");
@@ -4454,7 +4437,7 @@ html, body, button, a, input, select, textarea, label, [role="button"] { touch-a
       }, function () {});
     })).then(function () {
       var keys = Object.keys(state.rateHist).sort();
-      if (keys.length > 800) keys.slice(0, keys.length - 800).forEach(function (d) { delete state.rateHist[d]; });
+      if (keys.length > 400) keys.slice(0, keys.length - 400).forEach(function (d) { delete state.rateHist[d]; });
       state.rateHistAt = Date.now(); save();
       return any;
     });
@@ -4496,22 +4479,6 @@ html, body, button, a, input, select, textarea, label, [role="button"] { touch-a
     var c = accColor(a), ic = a.icon && ACC_SVG[a.icon] ? a.icon : "";
     return '<span class="acc-av' + (big ? " big" : "") + (ic ? " sym" : "") + '" style="--c:' + c + '" aria-hidden="true">' + (ic ? accSvg(ic) : esc(accInitials(a.nombre))) + "</span>";
   }
-  function accMonthNet(a, mstr) {
-    var n = 0, any = false;
-    state.items.forEach(function (it) {
-      if (it.fecha.slice(0, 7) !== mstr) return;
-      var d = null;
-      if (it.tipo === "traspaso") {
-        if (it.hacia && it.hacia.k === "cuenta" && String(it.hacia.id) === String(a.id)) d = it.hacia.monto;
-        else if (it.desde && it.desde.k === "cuenta" && String(it.desde.id) === String(a.id)) d = -it.desde.monto;
-      } else if (String(it.cuenta) === String(a.id)) {
-        if (it.tipo === "ingreso" || it.tipo === "retiro") d = it.monto;
-        else if (it.tipo === "gasto" || it.tipo === "ahorro") d = -it.monto;
-      }
-      if (d !== null) { n += d; any = true; }
-    });
-    return any ? n : null;
-  }
   // Saldo compacto para la lista de cuentas: moneda en pequeño, sin decimales en montos grandes (Bs 41.800, Bs 1,25 M)
   function accAmt(n, cur) {
     var x = Math.abs(n), sign = n < 0 ? "−" : "", v;
@@ -4552,10 +4519,6 @@ html, body, button, a, input, select, textarea, label, [role="button"] { touch-a
     }
     var ah = $("acc-head");
     if (ah) { ah.hidden = true; ah.innerHTML = "<span>La barra indica qué parte de tu dinero está en cada cuenta</span>"; }
-    if (false) {
-      sum.innerHTML = '<div><span class="l">Saldo total en tus cuentas</span><strong class="fit">' + money(tot, D) + (miss ? "*" : "") + "</strong></div>" +
-        '<span class="acc-n">' + state.accounts.length + (state.accounts.length === 1 ? " cuenta" : " cuentas") + "</span>";
-    }
     if (typeof window.__accd === "function") window.__accd();
     if (typeof window.__nudge === "function") window.__nudge();
     if (typeof window.__payAlert === "function") window.__payAlert();
@@ -7591,11 +7554,6 @@ html, body, button, a, input, select, textarea, label, [role="button"] { touch-a
       return "";
     }
     function cxVal() { var v = parseNum(calc.buf); return v > 0 ? v : 0; }
-    function cxShowBuf() {
-      if (!calc.buf) return "0";
-      var parts = calc.buf.split(","), ip = parts[0] ? Number(parts[0]).toLocaleString("es-VE") : "0";
-      return ip + (parts.length > 1 ? "," + parts[1] : "");
-    }
     function renderCalc() {
       var k = calc.k;
       $("cx-ic").innerHTML = ccIcon(k);
@@ -7613,17 +7571,6 @@ html, body, button, a, input, select, textarea, label, [role="button"] { touch-a
           '<span class="nm"><b>' + CC[c].name + "</b><small>" + cxSub(c) + '</small></span><span class="v fit">' + (v === null ? "—" : cxLabel(v, c)) + "</span></button></li>";
       }).join("");
       scheduleFit();
-    }
-    function cxKey(x) {
-      if (x === "del") calc.buf = calc.buf.slice(0, -1);
-      else if (x === ",") { if (calc.buf.indexOf(",") < 0) calc.buf = (calc.buf || "0") + ","; }
-      else {
-        var parts = calc.buf.split(",");
-        if (parts.length > 1 && parts[1].length >= cxDec(calc.k)) return;
-        if (parts[0].replace(/^0+/, "").length >= 12 && parts.length === 1) return;
-        calc.buf = calc.buf === "0" ? x : calc.buf + x;
-      }
-      renderCalc();
     }
     var btcLoading = false;
     function fetchBtc() {
