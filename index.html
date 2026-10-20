@@ -5368,20 +5368,27 @@ html.hold main, html.hold main *, html.hold .tabbar, html.hold .tabbar *, html.h
     // Gesto: deslizar de lado cambia de pestaña (izquierda = siguiente, derecha = anterior).
     // En Ajustes, detalle de cuenta y guía de Binance, deslizar a la derecha vuelve atrás.
     (function () {
-      var x0 = 0, y0 = 0, t0 = 0, ok = false;
+      var x0 = 0, y0 = 0, t0 = 0, ok = false, monthZone = null;
+      function shiftM(m, d) { var p = m.split("-"), dt = new Date(Number(p[0]), Number(p[1]) - 1 + d, 1); return dt.getFullYear() + "-" + pad2(dt.getMonth() + 1); }
       var NO = ".trend-chart, input, select, textarea, .hist-chips, #hist-cats, .sav-chart, .sheet, .seg, .rate-fields, .hrow[data-hid], .cat-chips, .tabbar, .dial, .menu, .acc3";
       function blocked() {
         if (document.querySelector(".sheet-backdrop:not([hidden])")) return true;
         return ["onb", "lock", "tour", "ctry", "splash", "cal-backdrop"].some(function (id) { var el = $(id); return el && !el.hidden; });
       }
       document.addEventListener("touchstart", function (e) {
-        ok = e.touches.length === 1 && !e.target.closest(NO) && !blocked();
+        monthZone = e.target.closest(".field-month, .hist-month");
+        ok = e.touches.length === 1 && (monthZone || !e.target.closest(NO)) && !blocked();
         if (ok) { x0 = e.touches[0].clientX; y0 = e.touches[0].clientY; t0 = Date.now(); }
       }, { passive: true });
       document.addEventListener("touchend", function (e) {
         if (!ok) return; ok = false;
         var dx = e.changedTouches[0].clientX - x0, dy = e.changedTouches[0].clientY - y0;
-        if (Math.abs(dx) < 70 || Math.abs(dy) > Math.abs(dx) * 0.6 || Date.now() - t0 > 800) return;
+        if (Math.abs(dx) < (monthZone ? 40 : 70) || Math.abs(dy) > Math.abs(dx) * 0.6 || Date.now() - t0 > 800) return;
+        if (monthZone) {
+          if (monthZone.classList.contains("hist-month")) { var hb = $(dx < 0 ? "hist-next" : "hist-prev"); if (!hb.disabled) hb.click(); }
+          else { var n2 = shiftM(state.month, dx < 0 ? 1 : -1); if (n2 <= today().slice(0, 7)) setMonth(n2); }
+          return;
+        }
         var v = activeView();
         if (v === "set" || v === "accd" || v === "bn") { if (dx > 0) { closeViews(); setTab(currentTab()); } return; }
         var tabs = Array.prototype.slice.call(document.querySelectorAll(".tab[data-tab]"));
