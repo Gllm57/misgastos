@@ -1896,6 +1896,8 @@ html, body, button, a, input, select, textarea, label, [role="button"] { touch-a
 .ar-c b { font-size: 1.08rem !important; max-width: 100px !important; }
 .bal-note { font-size: 0.8rem !important; font-weight: 500; margin-top: 4px !important; }
 .bal-note b { color: var(--ink); font-weight: 600; font-variant-numeric: tabular-nums; }
+.bal-note b.pos { color: var(--in); }
+.bal-note b.neg { color: var(--out); }
 </style>
 </head>
 <body>
@@ -4184,8 +4186,11 @@ html, body, button, a, input, select, textarea, label, [role="button"] { touch-a
     // Debajo: el total que hay hoy en todas las cuentas, para no confundirlo con lo del mes
     var bn = $("bal-note"), accTot = 0, accOk = false;
     state.accounts.forEach(function (a) { var v = conv(accBalance(a), a.moneda, D); if (v !== null) { accTot += v; accOk = true; } });
+    // Arriba va el saldo total de las cuentas; debajo, lo que te queda del mes
+    $("h-bal").textContent = accOk ? "Saldo total" : "Te queda este mes";
     bn.hidden = !accOk;
-    if (accOk) bn.innerHTML = 'En tus cuentas: <b>' + money(accTot, D) + "</b>";
+    if (accOk) bn.innerHTML = 'Te queda este mes: <b class="' + (bal < 0 ? "neg" : "pos") + '">' + (bal < 0 ? "−" : "") + money(Math.abs(bal), D) + "</b>";
+    if (accOk) bal = accTot;
     var b = $("balance");
     setMoney(b, bal, function (v) { return moneyH(v, D); }, D);
     b.className = "balance-amount fit" + (bal < 0 ? " neg" : "");
@@ -7272,7 +7277,7 @@ html, body, button, a, input, select, textarea, label, [role="button"] { touch-a
     /* ---------- Recorrido guiado ---------- */
     var TOUR = [
       { tab: 0, sel: ".rate-card", all: true, t: "Tasas del día", p: "Dólar BCV, euro y USDT. Se actualizan solas y te muestran si subieron ▲ o bajaron ▼." },
-      { tab: 0, sel: ".bal-hero", t: "Te queda este mes", p: "Lo que entró este mes menos lo que gastaste y ahorraste. Empieza de cero cada día 1. Debajo, «En tus cuentas» es todo el dinero que tienes hoy, sumando los meses anteriores." },
+      { tab: 0, sel: ".bal-hero", t: "Saldo total", p: "Todo el dinero que tienes hoy en tus cuentas. Debajo, «Te queda este mes» es lo que entró este mes menos lo que gastaste y ahorraste; empieza de cero cada día 1." },
       { tab: 0, sel: '[data-panel="acc"]', t: "Tus cuentas", p: "El total y cuánto hay en cada cuenta. Toca una para ver sus movimientos. Con ⇄ transfieres y con + agregas otra." },
       { tab: 0, sel: '[data-panel="cat"]', t: "En qué se va el dinero", p: "Tus gastos por categoría, comparados con el mes pasado. En Límites pones un máximo para cada una." },
       { tab: 0, sel: "#fab", t: "El botón +", p: "Tócalo para anotar un gasto, un ingreso o un ahorro. Mantenlo presionado para usar tus plantillas.", round: true },
