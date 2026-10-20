@@ -1505,8 +1505,8 @@ main > .panel::before, main > .panel::after, .bal-hero::before, .bal-hero::after
 body.view-goals .goals-view, body.view-pay .pay-view, body.view-hist .hist-view, body.view-bn .bn-view, body.view-set .set-view, body.view-accd .accd-view { animation: none; }
 body.booted main > * { animation: none !important; }
 /* Transiciones entre páginas: deslizan según la dirección, estilo iOS */
-@keyframes navInR { from { opacity: 0; transform: translateX(36px); } to { opacity: 1; transform: translateX(0); } }
-@keyframes navInL { from { opacity: 0; transform: translateX(-36px); } to { opacity: 1; transform: translateX(0); } }
+@keyframes navInR { from { opacity: 0.35; transform: translateX(28px); } to { opacity: 1; transform: translateX(0); } }
+@keyframes navInL { from { opacity: 0.35; transform: translateX(-28px); } to { opacity: 1; transform: translateX(0); } }
 @media (prefers-reduced-motion: no-preference) {
   body.nav-fwd .goals-view, body.nav-fwd .pay-view, body.nav-fwd .hist-view, body.nav-fwd .bn-view, body.nav-fwd .set-view, body.nav-fwd .accd-view { animation: navInR 0.42s cubic-bezier(0.32, 0.72, 0, 1) backwards !important; }
   body.nav-back .goals-view, body.nav-back .pay-view, body.nav-back .hist-view, body.nav-back .bn-view, body.nav-back .set-view, body.nav-back .accd-view, body.nav-back main { animation: navInL 0.42s cubic-bezier(0.32, 0.72, 0, 1) backwards !important; }
@@ -1965,7 +1965,7 @@ html.loc-none [data-disp="VES"], html.loc-none .rc-usd { display: none !importan
 
 /* ===== Deslizar para borrar en Historial ===== */
 #hist-list .hrow[data-hid] { position: relative; touch-action: pan-y; }
-#hist-list .hrow[data-hid] > * { transform: translateX(var(--sx, 0px)); transition: transform 0.32s cubic-bezier(0.32, 0.72, 0, 1); }
+#hist-list .hrow[style*="--sx"] > * { transform: translateX(var(--sx, 0px)); transition: transform 0.32s cubic-bezier(0.32, 0.72, 0, 1); }
 #hist-list .hrow.drag > * { transition: none; }
 #hist-list .hrow[data-hid]::after { content: ""; position: absolute; right: 2px; top: 8px; bottom: 8px; width: 66px; border-radius: 18px; background: var(--out) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M4 7h16M10 11v6M14 11v6M6 7l1 12a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2l1-12M9 7V4h6v3'/%3E%3C/svg%3E") center / 22px no-repeat; opacity: 0; transform: scale(0.7); transition: opacity 0.2s ease, transform 0.3s cubic-bezier(0.32, 0.72, 0, 1), width 0.25s ease; pointer-events: none; }
 #hist-list .hrow.drag::after, #hist-list .hrow.open::after { opacity: 1; transform: none; }
@@ -7021,7 +7021,8 @@ html.hold main, html.hold main *, html.hold .tabbar, html.hold .tabbar *, html.h
 
     /* ---------- Deslizar un movimiento para borrarlo ---------- */
     var swRow = null, swX = 0, swY = 0, swDx = 0, swDir = 0;
-    function closeSwipes(except) { document.querySelectorAll("#hist-list .hrow.open").forEach(function (r) { if (r !== except) { r.classList.remove("open"); r.style.setProperty("--sx", "0px"); } }); }
+    function sxReset(r) { r.style.setProperty("--sx", "0px"); setTimeout(function () { if (!r.classList.contains("open") && !r.classList.contains("drag")) r.style.removeProperty("--sx"); }, 360); }
+    function closeSwipes(except) { document.querySelectorAll("#hist-list .hrow.open").forEach(function (r) { if (r !== except) { r.classList.remove("open"); sxReset(r); } }); }
     function quickDel(id, row) {
       var keepI = state.items.filter(function (it) { return it.id === id || it.linkId === id; });
       var keepE = (state.earn || []).filter(function (x) { return x.ahorroId === id || x.id === id; });
@@ -7058,7 +7059,7 @@ html.hold main, html.hold main *, html.hold .tabbar, html.hold .tabbar *, html.h
       r.classList.remove("drag", "far");
       if (swDx < -130) { r.style.setProperty("--sx", "-110%"); quickDel(Number(r.getAttribute("data-hid")), r); return; }
       var open = swDx < -40;
-      r.classList.toggle("open", open); r.style.setProperty("--sx", open ? "-80px" : "0px");
+      r.classList.toggle("open", open); if (open) r.style.setProperty("--sx", "-80px"); else sxReset(r);
       r._swiped = Date.now();
     });
     $("hist-list").addEventListener("click", function (e) {
@@ -7067,7 +7068,7 @@ html.hold main, html.hold main *, html.hold .tabbar, html.hold .tabbar *, html.h
       if (r && r.classList.contains("open")) {
         e.stopImmediatePropagation();
         if (e.clientX > r.getBoundingClientRect().right - 80) quickDel(Number(r.getAttribute("data-hid")), r);
-        else { r.classList.remove("open"); r.style.setProperty("--sx", "0px"); }
+        else { r.classList.remove("open"); sxReset(r); }
       }
     }, true);
 
