@@ -1972,6 +1972,11 @@ html.loc-none [data-disp="VES"], html.loc-none .rc-usd { display: none !importan
 
 /* Inicio no anima hasta que se ve (pantalla de carga o clave delante) */
 html.hold main, html.hold main *, html.hold .tabbar, html.hold .tabbar *, html.hold .fab { animation-play-state: paused !important; }
+
+html { overflow-x: hidden; overscroll-behavior-x: none; }
+body { overflow-x: clip; }
+main, .goals-view, .pay-view, .hist-view, .bn-view, .set-view, .accd-view { touch-action: pan-y; }
+.hist-chips, .ai-quick, .ctry-list { touch-action: pan-x pan-y; }
 </style>
 </head>
 <body>
@@ -5394,7 +5399,15 @@ html.hold main, html.hold main *, html.hold .tabbar, html.hold .tabbar *, html.h
         var tabs = Array.prototype.slice.call(document.querySelectorAll(".tab[data-tab]"));
         var cur = tabs.findIndex(function (t) { return t.getAttribute("aria-current") === "true"; });
         var n = cur + (dx < 0 ? 1 : -1);
-        if (cur < 0 || n < 0 || n >= tabs.length) return;
+        if (cur < 0) return;
+        if (n < 0 || n >= tabs.length) {
+          var box = v ? $(v === "goals" ? "goals-view" : v + "-view") : document.querySelector("main");
+          if (box && box.animate && !(window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches)) {
+            var d = dx < 0 ? -1 : 1;
+            box.animate([{ transform: "translateX(0)" }, { transform: "translateX(" + (d * 22) + "px)", offset: 0.35 }, { transform: "translateX(" + (d * -4) + "px)", offset: 0.75 }, { transform: "translateX(0)" }], { duration: 560, easing: "cubic-bezier(0.32, 0.72, 0, 1)" });
+          }
+          return;
+        }
         tabs[n].click();
       }, { passive: true });
     })();
