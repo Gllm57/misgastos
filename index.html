@@ -1933,6 +1933,7 @@ html.loc-none [data-disp="VES"], html.loc-none .rc-usd { display: none !importan
 .bal-note b { color: var(--ink); font-weight: 600; font-variant-numeric: tabular-nums; }
 .bal-note b.pos { color: var(--in); }
 .bal-note b.neg { color: var(--out); }
+.acc3 .acc-sum svg { animation: none !important; }
 </style>
 </head>
 <body>
@@ -4651,17 +4652,10 @@ html.loc-none [data-disp="VES"], html.loc-none .rc-usd { display: none !importan
     $("acc3").hidden = !state.accounts.length;
     var sum = $("acc-sum");
     if (state.accounts.length) {
-      var segs = state.accounts.map(function (a) { return { a: a, u: Math.max(0, conv(accBalance(a), a.moneda, "USD") || 0) }; }).filter(function (o) { return o.u > 0; });
-      // Medidas en píxeles (sin pathLength, que Safari no respeta bien). Los extremos redondos
-      // sobresalen 5px por lado, así que el hueco suma 10px + 5px de separación visible.
-      var C = 2 * Math.PI * 44, gap = segs.length > 1 ? 15 : 0, at = 0;
-      var arcs = segs.map(function (o) {
-        var len = o.u / posUsd * C, d = segs.length > 1 ? Math.max(0.01, len - gap) : C;
-        var el = '<circle cx="52" cy="52" r="44" fill="none" stroke="' + accColor(o.a) + '" stroke-width="10" stroke-linecap="' + (segs.length > 1 ? "round" : "butt") + '" stroke-dasharray="' + d.toFixed(2) + " " + (C - d).toFixed(2) + '" stroke-dashoffset="' + (-(at + gap / 2)).toFixed(2) + '" transform="rotate(-90 52 52)"></circle>';
-        at += len; return el;
-      }).join("");
-      var sh = '<svg viewBox="0 0 104 104" aria-hidden="true"><circle cx="52" cy="52" r="44" fill="none" stroke="var(--fill)" stroke-width="10"></circle>' + arcs + "</svg>" +
-        '<div class="ar-c"><small>Total</small><b class="fit">' + accAmt(tot, D) + (miss ? "*" : "") + "</b></div>";
+      // Anillos concéntricos como en Metas: uno por cuenta, lleno según su parte del total
+      var segs = state.accounts.map(function (a) { return { a: a, u: Math.max(0, conv(accBalance(a), a.moneda, "USD") || 0) }; })
+        .filter(function (o) { return o.u > 0; }).sort(function (x, y) { return y.u - x.u; }).slice(0, 4);
+      var sh = ringsSvg(segs.map(function (o) { return { p: posUsd > 0 ? o.u / posUsd : 0, c: accColor(o.a) }; }), 128, 11, 4);
       if (sum._h !== sh) { sum.innerHTML = sh; sum._h = sh; }
     }
     var ah = $("acc-head");
