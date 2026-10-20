@@ -1975,6 +1975,9 @@ html.loc-none [data-disp="VES"], html.loc-none .rc-usd { display: none !importan
 .toast .t-act { margin-left: 12px; border: 0; background: none; color: var(--accent); font: inherit; font-weight: 700; padding: 4px 2px; cursor: pointer; pointer-events: auto; }
 .toast.show { pointer-events: auto; }
 #hist-list .hrow.drag, #hist-list .hrow.open, #hist-list .hrow.gone { overflow: hidden; }
+
+/* Inicio no anima hasta que se ve (pantalla de carga o clave delante) */
+html.hold main, html.hold main *, html.hold .tabbar, html.hold .tabbar *, html.hold .fab { animation-play-state: paused !important; }
 </style>
 </head>
 <body>
@@ -1986,8 +1989,9 @@ html.loc-none [data-disp="VES"], html.loc-none .rc-usd { display: none !importan
 </div>
 <script>
 (function () {
+  document.documentElement.classList.add("hold");
   var el = document.getElementById("splash"), t0 = Date.now(), quick = window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches;
-  function hide() { var wait = Math.max(0, (quick ? 300 : 1800) - (Date.now() - t0)); setTimeout(function () { el.classList.add("out"); setTimeout(function () { el.remove(); }, 450); }, wait); }
+  function hide() { var wait = Math.max(0, (quick ? 300 : 1800) - (Date.now() - t0)); setTimeout(function () { el.classList.add("out"); window.__splashDone = true; if (window.__release) window.__release(); setTimeout(function () { el.remove(); }, 450); }, wait); }
   if (document.readyState === "complete") hide(); else window.addEventListener("load", hide);
 })();
 </script>
@@ -4843,7 +4847,18 @@ html.loc-none [data-disp="VES"], html.loc-none .rc-usd { display: none !importan
     state.rateDate = state.rateEurDate = state.rateUsdtDate = t; state.rateUsdtSrc = ""; state.rateHist = {}; state.rateHistAt = 0; state.rateAutoAt = 0;
   }
   function init() {
-    setTimeout(function () { document.body.classList.add("booted"); }, 1100);
+    // Las animaciones de Inicio esperan a que se vea: tras la pantalla de carga y tras la clave
+    var released = false, H = document.documentElement;
+    window.__release = function () {
+      if (released || !window.__splashDone || H.classList.contains("locked")) return;
+      released = true; H.classList.remove("hold");
+      ["balance", "tin", "tout", "tsv"].forEach(function (id) { var e = $(id); if (e) e._v = undefined; });
+      try { render(); } catch (e) {}
+      setTimeout(function () { document.body.classList.add("booted"); }, 1300);
+    };
+    new MutationObserver(function () { window.__release(); }).observe(H, { attributes: true, attributeFilter: ["class"] });
+    if (!$("splash")) window.__splashDone = true;
+    setTimeout(function () { window.__splashDone = true; window.__release(); }, 4000);
     load();
     applyLocale();
     state.rateManual = ""; state.rateEurManual = ""; state.rateUsdtManual = "";
@@ -7742,6 +7757,7 @@ html.loc-none [data-disp="VES"], html.loc-none .rc-usd { display: none !importan
     if (!state.onb) startOnb();
     else if (state.pin && state.pin.h) openLock("unlock");
     else document.documentElement.classList.remove("locked");
+    setTimeout(function () { window.__release(); }, 0);
     $("bn-steps").addEventListener("input", function (e) {
       if (e.target.id !== "bn-apr") return;
       var v = parseNum(e.target.value);
