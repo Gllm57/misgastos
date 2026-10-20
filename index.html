@@ -1927,6 +1927,19 @@ html, body, button, a, input, select, textarea, label, [role="button"] { touch-a
 @keyframes spLoad { 0% { transform: translateX(-100%); } 100% { transform: translateX(250%); } }
 @media (prefers-reduced-motion: reduce) { .sp-arc, .sp-rot, .sp-dot, .sp-name, .sp-tag, .sp-bar, .sp-bar i { animation: none; } }
 .brand { display: inline-flex; align-items: center; }
+
+/* ===== Deslizar para borrar en Historial ===== */
+#hist-list .hrow[data-hid] { position: relative; touch-action: pan-y; }
+#hist-list .hrow[data-hid] > * { transform: translateX(var(--sx, 0px)); transition: transform 0.32s cubic-bezier(0.32, 0.72, 0, 1); }
+#hist-list .hrow.drag > * { transition: none; }
+#hist-list .hrow[data-hid]::after { content: ""; position: absolute; right: 2px; top: 8px; bottom: 8px; width: 66px; border-radius: 18px; background: var(--out) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M4 7h16M10 11v6M14 11v6M6 7l1 12a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2l1-12M9 7V4h6v3'/%3E%3C/svg%3E") center / 22px no-repeat; opacity: 0; transform: scale(0.7); transition: opacity 0.2s ease, transform 0.3s cubic-bezier(0.32, 0.72, 0, 1), width 0.25s ease; pointer-events: none; }
+#hist-list .hrow.drag::after, #hist-list .hrow.open::after { opacity: 1; transform: none; }
+#hist-list .hrow.far::after { width: calc(100% - 4px); background-position: right 22px center; }
+#hist-list .hrow.gone { transition: opacity 0.25s ease, max-height 0.26s ease, padding 0.26s ease; opacity: 0; max-height: 0 !important; padding-top: 0 !important; padding-bottom: 0 !important; overflow: hidden; }
+#hist-list .hrow[data-hid] { max-height: 140px; }
+.toast .t-act { margin-left: 12px; border: 0; background: none; color: var(--accent); font: inherit; font-weight: 700; padding: 4px 2px; cursor: pointer; pointer-events: auto; }
+.toast.show { pointer-events: auto; }
+#hist-list .hrow.drag, #hist-list .hrow.open, #hist-list .hrow.gone { overflow: hidden; }
 </style>
 </head>
 <body>
@@ -3888,7 +3901,7 @@ html, body, button, a, input, select, textarea, label, [role="button"] { touch-a
       '<button type="button" role="menuitem" class="danger" data-h-del="' + it.id + '">Eliminar movimiento</button></div></div>';
     var hgo = histGoal(it), gstyle = hgo && hgo.g ? ' style="--gc:' + goalColor(hgo.g) + '"' : "", catIc = (it.tipo === "gasto" || it.tipo === "ingreso") && CAT_ICON[it.cat];
     if (catIc) gstyle = ' style="--gc:' + (it.tipo === "gasto" ? colorFor(it.cat) : colorForIn(it.cat)) + '"';
-    return '<li class="hrow' + (fresh ? "@@F@@" : "") + '" data-hid="' + it.id + '"><span class="hic k-' + (hgo || catIc ? "goal" : k) + '"' + gstyle + '><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' + (hgo ? '<path d="M6.5 21V4M6.5 4h11l-2 4 2 4H6.5"></path>' : catIc || H_ICONS[k]) + "</svg></span>" +
+    return '<li class="hrow' + (fresh ? "@@F@@" : "") + '" data-hid="' + it.id + '"' + (it.auto ? ' data-auto="1"' : "") + '><span class="hic k-' + (hgo || catIc ? "goal" : k) + '"' + gstyle + '><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' + (hgo ? '<path d="M6.5 21V4M6.5 4h11l-2 4 2 4H6.5"></path>' : catIc || H_ICONS[k]) + "</svg></span>" +
       '<div class="hmain"><div class="ht">' + esc(histTitle(it)) + '</div><div class="hs">' + esc(histSub(it)) + '</div></div><div class="ha ' + cls + '">' + amt + "</div>" + menu + "</li>";
   }
   function renderHistory() {
@@ -4879,9 +4892,14 @@ html, body, button, a, input, select, textarea, label, [role="button"] { touch-a
       showToast(wasRetiro ? "Retiro listo." : "Conversión lista.");
     });
     var toastTimer = null;
-    function showToast(text) {
+    function showToast(text, action, fn) {
       var t = $("toast");
       t.textContent = text;
+      if (action) {
+        var b = document.createElement("button"); b.type = "button"; b.className = "t-act"; b.textContent = action;
+        b.addEventListener("click", function () { t.classList.remove("show"); fn(); });
+        t.appendChild(b);
+      }
       t.classList.add("show");
       clearTimeout(toastTimer);
       toastTimer = setTimeout(function () { t.classList.remove("show"); }, 3200);
@@ -5149,24 +5167,31 @@ html, body, button, a, input, select, textarea, label, [role="button"] { touch-a
     });
     document.addEventListener("click", function (e) { if (!e.target.closest(".menu-wrap")) closeMenus(); });
 
+    // Gesto: deslizar de lado cambia de pestaña (izquierda = siguiente, derecha = anterior).
+    // En Ajustes, detalle de cuenta y guía de Binance, deslizar a la derecha vuelve atrás.
     (function () {
-      function shiftM(m, d) { var p = m.split("-"), dt = new Date(Number(p[0]), Number(p[1]) - 1 + d, 1); return dt.getFullYear() + "-" + pad2(dt.getMonth() + 1); }
-      function bindSwipe(el, onLeft, onRight) {
-        var x0 = 0, y0 = 0, ok = false;
-        el.addEventListener("touchstart", function (e) {
-          var t = e.target;
-          ok = e.touches.length === 1 && !t.closest(".trend-chart, input, select, textarea, .hist-chips, .sav-chart, .sheet, .rates, .rate-fields, .seg");
-          if (ok) { x0 = e.touches[0].clientX; y0 = e.touches[0].clientY; }
-        }, { passive: true });
-        el.addEventListener("touchend", function (e) {
-          if (!ok) return; ok = false;
-          var dx = e.changedTouches[0].clientX - x0, dy = e.changedTouches[0].clientY - y0;
-          if (Math.abs(dx) > 70 && Math.abs(dy) < 45) (dx < 0 ? onLeft : onRight)();
-        }, { passive: true });
+      var x0 = 0, y0 = 0, t0 = 0, ok = false;
+      var NO = ".trend-chart, input, select, textarea, .hist-chips, #hist-cats, .sav-chart, .sheet, .seg, .rate-fields, .hrow[data-hid], .cat-chips, .tabbar, .dial, .menu, .acc3";
+      function blocked() {
+        if (document.querySelector(".sheet-backdrop:not([hidden])")) return true;
+        return ["onb", "lock", "tour", "ctry", "splash", "cal-backdrop"].some(function (id) { var el = $(id); return el && !el.hidden; });
       }
-      var cm = today().slice(0, 7);
-      bindSwipe(document.querySelector("main"), function () { var n = shiftM(state.month, 1); if (n <= today().slice(0, 7)) setMonth(n); }, function () { setMonth(shiftM(state.month, -1)); });
-      bindSwipe($("hist-view"), function () { if (!$("hist-next").disabled) $("hist-next").click(); }, function () { if (!$("hist-prev").disabled) $("hist-prev").click(); });
+      document.addEventListener("touchstart", function (e) {
+        ok = e.touches.length === 1 && !e.target.closest(NO) && !blocked();
+        if (ok) { x0 = e.touches[0].clientX; y0 = e.touches[0].clientY; t0 = Date.now(); }
+      }, { passive: true });
+      document.addEventListener("touchend", function (e) {
+        if (!ok) return; ok = false;
+        var dx = e.changedTouches[0].clientX - x0, dy = e.changedTouches[0].clientY - y0;
+        if (Math.abs(dx) < 70 || Math.abs(dy) > Math.abs(dx) * 0.6 || Date.now() - t0 > 800) return;
+        var v = activeView();
+        if (v === "set" || v === "accd" || v === "bn") { if (dx > 0) { closeViews(); setTab(currentTab()); } return; }
+        var tabs = Array.prototype.slice.call(document.querySelectorAll(".tab[data-tab]"));
+        var cur = tabs.findIndex(function (t) { return t.getAttribute("aria-current") === "true"; });
+        var n = cur + (dx < 0 ? 1 : -1);
+        if (cur < 0 || n < 0 || n >= tabs.length) return;
+        tabs[n].click();
+      }, { passive: true });
     })();
     /* ---------- Calendario ---------- */
     var cal = { mode: "day", target: "fecha", y: 0, m: 0, sel: "", nav: false };
@@ -6788,6 +6813,58 @@ html, body, button, a, input, select, textarea, label, [role="button"] { touch-a
       var row = e.target.closest(".hrow[data-hid]");
       if (row && !e.target.closest(".menu-wrap")) openHd(Number(row.getAttribute("data-hid")));
     });
+
+    /* ---------- Deslizar un movimiento para borrarlo ---------- */
+    var swRow = null, swX = 0, swY = 0, swDx = 0, swDir = 0;
+    function closeSwipes(except) { document.querySelectorAll("#hist-list .hrow.open").forEach(function (r) { if (r !== except) { r.classList.remove("open"); r.style.setProperty("--sx", "0px"); } }); }
+    function quickDel(id, row) {
+      var keepI = state.items.filter(function (it) { return it.id === id || it.linkId === id; });
+      var keepE = (state.earn || []).filter(function (x) { return x.ahorroId === id || x.id === id; });
+      function go() {
+        delMov(id); save(); render();
+        showToast("Movimiento eliminado.", "Deshacer", function () {
+          state.items = state.items.concat(keepI); state.earn = (state.earn || []).concat(keepE);
+          save(); render(); showToast("Movimiento restaurado.");
+        });
+      }
+      if (row) { row.classList.add("gone"); setTimeout(go, 260); } else go();
+    }
+    $("hist-list").addEventListener("touchstart", function (e) {
+      var r = e.target.closest(".hrow[data-hid]");
+      closeSwipes(r);
+      if (!r || r.hasAttribute("data-auto") || e.touches.length !== 1) { swRow = null; return; }
+      swRow = r; swX = e.touches[0].clientX; swY = e.touches[0].clientY; swDx = r.classList.contains("open") ? -80 : 0; swDir = 0;
+    }, { passive: true });
+    $("hist-list").addEventListener("touchmove", function (e) {
+      if (!swRow) return;
+      var mx = e.touches[0].clientX - swX, my = e.touches[0].clientY - swY;
+      if (!swDir) { if (Math.abs(mx) < 8 && Math.abs(my) < 8) return; swDir = Math.abs(mx) > Math.abs(my) ? 1 : 2; if (swDir === 1) swRow.classList.add("drag"); }
+      if (swDir !== 1) { swRow = null; return; }
+      e.preventDefault();
+      var base = swRow.classList.contains("open") ? -80 : 0;
+      swDx = Math.max(-170, Math.min(0, base + mx));
+      swRow.style.setProperty("--sx", swDx + "px");
+      swRow.classList.toggle("far", swDx < -130);
+    }, { passive: false });
+    $("hist-list").addEventListener("touchend", function () {
+      if (!swRow) return;
+      var r = swRow; swRow = null;
+      if (swDir !== 1) return;
+      r.classList.remove("drag", "far");
+      if (swDx < -130) { r.style.setProperty("--sx", "-110%"); quickDel(Number(r.getAttribute("data-hid")), r); return; }
+      var open = swDx < -40;
+      r.classList.toggle("open", open); r.style.setProperty("--sx", open ? "-80px" : "0px");
+      r._swiped = Date.now();
+    });
+    $("hist-list").addEventListener("click", function (e) {
+      var r = e.target.closest(".hrow[data-hid]");
+      if (r && r._swiped && Date.now() - r._swiped < 350) { e.stopImmediatePropagation(); return; }
+      if (r && r.classList.contains("open")) {
+        e.stopImmediatePropagation();
+        if (e.clientX > r.getBoundingClientRect().right - 80) quickDel(Number(r.getAttribute("data-hid")), r);
+        else { r.classList.remove("open"); r.style.setProperty("--sx", "0px"); }
+      }
+    }, true);
 
     /* ---------- Detalle de un movimiento ---------- */
     var hdId = null;
