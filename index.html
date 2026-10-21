@@ -1993,10 +1993,6 @@ html.sheet-open main, html.sheet-open .goals-view, html.sheet-open .pay-view, ht
 html.bg-lock, html.bg-lock body { overflow: hidden !important; overscroll-behavior: none; }
 .sheet-backdrop, .sheet, .dial { overscroll-behavior: contain; }
 .sheet-backdrop { background: rgba(10, 8, 30, 0.38) !important; -webkit-backdrop-filter: blur(3px); backdrop-filter: blur(3px); }
-/* Botones de confirmar más separados del teclado y del contenido */
-.sheet { padding-bottom: calc(30px + env(safe-area-inset-bottom, 0px)) !important; }
-.sheet button.primary, .sheet #add { margin-top: 20px !important; }
-#sheet #add { bottom: max(16px, calc(env(safe-area-inset-bottom, 0px) + 6px)) !important; }
 /* Historial: cada día en su tarjeta y más aire entre movimientos */
 #hist-list .hday { background: var(--surface); border-radius: 20px; padding: 4px 14px 2px; margin-top: 14px; }
 #hist-list .hday:first-child { margin-top: 6px; }
