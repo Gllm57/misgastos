@@ -1977,6 +1977,16 @@ html { overflow-x: hidden; overscroll-behavior-x: none; }
 body { overflow-x: clip; }
 main, .goals-view, .pay-view, .hist-view, .bn-view, .set-view, .accd-view { touch-action: pan-y; }
 .hist-chips, .ai-quick, .ctry-list { touch-action: pan-x pan-y; }
+
+/* ===== Uso táctil ===== */
+/* Zonas de toque de al menos 44px sin cambiar cómo se ven */
+.pay-check, .dots, #rates-tog, #rate-ref, #pay-prev, #pay-next, .amt-ops button, .rate-chip, #set-open, #cx-clear, [data-acc-col], .gs-list button { position: relative; }
+.pay-check::before, .dots::before, #pay-prev::before, #pay-next::before, .amt-ops button::before, .rate-chip::before, #set-open::before, #cx-clear::before, [data-acc-col]::before, .gs-list button::before { content: ""; position: absolute; left: 50%; top: 50%; width: 44px; height: 44px; transform: translate(-50%, -50%); }
+/* Guardar siempre a la vista en Nuevo movimiento */
+#sheet #add { position: sticky; bottom: max(8px, env(safe-area-inset-bottom, 0px)); z-index: 3; box-shadow: 0 -10px 24px var(--surface); }
+#goal-list .goal[data-gid] { cursor: pointer; }
+/* Nombres de cuentas completos en pantallas pequeñas */
+@media (max-width: 380px) { .acc3 { grid-template-columns: 104px minmax(0, 1fr) !important; gap: 10px !important; } .acc3 .acc-sum, .acc3 .acc-sum svg { width: 104px !important; height: 104px !important; } .ar-n b, .ar-v { font-size: 0.86rem; } }
 </style>
 </head>
 <body>
@@ -3227,10 +3237,15 @@ main, .goals-view, .pay-view, .hist-view, .bn-view, .set-view, .accd-view { touc
       var d = seg.replace(/\D/g, "");
       if (!d) return "";
       d = d.replace(/^0+/, "");
+      if (!d) return "";
       while (d.length < 3) d = "0" + d;
       return d.slice(0, -2).replace(/\B(?=(\d{3})+(?!\d))/g, ".") + "," + d.slice(-2);
     });
   }
+  function caretEnd(el) { setTimeout(function () { try { el.setSelectionRange(el.value.length, el.value.length); } catch (e) {} }, 0); }
+  ["click", "focusin", "keydown"].forEach(function (ev) {
+    document.addEventListener(ev, function (e) { var el = e.target; if (el && el.tagName === "INPUT" && isMoneyInput(el)) caretEnd(el); }, true);
+  });
   function moneyIn(n) { return (n < 0 ? "-" : "") + fmtCents(String(Math.round(Math.abs(n) * 100))); }
   document.addEventListener("focusin", function (e) {
     var el = e.target;
@@ -5147,10 +5162,12 @@ main, .goals-view, .pay-view, .hist-view, .bn-view, .set-view, .accd-view { touc
       document.querySelector(".amt-ops").classList.toggle("has", ok);
     }
     $("monto").addEventListener("input", renderAmtRes);
+    document.querySelector(".amt-ops").addEventListener("pointerdown", function (e) { if (e.target.closest("[data-op]") && document.activeElement === $("monto")) e.preventDefault(); });
     document.querySelector(".amt-ops").addEventListener("click", function (e) {
       var b = e.target.closest("[data-op]"); if (!b) return;
       var m = $("monto"); if (!m.value) return;
       m.value = m.value.replace(/[+\-−×]$/, "") + b.getAttribute("data-op"); renderAmtRes();
+      if (document.activeElement === m) try { m.setSelectionRange(m.value.length, m.value.length); } catch (er) {}
     });
     $("cat-quick").addEventListener("click", function (e) {
       var b = e.target.closest("[data-cat-pick]"); if (!b) return;
@@ -5247,13 +5264,23 @@ main, .goals-view, .pay-view, .hist-view, .bn-view, .set-view, .accd-view { touc
 
     }
     function closeSheet() { state.editId = null; $("sheet").hidden = true; $("fab").focus(); }
-    function openDial() { $("dial").hidden = false; document.body.classList.add("dial-open"); $("fab").setAttribute("aria-expanded", "true"); }
-    function closeDial() { $("dial").hidden = true; document.body.classList.remove("dial-open"); $("fab").setAttribute("aria-expanded", "false"); }
+    function openDial() { setTimeout(function () { bgLock(true); }, 0); $("dial").hidden = false; document.body.classList.add("dial-open"); $("fab").setAttribute("aria-expanded", "true"); }
+    // Con una hoja o el menú + abiertos el fondo no se desplaza (en iPhone hay que fijar el body)
+    var bgY = 0, bgOn = false;
+    function bgLock(on) {
+      on = !!on || !$("dial").hidden;
+      if (on === bgOn) return;
+      bgOn = on; var b = document.body;
+      if (on) { bgY = window.scrollY || 0; b.style.position = "fixed"; b.style.top = -bgY + "px"; b.style.left = "0"; b.style.right = "0"; }
+      else { b.style.position = ""; b.style.top = ""; b.style.left = ""; b.style.right = ""; var h = document.documentElement; h.style.scrollBehavior = "auto"; window.scrollTo(0, bgY); h.style.scrollBehavior = ""; }
+    }
+    function closeDial() { $("dial").hidden = true; document.body.classList.remove("dial-open"); $("fab").setAttribute("aria-expanded", "false"); bgLock(document.documentElement.classList.contains("sheet-open")); }
     $("fab").addEventListener("click", function () { if ($("dial").hidden) openDial(); else closeDial(); });
     (function () {
-      var fab = $("fab"), tmr = 0, fired = false;
-      function start() {
+      var fab = $("fab"), tmr = 0, fired = false, sx = 0, sy = 0;
+      function start(e) {
         fired = false; clearTimeout(tmr);
+        var t = e && e.touches && e.touches[0]; sx = t ? t.clientX : 0; sy = t ? t.clientY : 0;
         tmr = setTimeout(function () {
           fired = true;
           if (navigator.vibrate) try { navigator.vibrate(15); } catch (e) {}
@@ -5264,7 +5291,8 @@ main, .goals-view, .pay-view, .hist-view, .bn-view, .set-view, .accd-view { touc
       function stop() { clearTimeout(tmr); }
       fab.addEventListener("touchstart", start, { passive: true });
       fab.addEventListener("mousedown", start);
-      ["touchend", "touchcancel", "mouseup", "mouseleave", "touchmove"].forEach(function (ev) { fab.addEventListener(ev, stop, { passive: true }); });
+      ["touchend", "touchcancel", "mouseup", "mouseleave"].forEach(function (ev) { fab.addEventListener(ev, stop, { passive: true }); });
+      fab.addEventListener("touchmove", function (e) { var t = e.touches[0]; if (t && Math.abs(t.clientX - sx) + Math.abs(t.clientY - sy) > 12) stop(); }, { passive: true });
       fab.addEventListener("contextmenu", function (e) { e.preventDefault(); });
       document.addEventListener("click", function (e) { if (fired && e.target.closest("#fab")) { e.stopImmediatePropagation(); e.preventDefault(); fired = false; } }, true);
     })();
@@ -6757,6 +6785,7 @@ main, .goals-view, .pay-view, .hist-view, .bn-view, .set-view, .accd-view { touc
       var op = e.target.closest("[data-goal-open]");
       if (op) { openGd(op.getAttribute("data-goal-open")); return; }
       if (e.target.closest("[data-goal-new]")) { openGe(null); return; }
+      if (!e.target.closest("button, a, input, select, .menu, .menu-wrap")) { var gli = e.target.closest(".goal[data-gid]"); if (gli) { openGd(gli.getAttribute("data-gid")); return; } }
       goalClick(e);
     });
     function goalClick(e) {
@@ -7033,7 +7062,7 @@ main, .goals-view, .pay-view, .hist-view, .bn-view, .set-view, .accd-view { touc
     });
 
     /* ---------- Deslizar un movimiento para borrarlo ---------- */
-    var swRow = null, swX = 0, swY = 0, swDx = 0, swDir = 0;
+    var swRow = null, swX = 0, swY = 0, swDx = 0, swDir = 0, swMx = 0;
     function sxReset(r) { r.style.setProperty("--sx", "0px"); setTimeout(function () { if (!r.classList.contains("open") && !r.classList.contains("drag")) r.style.removeProperty("--sx"); }, 360); }
     function closeSwipes(except) { document.querySelectorAll("#hist-list .hrow.open").forEach(function (r) { if (r !== except) { r.classList.remove("open"); sxReset(r); } }); }
     function quickDel(id, row) {
@@ -7052,7 +7081,7 @@ main, .goals-view, .pay-view, .hist-view, .bn-view, .set-view, .accd-view { touc
       var r = e.target.closest(".hrow[data-hid]");
       closeSwipes(r);
       if (!r || r.hasAttribute("data-auto") || e.touches.length !== 1) { swRow = null; return; }
-      swRow = r; swX = e.touches[0].clientX; swY = e.touches[0].clientY; swDx = r.classList.contains("open") ? -80 : 0; swDir = 0;
+      swRow = r; swX = e.touches[0].clientX; swY = e.touches[0].clientY; swDx = r.classList.contains("open") ? -80 : 0; swDir = 0; swMx = 0;
     }, { passive: true });
     $("hist-list").addEventListener("touchmove", function (e) {
       if (!swRow) return;
@@ -7061,6 +7090,7 @@ main, .goals-view, .pay-view, .hist-view, .bn-view, .set-view, .accd-view { touc
       if (swDir !== 1) { swRow = null; return; }
       e.preventDefault();
       var base = swRow.classList.contains("open") ? -80 : 0;
+      swMx = mx;
       swDx = Math.max(-170, Math.min(0, base + mx));
       swRow.style.setProperty("--sx", swDx + "px");
       swRow.classList.toggle("far", swDx < -130);
@@ -7070,6 +7100,7 @@ main, .goals-view, .pay-view, .hist-view, .bn-view, .set-view, .accd-view { touc
       var r = swRow; swRow = null;
       if (swDir !== 1) return;
       r.classList.remove("drag", "far");
+      if (!r.classList.contains("open") && swMx > 70) { sxReset(r); var pt = document.querySelector('.tab[data-tab="2"]'); if (pt) pt.click(); return; }
       if (swDx < -130) { r.style.setProperty("--sx", "-110%"); quickDel(Number(r.getAttribute("data-hid")), r); return; }
       var open = swDx < -40;
       r.classList.toggle("open", open); if (open) r.style.setProperty("--sx", "-80px"); else sxReset(r);
@@ -7194,6 +7225,7 @@ main, .goals-view, .pay-view, .hist-view, .bn-view, .set-view, .accd-view { touc
     }
     function openView(name) {
       try {
+        try { closeSwipes(); } catch (e) {}
         closeDial();
         if (!activeView()) viewReturnY = window.scrollY || 0;
         if (activeView() !== name) navDir(NAV_I[name] || 4);
@@ -7664,7 +7696,7 @@ main, .goals-view, .pay-view, .hist-view, .bn-view, .set-view, .accd-view { touc
       { tab: 0, sel: '[data-panel="acc"]', t: "Tus cuentas", p: "El total y cuánto hay en cada cuenta. Toca una para ver sus movimientos. Con ⇄ transfieres y con + agregas otra." },
       { tab: 0, sel: '[data-panel="cat"]', t: "En qué se va el dinero", p: "Tus gastos por categoría, comparados con el mes pasado. En Límites pones un máximo para cada una." },
       { tab: 0, sel: "#fab", t: "El botón +", p: "Tócalo para anotar un gasto, un ingreso o un ahorro. Mantenlo presionado para usar tus plantillas.", round: true },
-      { tab: 0, sel: "#tabbar", t: "Secciones", p: "Muévete entre Inicio, Ahorro, Pagos e Historial. Desliza de lado para cambiar de mes.", round: true },
+      { tab: 0, sel: "#tabbar", t: "Secciones", p: "Muévete entre Inicio, Ahorro, Pagos e Historial. Desliza de lado para cambiar de pestaña; para cambiar de mes, desliza sobre el mes de arriba.", round: true },
       { tab: 1, sel: '#goals-view [data-panel="sav"]', t: "Tu ahorro", p: "Lo que tienes apartado. Desde aquí ahorras, retiras o cambias de moneda." },
       { tab: 1, sel: "#gv-hero", alt: "#goal-empty", t: "Metas", p: "Crea metas con el + de arriba y mira cuánto llevas de cada una." },
       { tab: 2, sel: ".pay-tabs", t: "Pagos y cobros", p: "Por pagar es lo que debes. Por cobrar es lo que esperas recibir, y también cuenta en tu proyección." },
@@ -7690,6 +7722,8 @@ main, .goals-view, .pay-view, .hist-view, .bn-view, .set-view, .accd-view { touc
       if (!el) return;
       var r = tourRect(st, el), pad = st.round ? 6 : 8, H = window.innerHeight;
       var top = Math.max(8, r.top - pad), bot = Math.min(H - 8, r.bottom + pad);
+      var thp = tip.offsetHeight || 170;
+      if (H - bot < thp + 24 && top < thp + 24) bot = Math.max(top + 60, H - thp - 26);
       T.classList.toggle("track", instant === true);
       hole.style.left = (r.left - pad) + "px"; hole.style.width = (r.width + pad * 2) + "px";
       hole.style.top = top + "px"; hole.style.height = Math.max(0, bot - top) + "px";
@@ -7849,6 +7883,7 @@ main, .goals-view, .pay-view, .hist-view, .bn-view, .set-view, .accd-view { touc
         var r = document.documentElement;
         if (open && !r.classList.contains("sheet-open")) r.style.setProperty("--so", ((window.scrollY || 0) + window.innerHeight / 2) + "px");
         r.classList.toggle("sheet-open", open);
+        bgLock(open);
       }
       var mo = new MutationObserver(syncSheets);
       sheets.forEach(function (b) { mo.observe(b, { attributes: true, attributeFilter: ["hidden"] }); });
