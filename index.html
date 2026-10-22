@@ -1949,8 +1949,8 @@ main, .goals-view, .pay-view, .hist-view, .bn-view, .set-view, .accd-view { touc
 .pay-check, .dots, #rates-tog, #rate-ref, #pay-prev, #pay-next, .amt-ops button, .rate-chip, #set-open, #cx-clear, [data-acc-col], .gs-list button { position: relative; }
 .pay-check::before, .dots::before, #pay-prev::before, #pay-next::before, .amt-ops button::before, .rate-chip::before, #set-open::before, #cx-clear::before, [data-acc-col]::before, .gs-list button::before { content: ""; position: absolute; left: 50%; top: 50%; width: 44px; height: 44px; transform: translate(-50%, -50%); }
 /* Guardar siempre a la vista en Nuevo movimiento */
-#sheet .sheet-foot { position: sticky; bottom: calc(-20px - env(safe-area-inset-bottom, 0px)); z-index: 3; margin: 18px -20px calc(-20px - env(safe-area-inset-bottom, 0px)); padding: 12px 20px calc(14px + env(safe-area-inset-bottom, 0px)); background: var(--surface); border-top: 1px solid color-mix(in srgb, var(--line) 60%, transparent); }
-#sheet .sheet-foot #add { width: 100%; margin: 0; }
+.sheet .sheet-foot { position: sticky; bottom: calc(-20px - env(safe-area-inset-bottom, 0px)); z-index: 3; margin: 18px -20px calc(-20px - env(safe-area-inset-bottom, 0px)); padding: 12px 20px calc(14px + env(safe-area-inset-bottom, 0px)); background: var(--surface); border-top: 1px solid color-mix(in srgb, var(--line) 60%, transparent); }
+.sheet .sheet-foot > .primary { width: 100%; margin: 0 !important; }
 #goal-list .goal[data-gid] { cursor: pointer; }
 /* Nombres de cuentas completos en pantallas pequeñas */
 @media (max-width: 380px) { .acc3 { grid-template-columns: 104px minmax(0, 1fr) !important; gap: 10px !important; } .acc3 .acc-sum, .acc3 .acc-sum svg { width: 104px !important; height: 104px !important; } .ar-n b, .ar-v { font-size: 0.86rem; } }
@@ -2353,7 +2353,7 @@ html { background: var(--bg); }
       </div>
       <div class="earn-prev" id="earn-prev"></div>
       <p class="error" id="earn-err" role="alert"></p>
-      <button type="button" class="primary" id="earn-save">Guardar en mis ahorros</button>
+      <div class="sheet-foot"><button type="button" class="primary" id="earn-save">Guardar en mis ahorros</button></div>
     </section>
   </div>
   <div class="sheet-backdrop" id="gd-sheet" hidden>
@@ -2373,8 +2373,8 @@ html { background: var(--bg); }
       <div class="sheet-head"><h2 id="h-cf"></h2><button type="button" class="del" id="cf-close" aria-label="Cerrar">✕</button></div>
       <p class="hint" id="cf-text"></p>
       <div id="cf-type-wrap"><label for="cf-type" style="margin-top:12px">Escribe <b id="cf-word"></b> para confirmar</label><input type="text" id="cf-type" class="confirm-in" autocomplete="off" autocapitalize="characters"></div>
-      <button type="button" class="primary btn-danger" id="cf-ok" style="margin-top:14px"></button>
-      <button type="button" class="secondary" id="cf-cancel" style="width:100%;margin-top:8px">Cancelar</button>
+      <div class="sheet-foot"><button type="button" class="primary btn-danger" id="cf-ok"></button>
+      <button type="button" class="secondary" id="cf-cancel" style="width:100%;margin-top:8px">Cancelar</button></div>
     </section>
   </div>
   <div class="tour" id="tour" hidden>
@@ -2531,7 +2531,7 @@ html { background: var(--bg); }
         </div>
       </div>
       <p class="error" id="pg-err" role="alert"></p>
-      <button type="button" class="primary" id="pg-save">Programar pago</button>
+      <div class="sheet-foot"><button type="button" class="primary" id="pg-save">Programar pago</button></div>
     </section>
   </div>
   <div class="sheet-backdrop" id="hd-sheet" hidden>
@@ -2553,14 +2553,14 @@ html { background: var(--bg); }
       <div class="sheet-head"><h2 id="h-lim">Límite por categoría</h2><button type="button" class="del" id="lim-close" aria-label="Cerrar">✕</button></div>
       <p class="hint" id="lim-hint" style="margin:0 0 6px"></p>
       <ul class="lim-list" id="lim-list"></ul>
-      <button type="button" class="primary" id="lim-save">Guardar límites</button>
+      <div class="sheet-foot"><button type="button" class="primary" id="lim-save">Guardar límites</button></div>
     </section>
   </div>
   <div class="sheet-backdrop" id="gs-sheet" hidden>
     <section class="panel sheet" role="dialog" aria-modal="true" aria-labelledby="h-gs">
       <div class="sheet-head"><h2 id="h-gs">Ordenar metas</h2><button type="button" class="del" id="gs-close" aria-label="Cerrar">✕</button></div>
       <ul class="gs-list" id="gs-list"></ul>
-      <button type="button" class="primary" id="gs-done">Listo</button>
+      <div class="sheet-foot"><button type="button" class="primary" id="gs-done">Listo</button></div>
     </section>
   </div>
   <div class="sheet-backdrop" id="ge-sheet" hidden>
@@ -2581,7 +2581,7 @@ html { background: var(--bg); }
         </div>
       </div>
       <p class="error" id="ge-err" role="alert"></p>
-      <button type="button" class="primary" id="ge-save">Crear meta</button>
+      <div class="sheet-foot"><button type="button" class="primary" id="ge-save">Crear meta</button></div>
     </section>
   </div>
   <div class="sheet-backdrop" id="gm-sheet" hidden>
@@ -2610,7 +2610,7 @@ html { background: var(--bg); }
       </div>
       <div class="sav-preview" id="gm-prev" aria-live="polite"></div>
       <p class="error" id="gm-err" role="alert"></p>
-      <button type="button" class="primary" id="gm-go">Depositar</button>
+      <div class="sheet-foot"><button type="button" class="primary" id="gm-go">Depositar</button></div>
     </section>
   </div>
   <button class="ai-fab" id="ai-btn" type="button" aria-label="Asistente financiero con IA" aria-haspopup="dialog"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2l1.8 5.2L19 9l-5.2 1.8L12 16l-1.8-5.2L5 9l5.2-1.8z"></path><path d="M19 14l.9 2.6 2.6.9-2.6.9L19 21l-.9-2.6-2.6-.9 2.6-.9z"></path></svg></button>
@@ -2673,7 +2673,7 @@ html { background: var(--bg); }
       </div>
       <div class="sav-preview" id="sv-prev" aria-live="polite"></div>
       <p class="error" id="sv-err" role="alert"></p>
-      <button type="button" class="primary" id="sv-go">Agregar ahorro</button>
+      <div class="sheet-foot"><button type="button" class="primary" id="sv-go">Agregar ahorro</button></div>
     </section>
   </div>
   <div class="sheet-backdrop" id="tpl-sheet" hidden>
@@ -2683,7 +2683,7 @@ html { background: var(--bg); }
       <p class="hint" id="tpl-hint" style="margin-bottom:8px">Toca una plantilla para agregar el movimiento escribiendo solo el monto.</p>
       <ul class="tpl-list" id="tpl-list"></ul>
       <p class="empty" id="tpl-empty">Aún no tienes plantillas. Crea una para algo que se repite, como el almuerzo o tu sueldo.</p>
-      <button type="button" class="primary" id="tpl-new">Crear plantilla</button>
+      <div class="sheet-foot"><button type="button" class="primary" id="tpl-new">Crear plantilla</button></div>
     </section>
   </div>
   <div class="sheet-backdrop" id="te-sheet" hidden>
@@ -2719,7 +2719,7 @@ html { background: var(--bg); }
         </div>
       </div>
       <p class="error" id="te-err" role="alert"></p>
-      <button type="button" class="primary" id="te-save">Guardar plantilla</button>
+      <div class="sheet-foot"><button type="button" class="primary" id="te-save">Guardar plantilla</button></div>
     </section>
   </div>
   <div class="sheet-backdrop" id="tu-sheet" hidden>
@@ -2733,7 +2733,7 @@ html { background: var(--bg); }
       <label for="tu-monto" id="tu-monto-label">Monto</label>
       <input type="text" id="tu-monto" inputmode="decimal" autocomplete="off" placeholder="0,00">
       <p class="error" id="tu-err" role="alert"></p>
-      <button type="button" class="primary" id="tu-go">Agregar</button>
+      <div class="sheet-foot"><button type="button" class="primary" id="tu-go">Agregar</button></div>
     </section>
   </div>
   <div class="sheet-backdrop" id="tr-sheet" hidden>
@@ -2769,7 +2769,7 @@ html { background: var(--bg); }
       </div>
       <div class="sav-preview" id="tr-prev" aria-live="polite"></div>
       <p class="error" id="tr-err" role="alert"></p>
-      <button type="button" class="primary" id="tr-go">Transferir</button>
+      <div class="sheet-foot"><button type="button" class="primary" id="tr-go">Transferir</button></div>
     </section>
   </div>
   <div class="sheet-backdrop" id="calc-sheet" hidden>
@@ -2820,7 +2820,7 @@ html { background: var(--bg); }
       </div>
       <div class="sav-preview" id="mv-prev" aria-live="polite"></div>
       <p class="error" id="mv-err" role="alert"></p>
-      <button type="button" class="primary" id="mv-go">Retirar</button>
+      <div class="sheet-foot"><button type="button" class="primary" id="mv-go">Retirar</button></div>
     </section>
   </div>
   <div class="sheet-backdrop cal-backdrop" id="cal-backdrop" hidden>
@@ -2867,7 +2867,7 @@ html { background: var(--bg); }
         </div>
       </div>
       <p class="error" id="acc-err" role="alert"></p>
-      <button type="button" class="primary" id="acc-save">Guardar cuenta</button>
+      <div class="sheet-foot"><button type="button" class="primary" id="acc-save">Guardar cuenta</button></div>
     </section>
   </div>
   <div class="sheet-backdrop" id="sheet" hidden>
