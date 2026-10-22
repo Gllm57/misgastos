@@ -2081,6 +2081,36 @@ h1 .brand { cursor: pointer; -webkit-tap-highlight-color: transparent; -webkit-u
 @keyframes navInL { from { opacity: 0.4; transform: translateX(-22px); } to { opacity: 1; transform: translateX(0); } }
 /* Durante el tutorial la página cambia al instante bajo el fondo oscuro; solo se mueve el recuadro */
 html.touring body .goals-view, html.touring body .pay-view, html.touring body .hist-view, html.touring body .bn-view, html.touring body .set-view, html.touring body .accd-view, html.touring body main { animation: none !important; }
+/* Subcategorías, etiquetas y gasto dividido */
+.sub-row { display: flex; gap: 6px; overflow-x: auto; margin: 8px -20px 0; padding: 2px 20px 2px; scrollbar-width: none; touch-action: pan-x pan-y; }
+.sub-row::-webkit-scrollbar { display: none; }
+.sub-row:empty { display: none; }
+.sub-chip { flex: none; font: inherit; font-size: 0.84rem; font-weight: 600; min-height: 34px; padding: 0 12px; border-radius: 999px; border: 1px solid var(--line); background: transparent; color: var(--muted); cursor: pointer; transition: background 0.25s ease, color 0.25s ease, border-color 0.25s ease; }
+.sub-chip.on { background: color-mix(in srgb, var(--accent) 14%, transparent); border-color: var(--accent); color: var(--accent); }
+.sub-chip.sub-add { border-style: dashed; }
+.sub-new { display: flex; gap: 8px; margin-top: 8px; }
+.sub-new input { flex: 1; min-height: 40px !important; }
+.sub-new button, .split-add, .siri-url button { font: inherit; font-weight: 600; border: 0; border-radius: 12px; padding: 0 14px; min-height: 40px; background: color-mix(in srgb, var(--accent) 14%, transparent); color: var(--accent); cursor: pointer; }
+.split-tog { display: inline-flex; align-items: center; gap: 6px; margin-top: 10px; font: inherit; font-size: 0.86rem; font-weight: 600; color: var(--accent); background: none; border: 0; padding: 6px 0; cursor: pointer; min-height: 36px; }
+.split-tog svg { width: 16px; height: 16px; }
+.split-tog.on { color: var(--out); }
+.split-tog[hidden], .sub-new[hidden], .split[hidden], .sub-row[hidden] { display: none !important; }
+.split { margin-top: 6px; padding: 10px; border-radius: 16px; background: var(--fill, color-mix(in srgb, var(--ink) 5%, transparent)); display: grid; gap: 8px; }
+.split-row { display: grid; grid-template-columns: minmax(0, 1fr) 110px 36px; gap: 6px; align-items: center; margin-bottom: 6px; }
+.split-row select, .split-row input { min-height: 42px !important; padding: 8px 10px !important; }
+.split-x { width: 36px; height: 36px; border-radius: 50%; border: 0; background: transparent; color: var(--muted); cursor: pointer; font-size: 0.9rem; }
+.split-add { justify-self: start; }
+#split-rest { margin: 0; }
+#split-rest.err { color: var(--out); }
+.tag-chip { display: inline-block; padding: 1px 8px; border-radius: 999px; font-size: 0.8rem; background: color-mix(in srgb, var(--accent) 12%, transparent); color: var(--accent); }
+/* Face ID */
+.lock-bio { display: inline-flex; align-items: center; gap: 8px; font: inherit; font-weight: 600; color: var(--accent); background: color-mix(in srgb, var(--accent) 12%, transparent); border: 0; border-radius: 999px; min-height: 44px; padding: 0 18px; cursor: pointer; }
+.lock-bio svg { width: 22px; height: 22px; }
+.lock-bio[hidden] { display: none; }
+/* Atajo de Siri */
+.siri-steps { margin: 6px 0; padding-left: 22px; display: grid; gap: 6px; line-height: 1.45; font-size: 0.92rem; }
+.siri-url { display: flex; gap: 8px; align-items: center; padding: 8px 8px 8px 12px; border-radius: 14px; background: var(--fill, color-mix(in srgb, var(--ink) 5%, transparent)); margin: 4px 0 6px; }
+.siri-url code { flex: 1; min-width: 0; font-size: 0.8rem; word-break: break-all; -webkit-user-select: all; user-select: all; }
 </style>
 </head>
 <body>
@@ -2350,6 +2380,10 @@ html.touring body .goals-view, html.touring body .pay-view, html.touring body .h
         <div class="tx"><b>Avisos de pagos</b><small id="notif-sub">Muestra en el ícono de Orbe cuántos pagos vencen hoy o mañana.</small></div>
         <button type="button" class="switch" id="notif-switch" role="switch" aria-checked="false" aria-label="Avisos de pagos"><span></span></button>
       </div>
+      <div class="set-row" id="bio-row" hidden>
+        <div class="tx"><b>Desbloquear con Face ID</b><small>En vez de escribir el código. El código sigue sirviendo si Face ID falla.</small></div>
+        <button type="button" class="switch" id="bio-switch" role="switch" aria-checked="false" aria-label="Desbloquear con Face ID"><span></span></button>
+      </div>
       <button type="button" class="set-row" id="pin-change" hidden><span class="tx"><b>Cambiar código</b></span><svg class="chev-r" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 5l7 7-7 7"></path></svg></button>
     </div>
 
@@ -2357,6 +2391,7 @@ html.touring body .goals-view, html.touring body .pay-view, html.touring body .h
     <div class="set-group">
       <button type="button" class="set-row " id="bk-save"><span class="tx"><b>Guardar una copia</b><small><span id="bk-sub">Descarga un archivo con todos tus movimientos.</span></small></span><svg class="chev-r" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 5l7 7-7 7"></path></svg></button>
       <button type="button" class="set-row " id="bk-load"><span class="tx"><b>Restaurar una copia</b><small>Carga un archivo guardado antes. Reemplaza lo que tienes ahora.</small></span><svg class="chev-r" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 5l7 7-7 7"></path></svg></button>
+      <button type="button" class="set-row " id="siri-open"><span class="tx"><b>Atajo de Siri «Agregar gasto»</b><small>Di «Oye Siri, agregar gasto» y Orbe se abre con el monto listo.</small></span><svg class="chev-r" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 5l7 7-7 7"></path></svg></button>
       <button type="button" class="set-row " id="snap-open"><span class="tx"><b>Copias automáticas</b><small id="snap-sub">Orbe guarda sola una copia cada día en este teléfono, por si necesitas volver atrás.</small></span><svg class="chev-r" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 5l7 7-7 7"></path></svg></button>
       <button type="button" class="set-row danger" id="data-del"><span class="tx"><b>Borrar todos los datos</b><small>Elimina todo lo guardado en este teléfono.</small></span><svg class="chev-r" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 5l7 7-7 7"></path></svg></button>
       <button type="button" class="set-row " id="ex-all"><span class="tx"><b>Exportar movimientos a Excel</b><small>Un archivo con todos tus movimientos para abrir en Excel o Numbers.</small></span><svg class="chev-r" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 5l7 7-7 7"></path></svg></button>
@@ -2510,6 +2545,7 @@ html.touring body .goals-view, html.touring body .pay-view, html.touring body .h
       <button type="button" data-k="7">7</button><button type="button" data-k="8">8</button><button type="button" data-k="9">9</button>
       <button type="button" class="kp-x" id="kp-cancel">Cancelar</button><button type="button" data-k="0">0</button><button type="button" class="kp-x" data-k="del" aria-label="Borrar">⌫</button>
     </div>
+    <button type="button" class="lock-bio" id="lock-bio" hidden><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 8V6a2 2 0 0 1 2-2h2M16 4h2a2 2 0 0 1 2 2v2M20 16v2a2 2 0 0 1-2 2h-2M8 20H6a2 2 0 0 1-2-2v-2M9 9v1.5M15 9v1.5M12 9v4.5h-1M9.5 16a4 4 0 0 0 5 0"></path></svg>Usar Face ID</button>
     <button type="button" class="lock-forgot" id="lock-forgot">Olvidé mi código</button>
   </div>
   <div class="bn-view" id="bn-view" role="region" aria-label="Ahorro en Binance" aria-hidden="true">
@@ -2568,7 +2604,7 @@ html.touring body .goals-view, html.touring body .pay-view, html.touring body .h
       <button type="button" class="cal-nav" id="hist-next" aria-label="Mes siguiente">›</button>
     </div>
     <div class="hist-stats" id="hist-stats"></div>
-    <div class="hist-search"><input type="search" id="hist-q" placeholder="Buscar por categoría, nota o cuenta" autocomplete="off" aria-label="Buscar movimientos"></div>
+    <div class="hist-search"><input type="search" id="hist-q" placeholder="Buscar por categoría, nota, #etiqueta o cuenta" autocomplete="off" aria-label="Buscar movimientos"></div>
     <div class="hist-chips" id="hist-chips" role="group" aria-label="Filtrar por tipo">
       <button type="button" data-hf="all" aria-pressed="true">Todo</button>
       <button type="button" data-hf="in" aria-pressed="false">Ingresos</button>
@@ -2644,6 +2680,22 @@ html.touring body .goals-view, html.touring body .pay-view, html.touring body .h
       <div class="sheet-head"><h2>Detalle</h2><button type="button" class="del" id="hd-close" aria-label="Cerrar">✕</button></div>
       <div id="hd-body"></div>
       <div class="hd-btns"><button type="button" class="secondary" id="hd-edit">Editar</button><button type="button" class="secondary" id="hd-dup">Duplicar</button><button type="button" class="secondary hd-del" id="hd-del">Eliminar</button></div>
+    </section>
+  </div>
+  <div class="sheet-backdrop" id="siri-sheet" hidden>
+    <section class="panel sheet" role="dialog" aria-modal="true" aria-labelledby="h-siri">
+      <div class="sheet-head"><h2 id="h-siri">Atajo de Siri</h2><button type="button" class="del" id="siri-close" aria-label="Cerrar">✕</button></div>
+      <ol class="siri-steps">
+        <li>Abre la app <b>Atajos</b> y toca <b>+</b> para crear uno nuevo.</li>
+        <li>Agrega la acción <b>Solicitar entrada</b>: tipo <b>Número</b>, pregunta «¿Cuánto gastaste?».</li>
+        <li>Agrega la acción <b>Abrir URL</b> y pega este enlace. Al final, toca y elige <b>Entrada proporcionada</b>:</li>
+      </ol>
+      <div class="siri-url"><code id="siri-url"></code><button type="button" id="siri-copy">Copiar</button></div>
+      <ol class="siri-steps" start="4">
+        <li>Ponle de nombre <b>Agregar gasto</b>. Listo: di «Oye Siri, agregar gasto».</li>
+      </ol>
+      <p class="hint">Puedes agregar al enlace la categoría y una nota, por ejemplo <code>&amp;cat=Transporte&amp;nota=Taxi</code>. Para un ingreso usa <code>?ingreso=</code> en vez de <code>?gasto=</code>.</p>
+      <p class="hint">Importante: en algunos iPhone, el atajo abre Orbe en Safari en vez de la app de tu pantalla de inicio, y Safari guarda los datos aparte. Si el gasto no aparece en tu app, avísanos.</p>
     </section>
   </div>
   <div class="sheet-backdrop" id="snap-sheet" hidden>
@@ -3008,6 +3060,14 @@ html.touring body .goals-view, html.touring body .pay-view, html.touring body .h
         <div class="cat-quick" id="cat-quick"></div>
         <button type="button" class="cat-btn" id="cat-btn" aria-haspopup="listbox" aria-expanded="false" aria-labelledby="cat-l"></button>
         <div class="cat-chips" id="cat-chips" role="listbox" aria-labelledby="cat-l" hidden></div>
+        <div class="sub-row" id="sub-row" role="group" aria-label="Subcategoría"></div>
+        <div class="sub-new" id="sub-new" hidden><input type="text" id="sub-in" maxlength="24" placeholder="Nueva subcategoría" aria-label="Nueva subcategoría"><button type="button" id="sub-ok">Agregar</button></div>
+        <button type="button" class="split-tog" id="split-tog" aria-expanded="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 3v6a6 6 0 0 0 6 6h0a6 6 0 0 0 6-6V3M12 15v6"></path></svg>Dividir entre varias categorías</button>
+        <div class="split" id="split" hidden>
+          <div id="split-rows"></div>
+          <button type="button" class="split-add" id="split-add">+ Otra parte</button>
+          <p class="hint" id="split-rest"></p>
+        </div>
       </div>
       <div>
         <label for="fecha-btn">Fecha</label>
@@ -3016,7 +3076,7 @@ html.touring body .goals-view, html.touring body .pay-view, html.touring body .h
       </div>
       <div class="wide">
         <label for="nota">Nota (opcional)</label>
-        <input type="text" id="nota" maxlength="80" placeholder="Ej: papel bond, almuerzo, pago de cliente">
+        <input type="text" id="nota" maxlength="80" placeholder="Ej: almuerzo con Ana #trabajo">
       </div>
     </div>
     <div class="sav-row" id="f-sav">
@@ -3086,6 +3146,7 @@ html.touring body .goals-view, html.touring body .pay-view, html.touring body .h
         if (d && typeof d.country === "string") state.country = d.country;
         if (d && d.instSeen) state.instSeen = true;
         if (d && d.notif) state.notif = true;
+        if (d && d.subs && typeof d.subs === "object") state.subs = d.subs;
         if (d && d.bn && typeof d.bn === "object") state.bn = { done: d.bn.done || {}, apr: typeof d.bn.apr === "number" ? d.bn.apr : BN_APR, hide: d.bn.v === 2 && !!d.bn.hide, opened: d.bn.opened || {}, v: 2 };
         if (d && typeof d.btcUsd === "number") { state.btcUsd = d.btcUsd; state.btcAt = d.btcAt || 0; }
         if (d && typeof d.rateEur === "number") state.rateEur = d.rateEur;
@@ -3103,7 +3164,7 @@ html.touring body .goals-view, html.touring body .pay-view, html.touring body .h
   }
   function save() {
     try {
-      localStorage.setItem(KEY, JSON.stringify({ items: state.items, rate: state.rate, rateDate: state.rateDate, hideSav: state.hideSav, rateManual: state.rateManual, rateAutoAt: state.rateAutoAt, accounts: state.accounts, templates: state.templates, goals: state.goals, payments: state.payments, paySeries: state.paySeries, earn: state.earn, limits: state.limits, rateHist: state.rateHist, rateHistAt: state.rateHistAt, theme: state.theme, pin: state.pin, backupAt: state.backupAt, onb: state.onb, msumSeen: state.msumSeen, country: state.country, instSeen: state.instSeen, notif: state.notif, bn: state.bn, btcUsd: state.btcUsd, btcAt: state.btcAt, rateEur: state.rateEur, rateEurDate: state.rateEurDate, rateEurManual: state.rateEurManual, rateUsdt: state.rateUsdt, rateUsdtDate: state.rateUsdtDate, rateUsdtManual: state.rateUsdtManual, rateUsdtSrc: state.rateUsdtSrc, collapsed: state.collapsed, disp: state.disp, sav: state.sav }));
+      localStorage.setItem(KEY, JSON.stringify({ items: state.items, rate: state.rate, rateDate: state.rateDate, hideSav: state.hideSav, rateManual: state.rateManual, rateAutoAt: state.rateAutoAt, accounts: state.accounts, templates: state.templates, goals: state.goals, payments: state.payments, paySeries: state.paySeries, earn: state.earn, limits: state.limits, rateHist: state.rateHist, rateHistAt: state.rateHistAt, theme: state.theme, pin: state.pin, backupAt: state.backupAt, onb: state.onb, msumSeen: state.msumSeen, country: state.country, instSeen: state.instSeen, notif: state.notif, subs: state.subs, bn: state.bn, btcUsd: state.btcUsd, btcAt: state.btcAt, rateEur: state.rateEur, rateEurDate: state.rateEurDate, rateEurManual: state.rateEurManual, rateUsdt: state.rateUsdt, rateUsdtDate: state.rateUsdtDate, rateUsdtManual: state.rateUsdtManual, rateUsdtSrc: state.rateUsdtSrc, collapsed: state.collapsed, disp: state.disp, sav: state.sav }));
     } catch (e) {}
   }
 
@@ -4103,6 +4164,27 @@ html.touring body .goals-view, html.touring body .pay-view, html.touring body .h
     if (it.tipo === "retiro") return "Retiro de ahorro";
     return it.cat;
   }
+  // Subcategorías sugeridas; el usuario puede agregar las suyas (state.subs)
+  var SUBS_DEF = {
+    "Alimentación": ["Mercado", "Panadería", "Carnicería", "Frutas y verduras"],
+    "Restaurantes": ["Almuerzo", "Comida rápida", "Café", "Delivery"],
+    "Transporte": ["Gasolina", "Pasaje", "Taxi", "Estacionamiento"],
+    "Servicios": ["Luz", "Agua", "Internet", "Teléfono", "Gas", "Condominio"],
+    "Salud": ["Farmacia", "Consulta", "Exámenes", "Seguro"],
+    "Hogar": ["Limpieza", "Reparaciones", "Muebles"],
+    "Ocio": ["Cine", "Salidas", "Juegos"],
+    "Educación": ["Colegio", "Cursos", "Libros"],
+    "Suscripciones": ["Streaming", "Música", "Nube"],
+    "Cuidado personal": ["Peluquería", "Cosméticos"],
+    "Ropa": ["Ropa", "Zapatos"],
+    "Sueldo": ["Quincena", "Bono"],
+    "Ventas": ["Efectivo", "Pago móvil", "Transferencia"]
+  };
+  function subsFor(cat) {
+    var own = (state.subs && state.subs[cat]) || [];
+    return (SUBS_DEF[cat] || []).concat(own.filter(function (x) { return (SUBS_DEF[cat] || []).indexOf(x) < 0; }));
+  }
+  function noteTags(n) { var m = String(n || "").match(/#[\wÁÉÍÓÚÑáéíóúñü]+/g); return m ? m.map(function (t) { return t.slice(1); }) : []; }
   function histSub(it) {
     var hg = histGoal(it);
     if (hg) {
@@ -4110,8 +4192,11 @@ html.touring body .goals-view, html.touring body .pay-view, html.touring body .h
       return (hg.dep ? "Desde " : "Hacia ") + (o && o.k === "ahorro" ? "ahorros de " : "") + (oa ? oa.nombre : "tu cuenta");
     }
     if (it.tipo === "traspaso") return it.nota || "";
-    var a = accById(it.cuenta);
-    return (a ? a.nombre : "") + (it.nota ? (a ? " · " : "") + it.nota : "");
+    var a = accById(it.cuenta), parts = [];
+    if (a) parts.push(a.nombre);
+    if (it.sub) parts.push(it.sub);
+    if (it.nota) parts.push(it.nota);
+    return parts.join(" · ");
   }
   function dayLabel(iso) {
     var t = today(), p = iso.split("-"), d = new Date(Number(p[0]), Number(p[1]) - 1, Number(p[2]));
@@ -4220,7 +4305,7 @@ html.touring body .goals-view, html.touring body .pay-view, html.touring body .h
       if (isCat) { if ((it.tipo !== "gasto" && it.tipo !== "ingreso") || it.cat !== hist.c) return false; }
       else if (hist.f !== "all" && histKind(it) !== hist.f) return false;
       if (!q) return true;
-      return (histTitle(it) + " " + histSub(it) + " " + (it.nota || "")).toLowerCase().indexOf(q) >= 0;
+      return (histTitle(it) + " " + histSub(it) + " " + (it.nota || "") + " " + (it.sub || "")).toLowerCase().indexOf(q) >= 0;
     }).sort(function (a, b) { return a.fecha < b.fecha ? 1 : a.fecha > b.fecha ? -1 : b.id - a.id; });
     var shown = rows.slice(0, hist.n);
     $("hist-more").style.display = rows.length > hist.n ? "" : "none";
@@ -5034,6 +5119,7 @@ html.touring body .goals-view, html.touring body .pay-view, html.touring body .h
         setPressed("[data-type]", "data-type", state.type);
         fillCats();
         renderFormSav();
+        fSub = ""; splitParts = []; $("split-rows").innerHTML = ""; renderSub(); renderSplit();
       });
     });
     function pickCat(e) {
@@ -5365,6 +5451,70 @@ html.touring body .goals-view, html.touring body .pay-view, html.touring body .h
     $("acc-nombre").addEventListener("input", function () { if (!accLook.icon) renderAccLook(); });
     $("acc-moneda").addEventListener("change", renderAccLook);
     function closeAccSheet() { editAccId = null; $("acc-sheet").hidden = true; $("acc-add").focus(); }
+    var fSub = "", splitParts = [];
+    function renderSub() {
+      var row = $("sub-row"); if (!row) return;
+      var cat = $("cat").value, list = subsFor(cat);
+      if (fSub && list.indexOf(fSub) < 0) list = list.concat([fSub]);
+      row.innerHTML = list.map(function (x) { return '<button type="button" class="sub-chip' + (x === fSub ? " on" : "") + '" data-sub="' + esc(x) + '" aria-pressed="' + (x === fSub) + '">' + esc(x) + "</button>"; }).join("") +
+        '<button type="button" class="sub-chip sub-add" data-sub-add="1" aria-label="Agregar subcategoría">+ Otra</button>';
+      row.hidden = !cat;
+    }
+    $("sub-row").addEventListener("click", function (e) {
+      var b = e.target.closest("[data-sub]");
+      if (b) { var v = b.getAttribute("data-sub"); fSub = fSub === v ? "" : v; renderSub(); return; }
+      if (e.target.closest("[data-sub-add]")) { $("sub-new").hidden = false; $("sub-in").value = ""; $("sub-in").focus(); }
+    });
+    function addSub() {
+      var v = $("sub-in").value.trim().replace(/\s+/g, " "); if (!v) { $("sub-new").hidden = true; return; }
+      v = v.charAt(0).toUpperCase() + v.slice(1);
+      var cat = $("cat").value; state.subs = state.subs || {};
+      var own = state.subs[cat] = state.subs[cat] || [];
+      if (subsFor(cat).indexOf(v) < 0) own.push(v);
+      fSub = v; $("sub-new").hidden = true; save(); renderSub();
+    }
+    $("sub-ok").addEventListener("click", addSub);
+    $("sub-in").addEventListener("keydown", function (e) { if (e.key === "Enter") { e.preventDefault(); addSub(); } });
+    $("cat").addEventListener("change", function () { fSub = ""; $("sub-new").hidden = true; renderSub(); renderSplit(); });
+    // Dividir un gasto: cada parte tiene su categoría y monto; lo que sobra queda en la categoría principal
+    function splitRest() {
+      var tot = amtVal($("monto").value) || 0, used = 0;
+      splitParts.forEach(function (x) { used += amtVal(x.m) || 0; });
+      return Math.round((tot - used) * 100) / 100;
+    }
+    function renderSplit() {
+      var on = splitParts.length > 0, box = $("split");
+      $("split-tog").hidden = !!state.editId || state.type !== "gasto";
+      $("split-tog").setAttribute("aria-expanded", on ? "true" : "false");
+      $("split-tog").classList.toggle("on", on);
+      $("split-tog").lastChild.textContent = on ? "Quitar la división" : "Dividir entre varias categorías";
+      box.hidden = !on;
+      if (!on) return;
+      var opts = CATS.gasto.map(function (c) { return '<option value="' + esc(c) + '">' + esc(c) + "</option>"; }).join("");
+      var rows = $("split-rows");
+      if (rows.children.length !== splitParts.length) {
+        rows.innerHTML = splitParts.map(function (x, i) {
+          return '<div class="split-row" data-sp="' + i + '"><select aria-label="Categoría de la parte ' + (i + 2) + '">' + opts + '</select><input type="text" inputmode="decimal" autocomplete="off" class="split-m" id="sp-' + i + '-monto" placeholder="0,00" aria-label="Monto de la parte ' + (i + 2) + '"><button type="button" class="split-x" aria-label="Quitar esta parte">✕</button></div>';
+        }).join("");
+        Array.prototype.forEach.call(rows.children, function (r, i) { r.querySelector("select").value = splitParts[i].c; r.querySelector("input").value = splitParts[i].m; });
+      }
+      var rest = splitRest(), cur = $("moneda").value;
+      $("split-rest").textContent = rest > 0 ? "Quedan " + money(rest, cur) + " en " + $("cat").value + "." : rest === 0 ? "Las partes suman el total." : "Las partes suman más que el total (" + money(-rest, cur) + " de más).";
+      $("split-rest").classList.toggle("err", rest < 0);
+    }
+    $("split-tog").addEventListener("click", function () {
+      if (splitParts.length) splitParts = [];
+      else splitParts = [{ c: CATS.gasto.filter(function (c) { return c !== $("cat").value; })[0], m: "" }];
+      $("split-rows").innerHTML = ""; renderSplit();
+    });
+    $("split-add").addEventListener("click", function () { splitParts.push({ c: CATS.gasto.filter(function (c) { return c !== $("cat").value; })[0], m: "" }); renderSplit(); var ins = $("split-rows").querySelectorAll("input"); if (ins.length) ins[ins.length - 1].focus(); });
+    $("split-rows").addEventListener("click", function (e) {
+      var x = e.target.closest(".split-x"); if (!x) return;
+      splitParts.splice(Number(x.closest(".split-row").getAttribute("data-sp")), 1); $("split-rows").innerHTML = ""; renderSplit();
+    });
+    $("split-rows").addEventListener("input", function (e) { var r = e.target.closest(".split-row"); if (!r) return; splitParts[Number(r.getAttribute("data-sp"))].m = r.querySelector("input").value; renderSplit(); });
+    $("split-rows").addEventListener("change", function (e) { var r = e.target.closest(".split-row"); if (!r) return; splitParts[Number(r.getAttribute("data-sp"))].c = r.querySelector("select").value; renderSplit(); });
+    $("monto").addEventListener("input", function () { if (splitParts.length) renderSplit(); });
     function openSheet(it) {
       if ($("amt-res")) { $("amt-res").textContent = ""; document.querySelector(".amt-ops").classList.remove("has"); }
       if (!it && !state.accounts.length) {
@@ -5388,14 +5538,17 @@ html.touring body .goals-view, html.touring body .pay-view, html.touring body .h
         $("cat").value = it.cat;
         setFecha(it.fecha);
         $("nota").value = it.nota || "";
+        fSub = it.sub || "";
       } else {
         $("monto").value = "";
         $("nota").value = "";
         setFecha(today());
         fillAccounts(accById(state.lastAcc) ? state.lastAcc : state.accounts[0].id, false);
         state.fsav = { on: false, pct: state.sav.pct };
+        fSub = "";
       }
-      syncCuenta();
+      splitParts = []; $("split-rows").innerHTML = ""; $("sub-new").hidden = true;
+      syncCuenta(); renderSub(); renderSplit();
       $("sheet").hidden = false;
 
     }
@@ -5494,6 +5647,7 @@ html.touring body .goals-view, html.touring body .pay-view, html.touring body .h
       else if (!$("ge-sheet").hidden) closeGe();
       else if (!$("hd-sheet").hidden) closeHd();
       else if (!$("snap-sheet").hidden) $("snap-sheet").hidden = true;
+      else if (!$("siri-sheet").hidden) $("siri-sheet").hidden = true;
       else if (!$("ms-sheet").hidden) $("ms-sheet").hidden = true;
       else if (!$("lim-sheet").hidden) closeLim();
       else if (!$("gs-sheet").hidden) closeGs();
@@ -7367,10 +7521,13 @@ html.touring body .goals-view, html.touring body .pay-view, html.touring body .h
         if (it.tasa > 0) rows += hdRow("Tasa usada", num(it.tasa, it.tasa < 10 ? 4 : 2));
       } else {
         var acc = accById(it.cuenta);
-        if (it.tipo === "gasto" || it.tipo === "ingreso") rows += hdRow("Categoría", esc(it.cat));
+        if (it.tipo === "gasto" || it.tipo === "ingreso") rows += hdRow("Categoría", esc(it.cat) + (it.sub ? " → " + esc(it.sub) : ""));
+        if (it.split) rows += hdRow("Dividido", "Parte de un gasto dividido");
         rows += hdRow("Cuenta", acc ? esc(acc.nombre) + " (" + curLabel(acc.moneda) + ")" : "Sin cuenta");
       }
       if (it.nota && !(isTr && !hg && k !== "sv")) rows += hdRow("Nota", esc(it.nota));
+      var tg = noteTags(it.nota);
+      if (tg.length) rows += hdRow("Etiquetas", tg.map(function (t) { return '<span class="tag-chip">#' + esc(t) + "</span>"; }).join(" "));
       if (isTr && !hg && it.nota) rows += hdRow("Nota", esc(it.nota));
       var linked = state.items.filter(function (x) { return x.linkId === it.id; })[0];
       if (linked && linked.tipo === "ahorro") rows += hdRow("Apartaste para ahorro", money(linked.monto, linked.moneda));
@@ -7606,6 +7763,7 @@ html.touring body .goals-view, html.touring body .pay-view, html.touring body .h
       var on = !!(state.pin && state.pin.h);
       $("pin-switch").setAttribute("aria-checked", on ? "true" : "false");
       $("pin-change").hidden = !on;
+      renderBio();
       $("pin-sub").textContent = on ? "Activado. Se pide al abrir la app y al volver después de 1 minuto." : "Pide un código de 4 dígitos al abrir la app.";
       var bs = $("bk-sub");
       if (state.backupAt) {
@@ -7719,6 +7877,34 @@ html.touring body .goals-view, html.touring body .pay-view, html.touring body .h
       });
     });
     setTimeout(snapTake, 2500);
+    function siriUrl() { return location.origin + location.pathname + "?gasto="; }
+    $("siri-open").addEventListener("click", function () { $("siri-url").textContent = siriUrl(); $("siri-sheet").hidden = false; });
+    $("siri-close").addEventListener("click", function () { $("siri-sheet").hidden = true; });
+    $("siri-sheet").addEventListener("click", function (e) { if (e.target === $("siri-sheet")) $("siri-sheet").hidden = true; });
+    $("siri-copy").addEventListener("click", function () {
+      var t = siriUrl();
+      try { navigator.clipboard.writeText(t).then(function () { showToast("Enlace copiado."); }, function () { showToast("Mantén presionado el enlace para copiarlo."); }); } catch (e) { showToast("Mantén presionado el enlace para copiarlo."); }
+    });
+    // Abrir Orbe con un movimiento listo: ?gasto=12,50&cat=Transporte&nota=Taxi&cuenta=Zinli
+    (function () {
+      var q; try { q = new URLSearchParams(location.search); } catch (e) { return; }
+      var tipo = q.has("gasto") ? "gasto" : q.has("ingreso") ? "ingreso" : "";
+      if (!tipo) return;
+      var amt = parseNum(String(q.get(tipo) || "").replace(/\s/g, ""));
+      try { history.replaceState(null, "", location.pathname); } catch (e) {}
+      var tries = 0;
+      (function go() {
+        var busy = !$("lock").hidden || !$("onb").hidden || document.documentElement.classList.contains("hold");
+        if (busy) { if (++tries < 120) setTimeout(go, 500); return; }
+        if (!state.accounts.length) return;
+        state.type = tipo; setPressed("[data-type]", "data-type", tipo); fillCats();
+        openSheet(null);
+        var cat = q.get("cat"); if (cat && CATS[tipo].indexOf(cat) >= 0) { $("cat").value = cat; $("cat").dispatchEvent(new Event("change", { bubbles: true })); renderCatChips(); }
+        var cu = q.get("cuenta"); if (cu) { var a = state.accounts.filter(function (x) { return x.nombre.toLowerCase() === cu.toLowerCase(); })[0]; if (a) { $("cuenta").value = String(a.id); $("cuenta").dispatchEvent(new Event("change", { bubbles: true })); renderAccPick(); } }
+        if (amt > 0) { $("monto").value = moneyIn(amt); $("monto").dispatchEvent(new Event("input", { bubbles: true })); }
+        if (q.get("nota")) $("nota").value = q.get("nota").slice(0, 80);
+      })();
+    })();
     document.addEventListener("visibilitychange", function () { if (!document.hidden) setTimeout(snapTake, 1500); });
     // Pide al teléfono que no borre los datos de Orbe cuando falte espacio
     try { if (navigator.storage && navigator.storage.persist) navigator.storage.persisted().then(function (ok) { if (!ok) navigator.storage.persist(); }); } catch (e) {}
@@ -7797,10 +7983,43 @@ html.touring body .goals-view, html.touring body .pay-view, html.touring body .h
       lockMsg(mode === "set" ? (lk.onb ? "Elige " + PIN_LEN + " números. La pediremos cada vez que abras la app para proteger tus datos." : "Lo pediremos cada vez que abras la app.") : "");
       $("kp-cancel").style.visibility = mode === "unlock" || lk.onb ? "hidden" : "visible";
       $("lock-forgot").hidden = mode !== "unlock";
+      renderBio();
+      if (mode === "unlock" && bioOk && bioOn()) setTimeout(bioUnlock, 350);
       lockDots();
       $("lock").hidden = false;
       document.documentElement.classList.add("locked");
     }
+    function lockOk() {
+      lk.fails = 0; var cb = lk.onDone, L = $("lock");
+      $("pin-dots").classList.add("ok"); lk.mode = "";
+      setTimeout(function () {
+        document.documentElement.classList.remove("locked"); L.classList.add("lock-out");
+        setTimeout(function () { L.classList.remove("lock-out"); $("pin-dots").classList.remove("ok"); closeLock(); if (cb) cb(); }, 380);
+      }, 160);
+    }
+    // Face ID / Touch ID con una llave de acceso del propio teléfono (no sale de él)
+    function b64u(buf) { return btoa(String.fromCharCode.apply(null, new Uint8Array(buf))).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, ""); }
+    function unb64u(s) { s = s.replace(/-/g, "+").replace(/_/g, "/"); while (s.length % 4) s += "="; var b = atob(s), u = new Uint8Array(b.length); for (var i = 0; i < b.length; i++) u[i] = b.charCodeAt(i); return u; }
+    function rnd(n) { var u = new Uint8Array(n); crypto.getRandomValues(u); return u; }
+    var bioOk = false;
+    try {
+      if (window.PublicKeyCredential && PublicKeyCredential.isUserVerifyingPlatformAuthenticatorAvailable && (location.protocol === "https:" || location.hostname === "localhost") && !window.__orbeDemo)
+        PublicKeyCredential.isUserVerifyingPlatformAuthenticatorAvailable().then(function (ok) { bioOk = !!ok; renderBio(); if (bioOk && bioOn() && lk.mode === "unlock") setTimeout(bioUnlock, 300); }).catch(function () {});
+    } catch (e) {}
+    function bioOn() { return !!(state.pin && state.pin.h && state.pin.wa); }
+    function renderBio() {
+      var row = $("bio-row"); if (!row) return;
+      row.hidden = !(bioOk && state.pin && state.pin.h);
+      $("bio-switch").setAttribute("aria-checked", bioOn() ? "true" : "false");
+      $("lock-bio").hidden = !(bioOk && bioOn() && lk.mode === "unlock");
+    }
+    function bioUnlock() {
+      if (!bioOn() || lk.mode !== "unlock") return;
+      navigator.credentials.get({ publicKey: { challenge: rnd(32), allowCredentials: [{ type: "public-key", id: unb64u(state.pin.wa) }], userVerification: "required", timeout: 60000 } })
+        .then(function (c) { if (c && b64u(c.rawId) === state.pin.wa && lk.mode === "unlock") lockOk(); })
+        .catch(function () { lockMsg("Usa tu código o vuelve a intentar con Face ID."); });
+    }
+    $("lock-bio").addEventListener("click", bioUnlock);
     function closeLock() { $("lock").hidden = true; document.documentElement.classList.remove("locked"); lk.mode = ""; }
     function lockInput(k) {
       if (!lk.mode) return;
@@ -7823,15 +8042,7 @@ html.touring body .goals-view, html.touring body .pay-view, html.touring body .h
         return;
       }
       pinHash(pin, state.pin.s).then(function (h) {
-        if (h === state.pin.h) {
-          lk.fails = 0; var cb = lk.onDone, L = $("lock");
-          $("pin-dots").classList.add("ok"); lk.mode = "";
-          setTimeout(function () {
-            document.documentElement.classList.remove("locked"); L.classList.add("lock-out");
-            setTimeout(function () { L.classList.remove("lock-out"); $("pin-dots").classList.remove("ok"); closeLock(); if (cb) cb(); }, 380);
-          }, 160);
-          return;
-        }
+        if (h === state.pin.h) { lockOk(); return; }
         lk.fails++; lk.buf = ""; shake(); pinErr(); setTimeout(lockDots, 300);
         if (lk.fails >= 5) { lk.until = Date.now() + 30000; lk.fails = 0; lockMsg("Demasiados intentos. Espera 30 segundos.", true); }
         else lockMsg("Código incorrecto.", true);
@@ -7890,7 +8101,21 @@ html.touring body .goals-view, html.touring body .pay-view, html.touring body .h
       if (state.pin && state.pin.h) openLock("verify", function () { state.pin = null; save(); renderSettings(); showToast("Código desactivado."); });
       else openLock("set");
     });
-    $("pin-change").addEventListener("click", function () { openLock("verify", function () { openLock("set"); }); });
+    $("pin-change").addEventListener("click", function () { openLock("verify", function () { var wa = state.pin && state.pin.wa; openLock("set", function () { if (wa && state.pin) { state.pin.wa = wa; save(); } renderBio(); }); }); });
+    $("bio-switch").addEventListener("click", function () {
+      if (!state.pin || !state.pin.h) return;
+      if (bioOn()) { delete state.pin.wa; save(); renderBio(); showToast("Face ID desactivado. Se pedirá el código."); return; }
+      navigator.credentials.create({ publicKey: {
+        challenge: rnd(32), rp: { name: "Orbe", id: location.hostname },
+        user: { id: rnd(16), name: "orbe", displayName: "Orbe" },
+        pubKeyCredParams: [{ type: "public-key", alg: -7 }, { type: "public-key", alg: -257 }],
+        authenticatorSelection: { authenticatorAttachment: "platform", userVerification: "required", residentKey: "discouraged" },
+        timeout: 60000, attestation: "none"
+      } }).then(function (c) {
+        if (!c) return;
+        state.pin.wa = b64u(c.rawId); save(); renderBio(); showToast("Listo. Orbe se abrirá con Face ID.");
+      }).catch(function () { showToast("No se activó Face ID. Puedes intentarlo de nuevo."); });
+    });
     /* ---------- Tutorial ---------- */
     var SVG = function (d) { return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' + d + "</svg>"; };
     var ONB = [
@@ -8489,6 +8714,7 @@ html.touring body .goals-view, html.touring body .pay-view, html.touring body .h
           cur.moneda = $("moneda").value;
           cur.cuenta = $("cuenta").value ? Number($("cuenta").value) : undefined;
           cur.cat = $("cat").value;
+          if (fSub) cur.sub = fSub; else delete cur.sub;
           cur.fecha = fecha;
           cur.nota = $("nota").value.trim();
           state.items.forEach(function (x) {
@@ -8509,7 +8735,22 @@ html.touring body .goals-view, html.touring body .pay-view, html.touring body .h
         showToast("Cambios guardados");
         return;
       }
-      state.items.push({
+      if (splitParts.length && state.type === "gasto") {
+        var rest = splitRest(), bad = splitParts.some(function (x) { return !(amtVal(x.m) > 0); });
+        if (bad) { err.textContent = "Escribe el monto de cada parte o quita las que no uses."; return; }
+        if (rest < 0) { err.textContent = "Las partes suman más que el total del gasto."; return; }
+        var sid = Date.now(), base = { tipo: "gasto", moneda: $("moneda").value, cuenta: Number($("cuenta").value), fecha: fecha, nota: $("nota").value.trim(), split: sid };
+        var parts = splitParts.map(function (x) { return { c: x.c, m: Math.round(amtVal(x.m) * 100) / 100 }; });
+        if (rest > 0) parts.unshift({ c: $("cat").value, m: rest, sub: fSub });
+        parts.forEach(function (x, i) { var o = Object.assign({ id: sid + i, cat: x.c, monto: x.m }, base); if (x.sub) o.sub = x.sub; state.items.push(o); });
+        state.lastAcc = Number($("cuenta").value);
+        save(); state.month = fecha.slice(0, 7); $("mes").value = state.month;
+        $("monto").value = ""; $("nota").value = ""; splitParts = [];
+        render(); closeSheet();
+        showToast("Gasto dividido en " + parts.length + " categorías.");
+        return;
+      }
+      var newIt = {
         id: Date.now(),
         tipo: state.type,
         monto: monto,
@@ -8518,7 +8759,9 @@ html.touring body .goals-view, html.touring body .pay-view, html.touring body .h
         cat: $("cat").value,
         fecha: fecha,
         nota: $("nota").value.trim()
-      });
+      };
+      if (fSub) newIt.sub = fSub;
+      state.items.push(newIt);
       var ok = $("ok");
       ok.textContent = "";
       if (state.type === "ingreso" && state.fsav.on && state.fsav.pct > 0) {
