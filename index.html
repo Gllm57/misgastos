@@ -1984,15 +1984,15 @@ html { background: var(--bg); }
   .sheet { box-shadow: 0 -10px 40px rgba(0, 0, 0, 0.18), 0 200px 0 0 var(--surface) !important; }
 }
 /* Cuenta del movimiento: tarjetas con el logo de cada cuenta */
-.acc-pick { display: flex; gap: 8px; overflow-x: auto; margin: 0 -20px; padding: 2px 20px 4px; scrollbar-width: none; touch-action: pan-x pan-y; }
-.acc-pick::-webkit-scrollbar { display: none; }
-.acc-pick .ap { flex: none; display: flex; align-items: center; gap: 10px; min-height: 56px; padding: 7px 14px 7px 7px; border-radius: 18px; border: 1.5px solid transparent; background: var(--fill, color-mix(in srgb, var(--ink) 5%, transparent)); color: var(--ink); font: inherit; text-align: left; cursor: pointer; transition: border-color 0.3s ease, background 0.3s ease, transform 0.15s ease; }
-.acc-pick .ap:active { transform: scale(0.96); }
-.acc-pick .ap .acc-av { width: 40px; height: 40px; }
-.acc-pick .ap-t { display: flex; flex-direction: column; line-height: 1.2; }
-.acc-pick .ap-t b { font-weight: 600; font-size: 0.92rem; white-space: nowrap; }
-.acc-pick .ap-t small { font-size: 0.76rem; color: var(--muted); font-variant-numeric: tabular-nums; white-space: nowrap; }
-.acc-pick .ap.on { border-color: var(--accent); background: color-mix(in srgb, var(--accent) 12%, var(--surface)); }
+.mv-acc { display: flex; gap: 8px; overflow-x: auto; margin: 0 -20px; padding: 2px 20px 4px; scrollbar-width: none; touch-action: pan-x pan-y; }
+.mv-acc::-webkit-scrollbar { display: none; }
+.mv-acc .ap { flex: none; display: flex; align-items: center; gap: 10px; min-height: 56px; padding: 7px 14px 7px 7px; border-radius: 18px; border: 1.5px solid transparent; background: var(--fill, color-mix(in srgb, var(--ink) 5%, transparent)); color: var(--ink); font: inherit; text-align: left; cursor: pointer; transition: border-color 0.3s ease, background 0.3s ease, transform 0.15s ease; }
+.mv-acc .ap:active { transform: scale(0.96); }
+.mv-acc .ap .acc-av { width: 40px; height: 40px; }
+.mv-acc .ap-t { display: flex; flex-direction: column; line-height: 1.2; }
+.mv-acc .ap-t b { font-weight: 600; font-size: 0.92rem; white-space: nowrap; }
+.mv-acc .ap-t small { font-size: 0.76rem; color: var(--muted); font-variant-numeric: tabular-nums; white-space: nowrap; }
+.mv-acc .ap.on { border-color: var(--accent); background: color-mix(in srgb, var(--accent) 12%, var(--surface)); }
 #sheet .grid > div:has(> #acc-pick) { grid-column: 1 / -1; min-width: 0; }
 #sheet .grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 @media (max-width: 520px) { #sheet .grid { grid-template-columns: minmax(0, 1fr); } }
@@ -2886,7 +2886,7 @@ html { background: var(--bg); }
       <div>
         <label id="cuenta-l">Cuenta</label>
         <select id="cuenta" hidden aria-hidden="true" tabindex="-1"></select>
-        <div class="acc-pick" id="acc-pick" role="radiogroup" aria-labelledby="cuenta-l"></div>
+        <div class="mv-acc" id="acc-pick" role="radiogroup" aria-labelledby="cuenta-l"></div>
       </div>
       <select id="moneda" hidden aria-hidden="true" tabindex="-1"><option value="USD">Dólares ($)</option><option value="VES">Bolívares (Bs)</option><option value="USDT">USDT</option><option value="EUR">Euros (€)</option></select>
       <div class="wide">
