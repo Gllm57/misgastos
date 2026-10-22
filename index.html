@@ -585,7 +585,7 @@ body.view-hist .hist-view { display: block; animation: viewIn 0.54s cubic-bezier
 .hlist { list-style: none; margin: 0; padding: 0; background: var(--surface); border: 1px solid var(--line); border-radius: 20px; }
 .hrow { display: grid; grid-template-columns: auto 1fr auto auto; gap: 12px; align-items: center; padding: 12px 8px 12px 14px; border-top: 1px solid var(--line); }
 .hrow:first-child { border-top: 0; }
-.hrow.flash { animation: itemIn 0.61s cubic-bezier(0.32, 0.72, 0, 1) backwards, hl 1.89s ease-out; border-radius: 14px; }
+.hrow.flash { animation: itemIn 0.61s cubic-bezier(0.32, 0.72, 0, 1) backwards; }
 .hic { display: flex; align-items: center; justify-content: center; flex: none; }
 .hic svg { width: 19px; height: 19px; }
 .hic.k-in { background: color-mix(in srgb, var(--in) 16%, transparent); color: var(--in); }
@@ -1836,7 +1836,7 @@ html, body, button, a, input, select, textarea, label, [role="button"] { touch-a
 
 /* ===== Detalle de movimiento ===== */
 .hrow[data-hid] { cursor: pointer; }
-.hrow[data-hid]:active { background: var(--fill); border-radius: 14px; }
+
 .hd-top { display: grid; justify-items: center; text-align: center; gap: 4px; padding: 4px 0 14px; }
 .hd-ic { width: 54px; height: 54px; border-radius: 50%; display: grid; place-items: center; color: var(--c); background: color-mix(in srgb, var(--c) 18%, transparent); margin-bottom: 4px; animation: dotPop 0.61s cubic-bezier(0.32, 0.72, 0, 1) backwards; }
 .hd-ic svg { width: 26px; height: 26px; }
@@ -1928,7 +1928,6 @@ html, body, button, a, input, select, textarea, label, [role="button"] { touch-a
 #hist-list .hrow.drag > * { transition: none; }
 #hist-list .hrow[data-hid]::after { content: ""; position: absolute; right: 2px; top: 8px; bottom: 8px; width: 66px; border-radius: 18px; background: var(--out) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M4 7h16M10 11v6M14 11v6M6 7l1 12a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2l1-12M9 7V4h6v3'/%3E%3C/svg%3E") center / 22px no-repeat; opacity: 0; transform: scale(0.7); transition: opacity 0.2s ease, transform 0.3s cubic-bezier(0.32, 0.72, 0, 1), width 0.25s ease; pointer-events: none; }
 #hist-list .hrow.drag::after, #hist-list .hrow.open::after { opacity: 1; transform: none; }
-#hist-list .hrow.far::after { width: calc(100% - 4px); background-position: right 22px center; }
 #hist-list .hrow.gone { transition: opacity 0.25s ease, max-height 0.26s ease, padding 0.26s ease; opacity: 0; max-height: 0 !important; padding-top: 0 !important; padding-bottom: 0 !important; overflow: hidden; }
 #hist-list .hrow[data-hid] { max-height: 140px; }
 .toast .t-act { margin-left: 12px; border: 0; background: none; color: var(--accent); font: inherit; font-weight: 700; padding: 4px 2px; cursor: pointer; pointer-events: auto; }
@@ -2007,21 +2006,11 @@ html { background: var(--bg); }
 .pin-dots.ok i { border-color: var(--in) !important; background: var(--in) !important; transform: scale(1.15); }
 .lock { transition: opacity 0.38s ease, transform 0.38s cubic-bezier(0.32, 0.72, 0, 1); }
 .lock.lock-out { opacity: 0; transform: scale(1.04); pointer-events: none; }
-/* Historial: el logo toca, se encoge y vuela al detalle */
-.hrow[data-hid] .hic { transition: transform 0.3s cubic-bezier(0.32, 0.72, 0, 1); }
-.hrow[data-hid]:active .hic { transform: scale(0.88); }
-.hd-ic.hd-wait { opacity: 0; animation: none !important; }
-.hic-fly { box-shadow: 0 10px 24px color-mix(in srgb, #000 22%, transparent); }
-#hd-sheet:not([hidden]) .hd-t, #hd-sheet:not([hidden]) .hd-v, #hd-sheet:not([hidden]) .hd-eq, #hd-sheet:not([hidden]) .hd-ctx, #hd-sheet:not([hidden]) .hd-rows, #hd-sheet:not([hidden]) .hd-btns { animation: hdUp 0.62s cubic-bezier(0.32, 0.72, 0, 1) backwards; }
-#hd-sheet:not([hidden]) .hd-t { animation-delay: 0.12s; }
-#hd-sheet:not([hidden]) .hd-v { animation-delay: 0.17s; }
-#hd-sheet:not([hidden]) .hd-eq { animation-delay: 0.21s; }
-#hd-sheet:not([hidden]) .hd-ctx { animation-delay: 0.25s; }
-#hd-sheet:not([hidden]) .hd-rows { animation-delay: 0.29s; }
-#hd-sheet:not([hidden]) .hd-btns { animation-delay: 0.33s; }
-@keyframes hdUp { from { opacity: 0; transform: translateY(12px); } }
+/* Detalle del movimiento: el logo aparece suave */
+#hd-sheet .hd-ic { animation: hdIcIn 0.7s cubic-bezier(0.32, 0.72, 0, 1) 0.08s backwards !important; }
+@keyframes hdIcIn { from { opacity: 0; transform: scale(0.72); } to { opacity: 1; transform: none; } }
 @media (prefers-reduced-motion: reduce) {
-  .pin-dots i.on, #hd-sheet:not([hidden]) .hd-t, #hd-sheet:not([hidden]) .hd-v, #hd-sheet:not([hidden]) .hd-eq, #hd-sheet:not([hidden]) .hd-ctx, #hd-sheet:not([hidden]) .hd-rows, #hd-sheet:not([hidden]) .hd-btns { animation: none; }
+  .pin-dots i.on, #hd-sheet .hd-ic { animation: none !important; }
   .lock { transition: none; }
 }
 </style>
@@ -7025,31 +7014,8 @@ html { background: var(--bg); }
         return;
       }
       var row = e.target.closest(".hrow[data-hid]");
-      if (row && !e.target.closest(".menu-wrap")) { openHd(Number(row.getAttribute("data-hid"))); flyIcon(row); }
+      if (row && !e.target.closest(".menu-wrap")) openHd(Number(row.getAttribute("data-hid")));
     });
-    function flyIcon(row) {
-      var src = row && row.querySelector(".hic"), dst = document.querySelector("#hd-body .hd-ic"), sheet = document.querySelector("#hd-sheet .sheet");
-      if (!src || !dst || !sheet || !document.body.animate || (window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches)) return;
-      try {
-        dst.classList.add("hd-wait");
-        var a = src.getBoundingClientRect(), b = dst.getBoundingClientRect(), ty = 0, m = getComputedStyle(sheet).transform;
-        if (m && m !== "none") { var v = m.slice(m.indexOf("(") + 1, -1).split(",").map(parseFloat); ty = v.length === 6 ? v[5] : (v[13] || 0); }
-        if (!a.width || !b.width) { dst.classList.remove("hd-wait"); return; }
-        var c = src.cloneNode(true);
-        c.className += " hic-fly";
-        c.style.cssText = "position:fixed;left:" + a.left + "px;top:" + a.top + "px;width:" + a.width + "px;height:" + a.height + "px;margin:0;z-index:60;pointer-events:none;transform-origin:0 0;border-radius:50%";
-        document.body.appendChild(c);
-        dst.classList.add("hd-wait"); src.style.visibility = "hidden";
-        var done = function () { if (!c.parentNode) return; dst.classList.remove("hd-wait"); src.style.visibility = ""; var f = c.animate([{ opacity: 1 }, { opacity: 0 }], { duration: 180, fill: "forwards" }); f.onfinish = function () { c.remove(); }; };
-        var dx = b.left - a.left, dy = (b.top - ty) - a.top, k = b.width / a.width;
-        var an = c.animate([
-          { transform: "translate(0px, 0px) scale(1)" },
-          { transform: "translate(" + dx * 0.5 + "px, " + (dy * 0.5 - 30) + "px) scale(" + (1 + (k - 1) * 0.6) + ")", offset: 0.5 },
-          { transform: "translate(" + dx + "px, " + dy + "px) scale(" + k + ")" }
-        ], { duration: 640, easing: "cubic-bezier(0.32, 0.72, 0, 1)", fill: "forwards" });
-        an.onfinish = done; setTimeout(done, 900);
-      } catch (er) { dst.classList.remove("hd-wait"); src.style.visibility = ""; }
-    }
 
     /* ---------- Deslizar un movimiento para borrarlo ---------- */
     var swRow = null, swX = 0, swY = 0, swDx = 0, swDir = 0, swMx = 0;
@@ -7081,17 +7047,16 @@ html { background: var(--bg); }
       e.preventDefault();
       var base = swRow.classList.contains("open") ? -80 : 0;
       swMx = mx;
-      swDx = Math.max(-170, Math.min(0, base + mx));
+      var raw = base + mx;
+      swDx = raw < -80 ? -80 - Math.pow(-80 - raw, 0.7) : Math.min(0, raw);
       swRow.style.setProperty("--sx", swDx + "px");
-      swRow.classList.toggle("far", swDx < -130);
     }, { passive: false });
     $("hist-list").addEventListener("touchend", function () {
       if (!swRow) return;
       var r = swRow; swRow = null;
       if (swDir !== 1) return;
-      r.classList.remove("drag", "far");
+      r.classList.remove("drag");
       if (!r.classList.contains("open") && swMx > 70) { sxReset(r); var pt = document.querySelector('.tab[data-tab="2"]'); if (pt) pt.click(); return; }
-      if (swDx < -130) { r.style.setProperty("--sx", "-110%"); quickDel(Number(r.getAttribute("data-hid")), r); return; }
       var open = swDx < -40;
       r.classList.toggle("open", open); if (open) r.style.setProperty("--sx", "-80px"); else sxReset(r);
       r._swiped = Date.now();
