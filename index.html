@@ -2010,11 +2010,12 @@ html.bg-lock, html.bg-lock body { overflow: hidden !important; overscroll-behavi
 @keyframes trSpin { from { transform: rotate(0); } to { transform: rotate(180deg); } }
 .tr-amt input { font-size: 1.6rem; font-weight: 700; min-height: 56px; }
 @media (prefers-reduced-motion: reduce) { .tr-swap.spin svg { animation: none; } }
-/* La franja de abajo del iPhone toma el color de la hoja o del fondo oscurecido */
+/* iOS 26, app instalada: si la página es más corta que la pantalla, iOS acorta la ventana y
+   la barra de pestañas y las hojas quedan levantadas con una franja debajo (WebKit 301108).
+   Con la página al menos del alto de la pantalla, iOS usa la ventana completa. */
 html { background: var(--bg); }
-.sheet-backdrop::after, .dial::after { content: ""; position: absolute; left: 0; right: 0; top: 100%; height: 200px; background: inherit; pointer-events: none; }
-@media (max-width: 639px) {
-  .sheet { box-shadow: 0 -10px 40px rgba(0, 0, 0, 0.18), 0 200px 0 0 var(--surface) !important; }
+@media (display-mode: standalone) {
+  html { min-height: min(100lvh, calc(100% + env(safe-area-inset-top, 0px))); }
 }
 /* Cuenta del movimiento: tarjetas con el logo de cada cuenta */
 .mv-acc { display: flex; gap: 8px; overflow-x: auto; margin: 0 -20px; padding: 2px 20px 4px; scrollbar-width: none; touch-action: pan-x pan-y; }
