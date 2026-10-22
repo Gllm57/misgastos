@@ -1949,7 +1949,8 @@ main, .goals-view, .pay-view, .hist-view, .bn-view, .set-view, .accd-view { touc
 .pay-check, .dots, #rates-tog, #rate-ref, #pay-prev, #pay-next, .amt-ops button, .rate-chip, #set-open, #cx-clear, [data-acc-col], .gs-list button { position: relative; }
 .pay-check::before, .dots::before, #pay-prev::before, #pay-next::before, .amt-ops button::before, .rate-chip::before, #set-open::before, #cx-clear::before, [data-acc-col]::before, .gs-list button::before { content: ""; position: absolute; left: 50%; top: 50%; width: 44px; height: 44px; transform: translate(-50%, -50%); }
 /* Guardar siempre a la vista en Nuevo movimiento */
-#sheet #add { position: sticky; bottom: max(8px, env(safe-area-inset-bottom, 0px)); z-index: 3; box-shadow: 0 -10px 24px var(--surface); }
+#sheet .sheet-foot { position: sticky; bottom: calc(-20px - env(safe-area-inset-bottom, 0px)); z-index: 3; margin: 18px -20px calc(-20px - env(safe-area-inset-bottom, 0px)); padding: 12px 20px calc(14px + env(safe-area-inset-bottom, 0px)); background: var(--surface); border-top: 1px solid color-mix(in srgb, var(--line) 60%, transparent); }
+#sheet .sheet-foot #add { width: 100%; margin: 0; }
 #goal-list .goal[data-gid] { cursor: pointer; }
 /* Nombres de cuentas completos en pantallas pequeñas */
 @media (max-width: 380px) { .acc3 { grid-template-columns: 104px minmax(0, 1fr) !important; gap: 10px !important; } .acc3 .acc-sum, .acc3 .acc-sum svg { width: 104px !important; height: 104px !important; } .ar-n b, .ar-v { font-size: 0.86rem; } }
@@ -1976,6 +1977,26 @@ html.bg-lock, html.bg-lock body { overflow: hidden !important; overscroll-behavi
 @keyframes trSpin { from { transform: rotate(0); } to { transform: rotate(180deg); } }
 .tr-amt input { font-size: 1.6rem; font-weight: 700; min-height: 56px; }
 @media (prefers-reduced-motion: reduce) { .tr-swap.spin svg { animation: none; } }
+/* La franja de abajo del iPhone toma el color de la hoja o del fondo oscurecido */
+html { background: var(--bg); }
+.sheet-backdrop::after, .dial::after { content: ""; position: absolute; left: 0; right: 0; top: 100%; height: 200px; background: inherit; pointer-events: none; }
+@media (max-width: 639px) {
+  .sheet { box-shadow: 0 -10px 40px rgba(0, 0, 0, 0.18), 0 200px 0 0 var(--surface) !important; }
+}
+/* Cuenta del movimiento: tarjetas con el logo de cada cuenta */
+.acc-pick { display: flex; gap: 8px; overflow-x: auto; margin: 0 -20px; padding: 2px 20px 4px; scrollbar-width: none; touch-action: pan-x pan-y; }
+.acc-pick::-webkit-scrollbar { display: none; }
+.acc-pick .ap { flex: none; display: flex; align-items: center; gap: 10px; min-height: 56px; padding: 7px 14px 7px 7px; border-radius: 18px; border: 1.5px solid transparent; background: var(--fill, color-mix(in srgb, var(--ink) 5%, transparent)); color: var(--ink); font: inherit; text-align: left; cursor: pointer; transition: border-color 0.3s ease, background 0.3s ease, transform 0.15s ease; }
+.acc-pick .ap:active { transform: scale(0.96); }
+.acc-pick .ap .acc-av { width: 40px; height: 40px; }
+.acc-pick .ap-t { display: flex; flex-direction: column; line-height: 1.2; }
+.acc-pick .ap-t b { font-weight: 600; font-size: 0.92rem; white-space: nowrap; }
+.acc-pick .ap-t small { font-size: 0.76rem; color: var(--muted); font-variant-numeric: tabular-nums; white-space: nowrap; }
+.acc-pick .ap.on { border-color: var(--accent); background: color-mix(in srgb, var(--accent) 12%, var(--surface)); }
+#sheet .grid > div:has(> #acc-pick) { grid-column: 1 / -1; min-width: 0; }
+#sheet .grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+@media (max-width: 520px) { #sheet .grid { grid-template-columns: minmax(0, 1fr); } }
+#sheet .grid > * { min-width: 0; }
 </style>
 </head>
 <body>
@@ -2863,8 +2884,9 @@ html.bg-lock, html.bg-lock body { overflow: hidden !important; overscroll-behavi
     </div>
     <div class="grid">
       <div>
-        <label for="cuenta">Cuenta</label>
-        <select id="cuenta"></select>
+        <label id="cuenta-l">Cuenta</label>
+        <select id="cuenta" hidden aria-hidden="true" tabindex="-1"></select>
+        <div class="acc-pick" id="acc-pick" role="radiogroup" aria-labelledby="cuenta-l"></div>
       </div>
       <select id="moneda" hidden aria-hidden="true" tabindex="-1"><option value="USD">Dólares ($)</option><option value="VES">Bolívares (Bs)</option><option value="USDT">USDT</option><option value="EUR">Euros (€)</option></select>
       <div class="wide">
@@ -2907,7 +2929,7 @@ html.bg-lock, html.bg-lock body { overflow: hidden !important; overscroll-behavi
     </div>
     <p class="error" id="err" role="alert"></p>
     <p class="ok" id="ok" role="status"></p>
-    <button type="button" class="primary" id="add">Agregar movimiento</button>
+    <div class="sheet-foot"><button type="button" class="primary" id="add">Agregar movimiento</button></div>
   </section>
   </div>
 
@@ -5003,7 +5025,26 @@ html.bg-lock, html.bg-lock body { overflow: hidden !important; overscroll-behavi
       if (legacy) opts.unshift('<option value="">Sin cuenta</option>');
       sel.innerHTML = opts.join("");
       sel.value = (selectedId === undefined || selectedId === null) ? "" : String(selectedId);
+      renderAccPick();
     }
+    function renderAccPick() {
+      var sel = $("cuenta"), box = $("acc-pick"); if (!box) return;
+      box.innerHTML = Array.prototype.map.call(sel.options, function (o) {
+        var a = accById(o.value), on = o.value === sel.value;
+        return '<button type="button" class="ap' + (on ? " on" : "") + '" role="radio" aria-checked="' + on + '" data-ap="' + esc(o.value) + '">' +
+          (a ? accAvatar(a) : '<span class="acc-av" aria-hidden="true">—</span>') +
+          '<span class="ap-t"><b>' + esc(a ? a.nombre : o.textContent) + "</b><small>" + (a ? money(accBalance(a), a.moneda) : "Sin cuenta") + "</small></span></button>";
+      }).join("");
+      var cur = box.querySelector(".ap.on");
+      if (cur) setTimeout(function () { box.scrollLeft = Math.max(0, cur.offsetLeft - 16); }, 0);
+    }
+    $("acc-pick").addEventListener("click", function (e) {
+      var b = e.target.closest("[data-ap]"); if (!b) return;
+      var sel = $("cuenta"); if (sel.value === b.getAttribute("data-ap")) return;
+      sel.value = b.getAttribute("data-ap");
+      sel.dispatchEvent(new Event("change", { bubbles: true }));
+      Array.prototype.forEach.call(this.children, function (x) { var on = x === b; x.classList.toggle("on", on); x.setAttribute("aria-checked", on); });
+    });
     function renderAmtRes() {
       var v = $("monto").value, r = amtVal(v), has = /[+\-−×xX*/]/.test(v.slice(1));
       var ok = has && r > 0;
@@ -5125,9 +5166,14 @@ html.bg-lock, html.bg-lock body { overflow: hidden !important; overscroll-behavi
     // Con el fondo bloqueado, solo se desliza el contenido de la hoja abierta
     document.addEventListener("touchmove", function (e) {
       if (!bgOn) return;
-      var t = e.target, sc = t.closest && t.closest(".sheet, .dial-menu, .cal, .cat-chips, .cat-quick, .ai-quick, .rate-chips");
-      if (!sc) { e.preventDefault(); return; }
-      if (sc.scrollHeight <= sc.clientHeight + 1 && sc.scrollWidth <= sc.clientWidth + 1) e.preventDefault();
+      var t = e.target, box = t.closest && t.closest(".sheet, .dial-menu, .cal");
+      if (!box) { e.preventDefault(); return; }
+      for (var el = t; el && el !== box.parentNode; el = el.parentNode) {
+        if (el.nodeType !== 1) continue;
+        var cs = getComputedStyle(el);
+        if ((/(auto|scroll)/.test(cs.overflowY) && el.scrollHeight > el.clientHeight + 1) || (/(auto|scroll)/.test(cs.overflowX) && el.scrollWidth > el.clientWidth + 1)) return;
+      }
+      e.preventDefault();
     }, { passive: false });
     function syncThemeColor() {
       var m = document.querySelector('meta[name="theme-color"]'); if (!m) return;
