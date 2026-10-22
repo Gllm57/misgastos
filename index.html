@@ -2056,6 +2056,16 @@ html { background: var(--bg); }
 .tour.nav .tour-tip { opacity: 1 !important; }
 .tt-body.out { transition: opacity 0.14s ease, transform 0.14s ease !important; }
 .tt-body.in { animation-duration: 0.32s !important; }
+/* Logo de Inicio: al tocarlo gira y redibuja sus anillos */
+h1 .brand { cursor: pointer; -webkit-tap-highlight-color: transparent; -webkit-user-select: none; user-select: none; }
+.orbe-mk { transform-origin: 50% 50%; }
+.orbe-mk.spin { animation: mkSpin 1.15s cubic-bezier(0.32, 0.72, 0, 1); }
+.orbe-mk.spin circle { animation: mkDraw 0.95s cubic-bezier(0.32, 0.72, 0, 1) backwards; }
+.orbe-mk.spin circle:nth-child(2) { animation-delay: 0.1s; }
+.orbe-mk.spin circle:nth-child(3) { animation-delay: 0.2s; }
+@keyframes mkSpin { 0% { transform: rotate(0) scale(1); } 35% { transform: rotate(160deg) scale(1.18); } 100% { transform: rotate(360deg) scale(1); } }
+@keyframes mkDraw { from { stroke-dasharray: 0 100; } }
+@media (prefers-reduced-motion: reduce) { .orbe-mk.spin, .orbe-mk.spin circle { animation: none; } }
 </style>
 </head>
 <body>
@@ -5389,6 +5399,16 @@ html { background: var(--bg); }
     new MutationObserver(syncThemeColor).observe(document.documentElement, { attributes: true, attributeFilter: ["data-theme"] });
     if (window.matchMedia) { var mqT = matchMedia("(prefers-color-scheme: dark)"); if (mqT.addEventListener) mqT.addEventListener("change", syncThemeColor); }
     setTimeout(syncThemeColor, 0);
+    // Al tocar el logo de Inicio, sus anillos se redibujan y giran como en la pantalla de carga
+    (function () {
+      var br = document.querySelector("h1 .brand"), mk = br && br.querySelector(".orbe-mk");
+      if (!mk) return;
+      br.addEventListener("click", function () {
+        mk.classList.remove("spin"); void mk.getBoundingClientRect(); mk.classList.add("spin");
+        if (navigator.vibrate) try { navigator.vibrate(8); } catch (e) {}
+      });
+      mk.addEventListener("animationend", function (e) { if (e.target === mk) mk.classList.remove("spin"); });
+    })();
     function closeDial() { $("dial").hidden = true; document.body.classList.remove("dial-open"); $("fab").setAttribute("aria-expanded", "false"); bgLock(document.documentElement.classList.contains("sheet-open")); }
     $("fab").addEventListener("click", function () { if ($("dial").hidden) openDial(); else closeDial(); });
     (function () {
