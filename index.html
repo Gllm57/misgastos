@@ -2031,6 +2031,33 @@ html { background: var(--bg); }
 #sheet .grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 @media (max-width: 520px) { #sheet .grid { grid-template-columns: minmax(0, 1fr); } }
 #sheet .grid > * { min-width: 0; }
+/* PIN: teclas suaves, puntos que laten y salida fluida */
+.keypad button { transition: background 0.2s ease, transform 0.28s cubic-bezier(0.32, 0.72, 0, 1) !important; }
+.keypad button.kp-on { transform: scale(0.9) !important; transition-duration: 0.08s !important; }
+.pin-dots i { transition: background 0.2s ease, border-color 0.2s ease, transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1) !important; }
+.pin-dots i.on { animation: pinDot 0.34s cubic-bezier(0.34, 1.56, 0.64, 1); }
+@keyframes pinDot { 0% { transform: scale(0.6); } 60% { transform: scale(1.25); } 100% { transform: scale(1); } }
+.pin-dots.err i { border-color: var(--out) !important; background: var(--out) !important; }
+.pin-dots.ok i { border-color: var(--in) !important; background: var(--in) !important; transform: scale(1.15); }
+.lock { transition: opacity 0.38s ease, transform 0.38s cubic-bezier(0.32, 0.72, 0, 1); }
+.lock.lock-out { opacity: 0; transform: scale(1.04); pointer-events: none; }
+/* Historial: el logo toca, se encoge y vuela al detalle */
+.hrow[data-hid] .hic { transition: transform 0.3s cubic-bezier(0.32, 0.72, 0, 1); }
+.hrow[data-hid]:active .hic { transform: scale(0.88); }
+.hd-ic.hd-wait { opacity: 0; animation: none !important; }
+.hic-fly { box-shadow: 0 10px 24px color-mix(in srgb, #000 22%, transparent); }
+#hd-sheet:not([hidden]) .hd-t, #hd-sheet:not([hidden]) .hd-v, #hd-sheet:not([hidden]) .hd-eq, #hd-sheet:not([hidden]) .hd-ctx, #hd-sheet:not([hidden]) .hd-rows, #hd-sheet:not([hidden]) .hd-btns { animation: hdUp 0.62s cubic-bezier(0.32, 0.72, 0, 1) backwards; }
+#hd-sheet:not([hidden]) .hd-t { animation-delay: 0.12s; }
+#hd-sheet:not([hidden]) .hd-v { animation-delay: 0.17s; }
+#hd-sheet:not([hidden]) .hd-eq { animation-delay: 0.21s; }
+#hd-sheet:not([hidden]) .hd-ctx { animation-delay: 0.25s; }
+#hd-sheet:not([hidden]) .hd-rows { animation-delay: 0.29s; }
+#hd-sheet:not([hidden]) .hd-btns { animation-delay: 0.33s; }
+@keyframes hdUp { from { opacity: 0; transform: translateY(12px); } }
+@media (prefers-reduced-motion: reduce) {
+  .pin-dots i.on, #hd-sheet:not([hidden]) .hd-t, #hd-sheet:not([hidden]) .hd-v, #hd-sheet:not([hidden]) .hd-eq, #hd-sheet:not([hidden]) .hd-ctx, #hd-sheet:not([hidden]) .hd-rows, #hd-sheet:not([hidden]) .hd-btns { animation: none; }
+  .lock { transition: none; }
+}
 </style>
 </head>
 <body>
@@ -4078,7 +4105,7 @@ html { background: var(--bg); }
       cls = it.tipo === "ahorro" ? "sv" : (plus ? "in" : "out");
     }
     if (sv) amt = state.hideSav ? '<span class="sv-val"><span class="masked">••••</span></span>' : '<span class="sv-val">' + amt + "</span>";
-    var canEdit = it.tipo === "gasto" || it.tipo === "ingreso";
+    var canEdit = it.tipo === "gasto" || it.tipo === "ingreso" || (it.tipo === "traspaso" && !it.auto && it.desde && it.hacia && it.desde.k === "cuenta" && it.hacia.k === "cuenta");
     var menu = it.auto ? '<span class="hnone"></span>' :
       '<div class="menu-wrap"><button class="dots" type="button" aria-haspopup="menu" aria-expanded="false" aria-label="Opciones del movimiento">⋮</button>' +
       '<div class="menu" role="menu" hidden>' + (canEdit ? '<button type="button" role="menuitem" data-h-edit="' + it.id + '">Editar movimiento</button>' : "") +
@@ -5679,12 +5706,26 @@ html { background: var(--bg); }
       if (v > accBalance(a) + 0.005) html += '<span class="hint">Ojo: en la app esta cuenta quedará en negativo.</span>';
       p.innerHTML = html;
     }
-    function openTr() {
+    var trEditId = null;
+    function isAccTr(it) { return !!it && it.tipo === "traspaso" && !it.auto && it.desde && it.hacia && it.desde.k === "cuenta" && it.hacia.k === "cuenta"; }
+    function editMov(it) { if (isAccTr(it)) openTr(it); else openSheet(it); }
+    function openTr(it) {
+      it = isAccTr(it) ? it : null;
       if (state.accounts.length < 2) { showToast("Necesitas al menos dos cuentas para transferir."); return; }
-      $("tr-monto").value = "";
-      setTrFecha(today());
+      trEditId = it ? it.id : null;
+      $("h-tr").textContent = it ? "Editar transferencia" : "Transferir entre cuentas";
+      $("tr-go").textContent = it ? "Guardar cambios" : "Transferir";
+      $("tr-monto").value = it ? moneyIn(it.desde.monto) : "";
+      setTrFecha(it ? it.fecha : today());
       trPair = "";
       $("tr-err").textContent = "";
+      if (it) {
+        fillTrFrom(); $("tr-from").value = String(it.desde.id); fillTrTo();
+        $("tr-to").value = String(it.hacia.id); syncTr();
+        if (it.tasa > 0) { $("tr-rate").value = fmtIn(it.tasa); renderTrPrev(); }
+        $("tr-sheet").hidden = false;
+        return;
+      }
       fillTrFrom();
       $("tr-sheet").hidden = false;
 
@@ -5715,17 +5756,22 @@ html { background: var(--bg); }
       if (diff && !(r > 0)) { err.textContent = "Escribe la tasa a la que te hicieron el cambio."; $("tr-rate").focus(); return; }
       var out = mvOut(v, a.moneda, b.moneda, r);
       var trF = $("tr-fecha").value || today();
-      var item = { id: Date.now(), tipo: "traspaso", fecha: trF, cat: "Transferencia entre cuentas", moneda: a.moneda, monto: v,
+      var item = { id: trEditId || Date.now(), tipo: "traspaso", fecha: trF, cat: "Transferencia entre cuentas", moneda: a.moneda, monto: v,
         nota: a.nombre + " → " + b.nombre + (diff ? " · tasa " + num(r) : ""),
         desde: { k: "cuenta", id: a.id, moneda: a.moneda, monto: v },
         hacia: { k: "cuenta", id: b.id, moneda: b.moneda, monto: out } };
       if (diff) item.tasa = r;
-      state.items.push(item);
+      var wasEdit = false;
+      if (trEditId) {
+        for (var ti = 0; ti < state.items.length; ti++) if (state.items[ti].id === trEditId) { state.items[ti] = item; wasEdit = true; break; }
+        trEditId = null;
+      }
+      if (!wasEdit) state.items.push(item);
       state.month = trF.slice(0, 7);
       $("mes").value = state.month;
       save(); render();
       closeTr();
-      showToast(trF === today() ? "Transferencia lista." : "Transferencia guardada el " + dateLabel(trF) + ".");
+      showToast(wasEdit ? "Transferencia actualizada." : trF === today() ? "Transferencia lista." : "Transferencia guardada el " + dateLabel(trF) + ".");
     });
 
     /* ---------- Agregar ahorro ---------- */
@@ -6023,7 +6069,7 @@ html { background: var(--bg); }
       var amt = (pos ? "+" : "−") + money(Math.abs(r.d), a.moneda);
       if (k === "sv" && state.hideSav) amt = '<span class="masked">••••</span>';
       var sub = it.tipo === "traspaso" ? (it.nota || "") : (it.nota || (k === "sv" ? "" : it.cat));
-      var canEdit = it.tipo === "gasto" || it.tipo === "ingreso";
+      var canEdit = it.tipo === "gasto" || it.tipo === "ingreso" || isAccTr(it);
       var menu = it.auto ? '<span class="hnone"></span>' :
         '<div class="menu-wrap"><button class="dots" type="button" aria-haspopup="menu" aria-expanded="false" aria-label="Opciones del movimiento">⋮</button>' +
         '<div class="menu" role="menu" hidden>' + (canEdit ? '<button type="button" role="menuitem" data-h-edit="' + it.id + '">Editar movimiento</button>' : "") +
@@ -6122,7 +6168,7 @@ html { background: var(--bg); }
       if ((b = e.target.closest("[data-h-edit]"))) {
         closeMenus();
         var id = Number(b.getAttribute("data-h-edit")), found = state.items.filter(function (x) { return x.id === id; })[0];
-        if (found) openSheet(found);
+        if (found) editMov(found);
         return;
       }
       if ((b = e.target.closest("[data-h-del]"))) {
@@ -7147,7 +7193,7 @@ html { background: var(--bg); }
       if ((b = e.target.closest("[data-h-edit]"))) {
         closeMenus();
         var id = Number(b.getAttribute("data-h-edit")), found = state.items.filter(function (x) { return x.id === id; })[0];
-        if (found) openSheet(found);
+        if (found) editMov(found);
         return;
       }
       if ((b = e.target.closest("[data-h-del]"))) {
@@ -7159,8 +7205,31 @@ html { background: var(--bg); }
         return;
       }
       var row = e.target.closest(".hrow[data-hid]");
-      if (row && !e.target.closest(".menu-wrap")) openHd(Number(row.getAttribute("data-hid")));
+      if (row && !e.target.closest(".menu-wrap")) { openHd(Number(row.getAttribute("data-hid"))); flyIcon(row); }
     });
+    function flyIcon(row) {
+      var src = row && row.querySelector(".hic"), dst = document.querySelector("#hd-body .hd-ic"), sheet = document.querySelector("#hd-sheet .sheet");
+      if (!src || !dst || !sheet || !document.body.animate || (window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches)) return;
+      try {
+        dst.classList.add("hd-wait");
+        var a = src.getBoundingClientRect(), b = dst.getBoundingClientRect(), ty = 0, m = getComputedStyle(sheet).transform;
+        if (m && m !== "none") { var v = m.slice(m.indexOf("(") + 1, -1).split(",").map(parseFloat); ty = v.length === 6 ? v[5] : (v[13] || 0); }
+        if (!a.width || !b.width) { dst.classList.remove("hd-wait"); return; }
+        var c = src.cloneNode(true);
+        c.className += " hic-fly";
+        c.style.cssText = "position:fixed;left:" + a.left + "px;top:" + a.top + "px;width:" + a.width + "px;height:" + a.height + "px;margin:0;z-index:60;pointer-events:none;transform-origin:0 0;border-radius:50%";
+        document.body.appendChild(c);
+        dst.classList.add("hd-wait"); src.style.visibility = "hidden";
+        var done = function () { if (!c.parentNode) return; dst.classList.remove("hd-wait"); src.style.visibility = ""; var f = c.animate([{ opacity: 1 }, { opacity: 0 }], { duration: 180, fill: "forwards" }); f.onfinish = function () { c.remove(); }; };
+        var dx = b.left - a.left, dy = (b.top - ty) - a.top, k = b.width / a.width;
+        var an = c.animate([
+          { transform: "translate(0px, 0px) scale(1)" },
+          { transform: "translate(" + dx * 0.5 + "px, " + (dy * 0.5 - 30) + "px) scale(" + (1 + (k - 1) * 0.6) + ")", offset: 0.5 },
+          { transform: "translate(" + dx + "px, " + dy + "px) scale(" + k + ")" }
+        ], { duration: 640, easing: "cubic-bezier(0.32, 0.72, 0, 1)", fill: "forwards" });
+        an.onfinish = done; setTimeout(done, 900);
+      } catch (er) { dst.classList.remove("hd-wait"); src.style.visibility = ""; }
+    }
 
     /* ---------- Deslizar un movimiento para borrarlo ---------- */
     var swRow = null, swX = 0, swY = 0, swDx = 0, swDir = 0, swMx = 0;
@@ -7264,7 +7333,7 @@ html { background: var(--bg); }
         ctx = '<div class="hd-ctx" style="--c:' + col + '">' + ringsSvg([{ p: totT > 0 ? mine / totT : 0, c: col }], 54, 7, 0) +
           "<div><b>" + pt + "% de tus " + (it.tipo === "gasto" ? "gastos" : "ingresos") + " de " + mesN + "</b><span>" + n + (n === 1 ? " movimiento" : " movimientos") + " en " + esc(it.cat) + " · " + money(totC, D) + (n > 1 ? " (este es el " + pc + "%)" : "") + "</span></div></div>";
       }
-      var canEdit = !it.auto && (it.tipo === "gasto" || it.tipo === "ingreso");
+      var canEdit = !it.auto && (it.tipo === "gasto" || it.tipo === "ingreso" || isAccTr(it));
       $("hd-body").innerHTML = '<div class="hd-top" style="--c:' + col + '"><span class="hd-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' + ic + "</svg></span>" +
         '<div class="hd-t">' + esc(histTitle(it)) + '</div><div class="hd-v ' + (k === "sv" ? "sv" : plus ? "in" : it.tipo === "gasto" ? "out" : "") + '">' + big + "</div>" + (hide || !eq ? "" : '<div class="hd-eq">' + eq + "</div>") + "</div>" +
         ctx + '<div class="hd-rows">' + rows + "</div>";
@@ -7275,7 +7344,7 @@ html { background: var(--bg); }
     function closeHd() { $("hd-sheet").hidden = true; hdId = null; }
     $("hd-close").addEventListener("click", closeHd);
     $("hd-sheet").addEventListener("click", function (e) { if (e.target === $("hd-sheet")) closeHd(); });
-    $("hd-edit").addEventListener("click", function () { var it = state.items.filter(function (x) { return x.id === hdId; })[0]; closeHd(); if (it) openSheet(it); });
+    $("hd-edit").addEventListener("click", function () { var it = state.items.filter(function (x) { return x.id === hdId; })[0]; closeHd(); if (it) editMov(it); });
     $("hd-dup").addEventListener("click", function () {
       var it = state.items.filter(function (x) { return x.id === hdId; })[0]; if (!it) return;
       var c = JSON.parse(JSON.stringify(it)); c.id = Date.now(); c.fecha = today(); delete c.linkId; delete c.auto;
@@ -7585,7 +7654,8 @@ html { background: var(--bg); }
     }
     function setTitle() { return lk.onb ? "Crea tu clave de acceso" : "Crea un código de " + PIN_LEN + " dígitos"; }
     function lockMsg(t, err) { var m = $("lock-msg"); m.textContent = t || ""; m.className = "hint" + (err ? " err" : ""); }
-    function shake() { var d = $("pin-dots"); d.classList.remove("shake"); void d.offsetWidth; d.classList.add("shake"); }
+    function shake() { var d = $("pin-dots"); d.classList.remove("shake"); void d.offsetWidth; d.classList.add("shake"); if (navigator.vibrate) try { navigator.vibrate([30, 40, 30]); } catch (e) {} }
+    function pinErr() { var d = $("pin-dots"); d.classList.add("err"); clearTimeout(pinErr.t); pinErr.t = setTimeout(function () { d.classList.remove("err"); }, 520); }
     function openLock(mode, onDone, opts) {
       opts = opts || {};
       lk.mode = mode; lk.buf = ""; lk.first = ""; lk.onDone = onDone || null; lk.onb = !!opts.onb;
@@ -7611,7 +7681,7 @@ html { background: var(--bg); }
       var pin = lk.buf;
       if (lk.mode === "set") {
         if (!lk.first) { lk.first = pin; lk.buf = ""; setTimeout(lockDots, 150); $("lock-t").textContent = lk.onb ? "Repite tu clave" : "Repite el código"; lockMsg("Para confirmar que la escribiste bien."); return; }
-        if (lk.first !== pin) { lk.first = ""; lk.buf = ""; shake(); setTimeout(lockDots, 300); $("lock-t").textContent = setTitle(); lockMsg("No coincidían. Empieza de nuevo.", true); return; }
+        if (lk.first !== pin) { lk.first = ""; lk.buf = ""; shake(); pinErr(); setTimeout(lockDots, 300); $("lock-t").textContent = setTitle(); lockMsg("No coincidían. Empieza de nuevo.", true); return; }
         var salt = Math.random().toString(36).slice(2) + Date.now().toString(36);
         pinHash(pin, salt).then(function (h) {
           var cb = lk.onDone, wasOnb = lk.onb;
@@ -7622,20 +7692,50 @@ html { background: var(--bg); }
         return;
       }
       pinHash(pin, state.pin.s).then(function (h) {
-        if (h === state.pin.h) { lk.fails = 0; var cb = lk.onDone; closeLock(); if (cb) cb(); return; }
-        lk.fails++; lk.buf = ""; shake(); setTimeout(lockDots, 300);
+        if (h === state.pin.h) {
+          lk.fails = 0; var cb = lk.onDone, L = $("lock");
+          $("pin-dots").classList.add("ok"); lk.mode = "";
+          setTimeout(function () {
+            document.documentElement.classList.remove("locked"); L.classList.add("lock-out");
+            setTimeout(function () { L.classList.remove("lock-out"); $("pin-dots").classList.remove("ok"); closeLock(); if (cb) cb(); }, 380);
+          }, 160);
+          return;
+        }
+        lk.fails++; lk.buf = ""; shake(); pinErr(); setTimeout(lockDots, 300);
         if (lk.fails >= 5) { lk.until = Date.now() + 30000; lk.fails = 0; lockMsg("Demasiados intentos. Espera 30 segundos.", true); }
         else lockMsg("Código incorrecto.", true);
       });
     }
-    // Teclas al tocar (no al soltar): rápido y sin zoom por doble toque en iPhone
+    // Teclas al tocar (no al soltar): rápido, sin zoom y con varios dedos a la vez.
+    // Si el dedo cae entre dos teclas, cuenta la más cercana.
     var kpTouch = 0;
+    function kpKeyAt(x, y) {
+      var el = document.elementFromPoint(x, y), b = el && el.closest && el.closest("[data-k]");
+      if (b) return b;
+      var best = null, bd = 56;
+      Array.prototype.forEach.call($("keypad").querySelectorAll("[data-k]"), function (k) {
+        var r = k.getBoundingClientRect(), dx = x - (r.left + r.width / 2), dy = y - (r.top + r.height / 2), d = Math.sqrt(dx * dx + dy * dy) - r.width / 2;
+        if (d < bd) { bd = d; best = k; }
+      });
+      return best;
+    }
+    function kpUp(b) { var t = Date.now() - (b._down || 0); setTimeout(function () { b.classList.remove("kp-on"); }, Math.max(0, 110 - t)); }
     $("keypad").addEventListener("touchstart", function (e) {
-      var b = e.target.closest("[data-k]"); if (!b) return;
       e.preventDefault(); kpTouch = Date.now();
-      b.classList.add("kp-on"); setTimeout(function () { b.classList.remove("kp-on"); }, 140);
-      lockInput(b.getAttribute("data-k"));
+      Array.prototype.forEach.call(e.changedTouches, function (t) {
+        if (t.target && t.target.closest && t.target.closest("#kp-cancel")) { $("kp-cancel").click(); return; }
+        var b = kpKeyAt(t.clientX, t.clientY); if (!b) return;
+        b._down = Date.now(); b._tid = t.identifier; b.classList.add("kp-on");
+        lockInput(b.getAttribute("data-k"));
+      });
     }, { passive: false });
+    ["touchend", "touchcancel"].forEach(function (ev) {
+      $("keypad").addEventListener(ev, function (e) {
+        Array.prototype.forEach.call(e.changedTouches, function (t) {
+          Array.prototype.forEach.call($("keypad").querySelectorAll(".kp-on"), function (b) { if (b._tid === t.identifier) kpUp(b); });
+        });
+      });
+    });
     $("keypad").addEventListener("dblclick", function (e) { e.preventDefault(); });
     $("keypad").addEventListener("click", function (e) { if (Date.now() - kpTouch < 800) return; var b = e.target.closest("[data-k]"); if (b) lockInput(b.getAttribute("data-k")); });
     document.addEventListener("keydown", function (e) {
