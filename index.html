@@ -2070,6 +2070,17 @@ h1 .brand { cursor: pointer; -webkit-tap-highlight-color: transparent; -webkit-u
 /* Copias automáticas */
 .snap-list { margin: 10px 0 6px; }
 .snap-note { font-size: 0.82rem; }
+/* Cambio de pestaña más ágil: la barra y la página llegan en ~0,36 s */
+@media (prefers-reduced-motion: no-preference) {
+  body.nav-fwd .goals-view, body.nav-fwd .pay-view, body.nav-fwd .hist-view, body.nav-fwd .bn-view, body.nav-fwd .set-view, body.nav-fwd .accd-view { animation: navInR 0.36s cubic-bezier(0.25, 0.8, 0.25, 1) backwards !important; }
+  body.nav-back .goals-view, body.nav-back .pay-view, body.nav-back .hist-view, body.nav-back .bn-view, body.nav-back .set-view, body.nav-back .accd-view, body.nav-back main { animation: navInL 0.36s cubic-bezier(0.25, 0.8, 0.25, 1) backwards !important; }
+  .tab-lens { transition: transform 0.38s cubic-bezier(0.3, 0.9, 0.3, 1.04), border-radius 0.4s var(--spring) !important; }
+  .tab { transition: color 0.22s ease; }
+}
+@keyframes navInR { from { opacity: 0.4; transform: translateX(22px); } to { opacity: 1; transform: translateX(0); } }
+@keyframes navInL { from { opacity: 0.4; transform: translateX(-22px); } to { opacity: 1; transform: translateX(0); } }
+/* Durante el tutorial la página cambia al instante bajo el fondo oscuro; solo se mueve el recuadro */
+html.touring body .goals-view, html.touring body .pay-view, html.touring body .hist-view, html.touring body .bn-view, html.touring body .set-view, html.touring body .accd-view, html.touring body main { animation: none !important; }
 </style>
 </head>
 <body>
@@ -5598,7 +5609,7 @@ h1 .brand { cursor: pointer; -webkit-tap-highlight-color: transparent; -webkit-u
     function setFecha(v) { $("fecha").value = v; $("fecha-label").textContent = dateLabel(v); }
     function slideIn(els, dir) {
       if (!dir || (window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches)) return;
-      els.forEach(function (el) { if (el && el.animate) el.animate([{ opacity: 0, transform: "translateX(" + (dir * 28) + "px)" }, { opacity: 1, transform: "none" }], { duration: 460, easing: "cubic-bezier(0.32, 0.72, 0, 1)" }); });
+      els.forEach(function (el) { if (el && el.animate) el.animate([{ opacity: 0, transform: "translateX(" + (dir * 24) + "px)" }, { opacity: 1, transform: "none" }], { duration: 360, easing: "cubic-bezier(0.32, 0.72, 0, 1)" }); });
     }
     function setMonth(m) {
       var dir = m > state.month ? 1 : m < state.month ? -1 : 0;
@@ -8110,7 +8121,7 @@ h1 .brand { cursor: pointer; -webkit-tap-highlight-color: transparent; -webkit-u
       t.classList.add("track"); t.classList.remove("on", "bye");
       hole.style.left = (window.innerWidth / 2) + "px"; hole.style.top = (window.innerHeight / 2) + "px"; hole.style.width = "0px"; hole.style.height = "0px";
       $("tour-tip").style.top = (window.innerHeight - 240) + "px";
-      t.hidden = false;
+      t.hidden = false; document.documentElement.classList.add("touring");
       requestAnimationFrame(function () { requestAnimationFrame(function () { t.classList.remove("track"); t.classList.add("on"); }); });
       tourGo(0);
     }
@@ -8119,7 +8130,7 @@ h1 .brand { cursor: pointer; -webkit-tap-highlight-color: transparent; -webkit-u
       t.classList.remove("track"); t.classList.add("bye");
       hole.style.left = "-40px"; hole.style.top = "-40px"; hole.style.width = (window.innerWidth + 80) + "px"; hole.style.height = (window.innerHeight + 80) + "px"; hole.style.borderRadius = "60px";
       setTimeout(function () { t.classList.remove("on"); }, 260);
-      setTimeout(function () { t.hidden = true; t.classList.remove("bye"); }, 620);
+      setTimeout(function () { t.hidden = true; t.classList.remove("bye"); document.documentElement.classList.remove("touring"); }, 620);
       var home = document.querySelector('.tab[data-tab="0"]'); if (home && document.body.className.indexOf("view-") >= 0) home.click();
       window.scrollTo({ top: 0, behavior: "smooth" });
     }
