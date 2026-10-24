@@ -1,5 +1,7 @@
 # Cuentas personales de Orbe (Supabase)
 
+**Estado:** conectado al proyecto **a-fuego** (`homninhiimgcpkbqbycg`), en la tabla `orbe_data`, que ya está creada con sus reglas. Los usuarios de inicio de sesión se comparten con la app de a-fuego.
+
 Orbe guarda los datos de cada persona en su cuenta, y cada quien solo ve los suyos.
 Mientras no conectes un proyecto, la app funciona igual que antes (solo en el teléfono) y la sección «Tu cuenta» no aparece en Ajustes.
 
