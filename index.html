@@ -2094,6 +2094,34 @@ html.touring body .goals-view, html.touring body .pay-view, html.touring body .h
 .rescue-in p { margin: 0 0 6px; color: var(--muted); }
 .rescue-in button { width: 100%; }
 .rescue-in .danger { color: var(--out) !important; }
+/* Revisión general: símbolos, contraste y ajustes de pantallas chicas */
+.set-ic { width: 32px; height: 32px; border-radius: 9px; flex: none; display: grid; place-items: center; color: var(--accent); background: color-mix(in srgb, var(--accent) 13%, transparent); }
+.set-ic svg { width: 18px; height: 18px; }
+.set-row.danger .set-ic { color: var(--out); background: color-mix(in srgb, var(--out) 12%, transparent); }
+.set-row > .set-ic + .tx { flex: 1; }
+.set-row > .set-ic { margin-right: -2px; }
+.ts-ic { width: 15px; height: 15px; margin-right: 5px; vertical-align: -2px; }
+.pa-ic { width: 26px; height: 26px; border-radius: 50%; flex: none; display: grid; place-items: center; color: var(--accent); background: color-mix(in srgb, var(--accent) 14%, transparent); }
+.pay-alert.late .pa-ic { color: var(--out); background: color-mix(in srgb, var(--out) 14%, transparent); }
+.pa-ic svg { width: 15px; height: 15px; }
+.hist-search { position: relative; }
+.hist-search input { padding-left: 40px !important; }
+.hist-search::before { content: ""; position: absolute; left: 14px; top: 50%; width: 18px; height: 18px; margin-top: -9px; pointer-events: none; background: var(--muted);
+  -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2.2' stroke-linecap='round'%3E%3Ccircle cx='11' cy='11' r='6.5'/%3E%3Cpath d='M20 20l-4-4'/%3E%3C/svg%3E") center / contain no-repeat;
+  mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2.2' stroke-linecap='round'%3E%3Ccircle cx='11' cy='11' r='6.5'/%3E%3Cpath d='M20 20l-4-4'/%3E%3C/svg%3E") center / contain no-repeat; }
+/* Botón principal con mejor contraste (texto blanco legible) */
+button.primary:not(.btn-danger), #add { background: #6a5cf2 !important; }
+html.touring #inst { display: none !important; }
+/* Bs y montos grandes en pantallas chicas */
+.bal-note b { white-space: nowrap; }
+@media (max-width: 380px) {
+  .bal-hero .balance-head { flex-direction: column; align-items: stretch; gap: 10px; }
+  .bal-hero .balance-head > div:first-child { width: 100%; }
+  .bal-hero .balance-head .seg { align-self: flex-start; }
+  .flows { gap: 8px !important; }
+  .flows .v { font-size: 1.02rem !important; letter-spacing: -0.02em; }
+  .flows .l { font-size: 0.72rem !important; }
+}
 </style>
 </head>
 <body>
@@ -2357,19 +2385,19 @@ html.touring body .goals-view, html.touring body .pay-view, html.touring body .h
 
     <div class="set-h">Seguridad</div>
     <div class="set-group">
-      <div class="set-row">
+      <div class="set-row" id="pin-row">
         <div class="tx"><b>Código de bloqueo</b><small id="pin-sub">Pide un código de 4 dígitos al abrir la app.</small></div>
         <button type="button" class="switch" id="pin-switch" role="switch" aria-checked="false" aria-label="Código de bloqueo"><span></span></button>
-      </div>
-      <div class="set-row">
-        <div class="tx"><b>Avisos de pagos</b><small id="notif-sub">Muestra en el ícono de Orbe cuántos pagos vencen hoy o mañana.</small></div>
-        <button type="button" class="switch" id="notif-switch" role="switch" aria-checked="false" aria-label="Avisos de pagos"><span></span></button>
       </div>
       <div class="set-row" id="bio-row" hidden>
         <div class="tx"><b>Desbloquear con Face ID</b><small>En vez de escribir el código. El código sigue sirviendo si Face ID falla.</small></div>
         <button type="button" class="switch" id="bio-switch" role="switch" aria-checked="false" aria-label="Desbloquear con Face ID"><span></span></button>
       </div>
       <button type="button" class="set-row" id="pin-change" hidden><span class="tx"><b>Cambiar código</b></span><svg class="chev-r" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 5l7 7-7 7"></path></svg></button>
+      <div class="set-row" id="notif-row">
+        <div class="tx"><b>Avisos de pagos</b><small id="notif-sub">Muestra en el ícono de Orbe cuántos pagos vencen hoy o mañana.</small></div>
+        <button type="button" class="switch" id="notif-switch" role="switch" aria-checked="false" aria-label="Avisos de pagos"><span></span></button>
+      </div>
     </div>
 
     <div class="set-h">Tus datos</div>
@@ -2378,9 +2406,9 @@ html.touring body .goals-view, html.touring body .pay-view, html.touring body .h
       <button type="button" class="set-row " id="bk-load"><span class="tx"><b>Restaurar una copia</b><small>Carga un archivo guardado antes. Reemplaza lo que tienes ahora.</small></span><svg class="chev-r" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 5l7 7-7 7"></path></svg></button>
       <button type="button" class="set-row " id="siri-open"><span class="tx"><b>Atajo de Siri «Agregar gasto»</b><small>Di «Oye Siri, agregar gasto» y Orbe se abre con el monto listo.</small></span><svg class="chev-r" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 5l7 7-7 7"></path></svg></button>
       <button type="button" class="set-row " id="snap-open"><span class="tx"><b>Copias automáticas</b><small id="snap-sub">Orbe guarda sola una copia cada día en este teléfono, por si necesitas volver atrás.</small></span><svg class="chev-r" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 5l7 7-7 7"></path></svg></button>
-      <button type="button" class="set-row danger" id="data-del"><span class="tx"><b>Borrar todos los datos</b><small>Elimina todo lo guardado en este teléfono.</small></span><svg class="chev-r" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 5l7 7-7 7"></path></svg></button>
       <button type="button" class="set-row " id="ex-all"><span class="tx"><b>Exportar movimientos a Excel</b><small>Un archivo con todos tus movimientos para abrir en Excel o Numbers.</small></span><svg class="chev-r" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 5l7 7-7 7"></path></svg></button>
       <input type="file" id="bk-file" accept=".json,application/json" hidden>
+      <button type="button" class="set-row danger" id="data-del"><span class="tx"><b>Borrar todos los datos</b><small>Elimina todo lo guardado en este teléfono.</small></span><svg class="chev-r" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 5l7 7-7 7"></path></svg></button>
     </div>
     <p class="hint" style="margin:8px 6px 0;font-size:0.8rem">Tus datos se guardan solo en este teléfono. Si lo pierdes, borras los datos de Safari o cambias de teléfono, solo podrás recuperarlos con una copia. Al guardarla, elige <b>Guardar en Archivos › iCloud Drive</b> o envíatela por correo para tenerla fuera del teléfono.</p>
 
@@ -2577,7 +2605,7 @@ html.touring body .goals-view, html.touring body .pay-view, html.touring body .h
       <button type="button" class="cal-nav" id="hist-next" aria-label="Mes siguiente">›</button>
     </div>
     <div class="hist-stats" id="hist-stats"></div>
-    <div class="hist-search"><input type="search" id="hist-q" placeholder="Buscar por categoría, nota, #etiqueta o cuenta" autocomplete="off" aria-label="Buscar movimientos"></div>
+    <div class="hist-search"><input type="search" id="hist-q" placeholder="Buscar o escribe #etiqueta" autocomplete="off" aria-label="Buscar movimientos"></div>
     <div class="hist-chips" id="hist-chips" role="group" aria-label="Filtrar por tipo">
       <button type="button" data-hf="all" aria-pressed="true">Todo</button>
       <button type="button" data-hf="in" aria-pressed="false">Ingresos</button>
@@ -3240,6 +3268,9 @@ html.touring body .goals-view, html.touring body .pay-view, html.touring body .h
     return n.toLocaleString("es-VE", { minimumFractionDigits: k, maximumFractionDigits: k });
   }
   function money(n, cur, d) {
+    // Redondea antes de decidir el signo: nunca «−0,00»
+    var dd = d === undefined ? 2 : d, f = Math.pow(10, dd);
+    if (Math.round(Math.abs(n) * f) === 0) n = 0;
     var sign = n < 0 ? "-" : "";
     var v = num(Math.abs(n), d);
     if (cur === "USDT") return sign + v + " USDT";
@@ -3456,6 +3487,20 @@ html.touring body .goals-view, html.touring body .pay-view, html.touring body .h
     var el = e.target;
     if (!el || el.tagName !== "INPUT" || el.getAttribute("inputmode") !== "decimal") return;
     if (isMoneyInput(el)) {
+      var simple = !/[+\-−×xX*/]/.test(el.value.slice(1));
+      if (simple && (e.data === "," || e.data === ".")) {
+        // Escribió la coma: lo anterior son enteros y lo que siga, céntimos
+        el._int = (el._dec === undefined ? el.value.slice(0, -1).replace(/\D/g, "").replace(/^0+/, "") : el._int) || "0";
+        el._dec = ""; el.value = fmtCents(el._int + "00"); try { el.setSelectionRange(el.value.length, el.value.length); } catch (er) {}
+        return;
+      }
+      if (simple && el._dec !== undefined && /^\d$/.test(e.data || "") && el._dec.length < 2) {
+        el._dec += e.data; var dd = (el._dec + "00").slice(0, 2);
+        el.value = fmtCents(el._int + dd); try { el.setSelectionRange(el.value.length, el.value.length); } catch (er) {}
+        return;
+      }
+      if (e.inputType !== "insertText" || !/^\d$/.test(e.data || "") || !simple) { el._dec = undefined; el._int = undefined; }
+      else if (el._dec !== undefined && el._dec.length >= 2) { el._dec = undefined; el._int = undefined; }
       var o = fmtCents(el.value);
       if (o !== el.value) { el.value = o; try { el.setSelectionRange(o.length, o.length); } catch (er) {} }
       return;
@@ -4090,11 +4135,11 @@ html.touring body .goals-view, html.touring body .pay-view, html.touring body .h
     var overdue = PL.filter(function (p) { return !p.paid && p.fecha < t; }).sort(payCmp);
     // resumen
     var pend = inMonth.filter(function (p) { return !p.paid && p.fecha >= t; }), tot = 0;
-    pend.forEach(function (p) { var v = conv(p.monto, p.moneda, D); if (v !== null) tot += v; });
+    pend.concat(overdue).forEach(function (p) { var v = conv(p.monto, p.moneda, D); if (v !== null) tot += v; });
     var mName = MESES[pay.m];
     $("pay-sub").textContent = PL.length
       ? (pend.length ? pend.length + (pend.length === 1 ? " pendiente" : " pendientes") + " en " + mName + " · " + money(tot, D) + " por pagar" : "Nada pendiente en " + mName) + (overdue.length ? " · " + overdue.length + (overdue.length === 1 ? " vencido" : " vencidos") : "")
-      : "Programa tus pagos y no se te pasa ninguno.";
+      : isC ? "Anota lo que te deben pagar y cuándo, para no olvidarlo." : "Programa tus pagos y no se te pasa ninguno.";
     var paidN = inMonth.filter(function (p) { return p.paid; }).length, hero = $("pay-hero");
     hero.hidden = !PL.length;
     $("pay-sub").hidden = !!PL.length;
@@ -4263,7 +4308,7 @@ html.touring body .goals-view, html.touring body .pay-view, html.touring body .h
     $("hist-next").disabled = vm >= curM;
     $("hist-sub").textContent = all.length ? all.length + (all.length === 1 ? " movimiento" : " movimientos") + " en el mes" : "Sin movimientos este mes";
     var hb = Math.round((tin - tout) * 100) / 100;
-    var statsHtml = '<div class="hh-card' + (hb < 0 ? " is-neg" : "") + '"><div class="hh-l">Balance del mes</div><div class="hh-v fit">' + (hb < 0 ? "−" : "") + money(Math.abs(hb), D) + "</div>" +
+    var statsHtml = '<div class="hh-card' + (hb < 0 ? " is-neg" : "") + '"><div class="hh-l">Ingresos menos gastos</div><div class="hh-v fit">' + (hb < 0 ? "−" : "") + money(Math.abs(hb), D) + "</div>" +
       '<div class="hh-row"><div><i style="background:var(--in)"></i><span>Ingresos</span><b class="in">+' + money(tin, D) + '</b></div><div><i style="background:var(--out)"></i><span>Gastos</span><b class="out">−' + money(tout, D) + "</b></div></div></div>";
     var msm = vm < curM ? vm : prevMonth(curM);
     statsHtml += '<button type="button" class="ms-pill" data-msum-open="' + msm + '"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="3"></rect><path d="M3 10h18M8 3v4M16 3v4M8 15l2.5 2.5L16 13"></path></svg>Así cerró ' + MESES[Number(msm.slice(5, 7)) - 1] + '</button>';
@@ -4342,7 +4387,7 @@ html.touring body .goals-view, html.touring body .pay-view, html.touring body .h
     if (listEl._core !== core) { listEl.innerHTML = html.replace(/@@F@@/g, " flash"); listEl._core = core; }
     var empty = !rows.length;
     $("hist-empty").style.display = empty ? "" : "none";
-    $("hist-empty-t").textContent = isCat && !q ? "No hay movimientos de " + hist.c + " en este mes." : all.length ? "Ningún movimiento coincide con tu búsqueda." : "No hay movimientos en este mes.";
+    $("hist-empty-t").textContent = isCat && !q ? "No hay movimientos de " + hist.c + " en este mes." : all.length ? (q ? "Ningún movimiento coincide con tu búsqueda." : "No hay movimientos de este tipo en el mes.") : "No hay movimientos en este mes.";
     scheduleFit();
   }
 
@@ -4585,7 +4630,8 @@ html.touring body .goals-view, html.touring body .pay-view, html.touring body .h
     // Arriba va el saldo total de las cuentas; debajo, lo que te queda del mes
     $("h-bal").textContent = accOk ? "Saldo total" : "Te queda este mes";
     bn.hidden = !accOk;
-    if (accOk) bn.innerHTML = 'Te queda este mes: <b class="' + (bal < 0 ? "neg" : "pos") + '">' + (bal < 0 ? "−" : "") + money(Math.abs(bal), D) + "</b>";
+    var curMo = state.month === today().slice(0, 7), mLbl = curMo ? "Te queda este mes" : "Te quedó en " + MESES[Number(state.month.slice(5, 7)) - 1];
+    if (accOk) bn.innerHTML = mLbl + ': <b class="' + (bal < 0 ? "neg" : "pos") + '">' + (bal < 0 ? "−" : "") + money(Math.abs(bal), D) + "</b>";
     if (accOk) bal = accTot;
     var b = $("balance");
     setMoney(b, bal, function (v) { return moneyH(v, D); }, D);
@@ -5051,7 +5097,8 @@ html.touring body .goals-view, html.touring body .pay-view, html.touring body .h
         setPressed("[data-type]", "data-type", state.type);
         fillCats();
         renderFormSav();
-        fSub = ""; splitParts = []; $("split-rows").innerHTML = ""; renderSub(); renderSplit();
+        fSub = ""; splitParts = []; $("split-rows").innerHTML = ""; $("sub-new").hidden = true; renderSub(); renderSplit();
+        $("nota").placeholder = state.type === "ingreso" ? "Ej: quincena, venta a Luis #trabajo" : "Ej: almuerzo con Ana #trabajo";
       });
     });
     function pickCat(e) {
@@ -5246,6 +5293,30 @@ html.touring body .goals-view, html.touring body .pay-view, html.touring body .h
     });
     var toastTimer = null;
     window.__toast = function (t) { showToast(t); };
+    (function () {
+      var I = function (d) { return '<span class="set-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">' + d + "</svg></span>"; };
+      var map = {
+        "pin-row": '<rect x="5" y="11" width="14" height="10" rx="2"></rect><path d="M8 11V7a4 4 0 0 1 8 0v4"></path>',
+        "bio-row": '<path d="M4 8V6a2 2 0 0 1 2-2h2M16 4h2a2 2 0 0 1 2 2v2M20 16v2a2 2 0 0 1-2 2h-2M8 20H6a2 2 0 0 1-2-2v-2M9 9v1.5M15 9v1.5M12 9v4.5h-1M9.5 16a4 4 0 0 0 5 0"></path>',
+        "pin-change": '<circle cx="8" cy="15" r="4"></circle><path d="M11 12l9-9M17 6l3 3M15 8l2 2"></path>',
+        "notif-row": '<path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9M10.3 21a1.9 1.9 0 0 0 3.4 0"></path>',
+        "bk-save": '<path d="M12 3v12M7 10l5 5 5-5M4 21h16"></path>',
+        "bk-load": '<path d="M12 21V9M7 14l5-5 5 5M4 3h16"></path>',
+        "siri-open": '<rect x="9" y="3" width="6" height="11" rx="3"></rect><path d="M5 11a7 7 0 0 0 14 0M12 18v3"></path>',
+        "snap-open": '<circle cx="12" cy="12" r="9"></circle><path d="M12 7v5l3 2"></path>',
+        "ex-all": '<rect x="3" y="4" width="18" height="16" rx="2"></rect><path d="M3 10h18M3 15h18M9 4v16"></path>',
+        "data-del": '<path d="M4 7h16M10 11v6M14 11v6M6 7l1 12a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2l1-12M9 7V4h6v3"></path>'
+      };
+      Object.keys(map).forEach(function (id) { var r = document.getElementById(id); if (r && !r.querySelector(".set-ic")) r.insertAdjacentHTML("afterbegin", I(map[id])); });
+      var arr = { gasto: '<path d="M7 7l10 10M17 9v8H9"></path>', ingreso: '<path d="M17 17L7 7M7 15V7h8"></path>' };
+      document.querySelectorAll(".type-seg [data-type]").forEach(function (b) { var k = b.getAttribute("data-type"); if (arr[k] && !b.querySelector("svg")) b.insertAdjacentHTML("afterbegin", '<svg class="ts-ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' + arr[k] + "</svg>"); });
+      var tp = document.querySelector('[data-dial="plantilla"] .ic svg');
+      if (tp) tp.innerHTML = '<path d="M6 3h12v18l-6-4-6 4z"></path>';
+    })();
+    document.addEventListener("input", function (e) {
+      var sh = e.target && e.target.closest && e.target.closest(".sheet"); if (!sh) return;
+      sh.querySelectorAll(".error").forEach(function (x) { if (x.textContent && !/Un momento|Entrando|Creando/.test(x.textContent)) x.textContent = ""; });
+    }, true);
     function showToast(text, action, fn) {
       var t = $("toast");
       t.textContent = text;
@@ -5312,6 +5383,7 @@ html.touring body .goals-view, html.touring body .pay-view, html.touring body .h
     });
     function renderAmtRes() {
       var v = $("monto").value, r = amtVal(v), has = /[+\-−×xX*/]/.test(v.slice(1));
+      $("monto").style.fontSize = v.length > 16 ? "1.35rem" : v.length > 12 ? "1.8rem" : v.length > 9 ? "2.3rem" : "";
       var ok = has && r > 0;
       if (ok) $("amt-res").textContent = "= " + num(r);
       document.querySelector(".amt-ops").classList.toggle("has", ok);
@@ -5451,7 +5523,8 @@ html.touring body .goals-view, html.touring body .pay-view, html.touring body .h
     function openSheet(it) {
       if ($("amt-res")) { $("amt-res").textContent = ""; document.querySelector(".amt-ops").classList.remove("has"); }
       if (!it && !state.accounts.length) {
-        showToast("Primero agrega una cuenta.");
+        showToast("Primero crea una cuenta (por ejemplo, tu banco o efectivo). Después anotas el movimiento.");
+        window.__accThenMov = true;
         openAccSheet(null);
         return;
       }
@@ -5637,6 +5710,7 @@ html.touring body .goals-view, html.touring body .pay-view, html.touring body .h
       save(); render();
       closeAccSheet();
       showToast("Cuenta guardada");
+      if (window.__accThenMov) { window.__accThenMov = false; setTimeout(function () { openSheet(null); }, 350); }
     });
     function closeMenus() {
       document.querySelectorAll(".menu").forEach(function (m) { m.hidden = true; });
@@ -6491,9 +6565,9 @@ html.touring body .goals-view, html.touring body .pay-view, html.touring body .h
     var nudgeOff = false;
     function renderNudge() {
       var el = $("bk-nudge"), n = state.items.length;
-      el.hidden = nudgeOff;
-      if (nudgeOff) return;
       var due = n >= 5 && (!state.backupAt || Date.now() - state.backupAt > BACKUP_DAYS * 86400000);
+      el.hidden = nudgeOff || !due;
+      if (el.hidden) return;
       var d = state.backupAt ? Math.floor((Date.now() - state.backupAt) / 86400000) : 0;
       el.classList.toggle("ok", !due);
       $("bk-nudge-s").textContent = due
@@ -7114,7 +7188,7 @@ html.touring body .goals-view, html.touring body .pay-view, html.touring body .h
       if (!due.length) return;
       var p = due[0], when = p.fecha < t ? "venció" : p.fecha === t ? "vence hoy" : "vence mañana";
       el.className = "pay-alert" + (p.fecha < t ? " late" : "");
-      el.innerHTML = '<span class="pa-dot"></span><span class="pa-t"><b>' + esc(p.titulo) + "</b> " + when + " · " + money(p.monto, p.moneda) + (due.length > 1 ? ' <small>y ' + (due.length - 1) + " más</small>" : "") + '</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6l6 6-6 6"></path></svg>';
+      el.innerHTML = (p.fecha < t ? '<span class="pa-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l9.5 17h-19z"></path><path d="M12 10v4M12 17.5h.01"></path></svg></span>' : '<span class="pa-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"></circle><path d="M12 7v5l3 2"></path></svg></span>') + '<span class="pa-t"><b>' + esc(p.titulo) + "</b> " + when + " · " + money(p.monto, p.moneda) + (due.length > 1 ? ' <small>y ' + (due.length - 1) + " más</small>" : "") + '</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6l6 6-6 6"></path></svg>';
     }
     window.__payAlert = function () { renderPayAlert(); renderMsum(); };
     // Avisos de pagos: número sobre el ícono de la app (iPhone: app instalada y permiso de notificaciones)
@@ -7316,7 +7390,19 @@ html.touring body .goals-view, html.touring body .pay-view, html.touring body .h
       var b;
       if ((b = e.target.closest("[data-pay-toggle]"))) {
         var p = payById(b.getAttribute("data-pay-toggle"));
-        if (p) { p.paid = !p.paid; save(); render(); showToast(p.paid ? (p.cobro ? "Marcado como cobrado." : "Pago marcado como pagado.") : "Marcado como pendiente."); }
+        if (p) {
+          p.paid = !p.paid; save(); render();
+          if (p.paid) showToast(p.cobro ? "Marcado como cobrado." : "Pago marcado como pagado.", p.cobro ? "Anotar ingreso" : "Anotar gasto", function () {
+            var tp = p.cobro ? "ingreso" : "gasto";
+            state.type = tp; setPressed("[data-type]", "data-type", tp); fillCats(); openSheet(null);
+            var acc = state.accounts.filter(function (x) { return x.moneda === p.moneda; })[0];
+            if (acc) { $("cuenta").value = String(acc.id); $("cuenta").dispatchEvent(new Event("change", { bubbles: true })); renderAccPick(); }
+            $("monto").value = moneyIn(p.monto); $("monto").dispatchEvent(new Event("input", { bubbles: true }));
+            if (!p.cobro && CATS.gasto.indexOf("Servicios") >= 0) { $("cat").value = "Servicios"; $("cat").dispatchEvent(new Event("change", { bubbles: true })); renderCatChips(); }
+            $("nota").value = p.titulo || "";
+          });
+          else showToast("Marcado como pendiente.");
+        }
         return;
       }
       if ((b = e.target.closest("[data-pay-edit]"))) { closeMenus(); openPg(payById(b.getAttribute("data-pay-edit"))); return; }
@@ -8146,7 +8232,8 @@ html.touring body .goals-view, html.touring body .pay-view, html.touring body .h
       $("lock-k").textContent = lk.onb ? "Último paso" : "";
       $("lock-t").textContent = mode === "unlock" ? "Escribe tu código" : mode === "verify" ? "Escribe tu código actual" : setTitle();
       lockMsg(mode === "set" ? (lk.onb ? "Elige " + PIN_LEN + " números. La pediremos cada vez que abras la app para proteger tus datos." : "Lo pediremos cada vez que abras la app.") : "");
-      $("kp-cancel").style.visibility = mode === "unlock" || lk.onb ? "hidden" : "visible";
+      $("kp-cancel").style.visibility = mode === "unlock" ? "hidden" : "visible";
+      $("kp-cancel").textContent = lk.onb ? "Ahora no" : "Cancelar";
       $("lock-forgot").hidden = mode !== "unlock";
       renderBio();
       if (mode === "unlock" && bioOk && bioOn()) setTimeout(bioUnlock, 350);
@@ -8256,7 +8343,11 @@ html.touring body .goals-view, html.touring body .pay-view, html.touring body .h
       if (/^[0-9]$/.test(e.key)) { e.preventDefault(); lockInput(e.key); }
       else if (e.key === "Backspace") { e.preventDefault(); lockInput("del"); }
     }, true);
-    $("kp-cancel").addEventListener("click", function () { if (lk.mode !== "unlock") closeLock(); });
+    $("kp-cancel").addEventListener("click", function () {
+      if (lk.mode === "unlock") return;
+      if (lk.onb) { var cb = lk.onDone; closeLock(); if (cb) cb(); showToast("Puedes activar el código cuando quieras en Ajustes."); return; }
+      closeLock();
+    });
     $("lock-forgot").addEventListener("click", function () {
       closeLock();
       document.documentElement.classList.add("locked");
@@ -8368,7 +8459,7 @@ html.touring body .goals-view, html.touring body .pay-view, html.touring body .h
     /* ---------- Recorrido guiado ---------- */
     var TOUR = [
       { tab: 0, sel: ".rate-card", all: true, t: "Tasas del día", p: "Dólar BCV, euro y USDT. Se actualizan solas y te muestran si subieron ▲ o bajaron ▼." },
-      { tab: 0, sel: ".bal-hero", t: "Saldo total", p: "Todo el dinero que tienes hoy en tus cuentas. Debajo, «Te queda este mes» es lo que entró este mes menos lo que gastaste y ahorraste; empieza de cero cada día 1." },
+      { tab: 0, sel: ".bal-hero", t: "Tu saldo", p: "Todo el dinero que tienes hoy en tus cuentas. Debajo, «Te queda este mes» es lo que entró este mes menos lo que gastaste y ahorraste; empieza de cero cada día 1." },
       { tab: 0, sel: '[data-panel="acc"]', t: "Tus cuentas", p: "El total y cuánto hay en cada cuenta. Toca una para ver sus movimientos. Con ⇄ transfieres y con + agregas otra." },
       { tab: 0, sel: '[data-panel="cat"]', t: "En qué se va el dinero", p: "Tus gastos por categoría, comparados con el mes pasado. En Límites pones un máximo para cada una." },
       { tab: 0, sel: "#fab", t: "El botón +", p: "Tócalo para anotar un gasto, un ingreso o un ahorro. Mantenlo presionado para usar tus plantillas.", round: true },
@@ -8661,7 +8752,7 @@ html.touring body .goals-view, html.touring body .pay-view, html.touring body .h
     function cxLabel(n, k) { return k === "VES" ? "Bs " + cxFmt(n, k) : k === "USD" ? "$" + cxFmt(n, k) : k === "EUR" ? "€" + cxFmt(n, k) : k === "USDT" ? cxFmt(n, k) + " USDT" : cxFmt(n, k) + " BTC"; }
     function cxSub(k) {
       var r = cxBs(k);
-      if (!(r > 0)) return k === "BTC" ? "Buscando el precio…" : "Sin tasa disponible";
+      if (!(r > 0)) return k === "BTC" ? (navigator.onLine ? "Buscando el precio…" : "Sin conexión") : "Sin tasa disponible";
       if (k === "USD") return (calc.src === "own" && calc.own > 0 ? "Tu tasa" : "BCV") + " · Bs " + num(r);
       if (k === "EUR") return "BCV · Bs " + num(r);
       if (k === "USDT") return "Bs " + num(r);
