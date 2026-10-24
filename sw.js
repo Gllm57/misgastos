@@ -1,7 +1,7 @@
 // Orbe: guarda la app en el teléfono para abrir sin internet.
 // La página se pide primero a la red (así siempre ves la última versión);
 // si la red no responde rápido o no hay señal, se abre la copia guardada.
-var CACHE = "orbe-v1";
+var CACHE = "orbe-v2";
 var CORE = ["./", "./index.html", "./manifest.webmanifest", "./icons/icon-192.png", "./icons/icon-512.png"];
 var NET_WAIT = 3000;
 
@@ -60,7 +60,7 @@ self.addEventListener("fetch", function (e) {
   if (url.host === "fonts.googleapis.com" || url.host === "fonts.gstatic.com") {
     e.respondWith(caches.match(req).then(function (hit) {
       return hit || fetch(req).then(function (res) {
-        var copy = res.clone(); caches.open(CACHE).then(function (c) { c.put(req, copy); });
+        if (res && res.ok) { var copy = res.clone(); caches.open(CACHE).then(function (c) { c.put(req, copy); }); }
         return res;
       });
     }));

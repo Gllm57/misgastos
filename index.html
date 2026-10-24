@@ -15,7 +15,7 @@
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" crossorigin>
 <script>
 (function () {
   try {
@@ -2111,6 +2111,51 @@ html.touring body .goals-view, html.touring body .pay-view, html.touring body .h
 .siri-steps { margin: 6px 0; padding-left: 22px; display: grid; gap: 6px; line-height: 1.45; font-size: 0.92rem; }
 .siri-url { display: flex; gap: 8px; align-items: center; padding: 8px 8px 8px 12px; border-radius: 14px; background: var(--fill, color-mix(in srgb, var(--ink) 5%, transparent)); margin: 4px 0 6px; }
 .siri-url code { flex: 1; min-width: 0; font-size: 0.8rem; word-break: break-all; -webkit-user-select: all; user-select: all; }
+/* Tu cuenta */
+.cl-av { width: 40px; height: 40px; border-radius: 50%; flex: none; display: grid; place-items: center; color: var(--accent); background: color-mix(in srgb, var(--accent) 14%, transparent); margin-right: 12px; }
+.cl-av svg { width: 21px; height: 21px; }
+#cloud-open { display: flex; align-items: center; }
+.cl-av.big { width: 52px; height: 52px; margin: 0; }
+.cl-av.big svg { width: 26px; height: 26px; }
+.cl-who { display: flex; align-items: center; gap: 12px; margin: 4px 0 14px; }
+.cl-who b { display: block; font-size: 1.02rem; word-break: break-all; }
+.cl-who small { color: var(--muted); }
+#cl-err, #cl-err2 { min-height: 1.2em; }
+/* Pantalla de rescate si la app no puede abrir los datos */
+.rescue { position: fixed; inset: 0; z-index: 200; background: var(--bg); color: var(--ink); display: grid; place-items: center; padding: max(24px, env(safe-area-inset-top, 0px)) 20px 24px; overflow-y: auto; }
+.rescue-in { max-width: 420px; width: 100%; display: grid; gap: 10px; }
+.rescue-in h2 { margin: 0 0 4px; font-size: 1.4rem; }
+.rescue-in p { margin: 0 0 6px; color: var(--muted); }
+.rescue-in button { width: 100%; }
+.rescue-in .danger { color: var(--out) !important; }
+/* Revisión general: símbolos, contraste y ajustes de pantallas chicas */
+.set-ic { width: 32px; height: 32px; border-radius: 9px; flex: none; display: grid; place-items: center; color: var(--accent); background: color-mix(in srgb, var(--accent) 13%, transparent); }
+.set-ic svg { width: 18px; height: 18px; }
+.set-row.danger .set-ic { color: var(--out); background: color-mix(in srgb, var(--out) 12%, transparent); }
+.set-row > .set-ic + .tx { flex: 1; }
+.set-row > .set-ic { margin-right: -2px; }
+.ts-ic { width: 15px; height: 15px; margin-right: 5px; vertical-align: -2px; }
+.pa-ic { width: 26px; height: 26px; border-radius: 50%; flex: none; display: grid; place-items: center; color: var(--accent); background: color-mix(in srgb, var(--accent) 14%, transparent); }
+.pay-alert.late .pa-ic { color: var(--out); background: color-mix(in srgb, var(--out) 14%, transparent); }
+.pa-ic svg { width: 15px; height: 15px; }
+.hist-search { position: relative; }
+.hist-search input { padding-left: 40px !important; }
+.hist-search::before { content: ""; position: absolute; left: 14px; top: 50%; width: 18px; height: 18px; margin-top: -9px; pointer-events: none; background: var(--muted);
+  -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2.2' stroke-linecap='round'%3E%3Ccircle cx='11' cy='11' r='6.5'/%3E%3Cpath d='M20 20l-4-4'/%3E%3C/svg%3E") center / contain no-repeat;
+  mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2.2' stroke-linecap='round'%3E%3Ccircle cx='11' cy='11' r='6.5'/%3E%3Cpath d='M20 20l-4-4'/%3E%3C/svg%3E") center / contain no-repeat; }
+/* Botón principal con mejor contraste (texto blanco legible) */
+button.primary:not(.btn-danger), #add { background: #6a5cf2 !important; }
+html.touring #inst { display: none !important; }
+/* Bs y montos grandes en pantallas chicas */
+.bal-note b { white-space: nowrap; }
+@media (max-width: 380px) {
+  .bal-hero .balance-head { flex-direction: column; align-items: stretch; gap: 10px; }
+  .bal-hero .balance-head > div:first-child { width: 100%; }
+  .bal-hero .balance-head .seg { align-self: flex-start; }
+  .flows { gap: 8px !important; }
+  .flows .v { font-size: 1.02rem !important; letter-spacing: -0.02em; }
+  .flows .l { font-size: 0.72rem !important; }
+}
 </style>
 </head>
 <body>
@@ -2350,6 +2395,12 @@ html.touring body .goals-view, html.touring body .pay-view, html.touring body .h
     <div class="set-group">
       <button type="button" class="set-row" id="set-country"><span class="tx"><b>País</b><small id="set-country-v"></small></span><svg class="chev-r" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 5l7 7-7 7"></path></svg></button>
     </div>
+    <div id="cloud-sec" hidden>
+      <div class="set-h">Tu cuenta</div>
+      <div class="set-group">
+        <button type="button" class="set-row" id="cloud-open"><span class="cl-av" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.5 19H8a5 5 0 1 1 1-9.9A6 6 0 0 1 20.5 12 3.5 3.5 0 0 1 17.5 19z"></path></svg></span><span class="tx"><b id="cloud-t">Inicia sesión o crea tu cuenta</b><small id="cloud-s">Guarda tus datos en la nube y úsalos en cualquier teléfono.</small></span><svg class="chev-r" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 5l7 7-7 7"></path></svg></button>
+      </div>
+    </div>
     <div class="set-h">Apariencia</div>
     <div class="set-group">
       <div class="set-row set-stack">
@@ -2372,19 +2423,19 @@ html.touring body .goals-view, html.touring body .pay-view, html.touring body .h
 
     <div class="set-h">Seguridad</div>
     <div class="set-group">
-      <div class="set-row">
+      <div class="set-row" id="pin-row">
         <div class="tx"><b>Código de bloqueo</b><small id="pin-sub">Pide un código de 4 dígitos al abrir la app.</small></div>
         <button type="button" class="switch" id="pin-switch" role="switch" aria-checked="false" aria-label="Código de bloqueo"><span></span></button>
-      </div>
-      <div class="set-row">
-        <div class="tx"><b>Avisos de pagos</b><small id="notif-sub">Muestra en el ícono de Orbe cuántos pagos vencen hoy o mañana.</small></div>
-        <button type="button" class="switch" id="notif-switch" role="switch" aria-checked="false" aria-label="Avisos de pagos"><span></span></button>
       </div>
       <div class="set-row" id="bio-row" hidden>
         <div class="tx"><b>Desbloquear con Face ID</b><small>En vez de escribir el código. El código sigue sirviendo si Face ID falla.</small></div>
         <button type="button" class="switch" id="bio-switch" role="switch" aria-checked="false" aria-label="Desbloquear con Face ID"><span></span></button>
       </div>
       <button type="button" class="set-row" id="pin-change" hidden><span class="tx"><b>Cambiar código</b></span><svg class="chev-r" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 5l7 7-7 7"></path></svg></button>
+      <div class="set-row" id="notif-row">
+        <div class="tx"><b>Avisos de pagos</b><small id="notif-sub">Muestra en el ícono de Orbe cuántos pagos vencen hoy o mañana.</small></div>
+        <button type="button" class="switch" id="notif-switch" role="switch" aria-checked="false" aria-label="Avisos de pagos"><span></span></button>
+      </div>
     </div>
 
     <div class="set-h">Tus datos</div>
@@ -2393,9 +2444,9 @@ html.touring body .goals-view, html.touring body .pay-view, html.touring body .h
       <button type="button" class="set-row " id="bk-load"><span class="tx"><b>Restaurar una copia</b><small>Carga un archivo guardado antes. Reemplaza lo que tienes ahora.</small></span><svg class="chev-r" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 5l7 7-7 7"></path></svg></button>
       <button type="button" class="set-row " id="siri-open"><span class="tx"><b>Atajo de Siri «Agregar gasto»</b><small>Di «Oye Siri, agregar gasto» y Orbe se abre con el monto listo.</small></span><svg class="chev-r" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 5l7 7-7 7"></path></svg></button>
       <button type="button" class="set-row " id="snap-open"><span class="tx"><b>Copias automáticas</b><small id="snap-sub">Orbe guarda sola una copia cada día en este teléfono, por si necesitas volver atrás.</small></span><svg class="chev-r" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 5l7 7-7 7"></path></svg></button>
-      <button type="button" class="set-row danger" id="data-del"><span class="tx"><b>Borrar todos los datos</b><small>Elimina todo lo guardado en este teléfono.</small></span><svg class="chev-r" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 5l7 7-7 7"></path></svg></button>
       <button type="button" class="set-row " id="ex-all"><span class="tx"><b>Exportar movimientos a Excel</b><small>Un archivo con todos tus movimientos para abrir en Excel o Numbers.</small></span><svg class="chev-r" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 5l7 7-7 7"></path></svg></button>
       <input type="file" id="bk-file" accept=".json,application/json" hidden>
+      <button type="button" class="set-row danger" id="data-del"><span class="tx"><b>Borrar todos los datos</b><small>Elimina todo lo guardado en este teléfono.</small></span><svg class="chev-r" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 5l7 7-7 7"></path></svg></button>
     </div>
     <p class="hint" style="margin:8px 6px 0;font-size:0.8rem">Tus datos se guardan solo en este teléfono. Si lo pierdes, borras los datos de Safari o cambias de teléfono, solo podrás recuperarlos con una copia. Al guardarla, elige <b>Guardar en Archivos › iCloud Drive</b> o envíatela por correo para tenerla fuera del teléfono.</p>
 
@@ -2604,7 +2655,7 @@ html.touring body .goals-view, html.touring body .pay-view, html.touring body .h
       <button type="button" class="cal-nav" id="hist-next" aria-label="Mes siguiente">›</button>
     </div>
     <div class="hist-stats" id="hist-stats"></div>
-    <div class="hist-search"><input type="search" id="hist-q" placeholder="Buscar por categoría, nota, #etiqueta o cuenta" autocomplete="off" aria-label="Buscar movimientos"></div>
+    <div class="hist-search"><input type="search" id="hist-q" placeholder="Buscar o escribe #etiqueta" autocomplete="off" aria-label="Buscar movimientos"></div>
     <div class="hist-chips" id="hist-chips" role="group" aria-label="Filtrar por tipo">
       <button type="button" data-hf="all" aria-pressed="true">Todo</button>
       <button type="button" data-hf="in" aria-pressed="false">Ingresos</button>
@@ -2680,6 +2731,35 @@ html.touring body .goals-view, html.touring body .pay-view, html.touring body .h
       <div class="sheet-head"><h2>Detalle</h2><button type="button" class="del" id="hd-close" aria-label="Cerrar">✕</button></div>
       <div id="hd-body"></div>
       <div class="hd-btns"><button type="button" class="secondary" id="hd-edit">Editar</button><button type="button" class="secondary" id="hd-dup">Duplicar</button><button type="button" class="secondary hd-del" id="hd-del">Eliminar</button></div>
+    </section>
+  </div>
+  <div class="sheet-backdrop" id="cloud-sheet" hidden>
+    <section class="panel sheet" role="dialog" aria-modal="true" aria-labelledby="h-cloud">
+      <div class="sheet-head"><h2 id="h-cloud">Tu cuenta</h2><button type="button" class="del" id="cloud-close" aria-label="Cerrar">✕</button></div>
+      <div id="cl-out">
+        <p class="hint">Con tu cuenta, tus movimientos se guardan en la nube y los ves en cualquier teléfono donde entres. Solo tú puedes verlos.</p>
+        <div class="grid">
+          <div class="wide"><label for="cl-email">Correo</label><input type="email" id="cl-email" autocomplete="username" inputmode="email" autocapitalize="off" spellcheck="false" placeholder="tu@correo.com"></div>
+          <div class="wide"><label for="cl-pass">Contraseña</label><input type="password" id="cl-pass" autocomplete="current-password" placeholder="Mínimo 8 caracteres"></div>
+        </div>
+        <p class="error" id="cl-err" role="alert"></p>
+        <button type="button" class="lock-forgot" id="cl-forgot">Olvidé mi contraseña</button>
+        <div class="sheet-foot"><button type="button" class="primary" id="cl-in">Entrar</button><button type="button" class="secondary" id="cl-up" style="width:100%;margin-top:8px">Crear cuenta nueva</button></div>
+      </div>
+      <div id="cl-new" hidden>
+        <p class="hint">Escribe tu nueva contraseña.</p>
+        <div class="grid"><div class="wide"><label for="cl-pass2">Nueva contraseña</label><input type="password" id="cl-pass2" autocomplete="new-password" placeholder="Mínimo 8 caracteres"></div></div>
+        <p class="error" id="cl-err2" role="alert"></p>
+        <div class="sheet-foot"><button type="button" class="primary" id="cl-pass-save">Guardar contraseña</button></div>
+      </div>
+      <div id="cl-inn" hidden>
+        <div class="cl-who"><span class="cl-av big" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"></circle><path d="M4 21a8 8 0 0 1 16 0"></path></svg></span><div><b id="cl-mail"></b><small id="cl-state"></small></div></div>
+        <div class="set-group">
+          <button type="button" class="set-row" id="cl-sync"><span class="tx"><b>Sincronizar ahora</b><small>Sube tus cambios y trae los de tus otros teléfonos.</small></span></button>
+          <button type="button" class="set-row" id="cl-out-btn"><span class="tx"><b>Cerrar sesión</b><small>Tus datos quedan guardados en tu cuenta.</small></span></button>
+          <button type="button" class="set-row danger" id="cl-del"><span class="tx"><b>Borrar mis datos de la nube</b><small>No borra lo que tienes en este teléfono.</small></span></button>
+        </div>
+      </div>
     </section>
   </div>
   <div class="sheet-backdrop" id="siri-sheet" hidden>
@@ -3110,6 +3190,9 @@ html.touring body .goals-view, html.touring body .pay-view, html.touring body .h
 <script>
 (function () {
   var KEY = "gastos-v1";
+  // Cuentas personales (Supabase). Vacío = la app funciona solo en este teléfono y la sección «Tu cuenta» no aparece.
+  // url: «Project URL» y key: clave publicable o «anon», de Supabase → Project Settings → API.
+  var CLOUD = { url: "", key: "" };
   var CATS = {
     gasto: ["Alimentación", "Restaurantes", "Vivienda", "Hogar", "Servicios", "Suscripciones", "Transporte", "Salud", "Cuidado personal", "Ropa", "Educación", "Ocio", "Viajes", "Tecnología", "Mascotas", "Regalos", "Deudas", "Impuestos", "Negocio", "Otros"],
     ingreso: ["Sueldo", "Ventas", "Freelance", "Negocio propio", "Inversiones", "Remesas", "Regalos recibidos", "Reembolsos", "Otros ingresos"]
@@ -3118,11 +3201,58 @@ html.touring body .goals-view, html.touring body .pay-view, html.touring body .h
 
   var state = { limits: {}, items: [], rate: 0, disp: "USD", type: "gasto", month: "", sel: null, selIn: null, collapsed: {}, paySeries: [], earn: [], rateHist: {}, rateHistAt: 0, theme: "auto", pin: null, backupAt: 0, onb: false, bn: { done: {}, apr: 5, hide: false, opened: {}, v: 2 }, templates: [], showAll: false, hideSav: false, rateManual: "", rateAutoAt: 0, rateLoading: false, rateFail: false, rateErr: "", accounts: [], rateEur: 0, rateEurDate: "", rateEurManual: "", rateUsdt: 0, rateUsdtDate: "", rateUsdtManual: "", rateUsdtSrc: "", goals: [], payments: [], lastAcc: null, rateDate: "", fsav: { on: false, pct: 10 }, sav: { on: false, pct: 10 } };
 
+  // Reconstruye cada registro con campos válidos: ids y colores seguros, montos numéricos, fechas correctas.
+  // Así un archivo de copia dañado o malicioso no puede romper la app ni meter código.
+  var ID_RE = /^[\w.-]{1,40}$/, HEX_RE = /^#[0-9a-f]{3,8}$/i, DATE_RE = /^\d{4}-\d{2}-\d{2}$/;
+  function cleanObj(o, depth) {
+    if (!o || typeof o !== "object" || Array.isArray(o) || (depth || 0) > 4) return null;
+    var r = {};
+    Object.keys(o).forEach(function (k) {
+      if (k === "__proto__" || k === "constructor" || k === "prototype") return;
+      var v = o[k];
+      if (/^(id|split|gid|cuenta)$|Id$/.test(k)) { if ((typeof v === "number" && isFinite(v)) || (typeof v === "string" && ID_RE.test(v))) r[k] = v; return; }
+      if (/^color$|Color$/.test(k)) { if (typeof v === "string" && HEX_RE.test(v)) r[k] = v; return; }
+      if (k === "icon") { if (typeof v === "string" && /^[a-z]{1,16}$/.test(v)) r[k] = v; return; }
+      if (k === "moneda") { if (typeof v === "string" && /^[A-Z]{3,4}$/.test(v)) r[k] = v; return; }
+      if (k === "fecha") { if (typeof v === "string" && DATE_RE.test(v)) r[k] = v; return; }
+      if (/^(monto|meta|tasa|pct|saldo)$/.test(k)) { var n = Number(v); if (isFinite(n)) r[k] = n; return; }
+      if (v && typeof v === "object" && !Array.isArray(v)) { var c = cleanObj(v, (depth || 0) + 1); if (c) r[k] = c; return; }
+      if (typeof v === "string" || typeof v === "number" || typeof v === "boolean" || v === null) r[k] = v;
+      else if (Array.isArray(v)) r[k] = v.filter(function (x) { return x === null || typeof x !== "object" || !Array.isArray(x); }).map(function (x) { return x && typeof x === "object" ? cleanObj(x, (depth || 0) + 1) : x; }).filter(function (x) { return x !== null && x !== undefined; });
+    });
+    return r;
+  }
+  function cleanList(a, ok) { return Array.isArray(a) ? a.map(function (x) { return cleanObj(x); }).filter(function (x) { return x && x.id !== undefined && (!ok || ok(x)); }) : undefined; }
+  var TIPOS = ["gasto", "ingreso", "ahorro", "retiro", "traspaso"];
+  function sanitizeData(d) {
+    if (!d || typeof d !== "object") return null;
+    var out = cleanObj(d) || {};
+    var num = function (x) { return typeof x === "number" && isFinite(x); };
+    out.items = cleanList(d.items, function (x) {
+      if (TIPOS.indexOf(x.tipo) < 0 || !x.fecha) return false;
+      if (x.tipo === "traspaso") return !!(x.desde && x.hacia && num(x.desde.monto) && num(x.hacia.monto));
+      return num(x.monto);
+    }) || [];
+    if (d.accounts !== undefined) out.accounts = cleanList(d.accounts, function (x) { return typeof x.nombre === "string"; }) || [];
+    if (d.goals !== undefined) out.goals = cleanList(d.goals, function (x) { return typeof x.nombre === "string"; }) || [];
+    if (d.payments !== undefined) out.payments = cleanList(d.payments, function (x) { return !!x.fecha && num(x.monto); }) || [];
+    if (d.templates !== undefined) out.templates = cleanList(d.templates) || [];
+    if (d.paySeries !== undefined) out.paySeries = cleanList(d.paySeries) || [];
+    if (d.earn !== undefined) out.earn = cleanList(d.earn) || [];
+    return out;
+  }
+  window.__sanitizeOrbe = sanitizeData;
   function load() {
     try {
       var raw = localStorage.getItem(KEY);
       if (raw) {
-        var d = JSON.parse(raw);
+        var d;
+        try { d = JSON.parse(raw); } catch (pe) {
+          // Datos dañados: se guarda el texto original aparte antes de seguir, para no perderlo nunca
+          try { localStorage.setItem(KEY + "-danado-" + Date.now(), raw); } catch (e2) {}
+          window.__orbeCorrupt = true; d = null;
+        }
+        d = sanitizeData(d);
         if (d && Array.isArray(d.items)) state.items = d.items;
         if (d && typeof d.rate === "number") state.rate = d.rate;
         if (d && typeof d.rateDate === "string") state.rateDate = d.rateDate;
@@ -3147,6 +3277,8 @@ html.touring body .goals-view, html.touring body .pay-view, html.touring body .h
         if (d && d.instSeen) state.instSeen = true;
         if (d && d.notif) state.notif = true;
         if (d && d.subs && typeof d.subs === "object") state.subs = d.subs;
+        if (d && d.limCur && typeof d.limCur === "object") state.limCur = d.limCur;
+        if (d && d.lastAcc !== undefined && d.lastAcc !== null) state.lastAcc = d.lastAcc;
         if (d && d.bn && typeof d.bn === "object") state.bn = { done: d.bn.done || {}, apr: typeof d.bn.apr === "number" ? d.bn.apr : BN_APR, hide: d.bn.v === 2 && !!d.bn.hide, opened: d.bn.opened || {}, v: 2 };
         if (d && typeof d.btcUsd === "number") { state.btcUsd = d.btcUsd; state.btcAt = d.btcAt || 0; }
         if (d && typeof d.rateEur === "number") state.rateEur = d.rateEur;
@@ -3160,12 +3292,17 @@ html.touring body .goals-view, html.touring body .pay-view, html.touring body .h
         if (d && (d.disp === "USD" || d.disp === "VES" || d.disp === "EUR")) state.disp = d.disp;
         if (d && d.sav && typeof d.sav.pct === "number") state.sav = { on: !!d.sav.on, pct: d.sav.pct };
       }
-    } catch (e) {}
+    } catch (e) { window.__orbeCorrupt = true; }
   }
   function save() {
     try {
-      localStorage.setItem(KEY, JSON.stringify({ items: state.items, rate: state.rate, rateDate: state.rateDate, hideSav: state.hideSav, rateManual: state.rateManual, rateAutoAt: state.rateAutoAt, accounts: state.accounts, templates: state.templates, goals: state.goals, payments: state.payments, paySeries: state.paySeries, earn: state.earn, limits: state.limits, rateHist: state.rateHist, rateHistAt: state.rateHistAt, theme: state.theme, pin: state.pin, backupAt: state.backupAt, onb: state.onb, msumSeen: state.msumSeen, country: state.country, instSeen: state.instSeen, notif: state.notif, subs: state.subs, bn: state.bn, btcUsd: state.btcUsd, btcAt: state.btcAt, rateEur: state.rateEur, rateEurDate: state.rateEurDate, rateEurManual: state.rateEurManual, rateUsdt: state.rateUsdt, rateUsdtDate: state.rateUsdtDate, rateUsdtManual: state.rateUsdtManual, rateUsdtSrc: state.rateUsdtSrc, collapsed: state.collapsed, disp: state.disp, sav: state.sav }));
-    } catch (e) {}
+      localStorage.setItem(KEY, JSON.stringify({ items: state.items, rate: state.rate, rateDate: state.rateDate, hideSav: state.hideSav, rateManual: state.rateManual, rateAutoAt: state.rateAutoAt, accounts: state.accounts, templates: state.templates, goals: state.goals, payments: state.payments, paySeries: state.paySeries, earn: state.earn, limits: state.limits, rateHist: state.rateHist, rateHistAt: state.rateHistAt, theme: state.theme, pin: state.pin, backupAt: state.backupAt, onb: state.onb, msumSeen: state.msumSeen, country: state.country, instSeen: state.instSeen, notif: state.notif, subs: state.subs, limCur: state.limCur, lastAcc: state.lastAcc, bn: state.bn, btcUsd: state.btcUsd, btcAt: state.btcAt, rateEur: state.rateEur, rateEurDate: state.rateEurDate, rateEurManual: state.rateEurManual, rateUsdt: state.rateUsdt, rateUsdtDate: state.rateUsdtDate, rateUsdtManual: state.rateUsdtManual, rateUsdtSrc: state.rateUsdtSrc, collapsed: state.collapsed, disp: state.disp, sav: state.sav }));
+      window.__saveFail = 0;
+    } catch (e) {
+      if (!window.__saveFail && window.__toast) window.__toast("No se pudo guardar en este teléfono (puede estar sin espacio). Guarda una copia en Archivos desde Ajustes.");
+      window.__saveFail = 1;
+    }
+    if (window.__cloudDirty) window.__cloudDirty();
   }
 
   function $(id) { return document.getElementById(id); }
@@ -3224,6 +3361,9 @@ html.touring body .goals-view, html.touring body .pay-view, html.touring body .h
   setLocale("VE");
   function locCap() { return LOC.name.charAt(0).toUpperCase() + LOC.name.slice(1); }
   function money(n, cur, d) {
+    // Redondea antes de decidir el signo: nunca «−0,00»
+    var dd = d === undefined ? 2 : d, f = Math.pow(10, dd);
+    if (Math.round(Math.abs(n) * f) === 0) n = 0;
     var sign = n < 0 ? "-" : "";
     var v = num(Math.abs(n), d);
     if (cur === "USDT") return sign + v + " USDT";
@@ -3392,7 +3532,8 @@ html.touring body .goals-view, html.touring body .pay-view, html.touring body .h
   function parseNum(str) {
     var t = String(str == null ? "" : str).replace(/\s/g, "");
     if (!t) return NaN;
-    if (t.indexOf(",") >= 0) t = t.replace(/\./g, "").replace(",", ".");
+    if (t.indexOf(",") >= 0 && t.lastIndexOf(".") > t.lastIndexOf(",")) t = t.replace(/,/g, "");
+    else if (t.indexOf(",") >= 0) t = t.replace(/\./g, "").replace(",", ".");
     else if ((t.match(/\./g) || []).length > 1 || /^-?\d{1,3}\.\d{3}$/.test(t)) t = t.replace(/\./g, "");
     return /^-?(\d+\.?\d*|\.\d+)$/.test(t) ? parseFloat(t) : NaN;
   }
@@ -3411,14 +3552,18 @@ html.touring body .goals-view, html.touring body .pay-view, html.touring body .h
   // Montos tipo cajero: los dígitos entran por la derecha y los 2 decimales ya están puestos (1234 → 12,34)
   function isMoneyInput(el) { return /(^|-)monto$|^acc-saldo$|^ge-meta$|^cx-amt$/.test(el.id) || el.hasAttribute("data-lim"); }
   function fmtCents(v) {
-    return String(v).replace(/[^+\-−×xX*/]+/g, function (seg) {
-      var d = seg.replace(/\D/g, "");
-      if (!d) return "";
-      d = d.replace(/^0+/, "");
-      if (!d) return "";
+    var parts = String(v).split(/([+\-−×xX*/])/), out = "";
+    for (var i = 0; i < parts.length; i++) {
+      var seg = parts[i];
+      if (i % 2 === 1) { out += seg; continue; }
+      var d = seg.replace(/\D/g, "").replace(/^0+/, ""), op = i > 0 ? parts[i - 1] : "";
+      if (!d) continue;
+      // Tras × o ÷ va un factor (×3), no un monto: se deja tal cual
+      if (/[×xX*/]/.test(op)) { out += d; continue; }
       while (d.length < 3) d = "0" + d;
-      return d.slice(0, -2).replace(/\B(?=(\d{3})+(?!\d))/g, ".") + "," + d.slice(-2);
-    });
+      out += d.slice(0, -2).replace(/\B(?=(\d{3})+(?!\d))/g, ".") + "," + d.slice(-2);
+    }
+    return out;
   }
   function caretEnd(el) { setTimeout(function () { try { el.setSelectionRange(el.value.length, el.value.length); } catch (e) {} }, 0); }
   ["click", "focusin", "keydown"].forEach(function (ev) {
@@ -3435,6 +3580,20 @@ html.touring body .goals-view, html.touring body .pay-view, html.touring body .h
     var el = e.target;
     if (!el || el.tagName !== "INPUT" || el.getAttribute("inputmode") !== "decimal") return;
     if (isMoneyInput(el)) {
+      var simple = !/[+\-−×xX*/]/.test(el.value.slice(1));
+      if (simple && (e.data === "," || e.data === ".")) {
+        // Escribió la coma: lo anterior son enteros y lo que siga, céntimos
+        el._int = (el._dec === undefined ? el.value.slice(0, -1).replace(/\D/g, "").replace(/^0+/, "") : el._int) || "0";
+        el._dec = ""; el.value = fmtCents(el._int + "00"); try { el.setSelectionRange(el.value.length, el.value.length); } catch (er) {}
+        return;
+      }
+      if (simple && el._dec !== undefined && /^\d$/.test(e.data || "") && el._dec.length < 2) {
+        el._dec += e.data; var dd = (el._dec + "00").slice(0, 2);
+        el.value = fmtCents(el._int + dd); try { el.setSelectionRange(el.value.length, el.value.length); } catch (er) {}
+        return;
+      }
+      if (e.inputType !== "insertText" || !/^\d$/.test(e.data || "") || !simple) { el._dec = undefined; el._int = undefined; }
+      else if (el._dec !== undefined && el._dec.length >= 2) { el._dec = undefined; el._int = undefined; }
       var o = fmtCents(el.value);
       if (o !== el.value) { el.value = o; try { el.setSelectionRange(o.length, o.length); } catch (er) {} }
       return;
@@ -3511,7 +3670,7 @@ html.touring body .goals-view, html.touring body .pay-view, html.touring body .h
       v = conv(it.monto, it.moneda, D);
       if (v === null) return;
       if (it.tipo === "ingreso" || it.tipo === "retiro") delta[d] += v;
-      else if (it.tipo === "gasto" || it.tipo === "ahorro") { delta[d] -= v; if (it.tipo === "gasto") spent += v; }
+      else if (it.tipo === "gasto" || (it.tipo === "ahorro" && !it.pre)) { delta[d] -= v; if (it.tipo === "gasto") spent += v; }
     });
     var op = accOpening(m);
     Object.keys(op.byDay).forEach(function (k) { if (Number(k) >= 1 && Number(k) <= nd) delta[Number(k)] += op.byDay[k]; });
@@ -3618,7 +3777,7 @@ html.touring body .goals-view, html.touring body .pay-view, html.touring body .h
         r.cat[it.cat] = (r.cat[it.cat] || 0) + v;
         r.catN[it.cat] = (r.catN[it.cat] || 0) + 1;
         if (!r.maxExp || v > r.maxExp.v) r.maxExp = { v: v, cat: it.cat, nota: it.nota || "" };
-      } else if (it.tipo === "ahorro") r.sav += v;
+      } else if (it.tipo === "ahorro") { if (!it.pre) r.sav += v; }
       else if (it.tipo === "retiro") r.sav -= v;
     });
     return r;
@@ -3758,7 +3917,7 @@ html.touring body .goals-view, html.touring body .pay-view, html.touring body .h
     var t = today(), days = daysBetween(evs[0].fecha, t);
     if (days < 7) return { kind: "wait" };
     var win = Math.min(90, days), from = addDaysIso(t, -win), net = 0;
-    evs.forEach(function (e) { if (e.fecha > from) net += e.delta; });
+    evs.forEach(function (e) { if (e.fecha >= from) net += e.delta; });
     var monthly = net / (win / 30);
     if (monthly <= 0.0001) return { kind: "flat" };
     var months = Math.max(0, g.meta - bal) / monthly;
@@ -4082,11 +4241,11 @@ html.touring body .goals-view, html.touring body .pay-view, html.touring body .h
     var overdue = PL.filter(function (p) { return !p.paid && p.fecha < t; }).sort(payCmp);
     // resumen
     var pend = inMonth.filter(function (p) { return !p.paid && p.fecha >= t; }), tot = 0;
-    pend.forEach(function (p) { var v = conv(p.monto, p.moneda, D); if (v !== null) tot += v; });
+    pend.concat(overdue).forEach(function (p) { var v = conv(p.monto, p.moneda, D); if (v !== null) tot += v; });
     var mName = MESES[pay.m];
     $("pay-sub").textContent = PL.length
       ? (pend.length ? pend.length + (pend.length === 1 ? " pendiente" : " pendientes") + " en " + mName + " · " + money(tot, D) + " por pagar" : "Nada pendiente en " + mName) + (overdue.length ? " · " + overdue.length + (overdue.length === 1 ? " vencido" : " vencidos") : "")
-      : "Programa tus pagos y no se te pasa ninguno.";
+      : isC ? "Anota lo que te deben pagar y cuándo, para no olvidarlo." : "Programa tus pagos y no se te pasa ninguno.";
     var paidN = inMonth.filter(function (p) { return p.paid; }).length, hero = $("pay-hero");
     hero.hidden = !PL.length;
     $("pay-sub").hidden = !!PL.length;
@@ -4254,8 +4413,8 @@ html.touring body .goals-view, html.touring body .pay-view, html.touring body .h
     $("hist-prev").disabled = vm <= minM;
     $("hist-next").disabled = vm >= curM;
     $("hist-sub").textContent = all.length ? all.length + (all.length === 1 ? " movimiento" : " movimientos") + " en el mes" : "Sin movimientos este mes";
-    var hb = tin - tout;
-    var statsHtml = '<div class="hh-card' + (hb < 0 ? " is-neg" : "") + '"><div class="hh-l">Balance del mes</div><div class="hh-v fit">' + (hb < 0 ? "−" : "") + money(Math.abs(hb), D) + "</div>" +
+    var hb = Math.round((tin - tout) * 100) / 100;
+    var statsHtml = '<div class="hh-card' + (hb < 0 ? " is-neg" : "") + '"><div class="hh-l">Ingresos menos gastos</div><div class="hh-v fit">' + (hb < 0 ? "−" : "") + money(Math.abs(hb), D) + "</div>" +
       '<div class="hh-row"><div><i style="background:var(--in)"></i><span>Ingresos</span><b class="in">+' + money(tin, D) + '</b></div><div><i style="background:var(--out)"></i><span>Gastos</span><b class="out">−' + money(tout, D) + "</b></div></div></div>";
     var msm = vm < curM ? vm : prevMonth(curM);
     statsHtml += '<button type="button" class="ms-pill" data-msum-open="' + msm + '"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="3"></rect><path d="M3 10h18M8 3v4M16 3v4M8 15l2.5 2.5L16 13"></path></svg>Así cerró ' + MESES[Number(msm.slice(5, 7)) - 1] + '</button>';
@@ -4334,7 +4493,7 @@ html.touring body .goals-view, html.touring body .pay-view, html.touring body .h
     if (listEl._core !== core) { listEl.innerHTML = html.replace(/@@F@@/g, " flash"); listEl._core = core; }
     var empty = !rows.length;
     $("hist-empty").style.display = empty ? "" : "none";
-    $("hist-empty-t").textContent = isCat && !q ? "No hay movimientos de " + hist.c + " en este mes." : all.length ? "Ningún movimiento coincide con tu búsqueda." : "No hay movimientos en este mes.";
+    $("hist-empty-t").textContent = isCat && !q ? "No hay movimientos de " + hist.c + " en este mes." : all.length ? (q ? "Ningún movimiento coincide con tu búsqueda." : "No hay movimientos de este tipo en el mes.") : "No hay movimientos en este mes.";
     scheduleFit();
   }
 
@@ -4562,7 +4721,7 @@ html.touring body .goals-view, html.touring body .pay-view, html.touring body .h
       var v = conv(it.monto, it.moneda, D);
       if (v === null) { missing = true; return; }
       if (it.tipo === "ingreso") { tin += v; byIn[it.cat] = (byIn[it.cat] || 0) + v; }
-      else if (it.tipo === "ahorro") tsv += v;
+      else if (it.tipo === "ahorro") { if (!it.pre) tsv += v; }
       else if (it.tipo === "retiro") tsv -= v;
       else {
         tout += v;
@@ -4570,13 +4729,14 @@ html.touring body .goals-view, html.touring body .pay-view, html.touring body .h
       }
     });
 
-    var open = accOpening(state.month), bal = tin - tout - tsv + open.tot;
+    var open = accOpening(state.month), bal = Math.round((tin - tout - tsv + open.tot) * 100) / 100;
     // Debajo: el total que hay hoy en todas las cuentas, para no confundirlo con lo del mes
     var bn = $("bal-note"), accTot = 0, accOk = false;
     state.accounts.forEach(function (a) { var v = conv(accBalance(a), a.moneda, D); if (v !== null) { accTot += v; accOk = true; } });
     $("h-bal").textContent = accOk ? "Saldo total" : "Te queda este mes";
     bn.hidden = !accOk;
-    if (accOk) bn.innerHTML = 'Te queda este mes: <b class="' + (bal < 0 ? "neg" : "pos") + '">' + (bal < 0 ? "−" : "") + money(Math.abs(bal), D) + "</b>";
+    var curMo = state.month === today().slice(0, 7), mLbl = curMo ? "Te queda este mes" : "Te quedó en " + MESES[Number(state.month.slice(5, 7)) - 1];
+    if (accOk) bn.innerHTML = mLbl + ': <b class="' + (bal < 0 ? "neg" : "pos") + '">' + (bal < 0 ? "−" : "") + money(Math.abs(bal), D) + "</b>";
     if (accOk) bal = accTot;
     var b = $("balance");
     setMoney(b, bal, function (v) { return moneyH(v, D); }, D);
@@ -4886,7 +5046,7 @@ html.touring body .goals-view, html.touring body .pay-view, html.touring body .h
   var ACC_ICONS = ["", "bank", "card", "cash", "wallet", "coin", "phone", "home", "cart", "plane", "bag", "star"];
   var ACC_COLORS = ["#5b4cff", "#00994f", "#e08a00", "#8a3ffc", "#e5133f", "#0e9aa7", "#d6502b"];
   function accSvg(k) { return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' + ACC_SVG[k] + "</svg>"; }
-  function accColor(a) { return a.color || (ACC_CUR[a.moneda] || ACC_CUR.USD).c; }
+  function accColor(a) { return (a.color && HEX_RE.test(a.color)) ? a.color : (ACC_CUR[a.moneda] || ACC_CUR.USD).c; }
   function accAvatar(a, big) {
     var c = accColor(a), ic = a.icon && ACC_SVG[a.icon] ? a.icon : "";
     return '<span class="acc-av' + (big ? " big" : "") + (ic ? " sym" : "") + '" style="--c:' + c + '" aria-hidden="true">' + (ic ? accSvg(ic) : esc(accInitials(a.nombre))) + "</span>";
@@ -5119,7 +5279,8 @@ html.touring body .goals-view, html.touring body .pay-view, html.touring body .h
         setPressed("[data-type]", "data-type", state.type);
         fillCats();
         renderFormSav();
-        fSub = ""; splitParts = []; $("split-rows").innerHTML = ""; renderSub(); renderSplit();
+        fSub = ""; splitParts = []; $("split-rows").innerHTML = ""; $("sub-new").hidden = true; renderSub(); renderSplit();
+        $("nota").placeholder = state.type === "ingreso" ? "Ej: quincena, venta a Luis #trabajo" : "Ej: almuerzo con Ana #trabajo";
       });
     });
     function pickCat(e) {
@@ -5313,6 +5474,31 @@ html.touring body .goals-view, html.touring body .pay-view, html.touring body .h
       showToast(wasRetiro ? "Retiro listo." : "Conversión lista.");
     });
     var toastTimer = null;
+    window.__toast = function (t) { showToast(t); };
+    (function () {
+      var I = function (d) { return '<span class="set-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">' + d + "</svg></span>"; };
+      var map = {
+        "pin-row": '<rect x="5" y="11" width="14" height="10" rx="2"></rect><path d="M8 11V7a4 4 0 0 1 8 0v4"></path>',
+        "bio-row": '<path d="M4 8V6a2 2 0 0 1 2-2h2M16 4h2a2 2 0 0 1 2 2v2M20 16v2a2 2 0 0 1-2 2h-2M8 20H6a2 2 0 0 1-2-2v-2M9 9v1.5M15 9v1.5M12 9v4.5h-1M9.5 16a4 4 0 0 0 5 0"></path>',
+        "pin-change": '<circle cx="8" cy="15" r="4"></circle><path d="M11 12l9-9M17 6l3 3M15 8l2 2"></path>',
+        "notif-row": '<path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9M10.3 21a1.9 1.9 0 0 0 3.4 0"></path>',
+        "bk-save": '<path d="M12 3v12M7 10l5 5 5-5M4 21h16"></path>',
+        "bk-load": '<path d="M12 21V9M7 14l5-5 5 5M4 3h16"></path>',
+        "siri-open": '<rect x="9" y="3" width="6" height="11" rx="3"></rect><path d="M5 11a7 7 0 0 0 14 0M12 18v3"></path>',
+        "snap-open": '<circle cx="12" cy="12" r="9"></circle><path d="M12 7v5l3 2"></path>',
+        "ex-all": '<rect x="3" y="4" width="18" height="16" rx="2"></rect><path d="M3 10h18M3 15h18M9 4v16"></path>',
+        "data-del": '<path d="M4 7h16M10 11v6M14 11v6M6 7l1 12a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2l1-12M9 7V4h6v3"></path>'
+      };
+      Object.keys(map).forEach(function (id) { var r = document.getElementById(id); if (r && !r.querySelector(".set-ic")) r.insertAdjacentHTML("afterbegin", I(map[id])); });
+      var arr = { gasto: '<path d="M7 7l10 10M17 9v8H9"></path>', ingreso: '<path d="M17 17L7 7M7 15V7h8"></path>' };
+      document.querySelectorAll(".type-seg [data-type]").forEach(function (b) { var k = b.getAttribute("data-type"); if (arr[k] && !b.querySelector("svg")) b.insertAdjacentHTML("afterbegin", '<svg class="ts-ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' + arr[k] + "</svg>"); });
+      var tp = document.querySelector('[data-dial="plantilla"] .ic svg');
+      if (tp) tp.innerHTML = '<path d="M6 3h12v18l-6-4-6 4z"></path>';
+    })();
+    document.addEventListener("input", function (e) {
+      var sh = e.target && e.target.closest && e.target.closest(".sheet"); if (!sh) return;
+      sh.querySelectorAll(".error").forEach(function (x) { if (x.textContent && !/Un momento|Entrando|Creando/.test(x.textContent)) x.textContent = ""; });
+    }, true);
     function showToast(text, action, fn) {
       var t = $("toast");
       t.textContent = text;
@@ -5379,6 +5565,7 @@ html.touring body .goals-view, html.touring body .pay-view, html.touring body .h
     });
     function renderAmtRes() {
       var v = $("monto").value, r = amtVal(v), has = /[+\-−×xX*/]/.test(v.slice(1));
+      $("monto").style.fontSize = v.length > 16 ? "1.35rem" : v.length > 12 ? "1.8rem" : v.length > 9 ? "2.3rem" : "";
       var ok = has && r > 0;
       if (ok) $("amt-res").textContent = "= " + num(r);
       document.querySelector(".amt-ops").classList.toggle("has", ok);
@@ -5518,7 +5705,8 @@ html.touring body .goals-view, html.touring body .pay-view, html.touring body .h
     function openSheet(it) {
       if ($("amt-res")) { $("amt-res").textContent = ""; document.querySelector(".amt-ops").classList.remove("has"); }
       if (!it && !state.accounts.length) {
-        showToast("Primero agrega una cuenta.");
+        showToast("Primero crea una cuenta (por ejemplo, tu banco o efectivo). Después anotas el movimiento.");
+        window.__accThenMov = true;
         openAccSheet(null);
         return;
       }
@@ -5535,6 +5723,7 @@ html.touring body .goals-view, html.touring body .pay-view, html.touring body .h
         fillAccounts(it.cuenta, !accById(it.cuenta));
         $("monto").value = moneyIn(it.monto);
         $("moneda").value = it.moneda;
+        if (it.cat && !Array.prototype.some.call($("cat").options, function (o) { return o.value === it.cat; })) { var oo = document.createElement("option"); oo.value = it.cat; oo.textContent = it.cat; $("cat").appendChild(oo); }
         $("cat").value = it.cat;
         setFecha(it.fecha);
         $("nota").value = it.nota || "";
@@ -5648,6 +5837,7 @@ html.touring body .goals-view, html.touring body .pay-view, html.touring body .h
       else if (!$("hd-sheet").hidden) closeHd();
       else if (!$("snap-sheet").hidden) $("snap-sheet").hidden = true;
       else if (!$("siri-sheet").hidden) $("siri-sheet").hidden = true;
+      else if (!$("cloud-sheet").hidden) $("cloud-sheet").hidden = true;
       else if (!$("ms-sheet").hidden) $("ms-sheet").hidden = true;
       else if (!$("lim-sheet").hidden) closeLim();
       else if (!$("gs-sheet").hidden) closeGs();
@@ -5680,7 +5870,7 @@ html.touring body .goals-view, html.touring body .pay-view, html.touring body .h
       var nuevo = NaN;
       var raw = $("acc-saldo").value.trim();
       if (raw) {
-        nuevo = parseNum(raw);
+        nuevo = amtVal(raw);
         if (isNaN(nuevo)) { err.textContent = "Escribe un saldo válido, por ejemplo 1250,50."; return; }
       }
       err.textContent = "";
@@ -5702,6 +5892,7 @@ html.touring body .goals-view, html.touring body .pay-view, html.touring body .h
       save(); render();
       closeAccSheet();
       showToast("Cuenta guardada");
+      if (window.__accThenMov) { window.__accThenMov = false; setTimeout(function () { openSheet(null); }, 350); }
     });
     function closeMenus() {
       document.querySelectorAll(".menu").forEach(function (m) { m.hidden = true; });
@@ -6061,7 +6252,7 @@ html.touring body .goals-view, html.touring body .pay-view, html.touring body .h
     /* ---------- Plantillas ---------- */
     var teId = null, teType = "gasto", tuId = null, tuType = "gasto", tplTab = "gasto", teColor = null;
     var TPL_COLORS = ["#5b4cff", "#0e9aa7", "#00994f", "#e08a00", "#f0567e", "#e5133f", "#8a3ffc", "#d65fb0", "#4f86f7"];
-    function tplColor(t) { return t.color || (t.tipo === "ingreso" ? colorForIn(t.cat) : colorFor(t.cat)); }
+    function tplColor(t) { return (t.color && HEX_RE.test(t.color)) ? t.color : (t.tipo === "ingreso" ? colorForIn(t.cat) : colorFor(t.cat)); }
     function drawTeCats() {
       var cur = $("te-cat").value, inc = teType === "ingreso";
       $("te-cats").innerHTML = CATS[teType].map(function (c) {
@@ -6554,9 +6745,9 @@ html.touring body .goals-view, html.touring body .pay-view, html.touring body .h
     var nudgeOff = false;
     function renderNudge() {
       var el = $("bk-nudge"), n = state.items.length;
-      el.hidden = nudgeOff;
-      if (nudgeOff) return;
       var due = n >= 5 && (!state.backupAt || Date.now() - state.backupAt > BACKUP_DAYS * 86400000);
+      el.hidden = nudgeOff || !due;
+      if (el.hidden) return;
       var d = state.backupAt ? Math.floor((Date.now() - state.backupAt) / 86400000) : 0;
       el.classList.toggle("ok", !due);
       $("bk-nudge-s").textContent = due
@@ -6615,14 +6806,14 @@ html.touring body .goals-view, html.touring body .pay-view, html.touring body .h
       if (cur !== "USDT" && !(r > 0)) { err.textContent = "Escribe la tasa a la que cambiaste a USDT."; $("earn-rate").focus(); return; }
       if (!(apr > 0) || apr > 200) { err.textContent = "Escribe la tasa anual que te muestra Binance, por ejemplo 5."; $("earn-apr").focus(); return; }
       var bin = binanceAcc();
-      if (!bin) { bin = { id: Date.now(), nombre: "Binance", moneda: "USDT" }; state.accounts.push(bin); }
       var usdt = cur === "USDT" ? v : mvOut(v, cur, "USDT", r), base = Date.now(), t = today();
+      if (!bin) { bin = { id: Date.now(), nombre: "Binance", moneda: "USDT", saldo: a ? 0 : Math.round(usdt * 100) / 100, creado: t }; state.accounts.push(bin); }
       if (a && String(a.id) !== String(bin.id)) {
         state.items.push({ id: base, tipo: "traspaso", fecha: t, cat: "Transferencia entre cuentas", moneda: a.moneda, monto: v,
           nota: a.nombre + " → " + bin.nombre + (cur !== "USDT" ? " · tasa " + num(r, r < 10 ? 4 : 2) : ""), tasa: cur !== "USDT" ? r : undefined,
           desde: { k: "cuenta", id: a.id, moneda: a.moneda, monto: v }, hacia: { k: "cuenta", id: bin.id, moneda: "USDT", monto: usdt } });
       }
-      state.items.push({ id: base + 1, tipo: "ahorro", monto: usdt, moneda: "USDT", cuenta: bin.id, cat: "Binance Earn", fecha: t, nota: "Binance Earn · " + (earnP ? earnP + " días" : "Flexible") + " · " + num(apr) + "%" });
+      state.items.push({ id: base + 1, tipo: "ahorro", pre: a ? undefined : true, monto: usdt, moneda: "USDT", cuenta: bin.id, cat: "Binance Earn", fecha: t, nota: "Binance Earn · " + (earnP ? earnP + " días" : "Flexible") + " · " + num(apr) + "%" });
       state.earn.push({ id: base + 2, cuenta: bin.id, monto: usdt, apr: apr, plazo: earnP, fecha: t, ahorroId: base + 1 });
       if (state.bn) { state.bn.done[5] = true; state.bn.done[4] = true; }
       state.month = t.slice(0, 7); $("mes").value = state.month;
@@ -6900,7 +7091,7 @@ html.touring body .goals-view, html.touring body .pay-view, html.touring body .h
     $("ge-close").addEventListener("click", closeGe);
     $("ge-sheet").addEventListener("click", function (e) { if (e.target === $("ge-sheet")) closeGe(); });
     $("ge-save").addEventListener("click", function () {
-      var nombre = $("ge-nombre").value.trim(), meta = parseNum($("ge-meta").value), err = $("ge-err");
+      var nombre = $("ge-nombre").value.trim(), meta = amtVal($("ge-meta").value), err = $("ge-err");
       if (!nombre) { err.textContent = "Ponle un nombre a tu meta."; $("ge-nombre").focus(); return; }
       if (!(meta > 0)) { err.textContent = "Escribe el monto que quieres juntar."; $("ge-meta").focus(); return; }
       if (geId) {
@@ -7046,7 +7237,8 @@ html.touring body .goals-view, html.touring body .pay-view, html.touring body .h
       var D = state.disp, cur = { USD: "$", VES: LOC.sym, EUR: "€" }[D] || D;
       $("lim-hint").textContent = "Cuánto quieres gastar como máximo al mes, en " + (D === "VES" ? LOC.name : D === "EUR" ? "euros" : "dólares") + ". Déjalo vacío para no poner límite.";
       $("lim-list").innerHTML = CATS.gasto.map(function (c, i) {
-        var l = state.limits && state.limits[c] > 0 ? conv(state.limits[c], "USD", D) : null;
+        var lv = state.limits && state.limits[c], lc = state.limCur && state.limCur[c];
+        var l = lv > 0 ? (lc && lc.cur === D ? lc.v : conv(lv, "USD", D)) : null;
         return '<li><span class="cv-dot" style="--c:' + colorFor(c) + '">' + catSvg(c) + '</span><label for="lim-' + i + '">' + esc(c) + '</label><span class="lim-cur">' + cur + '</span><input type="text" inputmode="decimal" id="lim-' + i + '" data-lim="' + esc(c) + '" placeholder="Sin límite" value="' + (l ? moneyIn(l) : "") + '" autocomplete="off"></li>';
       }).join("");
       $("lim-sheet").hidden = false;
@@ -7055,12 +7247,17 @@ html.touring body .goals-view, html.touring body .pay-view, html.touring body .h
     $("lim-close").addEventListener("click", closeLim);
     $("lim-sheet").addEventListener("click", function (e) { if (e.target === $("lim-sheet")) closeLim(); });
     $("lim-save").addEventListener("click", function () {
-      var out = {}, D = state.disp;
+      var out = {}, oc = {}, D = state.disp, old = state.limits || {}, oldC = state.limCur || {};
       document.querySelectorAll("#lim-list [data-lim]").forEach(function (inp) {
-        var v = parseNum(inp.value);
-        if (v > 0) { var u = conv(v, D, "USD"); if (u !== null) out[inp.getAttribute("data-lim")] = Math.round(u * 100) / 100; }
+        var c = inp.getAttribute("data-lim"), raw = inp.value.trim();
+        if (!raw) return;
+        var v = amtVal(raw);
+        if (!(v > 0)) { if (old[c] > 0) { out[c] = old[c]; if (oldC[c]) oc[c] = oldC[c]; } return; }
+        var u = conv(v, D, "USD");
+        if (u === null) { if (old[c] > 0) { out[c] = old[c]; if (oldC[c]) oc[c] = oldC[c]; } return; }
+        out[c] = u; oc[c] = { v: v, cur: D };
       });
-      state.limits = out; save(); render(); closeLim();
+      state.limits = out; state.limCur = oc; save(); render(); closeLim();
       showToast(Object.keys(out).length ? "Límites guardados." : "Sin límites.");
     });
     $("goal-sort").addEventListener("click", function () { renderGs(); $("gs-sheet").hidden = false; });
@@ -7164,13 +7361,14 @@ html.touring body .goals-view, html.touring body .pay-view, html.touring body .h
     function renderPayAlert() {
       var el = $("pay-alert"); if (!el) return;
       var t = today(), tm = addDaysIso(t, 1);
+      try { ensureSeries(tm.slice(0, 7)); } catch (e) {}
       var due = state.payments.filter(function (p) { return !p.paid && !p.cobro && p.fecha <= tm; }).sort(function (a, b) { return a.fecha < b.fecha ? -1 : 1; });
       el.hidden = !due.length;
       payBadge(due.length);
       if (!due.length) return;
       var p = due[0], when = p.fecha < t ? "venció" : p.fecha === t ? "vence hoy" : "vence mañana";
       el.className = "pay-alert" + (p.fecha < t ? " late" : "");
-      el.innerHTML = '<span class="pa-dot"></span><span class="pa-t"><b>' + esc(p.titulo) + "</b> " + when + " · " + money(p.monto, p.moneda) + (due.length > 1 ? ' <small>y ' + (due.length - 1) + " más</small>" : "") + '</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6l6 6-6 6"></path></svg>';
+      el.innerHTML = (p.fecha < t ? '<span class="pa-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l9.5 17h-19z"></path><path d="M12 10v4M12 17.5h.01"></path></svg></span>' : '<span class="pa-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"></circle><path d="M12 7v5l3 2"></path></svg></span>') + '<span class="pa-t"><b>' + esc(p.titulo) + "</b> " + when + " · " + money(p.monto, p.moneda) + (due.length > 1 ? ' <small>y ' + (due.length - 1) + " más</small>" : "") + '</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6l6 6-6 6"></path></svg>';
     }
     window.__payAlert = function () { renderPayAlert(); renderMsum(); };
     // Avisos de pagos: número sobre el ícono de la app (iPhone: app instalada y permiso de notificaciones)
@@ -7226,12 +7424,12 @@ html.touring body .goals-view, html.touring body .pay-view, html.touring body .h
           return;
         }
         var v = conv(it.monto, it.moneda, D); if (v === null) return;
-        if (it.tipo === "ingreso") r.tin += v; else if (it.tipo === "gasto") r.tout += v; else if (it.tipo === "ahorro") r.tsv += v; else if (it.tipo === "retiro") r.tsv -= v;
+        if (it.tipo === "ingreso") r.tin += v; else if (it.tipo === "gasto") r.tout += v; else if (it.tipo === "ahorro") { if (!it.pre) r.tsv += v; } else if (it.tipo === "retiro") r.tsv -= v;
       });
       return r;
     }
     function msumHtml(pm, closable) {
-      var a = monthTot(pm), b = monthTot(prevMonth(pm)), D = state.disp, libre = a.tin - a.tout - a.tsv;
+      var a = monthTot(pm), b = monthTot(prevMonth(pm)), D = state.disp, libre = Math.round((a.tin - a.tout - a.tsv) * 100) / 100;
       var dl = function (x, y, goodUp) { if (!(y > 0.004)) return ""; var q = Math.round((x - y) / y * 100); if (!q) return ""; var good = goodUp ? q > 0 : q < 0; return '<span class="cv-dl ' + (good ? "g" : "b") + '">' + (q > 0 ? "▲ " : "▼ ") + Math.abs(q) + "%</span>"; };
       var cd = cvData(pm, "gasto"), topC = Object.keys(cd.by).sort(function (x, y) { return cd.by[y] - cd.by[x]; })[0];
       if (!(a.tin || a.tout || a.tsv)) return '<div class="msum-empty">No hubo movimientos en ' + MESES[Number(pm.slice(5, 7)) - 1] + ".</div>";
@@ -7372,7 +7570,19 @@ html.touring body .goals-view, html.touring body .pay-view, html.touring body .h
       var b;
       if ((b = e.target.closest("[data-pay-toggle]"))) {
         var p = payById(b.getAttribute("data-pay-toggle"));
-        if (p) { p.paid = !p.paid; save(); render(); showToast(p.paid ? (p.cobro ? "Marcado como cobrado." : "Pago marcado como pagado.") : "Marcado como pendiente."); }
+        if (p) {
+          p.paid = !p.paid; save(); render();
+          if (p.paid) showToast(p.cobro ? "Marcado como cobrado." : "Pago marcado como pagado.", p.cobro ? "Anotar ingreso" : "Anotar gasto", function () {
+            var tp = p.cobro ? "ingreso" : "gasto";
+            state.type = tp; setPressed("[data-type]", "data-type", tp); fillCats(); openSheet(null);
+            var acc = state.accounts.filter(function (x) { return x.moneda === p.moneda; })[0];
+            if (acc) { $("cuenta").value = String(acc.id); $("cuenta").dispatchEvent(new Event("change", { bubbles: true })); renderAccPick(); }
+            $("monto").value = moneyIn(p.monto); $("monto").dispatchEvent(new Event("input", { bubbles: true }));
+            if (!p.cobro && CATS.gasto.indexOf("Servicios") >= 0) { $("cat").value = "Servicios"; $("cat").dispatchEvent(new Event("change", { bubbles: true })); renderCatChips(); }
+            $("nota").value = p.titulo || "";
+          });
+          else showToast("Marcado como pendiente.");
+        }
         return;
       }
       if ((b = e.target.closest("[data-pay-edit]"))) { closeMenus(); openPg(payById(b.getAttribute("data-pay-edit"))); return; }
@@ -7560,7 +7770,7 @@ html.touring body .goals-view, html.touring body .pay-view, html.touring body .h
     $("hd-edit").addEventListener("click", function () { var it = state.items.filter(function (x) { return x.id === hdId; })[0]; closeHd(); if (it) editMov(it); });
     $("hd-dup").addEventListener("click", function () {
       var it = state.items.filter(function (x) { return x.id === hdId; })[0]; if (!it) return;
-      var c = JSON.parse(JSON.stringify(it)); c.id = Date.now(); c.fecha = today(); delete c.linkId; delete c.auto;
+      var c = JSON.parse(JSON.stringify(it)); c.id = Date.now(); c.fecha = today(); delete c.linkId; delete c.auto; delete c.split; delete c.pre;
       state.items.push(c); save(); render(); closeHd();
       showToast("Movimiento duplicado con fecha de hoy.");
     });
@@ -7722,8 +7932,10 @@ html.touring body .goals-view, html.touring body .pay-view, html.touring body .h
 
     // Confirmación dentro de la página (confirm() no siempre está disponible)
     var cfAction = null, cfCancel = null;
+    var cfNo = null;
     function openCf(o) {
-      cfAction = o.ok; cfCancel = o.cancel || null;
+      cfAction = o.ok; cfCancel = o.cancel || null; cfNo = o.noFn || null;
+      $("cf-cancel").textContent = o.no || "Cancelar";
       $("h-cf").textContent = o.title;
       $("cf-text").textContent = o.text;
       $("cf-ok").textContent = o.btn;
@@ -7738,7 +7950,7 @@ html.touring body .goals-view, html.touring body .pay-view, html.touring body .h
     function closeCf() { var c = cfCancel; $("cf-sheet").hidden = true; cfAction = null; cfCancel = null; if (c) c(); }
     $("cf-type").addEventListener("input", function () { $("cf-ok").disabled = $("cf-type").value.trim().toUpperCase() !== $("cf-ok")._word; });
     $("cf-close").addEventListener("click", closeCf);
-    $("cf-cancel").addEventListener("click", closeCf);
+    $("cf-cancel").addEventListener("click", function () { var f = cfNo; cfNo = null; if (f) { cfCancel = null; closeCf(); f(); } else closeCf(); });
     $("cf-sheet").addEventListener("click", function (e) { if (e.target === $("cf-sheet")) closeCf(); });
     $("cf-ok").addEventListener("click", function () { var a = cfAction; cfCancel = null; closeCf(); if (a) a(); });
 
@@ -7844,6 +8056,13 @@ html.touring body .goals-view, html.touring body .pay-view, html.touring body .h
         } catch (e) { cb([]); }
       });
     }
+    function snapForce(label, cb) {
+      var keep = backupData();
+      snapDb(function (db) {
+        try { if (db && state.items.length) db.transaction("s", "readwrite").objectStore("s").put({ dia: today() + " " + label, at: Date.now(), n: state.items.length, data: keep }); } catch (e) {}
+        cb();
+      });
+    }
     var snapRows = [];
     function openSnap() {
       snapList(function (rows) {
@@ -7871,12 +8090,218 @@ html.touring body .goals-view, html.touring body .pay-view, html.touring body .h
         ok: function () {
           if (state.pin) d.pin = state.pin;
           d.backupAt = state.backupAt;
-          try { localStorage.setItem(KEY, JSON.stringify(d)); } catch (e) { showToast("No pude restaurar la copia."); return; }
-          location.reload();
+          snapForce("antes de restaurar", function () {
+            try { localStorage.setItem(KEY, JSON.stringify(d)); } catch (e) { showToast("No pude restaurar la copia."); return; }
+            location.reload();
+          });
         }
       });
     });
     setTimeout(snapTake, 2500);
+    /* ---------- Cuentas personales y sincronización (Supabase, sin librerías) ---------- */
+    var SES = "orbe-sesion", SYNC = "orbe-sync";
+    function cloudOn() { return !!(CLOUD.url && CLOUD.key) && !window.__orbeDemo; }
+    function jget(k) { try { return JSON.parse(localStorage.getItem(k) || "null"); } catch (e) { return null; } }
+    function jset(k, v) { try { if (v === null) localStorage.removeItem(k); else localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} }
+    function sync() { return jget(SYNC) || { remoteAt: "", dirty: false, localAt: 0 }; }
+    function api(path, o, tok) {
+      o = o || {};
+      var h = { apikey: CLOUD.key, "Content-Type": "application/json" };
+      if (tok) h.Authorization = "Bearer " + tok;
+      if (o.prefer) h.Prefer = o.prefer;
+      return fetch(CLOUD.url.replace(/\/+$/, "") + path, { method: o.method || "GET", headers: h, body: o.body ? JSON.stringify(o.body) : undefined, cache: "no-store" })
+        .then(function (r) {
+          return r.text().then(function (t) {
+            var j = null; try { j = t ? JSON.parse(t) : null; } catch (e) {}
+            if (!r.ok) { var er = new Error((j && (j.msg || j.message || j.error_description || j.error)) || "http " + r.status); er.status = r.status; er.code = j && (j.error_code || j.code); throw er; }
+            return j;
+          });
+        });
+    }
+    function keepSes(j) {
+      if (!j || !j.access_token) return null;
+      var u = j.user || {}, old = jget(SES) || {};
+      var s = { at: j.access_token, rt: j.refresh_token, exp: Date.now() + (Number(j.expires_in) || 3600) * 1000 - 60000, id: u.id || old.id, email: u.email || old.email };
+      jset(SES, s); return s;
+    }
+    function tokenOk() {
+      var s = jget(SES);
+      if (!s) return Promise.reject(new Error("sin sesión"));
+      if (Date.now() < s.exp) return Promise.resolve(s);
+      return api("/auth/v1/token?grant_type=refresh_token", { method: "POST", body: { refresh_token: s.rt } }).then(keepSes, function (e) {
+        if (e.status === 400 || e.status === 401) { jset(SES, null); renderCloud(); }
+        throw e;
+      });
+    }
+    function cloudErr(e) {
+      var m = String((e && e.message) || "");
+      if (!navigator.onLine || /Failed to fetch|NetworkError|Load failed/i.test(m)) return "Sin conexión. Inténtalo cuando tengas internet.";
+      if (/invalid login|invalid_credentials/i.test(m + (e.code || ""))) return "Correo o contraseña incorrectos.";
+      if (/already registered|user_already_exists/i.test(m + (e.code || ""))) return "Ese correo ya tiene una cuenta. Toca «Entrar».";
+      if (/not confirmed|email_not_confirmed/i.test(m + (e.code || ""))) return "Confirma tu correo primero: revisa tu bandeja de entrada.";
+      if (/password/i.test(m) && /6|8|weak|short/i.test(m)) return "La contraseña es muy corta o muy simple.";
+      if (/rate limit|too many/i.test(m)) return "Demasiados intentos. Espera un momento.";
+      return "No se pudo completar. " + (m ? "(" + m + ")" : "");
+    }
+    // Solo viaja lo que la persona crea; tasas, avisos y preferencias del teléfono se quedan aquí
+    var LOCAL_ONLY = ["pin", "notif", "rate", "rateDate", "rateAutoAt", "rateHist", "rateHistAt", "btcUsd", "btcAt", "rateEur", "rateEurDate", "rateUsdt", "rateUsdtDate", "rateUsdtSrc", "backupAt", "msumSeen", "instSeen", "collapsed"];
+    function cloudData() { var d = backupData().datos; LOCAL_ONLY.forEach(function (k) { delete d[k]; }); return d; }
+    function hashOf(d) { var t = JSON.stringify(d), h = 5381; for (var i = 0; i < t.length; i++) h = ((h << 5) + h + t.charCodeAt(i)) | 0; return t.length + ":" + h; }
+    var pushT = 0, busy = false;
+    window.__cloudDirty = function () {
+      if (!cloudOn() || !jget(SES) || window.__cloudApplying) return;
+      var y = sync(), hh = hashOf(cloudData());
+      if (hh === y.hash) return;
+      y.dirty = true; y.localAt = Date.now(); jset(SYNC, y);
+      clearTimeout(pushT); pushT = setTimeout(cloudPush, 2500);
+    };
+    function cloudPush() {
+      if (!cloudOn() || !navigator.onLine) return Promise.resolve();
+      return tokenOk().then(function (s) {
+        var at = new Date().toISOString(), d = cloudData();
+        return api("/rest/v1/orbe_data", { method: "POST", prefer: "resolution=merge-duplicates,return=minimal", body: { user_id: s.id, data: d, updated_at: at } }, s.at)
+          .then(function () { var y = sync(); y.remoteAt = at; y.dirty = false; y.hash = hashOf(d); jset(SYNC, y); renderCloud(); });
+      }).catch(function () {});
+    }
+    function cloudPull() {
+      return tokenOk().then(function (s) {
+        return api("/rest/v1/orbe_data?select=data,updated_at&user_id=eq." + encodeURIComponent(s.id), {}, s.at).then(function (rows) { return rows && rows[0] ? rows[0] : null; });
+      });
+    }
+    function applyRemote(row, msg) {
+      // Antes de reemplazar, guarda lo de este teléfono en las copias automáticas
+      var keep = backupData();
+      snapDb(function (db) {
+        try { if (db && state.items.length) db.transaction("s", "readwrite").objectStore("s").put({ dia: today() + " antes de sincronizar", at: Date.now(), n: state.items.length, data: keep }); } catch (e) {}
+        var d = row.data || {}, mine = {};
+        try { mine = JSON.parse(localStorage.getItem(KEY) || "{}"); } catch (e) {}
+        LOCAL_ONLY.forEach(function (k) { if (mine[k] !== undefined) d[k] = mine[k]; });
+        d.onb = true;
+        window.__cloudApplying = true;
+        try { localStorage.setItem(KEY, JSON.stringify(d)); } catch (e) {}
+        var clean = JSON.parse(JSON.stringify(row.data || {})); LOCAL_ONLY.forEach(function (k) { delete clean[k]; });
+        jset(SYNC, { remoteAt: row.updated_at, dirty: false, localAt: Date.now(), hash: hashOf(clean) });
+        if (msg) try { sessionStorage.setItem("orbe-msg", msg); } catch (e) {}
+        location.reload();
+      });
+    }
+    function cloudCheck(manual) {
+      if (!cloudOn() || !jget(SES) || busy || !navigator.onLine) return;
+      busy = true; renderCloud();
+      cloudPull().then(function (row) {
+        busy = false;
+        var y = sync();
+        if (!row) return cloudPush().then(function () { if (manual) showToast("Tus datos ya están en tu cuenta."); });
+        if (row.updated_at === y.remoteAt) { if (y.dirty) return cloudPush().then(function () { if (manual) showToast("Sincronizado."); }); if (manual) showToast("Todo está al día."); renderCloud(); return; }
+        // Hubo cambios en otro teléfono
+        if (!y.dirty || Date.parse(row.updated_at) > (y.localAt || 0)) applyRemote(row, "Trajimos los cambios de tu cuenta.");
+        else cloudPush().then(function () { if (manual) showToast("Sincronizado."); });
+      }).catch(function (e) { busy = false; renderCloud(); if (manual) showToast(cloudErr(e)); });
+    }
+    function afterLogin() {
+      $("cl-err").textContent = "Un momento…";
+      cloudPull().then(function (row) {
+        $("cl-err").textContent = "";
+        if (!row) { jset(SYNC, { remoteAt: "", dirty: true, localAt: Date.now() }); cloudPush().then(function () { renderCloud(); showToast("Cuenta lista. Tus datos se guardan en la nube."); }); return; }
+        if (!state.items.length) { applyRemote(row, "Bienvenido de vuelta. Trajimos tus datos."); return; }
+        $("cloud-sheet").hidden = true;
+        var n = (row.data && row.data.items || []).length;
+        openCf({
+          title: "Ya tienes datos en tu cuenta",
+          text: "Tu cuenta tiene " + n + (n === 1 ? " movimiento" : " movimientos") + " y este teléfono " + state.items.length + ". ¿Cuáles quieres usar? Lo que no elijas queda guardado en Copias automáticas de este teléfono.",
+          btn: "Usar los de mi cuenta", ok: function () { applyRemote(row, "Listo. Usamos los datos de tu cuenta."); },
+          no: "Usar los de este teléfono", noFn: function () { jset(SYNC, { remoteAt: row.updated_at, dirty: true, localAt: Date.now() }); cloudPush().then(function () { showToast("Listo. Tu cuenta ahora tiene los datos de este teléfono."); }); }
+        });
+      }).catch(function (e) { $("cl-err").textContent = cloudErr(e); });
+    }
+    function renderCloud() {
+      if (!$("cloud-sec")) return;
+      $("cloud-sec").hidden = !cloudOn();
+      if (!cloudOn()) return;
+      var s = jget(SES), y = sync();
+      $("cloud-t").textContent = s ? s.email || "Tu cuenta" : "Inicia sesión o crea tu cuenta";
+      var st = busy ? "Sincronizando…" : !navigator.onLine ? "Sin conexión: se sincroniza al volver." : y.dirty ? "Hay cambios por subir." : y.remoteAt ? "Sincronizado " + relTime(Date.parse(y.remoteAt)) + "." : "";
+      $("cloud-s").textContent = s ? st : "Guarda tus datos en la nube y úsalos en cualquier teléfono.";
+      $("cl-out").hidden = !!s || !$("cl-new").hidden; $("cl-inn").hidden = !s || !$("cl-new").hidden;
+      if (s) { $("cl-mail").textContent = s.email || ""; $("cl-state").textContent = st; }
+    }
+    function relTime(t) {
+      var m = Math.round((Date.now() - t) / 60000);
+      return m < 1 ? "ahora" : m < 60 ? "hace " + m + " min" : m < 1440 ? "hace " + Math.round(m / 60) + " h" : "hace " + Math.round(m / 1440) + " días";
+    }
+    function clCreds() {
+      var e = $("cl-email").value.trim(), p = $("cl-pass").value;
+      if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e)) { $("cl-err").textContent = "Escribe un correo válido."; return null; }
+      if (p.length < 8) { $("cl-err").textContent = "La contraseña debe tener al menos 8 caracteres."; return null; }
+      return { email: e, password: p };
+    }
+    $("cloud-open").addEventListener("click", function () { $("cl-new").hidden = true; $("cl-err").textContent = ""; renderCloud(); $("cloud-sheet").hidden = false; });
+    $("cloud-close").addEventListener("click", function () { $("cloud-sheet").hidden = true; });
+    $("cloud-sheet").addEventListener("click", function (e) { if (e.target === $("cloud-sheet")) $("cloud-sheet").hidden = true; });
+    $("cl-in").addEventListener("click", function () {
+      var c = clCreds(); if (!c) return;
+      $("cl-err").textContent = "Entrando…";
+      api("/auth/v1/token?grant_type=password", { method: "POST", body: c }).then(function (j) { keepSes(j); $("cl-pass").value = ""; afterLogin(); }, function (e) { $("cl-err").textContent = cloudErr(e); });
+    });
+    $("cl-up").addEventListener("click", function () {
+      var c = clCreds(); if (!c) return;
+      $("cl-err").textContent = "Creando tu cuenta…";
+      api("/auth/v1/signup", { method: "POST", body: { email: c.email, password: c.password } }).then(function (j) {
+        $("cl-pass").value = "";
+        if (j && j.access_token) { keepSes(j); afterLogin(); }
+        else $("cl-err").textContent = "Te enviamos un correo a " + c.email + ". Ábrelo para confirmar tu cuenta y vuelve aquí a entrar.";
+      }, function (e) { $("cl-err").textContent = cloudErr(e); });
+    });
+    $("cl-forgot").addEventListener("click", function () {
+      var e = $("cl-email").value.trim();
+      if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e)) { $("cl-err").textContent = "Escribe tu correo arriba y vuelve a tocar «Olvidé mi contraseña»."; return; }
+      api("/auth/v1/recover", { method: "POST", body: { email: e } }).then(function () { $("cl-err").textContent = "Te enviamos un correo para cambiar tu contraseña."; }, function (er) { $("cl-err").textContent = cloudErr(er); });
+    });
+    $("cl-pass-save").addEventListener("click", function () {
+      var p = $("cl-pass2").value;
+      if (p.length < 8) { $("cl-err2").textContent = "La contraseña debe tener al menos 8 caracteres."; return; }
+      tokenOk().then(function (s) { return api("/auth/v1/user", { method: "PUT", body: { password: p } }, s.at); })
+        .then(function () { $("cl-pass2").value = ""; $("cl-new").hidden = true; renderCloud(); showToast("Contraseña cambiada."); afterLogin(); }, function (e) { $("cl-err2").textContent = cloudErr(e); });
+    });
+    $("cl-sync").addEventListener("click", function () { cloudCheck(true); });
+    $("cl-out-btn").addEventListener("click", function () {
+      var s = jget(SES);
+      var bye = function (wipe) {
+        cloudPush().then(function () {
+          if (s) api("/auth/v1/logout", { method: "POST" }, s.at).catch(function () {});
+          jset(SES, null); jset(SYNC, null);
+          if (wipe) { try { localStorage.removeItem(KEY); } catch (e) {} location.reload(); return; }
+          renderCloud(); showToast("Sesión cerrada.");
+        });
+      };
+      $("cloud-sheet").hidden = true;
+      openCf({ title: "¿Cerrar sesión?", text: "Tus datos quedan en tu cuenta. ¿Quieres borrarlos también de este teléfono? Hazlo si el teléfono no es tuyo.", btn: "Cerrar y borrar de este teléfono", ok: function () { bye(true); }, no: "Cerrar y dejarlos aquí", noFn: function () { bye(false); } });
+    });
+    $("cl-del").addEventListener("click", function () {
+      $("cloud-sheet").hidden = true;
+      openCf({ title: "¿Borrar tus datos de la nube?", text: "Se borran tus movimientos guardados en tu cuenta. Lo que tienes en este teléfono no se toca. Tu cuenta (correo y contraseña) sigue existiendo.", word: "BORRAR", btn: "Borrar de la nube", ok: function () {
+        tokenOk().then(function (s) { return api("/rest/v1/orbe_data?user_id=eq." + encodeURIComponent(s.id), { method: "DELETE" }, s.at); })
+          .then(function () { jset(SYNC, { remoteAt: "", dirty: false, localAt: 0 }); showToast("Datos de la nube borrados."); renderCloud(); }, function (e) { showToast(cloudErr(e)); });
+      } });
+    });
+    // Enlaces del correo (confirmar cuenta o cambiar contraseña) vuelven con #access_token=...
+    (function () {
+      if (!cloudOn() || !/access_token=/.test(location.hash)) return;
+      var h = {}; location.hash.slice(1).split("&").forEach(function (kv) { var i = kv.indexOf("="); if (i > 0) h[decodeURIComponent(kv.slice(0, i))] = decodeURIComponent(kv.slice(i + 1)); });
+      try { history.replaceState(null, "", location.pathname + location.search); } catch (e) {}
+      var s = keepSes({ access_token: h.access_token, refresh_token: h.refresh_token, expires_in: h.expires_in });
+      if (!s) return;
+      api("/auth/v1/user", {}, s.at).then(function (u) { var x = jget(SES); x.id = u.id; x.email = u.email; jset(SES, x); renderCloud();
+        if (h.type === "recovery") { $("cl-new").hidden = false; $("cl-err2").textContent = ""; renderCloud(); $("cloud-sheet").hidden = false; }
+        else afterLogin();
+      }).catch(function () {});
+    })();
+    try { var om = sessionStorage.getItem("orbe-msg"); if (om) { sessionStorage.removeItem("orbe-msg"); setTimeout(function () { showToast(om); }, 1200); } } catch (e) {}
+    renderCloud();
+    setTimeout(function () { cloudCheck(false); }, 1800);
+    document.addEventListener("visibilitychange", function () { if (document.hidden) { if (sync().dirty) cloudPush(); } else setTimeout(function () { cloudCheck(false); }, 800); });
+    window.addEventListener("online", function () { renderCloud(); cloudCheck(false); });
+    window.addEventListener("offline", renderCloud);
     function siriUrl() { return location.origin + location.pathname + "?gasto="; }
     $("siri-open").addEventListener("click", function () { $("siri-url").textContent = siriUrl(); $("siri-sheet").hidden = false; });
     $("siri-close").addEventListener("click", function () { $("siri-sheet").hidden = true; });
@@ -7930,8 +8355,12 @@ html.touring body .goals-view, html.touring body .pay-view, html.touring body .h
           ok: function () {
             if (state.pin) d.pin = state.pin;
             d.backupAt = Date.now();
-            try { localStorage.setItem(KEY, JSON.stringify(d)); } catch (e) { showToast("No pude guardar la copia en este teléfono."); return; }
-            location.reload();
+            d = sanitizeData(d);
+            if (state.pin) d.pin = state.pin;
+            snapForce("antes de restaurar", function () {
+              try { localStorage.setItem(KEY, JSON.stringify(d)); } catch (e) { showToast("No pude guardar la copia en este teléfono."); return; }
+              location.reload();
+            });
           }
         });
       };
@@ -7963,7 +8392,9 @@ html.touring body .goals-view, html.touring body .pay-view, html.touring body .h
       return Promise.resolve("f" + h.toString(16));
     }
     var PIN_LEN = 4;
-    var lk = { mode: "", buf: "", first: "", onDone: null, fails: 0, until: 0, n: PIN_LEN, onb: false };
+    var lk = { mode: "", buf: "", first: "", onDone: null, fails: 0, until: 0, n: PIN_LEN, onb: false, rounds: 0 };
+    try { var lks = JSON.parse(localStorage.getItem("orbe-lk") || "null"); if (lks) { lk.fails = lks.f || 0; lk.until = lks.u || 0; lk.rounds = lks.r || 0; } } catch (e) {}
+    function lkSave() { try { localStorage.setItem("orbe-lk", JSON.stringify({ f: lk.fails, u: lk.until, r: lk.rounds })); } catch (e) {} }
     function lockDots() {
       var w = $("pin-dots");
       if (w.children.length !== lk.n) w.innerHTML = new Array(lk.n + 1).join("<i></i>");
@@ -7981,7 +8412,8 @@ html.touring body .goals-view, html.touring body .pay-view, html.touring body .h
       $("lock-k").textContent = lk.onb ? "Último paso" : "";
       $("lock-t").textContent = mode === "unlock" ? "Escribe tu código" : mode === "verify" ? "Escribe tu código actual" : setTitle();
       lockMsg(mode === "set" ? (lk.onb ? "Elige " + PIN_LEN + " números. La pediremos cada vez que abras la app para proteger tus datos." : "Lo pediremos cada vez que abras la app.") : "");
-      $("kp-cancel").style.visibility = mode === "unlock" || lk.onb ? "hidden" : "visible";
+      $("kp-cancel").style.visibility = mode === "unlock" ? "hidden" : "visible";
+      $("kp-cancel").textContent = lk.onb ? "Ahora no" : "Cancelar";
       $("lock-forgot").hidden = mode !== "unlock";
       renderBio();
       if (mode === "unlock" && bioOk && bioOn()) setTimeout(bioUnlock, 350);
@@ -7990,7 +8422,7 @@ html.touring body .goals-view, html.touring body .pay-view, html.touring body .h
       document.documentElement.classList.add("locked");
     }
     function lockOk() {
-      lk.fails = 0; var cb = lk.onDone, L = $("lock");
+      lk.fails = 0; lk.rounds = 0; lk.until = 0; lkSave(); var cb = lk.onDone, L = $("lock");
       $("pin-dots").classList.add("ok"); lk.mode = "";
       setTimeout(function () {
         document.documentElement.classList.remove("locked"); L.classList.add("lock-out");
@@ -8023,7 +8455,7 @@ html.touring body .goals-view, html.touring body .pay-view, html.touring body .h
     function closeLock() { $("lock").hidden = true; document.documentElement.classList.remove("locked"); lk.mode = ""; }
     function lockInput(k) {
       if (!lk.mode) return;
-      if (Date.now() < lk.until) { lockMsg("Espera unos segundos e intenta de nuevo.", true); return; }
+      if (Date.now() < lk.until) { var sl = Math.ceil((lk.until - Date.now()) / 1000); lockMsg("Espera " + (sl < 60 ? sl + " segundos" : Math.ceil(sl / 60) + " min") + " e intenta de nuevo.", true); return; }
       if (k === "del") { lk.buf = lk.buf.slice(0, -1); lockDots(); return; }
       if (lk.buf.length >= lk.n) return;
       lk.buf += k; lockDots();
@@ -8044,8 +8476,14 @@ html.touring body .goals-view, html.touring body .pay-view, html.touring body .h
       pinHash(pin, state.pin.s).then(function (h) {
         if (h === state.pin.h) { lockOk(); return; }
         lk.fails++; lk.buf = ""; shake(); pinErr(); setTimeout(lockDots, 300);
-        if (lk.fails >= 5) { lk.until = Date.now() + 30000; lk.fails = 0; lockMsg("Demasiados intentos. Espera 30 segundos.", true); }
+        if (lk.fails >= 5) {
+          // Cada tanda de 5 errores dobla la espera: 30 s, 1 min, 2 min… hasta 15 min
+          var wait = Math.min(900, 30 * Math.pow(2, lk.rounds)); lk.rounds++;
+          lk.until = Date.now() + wait * 1000; lk.fails = 0;
+          lockMsg("Demasiados intentos. Espera " + (wait < 60 ? wait + " segundos." : Math.round(wait / 60) + (wait < 120 ? " minuto." : " minutos.")), true);
+        }
         else lockMsg("Código incorrecto.", true);
+        lkSave();
       });
     }
     // Teclas al tocar (no al soltar): rápido, sin zoom y con varios dedos a la vez.
@@ -8085,7 +8523,11 @@ html.touring body .goals-view, html.touring body .pay-view, html.touring body .h
       if (/^[0-9]$/.test(e.key)) { e.preventDefault(); lockInput(e.key); }
       else if (e.key === "Backspace") { e.preventDefault(); lockInput("del"); }
     }, true);
-    $("kp-cancel").addEventListener("click", function () { if (lk.mode !== "unlock") closeLock(); });
+    $("kp-cancel").addEventListener("click", function () {
+      if (lk.mode === "unlock") return;
+      if (lk.onb) { var cb = lk.onDone; closeLock(); if (cb) cb(); showToast("Puedes activar el código cuando quieras en Ajustes."); return; }
+      closeLock();
+    });
     $("lock-forgot").addEventListener("click", function () {
       closeLock();
       document.documentElement.classList.add("locked");
@@ -8249,7 +8691,7 @@ html.touring body .goals-view, html.touring body .pay-view, html.touring body .h
     /* ---------- Recorrido guiado ---------- */
     var TOUR = [
       { tab: 0, sel: ".rate-card", all: true, t: "Tasas del día", p: "Dólar BCV, euro y USDT. Se actualizan solas y te muestran si subieron ▲ o bajaron ▼." },
-      { tab: 0, sel: ".bal-hero", t: "Saldo total", p: "" },
+      { tab: 0, sel: ".bal-hero", t: "Tu saldo", p: "" },
       { tab: 0, sel: '[data-panel="acc"]', t: "Tus cuentas", p: "El total y cuánto hay en cada cuenta. Toca una para ver sus movimientos. Con ⇄ transfieres y con + agregas otra." },
       { tab: 0, sel: '[data-panel="cat"]', t: "En qué se va el dinero", p: "Tus gastos por categoría, comparados con el mes pasado. En Límites pones un máximo para cada una." },
       { tab: 0, sel: "#fab", t: "El botón +", p: "Tócalo para anotar un gasto, un ingreso o un ahorro. Mantenlo presionado para usar tus plantillas.", round: true },
@@ -8543,7 +8985,7 @@ html.touring body .goals-view, html.touring body .pay-view, html.touring body .h
     function cxLabel(n, k) { return k === "VES" ? LOC.sym + " " + cxFmt(n, k) : k === "USD" ? "$" + cxFmt(n, k) : k === "EUR" ? "€" + cxFmt(n, k) : k === "USDT" ? cxFmt(n, k) + " USDT" : cxFmt(n, k) + " BTC"; }
     function cxSub(k) {
       var r = cxBs(k);
-      if (!(r > 0)) return k === "BTC" ? "Buscando el precio…" : "Sin tasa disponible";
+      if (!(r > 0)) return k === "BTC" ? (navigator.onLine ? "Buscando el precio…" : "Sin conexión") : "Sin tasa disponible";
       if (LOC.none) return k === "USD" ? "" : "$ " + num(r, r < 10 ? 4 : 2);
       if (k === "USD") return (calc.src === "own" && calc.own > 0 ? "Tu tasa" : LOC.src || "Tasa del día") + " · " + LOC.sym + " " + num(r);
       if (k === "EUR") return (LOC.src || "Tasa del día") + " · " + LOC.sym + " " + num(r);
@@ -8782,7 +9224,54 @@ html.touring body .goals-view, html.touring body .pay-view, html.touring body .h
       $("ok").textContent = "";
     });
   }
-  init();
+  try { init(); } catch (err) { orbeRescue(err); }
+  if (window.__orbeCorrupt) setTimeout(function () { if (window.__toast) window.__toast("Tus datos guardados estaban dañados. Guardamos una copia aparte; puedes volver a una copia automática en Ajustes."); }, 2500);
+  function orbeRescue(err) {
+    try { document.documentElement.classList.remove("locked", "hold"); var sp = document.getElementById("splash"); if (sp) sp.remove(); } catch (e) {}
+    var box = document.createElement("div");
+    box.className = "rescue";
+    box.innerHTML = '<div class="rescue-in"><h2>Algo salió mal al abrir tus datos</h2><p>Tus datos siguen guardados en este teléfono. Elige una opción:</p>' +
+      '<button type="button" class="primary" data-r="snap">Volver a la última copia automática</button>' +
+      '<button type="button" class="secondary" data-r="save">Guardar mis datos en un archivo</button>' +
+      '<button type="button" class="secondary" data-r="file">Restaurar una copia desde un archivo</button>' +
+      '<button type="button" class="secondary danger" data-r="wipe">Empezar de cero (borra los datos)</button>' +
+      '<input type="file" accept=".json,application/json" hidden><p class="hint rescue-msg"></p></div>';
+    document.body.appendChild(box);
+    var msg = box.querySelector(".rescue-msg"), file = box.querySelector("input");
+    var put = function (d) { try { var cur = JSON.parse(localStorage.getItem(KEY) || "{}"); if (cur.pin) d.pin = cur.pin; localStorage.setItem(KEY, JSON.stringify(d)); location.reload(); } catch (e) { msg.textContent = "No se pudo guardar."; } };
+    box.addEventListener("click", function (e) {
+      var b = e.target.closest("[data-r]"); if (!b) return;
+      var r = b.getAttribute("data-r");
+      if (r === "save") {
+        var raw = localStorage.getItem(KEY) || "{}", blob = new Blob([raw], { type: "application/json" }), name = "orbe-datos-" + new Date().toISOString().slice(0, 10) + ".json";
+        var f = null; try { f = new File([blob], name, { type: "application/json" }); } catch (e) {}
+        if (f && navigator.canShare && navigator.canShare({ files: [f] })) navigator.share({ files: [f] }).catch(function () {});
+        else { var a = document.createElement("a"); a.href = URL.createObjectURL(blob); a.download = name; document.body.appendChild(a); a.click(); }
+      } else if (r === "snap") {
+        try {
+          var q = indexedDB.open("orbe-copias", 1);
+          q.onupgradeneeded = function () { q.result.createObjectStore("s", { keyPath: "dia" }); };
+          q.onsuccess = function () {
+            var g = q.result.transaction("s").objectStore("s").getAll();
+            g.onsuccess = function () {
+              var rows = (g.result || []).sort(function (a, b) { return b.at - a.at; });
+              var ok = rows.filter(function (x) { return x.data && x.data.datos; })[0];
+              if (!ok) { msg.textContent = "No hay copias automáticas en este teléfono."; return; }
+              put(sanitizeData(ok.data.datos));
+            };
+          };
+        } catch (e) { msg.textContent = "No hay copias automáticas en este teléfono."; }
+      } else if (r === "file") file.click();
+      else if (r === "wipe") { if (b.classList.contains("sure")) { try { localStorage.removeItem(KEY); } catch (e) {} location.reload(); } else { b.classList.add("sure"); b.textContent = "Toca otra vez para borrar todo"; } }
+    });
+    file.addEventListener("change", function () {
+      var f = file.files && file.files[0]; if (!f) return;
+      var rd = new FileReader();
+      rd.onload = function () { try { var j = JSON.parse(String(rd.result)); var d = sanitizeData(j && j.datos ? j.datos : j); if (!d || !Array.isArray(d.items)) throw 0; put(d); } catch (e) { msg.textContent = "Ese archivo no es una copia de Orbe."; } };
+      rd.readAsText(f);
+    });
+    try { console.error(err); } catch (e) {}
+  }
 })();
 </script>
 </body>
