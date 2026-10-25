@@ -2161,6 +2161,12 @@ html.touring #inst { display: none !important; }
 .acc-av.xs { width: 22px !important; height: 22px !important; font-size: 0.55rem !important; }
 .acc-av.xs.sym svg { width: 13px; height: 13px; }
 .sel-chips { margin-top: 2px; }
+/* Hojas: solo se mueven en vertical; la fila de cuentas es lo único que se desliza de lado */
+.sheet { overflow-x: hidden; overscroll-behavior-x: none; }
+.sheet .grid > * { min-width: 0; }
+.sheet .grid { min-width: 0; max-width: 100%; }
+.sel-chips { touch-action: pan-x; overscroll-behavior-x: contain; -webkit-overflow-scrolling: touch; scroll-snap-type: x proximity; }
+.sel-chips .ap { scroll-snap-align: start; scroll-margin-left: 20px; }
 .sel-chips .sel-none { margin: 6px 0; }
 .pv .pv-l { display: inline-flex; align-items: center; gap: 8px; min-width: 0; }
 .pv strong { white-space: nowrap; }
