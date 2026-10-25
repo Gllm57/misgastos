@@ -5113,24 +5113,43 @@ html.touring #inst { display: none !important; }
     sel.hidden = true; sel.setAttribute("aria-hidden", "true"); sel.tabIndex = -1;
     sel.parentNode.insertBefore(box, sel.nextSibling);
     sel._chips = box;
+    function mark() {
+      var on = null;
+      Array.prototype.forEach.call(box.querySelectorAll("[data-sv]"), function (x) {
+        var is = x.getAttribute("data-sv") === sel.value;
+        if (x.classList.contains("on") !== is) { x.classList.toggle("on", is); x.setAttribute("aria-checked", is); }
+        if (is) on = x;
+      });
+      return on;
+    }
     function draw() {
-      var html = "", on = null;
+      var html = "";
       Array.prototype.forEach.call(sel.options, function (o) {
         var m = /(\d+)$/.exec(o.value), a = m ? accById(m[1]) : null;
         if (!a) { html += '<p class="hint sel-none">' + esc(o.textContent) + "</p>"; return; }
-        var is = o.value === sel.value;
-        html += '<button type="button" class="ap' + (is ? " on" : "") + '" role="radio" aria-checked="' + is + '" data-sv="' + esc(o.value) + '">' + accAvatar(a) +
+        html += '<button type="button" class="ap" role="radio" aria-checked="false" data-sv="' + esc(o.value) + '">' + accAvatar(a) +
           '<span class="ap-t"><b>' + esc(a.nombre) + "</b><small>" + esc(sub(o, a)) + "</small></span></button>";
       });
-      if (box._h !== html) { box.innerHTML = html; box._h = html; }
-      on = box.querySelector(".ap.on");
-      if (on && box._last !== sel.value) { box._last = sel.value; setTimeout(function () { box.scrollLeft = Math.max(0, on.offsetLeft - 16); }, 0); }
+      var fresh = box._h !== html;
+      if (fresh) { box.innerHTML = html; box._h = html; }
+      var on = mark();
+      // Al abrir o cambiar la lista, deja visible la cuenta elegida (sin saltos si ya se ve)
+      if (on && (fresh || box._last !== sel.value)) {
+        box._last = sel.value;
+        setTimeout(function () {
+          var l = on.offsetLeft - 20, r = on.offsetLeft + on.offsetWidth + 20 - box.clientWidth;
+          if (fresh) box.scrollLeft = Math.max(0, l);
+          else if (box.scrollLeft > l) box.scrollTo({ left: Math.max(0, l), behavior: "smooth" });
+          else if (box.scrollLeft < r) box.scrollTo({ left: r, behavior: "smooth" });
+        }, 0);
+      }
     }
     box.addEventListener("click", function (e) {
       var b = e.target.closest("[data-sv]"); if (!b || sel.value === b.getAttribute("data-sv")) return;
       sel.value = b.getAttribute("data-sv");
+      box._last = sel.value;
+      mark();
       sel.dispatchEvent(new Event("change", { bubbles: true }));
-      draw();
     });
     sel.addEventListener("change", draw);
     new MutationObserver(draw).observe(sel, { childList: true });
@@ -8994,18 +9013,21 @@ html.touring #inst { display: none !important; }
       sheets.forEach(function (b) {
         var sh = b.querySelector(".sheet");
         if (!sh) return;
-        var y0 = null, dy = 0, t0 = 0, active = false;
+        var y0 = null, x0 = 0, dy = 0, t0 = 0, active = false, side = false;
         sh.addEventListener("touchstart", function (e) {
           if (e.touches.length !== 1) return;
           var tag = e.target.tagName;
           if (tag === "INPUT" || tag === "SELECT" || tag === "TEXTAREA") return;
-          y0 = e.touches[0].clientY; dy = 0; t0 = Date.now(); active = false;
+          // En filas que se deslizan de lado (cuentas, subcategorías) hace falta un gesto más claro hacia abajo
+          side = !!(e.target.closest && e.target.closest(".mv-acc, .sub-row, .cat-chips, .hist-chips"));
+          y0 = e.touches[0].clientY; x0 = e.touches[0].clientX; dy = 0; t0 = Date.now(); active = false;
         }, { passive: true });
         sh.addEventListener("touchmove", function (e) {
           if (y0 === null) return;
-          var d = e.touches[0].clientY - y0;
+          var d = e.touches[0].clientY - y0, dx = Math.abs(e.touches[0].clientX - x0);
           if (!active) {
-            if (d > 8 && sh.scrollTop <= 0) { active = true; sh.classList.add("dragging"); }
+            if (dx > 6 && dx >= Math.abs(d) * 0.8) { y0 = null; return; }
+            if (d > (side ? 28 : 14) && d > dx * 2 && sh.scrollTop <= 0) { active = true; y0 += side ? 28 : 14; d = e.touches[0].clientY - y0; sh.classList.add("dragging"); }
             else if (d < -4 || sh.scrollTop > 0) { y0 = null; return; }
             else return;
           }
