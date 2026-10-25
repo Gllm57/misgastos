@@ -2122,6 +2122,26 @@ html.touring #inst { display: none !important; }
   .flows .v { font-size: 1.02rem !important; letter-spacing: -0.02em; }
   .flows .l { font-size: 0.72rem !important; }
 }
+
+/* Logos de cuentas en metas y ahorros */
+.acc-av.xs { width: 22px !important; height: 22px !important; font-size: 0.55rem !important; }
+.acc-av.xs.sym svg { width: 13px; height: 13px; }
+.sel-chips { margin-top: 2px; }
+.sel-chips .sel-none { margin: 6px 0; }
+.pv .pv-l { display: inline-flex; align-items: center; gap: 8px; min-width: 0; }
+.pv strong { white-space: nowrap; }
+.gd-hist .tx { display: inline-flex; align-items: center; gap: 8px; }
+.gd-hist .tx .acc-av { flex: none; }
+.goal-accs { display: none; align-items: center; gap: 6px; margin-top: 4px; min-width: 0; }
+.goals-view .goal-list .goal-accs { display: flex; order: 1; margin: 0 auto 0 -2px; align-self: center; }
+.goals-view .goal-list .goal-name { order: 0; flex: 0 1 auto; }
+.goals-view .goal-list .goal-amt { order: 2; }
+.goal-list .goal-accs .ga-t { display: none; }
+.gd-top .goal-accs { display: flex; }
+.goal-accs .ga-av { display: flex; flex: none; }
+.goal-accs .ga-av .acc-av { width: 20px !important; height: 20px !important; box-shadow: 0 0 0 2px var(--surface); background: color-mix(in srgb, var(--c) 18%, var(--surface)) !important; }
+.goal-accs .ga-av .acc-av + .acc-av { margin-left: -6px; }
+.goal-accs .ga-t { font-size: 0.74rem; color: var(--muted); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 </style>
 </head>
 <body>
@@ -3817,6 +3837,14 @@ html.touring #inst { display: none !important; }
     var months = Math.max(0, g.meta - bal) / monthly;
     return { kind: "eta", monthly: monthly, months: months, eta: addDaysIso(t, Math.round(months * 30)) };
   }
+  function evAcc(e) { var side = e.dep ? e.it.desde : e.it.hacia; return (side.k === "ahorro" || side.k === "cuenta") ? accById(side.id) : null; }
+  function goalAccs(evs) {
+    var seen = {}, out = [];
+    evs.forEach(function (e) { var a = e.dep && evAcc(e); if (a && !seen[a.id]) { seen[a.id] = 1; out.push(a); } });
+    if (!out.length) return "";
+    return '<span class="goal-accs"><span class="ga-av">' + out.slice(0, 3).map(accAvatarXs).join("") + "</span><span class=\"ga-t\">Desde " +
+      esc(out.slice(0, 2).map(function (a) { return a.nombre; }).join(", ") + (out.length > 2 ? " y " + (out.length - 2) + " más" : "")) + "</span></span>";
+  }
   function evLabel(e) {
     var it = e.it, side = e.dep ? it.desde : it.hacia, a = (side.k === "ahorro" || side.k === "cuenta") ? accById(side.id) : null;
     var nm = a ? a.nombre : "cuenta";
@@ -3900,14 +3928,15 @@ html.touring #inst { display: none !important; }
       var stats = o.done ? "" : '<div class="gd-stats"><div><b>Ritmo actual</b><span>' + (pace.kind === "eta" ? mask(money(pace.monthly, g.moneda)) + "<small>por mes</small>" : "—") + "</span></div>" +
         "<div><b>Para lograrla en 6 meses</b><span>" + mask(money(rem / 6, g.moneda)) + "<small>por mes</small></span></div><div><b>Para lograrla en 12 meses</b><span>" + mask(money(rem / 12, g.moneda)) + "<small>por mes</small></span></div></div>";
       var hist = evs.slice(-5).reverse().map(function (e) {
-        return '<li><span class="dt">' + shortDate(e.fecha) + '</span><span class="tx">' + esc(evLabel(e)) + '</span><span class="am ' + (e.dep ? "in" : "out") + '">' + mask((e.dep ? "+" : "−") + money(Math.abs(e.delta), g.moneda)) + "</span></li>";
+        var ea = evAcc(e);
+        return '<li><span class="dt">' + shortDate(e.fecha) + '</span><span class="tx">' + (ea ? accAvatarXs(ea) : "") + esc(evLabel(e)) + '</span><span class="am ' + (e.dep ? "in" : "out") + '">' + mask((e.dep ? "+" : "−") + money(Math.abs(e.delta), g.moneda)) + "</span></li>";
       }).join("");
       return '<li class="goal' + (o.done ? " done" : "") + '" data-gid="' + g.id + '" style="--gc:' + o.color + '">' +
         '<button type="button" class="goal-head" data-goal-open="' + g.id + '" aria-expanded="false" aria-controls="gd-' + g.id + '">' +
         '<span class="ring"><svg viewBox="0 0 42 42" aria-hidden="true"><circle class="trk" cx="21" cy="21" r="15.9155"></circle><circle class="bar" cx="21" cy="21" r="15.9155" style="--p:' + o.pct.toFixed(2) + '"></circle></svg>' +
         '<span class="pct">' + (o.done ? "✓" : fmtPct(o.pct)) + "</span></span>" +
         '<span class="goal-main"><span class="goal-name">' + esc(g.nombre) + '</span><span class="goal-amt">' + mask(money(bal, g.moneda) + " de " + money(g.meta, g.moneda)) +
-        '</span><span class="goal-sub">' + (o.done ? "¡Meta lograda!" : "Te faltan " + mask(money(rem, g.moneda))) + "</span></span>" + chev +
+        '</span><span class="goal-sub">' + (o.done ? "¡Meta lograda!" : "Te faltan " + mask(money(rem, g.moneda))) + "</span>" + goalAccs(evs) + "</span>" + chev +
         '<span class="goal-short' + (o.done || o.pct >= 85 ? " hot" : "") + '">' + shortEta + "</span></button>" +
         '<div class="gbar" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="' + Math.round(o.pct) + '"><span style="width:' + o.pct.toFixed(2) + '%"></span>' + ticks + "</div>" +
         '<div class="goal-eta">' + eta + "</div>" +
@@ -4926,6 +4955,41 @@ html.touring #inst { display: none !important; }
     var c = accColor(a), ic = a.icon && ACC_SVG[a.icon] ? a.icon : "";
     return '<span class="acc-av' + (big ? " big" : "") + (ic ? " sym" : "") + '" style="--c:' + c + '" aria-hidden="true">' + (ic ? accSvg(ic) : esc(accInitials(a.nombre))) + "</span>";
   }
+  function accAvatarXs(a) { return accAvatar(a).replace('class="acc-av', 'class="acc-av xs'); }
+  // Convierte un <select> de cuentas en fichas con el logo de cada cuenta (el select sigue guardando el valor)
+  function selChips(selId, sub) {
+    var sel = $(selId); if (!sel || sel._chips) return;
+    var box = document.createElement("div");
+    box.className = "mv-acc sel-chips"; box.setAttribute("role", "radiogroup");
+    var lb = document.querySelector('label[for="' + selId + '"]');
+    if (lb) { if (!lb.id) lb.id = selId + "-lbl"; box.setAttribute("aria-labelledby", lb.id); lb.removeAttribute("for"); }
+    sel.hidden = true; sel.setAttribute("aria-hidden", "true"); sel.tabIndex = -1;
+    sel.parentNode.insertBefore(box, sel.nextSibling);
+    sel._chips = box;
+    function draw() {
+      var html = "", on = null;
+      Array.prototype.forEach.call(sel.options, function (o) {
+        var m = /(\d+)$/.exec(o.value), a = m ? accById(m[1]) : null;
+        if (!a) { html += '<p class="hint sel-none">' + esc(o.textContent) + "</p>"; return; }
+        var is = o.value === sel.value;
+        html += '<button type="button" class="ap' + (is ? " on" : "") + '" role="radio" aria-checked="' + is + '" data-sv="' + esc(o.value) + '">' + accAvatar(a) +
+          '<span class="ap-t"><b>' + esc(a.nombre) + "</b><small>" + esc(sub(o, a)) + "</small></span></button>";
+      });
+      if (box._h !== html) { box.innerHTML = html; box._h = html; }
+      on = box.querySelector(".ap.on");
+      if (on && box._last !== sel.value) { box._last = sel.value; setTimeout(function () { box.scrollLeft = Math.max(0, on.offsetLeft - 16); }, 0); }
+    }
+    box.addEventListener("click", function (e) {
+      var b = e.target.closest("[data-sv]"); if (!b || sel.value === b.getAttribute("data-sv")) return;
+      sel.value = b.getAttribute("data-sv");
+      sel.dispatchEvent(new Event("change", { bubbles: true }));
+      draw();
+    });
+    sel.addEventListener("change", draw);
+    new MutationObserver(draw).observe(sel, { childList: true });
+    sel._draw = draw;
+    draw();
+  }
   // Saldo compacto para la lista de cuentas: moneda en pequeño, sin decimales en montos grandes (Bs 41.800, Bs 1,25 M)
   function accAmt(n, cur) {
     var x = Math.abs(n), sign = n < 0 ? "−" : "", v;
@@ -5184,6 +5248,7 @@ html.touring #inst { display: none !important; }
       });
       from.innerHTML = opts.length ? opts.join("") : '<option value="">No tienes ahorros todavía</option>';
       for (var i = 0; i < from.options.length; i++) if (from.options[i].value === prev) from.value = prev;
+      if (from._draw) from._draw();
       $("mv-from-label").textContent = mv.mode === "retirar" ? "Retirar de los ahorros de" : "Pasar los ahorros de";
       fillMvDest();
     }
@@ -5206,6 +5271,7 @@ html.touring #inst { display: none !important; }
         return '<option value="' + a.id + '">' + esc(a.nombre) + " (" + curLabel(a.moneda) + ")</option>";
       }).join("") : '<option value="">No tienes una cuenta que pueda recibirlo</option>';
       for (var i = 0; i < $("mv-dest").options.length; i++) if ($("mv-dest").options[i].value === prev) $("mv-dest").value = prev;
+      if ($("mv-dest")._draw) $("mv-dest")._draw();
       $("mv-dest-label").textContent = mv.mode === "retirar" ? "Enviar a la cuenta" : "A la cuenta";
       $("mv-monto-label").textContent = "Monto" + (src ? " (" + curLabel(src.cur) + ")" : "");
       $("mv-go").textContent = mv.mode === "retirar" ? "Retirar" : "Convertir";
@@ -5998,6 +6064,7 @@ html.touring #inst { display: none !important; }
       }).join("");
       var want = prev || (accById(state.lastAcc) ? String(state.lastAcc) : "");
       for (var i = 0; i < $("sv-from").options.length; i++) if ($("sv-from").options[i].value === want) $("sv-from").value = want;
+      if ($("sv-from")._draw) $("sv-from")._draw();
       fillSvTo();
     }
     function fillSvTo() {
@@ -6009,6 +6076,7 @@ html.touring #inst { display: none !important; }
       });
       $("sv-to").innerHTML = opts.length ? opts.join("") : '<option value="">No hay una cuenta que pueda recibirlo</option>';
       if (src) $("sv-to").value = String(src.id);
+      if ($("sv-to")._draw) $("sv-to")._draw();
       $("sv-monto-label").textContent = "Monto" + (src ? " (" + curLabel(src.moneda) + ")" : "");
       syncSv();
     }
@@ -6025,8 +6093,8 @@ html.touring #inst { display: none !important; }
       var r = parseNum($("sv-rate").value);
       if (a.moneda !== b.moneda && !(r > 0)) { p.innerHTML = '<span class="hint">Escribe la tasa para ver cuánto llega.</span>'; return; }
       var out = mvOut(v, a.moneda, b.moneda, r);
-      var html = '<div class="pv"><span>Sale de ' + esc(a.nombre) + '</span><strong>' + money(v, a.moneda) + '</strong></div>' +
-        '<div class="pv"><span>Llega a los ahorros de ' + esc(b.nombre) + '</span><strong>' + money(out, b.moneda) + "</strong></div>";
+      var html = '<div class="pv"><span class="pv-l">' + accAvatarXs(a) + "Sale de " + esc(a.nombre) + '</span><strong>' + money(v, a.moneda) + '</strong></div>' +
+        '<div class="pv"><span class="pv-l">' + accAvatarXs(b) + "Llega a los ahorros de " + esc(b.nombre) + '</span><strong>' + money(out, b.moneda) + "</strong></div>";
       if (a.moneda !== b.moneda) html += '<span class="hint">Tasa usada: ' + trRateInfo(a.moneda, b.moneda).hint.replace("{r}", num(r, r < 10 ? 4 : 2)) + ".</span>";
       if (v > accBalance(a) + 0.005) html += '<span class="hint">Ojo: en la app esta cuenta quedará en negativo.</span>';
       p.innerHTML = html;
@@ -6887,6 +6955,19 @@ html.touring #inst { display: none !important; }
     });
     applyCollapsed();
 
+    /* ---------- Logos de cuentas en metas y ahorros ---------- */
+    function afterDot(o) { var t = o.textContent, i = t.indexOf(" · "); return i < 0 ? "" : t.slice(i + 3); }
+    function savTxt(a) { return state.hideSav ? curLabel(a.moneda) : money(savMap()["a" + a.id] || 0, a.moneda); }
+    selChips("gm-acc", function (o, a) {
+      var s = o.value.charAt(0) === "s", v = afterDot(o);
+      if (gm.mode === "ret") return s ? "A sus ahorros" : "A su saldo";
+      return (s ? "Ahorros" : "Saldo") + (v ? " · " + v : "");
+    });
+    selChips("sv-from", function (o, a) { return afterDot(o) || curLabel(a.moneda); });
+    selChips("sv-to", function (o, a) { return "Ahorrado: " + savTxt(a); });
+    selChips("mv-from", function (o, a) { return "Ahorrado: " + savTxt(a); });
+    selChips("mv-dest", function (o, a) { return "Saldo: " + money(accBalance(a), a.moneda); });
+
     /* ---------- Metas ---------- */
     var geId = null, gm = { id: null, mode: "dep" };
     function goalUsed(g) {
@@ -6952,6 +7033,7 @@ html.touring #inst { display: none !important; }
       $("gm-go").textContent = gm.mode === "dep" ? "Depositar" : "Retirar";
       $("gm-acc").innerHTML = opts.length ? opts.map(function (o) { return '<option value="' + o.value + '">' + esc(o.label) + "</option>"; }).join("") : '<option value="">No hay una cuenta disponible</option>';
       for (var i = 0; i < $("gm-acc").options.length; i++) if ($("gm-acc").options[i].value === prev) $("gm-acc").value = prev;
+      if ($("gm-acc")._draw) $("gm-acc")._draw();
       syncGm();
     }
     function gmCurs() {
@@ -6975,8 +7057,10 @@ html.touring #inst { display: none !important; }
       var out = mvOut(v, c.from, c.to, r);
       var left = gm.mode === "dep" ? "Sale de " + c.o.label.split(" · ")[0] : "Sale de la meta";
       var right = gm.mode === "dep" ? "Entra a la meta" : "Llega a " + c.o.label;
-      p.innerHTML = '<div class="pv"><span>' + esc(left) + "</span><strong>" + money(v, c.from) + "</strong></div>" +
-        '<div class="pv"><span>' + esc(right) + "</span><strong>" + money(out, c.to) + "</strong></div>" +
+      var gav = '<span class="acc-av xs" style="--c:' + goalColor(c.g) + '" aria-hidden="true">' + esc(accInitials(c.g.nombre)) + "</span>";
+      var lav = gm.mode === "dep" ? accAvatarXs(c.o.acc) : gav, rav = gm.mode === "dep" ? gav : accAvatarXs(c.o.acc);
+      p.innerHTML = '<div class="pv"><span class="pv-l">' + lav + esc(left) + "</span><strong>" + money(v, c.from) + "</strong></div>" +
+        '<div class="pv"><span class="pv-l">' + rav + esc(right) + "</span><strong>" + money(out, c.to) + "</strong></div>" +
         (c.from !== c.to ? '<span class="hint">Tasa usada: ' + rateUsed(c.from, c.to, r) + ".</span>" : "");
     }
     function openGm(g, mode) {
