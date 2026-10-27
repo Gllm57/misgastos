@@ -2182,6 +2182,38 @@ html.touring #inst { display: none !important; }
 .goal-accs .ga-av .acc-av { width: 20px !important; height: 20px !important; box-shadow: 0 0 0 2px var(--surface); background: color-mix(in srgb, var(--c) 18%, var(--surface)) !important; }
 .goal-accs .ga-av .acc-av + .acc-av { margin-left: -6px; }
 .goal-accs .ga-t { font-size: 0.74rem; color: var(--muted); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+/* Pantalla de países: cuadrada en iPhone (alto real, fondo quieto, filas alineadas, teclado) */
+html.ctry-open, html.ctry-open body { overflow: hidden !important; overscroll-behavior: none; }
+.ctry { height: 100%; height: 100dvh; box-sizing: border-box; overflow: hidden; overscroll-behavior: contain; gap: 14px; align-items: stretch; }
+.ctry > * { flex: none; box-sizing: border-box; }
+.ctry > .ctry-list { flex: 1 1 auto; min-height: 0; }
+.ctry-top { min-height: 36px; margin-bottom: -18px; position: relative; z-index: 1; }
+.ctry-head { transition: opacity 0.3s ease; }
+.ctry-head p { line-height: 1.4; }
+.ctry-list { overscroll-behavior: contain; padding: 2px 0 8px; mask-image: linear-gradient(to bottom, #000 calc(100% - 22px), transparent); -webkit-mask-image: linear-gradient(to bottom, #000 calc(100% - 22px), transparent); }
+.ctry-list li { list-style: none; }
+.ctry-list button { min-height: 62px; padding: 10px 12px; box-sizing: border-box; }
+.ctry-list .cf { display: flex; align-items: center; justify-content: center; width: 36px; height: 36px; flex: none; font-size: 1.7rem; line-height: 1; font-family: "Apple Color Emoji", "Segoe UI Emoji", "Noto Color Emoji", sans-serif; }
+.ctry-list .cn { gap: 1px; }
+.ctry-list .cn b, .ctry-list .cn small { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.ctry-list li + li button { margin-top: 2px; }
+.ctry-search { flex: none; }
+.ctry-warn { line-height: 1.4; }
+.ctry-go { width: 100%; }
+.ctry.typing .ctry-head { display: none; }
+.ctry.typing .ctry-top { margin-bottom: 0; }
+@media (max-height: 740px) {
+  .ctry { gap: 10px; }
+  .ctry-globe { width: 48px; height: 48px; }
+  .ctry-globe svg { width: 24px; height: 24px; }
+  .ctry-head h2 { font-size: 1.4rem; margin-top: 0; }
+  .ctry-head p { font-size: 0.88rem; }
+  .ctry-list button { min-height: 56px; padding: 8px 10px; }
+}
+/* Países con dólar o euro: sin el hueco de la tasa del dólar, las otras dos se reparten el ancho */
+html.loc-none .top .field-rate:nth-child(2) { grid-column: 1 / 4; border-left: 0 !important; }
+html.loc-none .top .field-rate:nth-child(3) { grid-column: 4 / 7; }
 </style>
 </head>
 <body>
@@ -8745,6 +8777,11 @@ html.touring #inst { display: none !important; }
       $("ctry").hidden = false;
     }
     $("ctry-q").addEventListener("input", drawCtry);
+    // Al buscar, se esconde el encabezado para que el teclado no aplaste la lista
+    $("ctry-q").addEventListener("focus", function () { $("ctry").classList.add("typing"); });
+    $("ctry-q").addEventListener("blur", function () { setTimeout(function () { $("ctry").classList.remove("typing"); }, 120); });
+    // Con la pantalla de países abierta, el fondo no se mueve
+    new MutationObserver(function () { document.documentElement.classList.toggle("ctry-open", !$("ctry").hidden); if ($("ctry").hidden) $("ctry").classList.remove("typing"); }).observe($("ctry"), { attributes: true, attributeFilter: ["hidden"] });
     $("ctry-list").addEventListener("click", function (e) {
       var b = e.target.closest("[data-ctry]"); if (!b) return;
       ctry.sel = b.getAttribute("data-ctry");
