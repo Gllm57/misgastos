@@ -2245,6 +2245,13 @@ html.ai-off .ai-fab { display: none !important; }
 .acc-r .acc-av { width: 30px; height: 30px; transition: transform 0.25s cubic-bezier(0.32, 0.72, 0, 1); }
 .acc-r .acc-av.sym svg { width: 16px; height: 16px; }
 .acc-r:active .acc-av { transform: scale(0.92); }
+
+/* Botón + que se achica al bajar (opción 3): baja a la esquina junto a la barra achicada; al subir o al abrirlo vuelve */
+.fab { transition: transform 0.38s var(--spring), bottom 0.61s var(--spring), width 0.61s var(--spring), height 0.61s var(--spring), right 0.61s var(--spring), font-size 0.61s var(--spring) !important; }
+body.tb-min:not(.dial-open) { --tbx: 64px; }
+body.tb-min:not(.dial-open) .fab { width: 44px; height: 44px; font-size: 1.6rem; padding-bottom: 3px; right: max(12px, env(safe-area-inset-right, 0px)); bottom: calc(var(--tbb) + (var(--tbh) - 44px) / 2) !important; }
+body.tb-min:not(.dial-open) .ai-fab { right: max(11px, env(safe-area-inset-right, 0px)); bottom: calc(var(--tbb) + var(--tbh) + 12px) !important; }
+.ai-fab { transition: bottom 0.61s var(--spring), right 0.61s var(--spring), opacity 0.27s ease, transform 0.27s ease !important; }
 </style>
 </head>
 <body>
