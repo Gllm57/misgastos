@@ -2255,9 +2255,12 @@ html.ai-off .ai-fab { display: none !important; }
 }
 
 /* Logo de cada meta junto a su nombre */
-.goal-name .g-av { display: inline-flex !important; vertical-align: -5px; margin-right: 8px; width: 24px !important; height: 24px !important; }
-.goal-name .g-av.sym svg { width: 14px; height: 14px; }
-.goal-name .g-av:not(.sym) { font-size: 0.55rem !important; }
+.goal-list .goal-name { display: flex !important; align-items: center; gap: 10px; min-width: 0; }
+.goal-name .gn-t { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.goal-name .g-av { flex: none; width: 32px !important; height: 32px !important; }
+.goal-name .g-av.sym svg { width: 17px; height: 17px; }
+.goal-name .g-av:not(.sym) { font-size: 0.7rem !important; }
+.goals-view .goal-list .goal-main { align-items: center !important; }
 </style>
 </head>
 <body>
@@ -4155,7 +4158,7 @@ html.ai-off .ai-fab { display: none !important; }
         '<button type="button" class="goal-head" data-goal-open="' + g.id + '" aria-expanded="false" aria-controls="gd-' + g.id + '">' +
         '<span class="ring"><svg viewBox="0 0 42 42" aria-hidden="true"><circle class="trk" cx="21" cy="21" r="15.9155"></circle><circle class="bar" cx="21" cy="21" r="15.9155" style="--p:' + o.pct.toFixed(2) + '"></circle></svg>' +
         '<span class="pct">' + (o.done ? "✓" : fmtPct(o.pct)) + "</span></span>" +
-        '<span class="goal-main"><span class="goal-name">' + goalAvatar(g, "xs g-av") + esc(g.nombre) + '</span><span class="goal-amt">' + mask(money(bal, g.moneda) + " de " + money(g.meta, g.moneda)) +
+        '<span class="goal-main"><span class="goal-name">' + goalAvatar(g, "xs g-av") + '<span class="gn-t">' + esc(g.nombre) + '</span></span><span class="goal-amt">' + mask(money(bal, g.moneda) + " de " + money(g.meta, g.moneda)) +
         '</span><span class="goal-sub">' + (o.done ? "¡Meta lograda!" : "Te faltan " + mask(money(rem, g.moneda))) + "</span>" + goalAccs(evs) + "</span>" + chev +
         '<span class="goal-short' + (o.done || o.pct >= 85 ? " hot" : "") + '">' + shortEta + "</span></button>" +
         '<div class="gbar" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="' + Math.round(o.pct) + '"><span style="width:' + o.pct.toFixed(2) + '%"></span>' + ticks + "</div>" +
