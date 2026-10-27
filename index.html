@@ -2214,6 +2214,12 @@ html.ctry-open, html.ctry-open body { overflow: hidden !important; overscroll-be
 /* Países con dólar o euro: sin el hueco de la tasa del dólar, las otras dos se reparten el ancho */
 html.loc-none .top .field-rate:nth-child(2) { grid-column: 1 / 4; border-left: 0 !important; }
 html.loc-none .top .field-rate:nth-child(3) { grid-column: 4 / 7; }
+
+/* Tasas según el país: dólar y euro donde la moneda es estable; nada en países con dólar o euro (se puede activar en Ajustes) */
+html.loc-fx .rc-usdt, html.loc-fx [data-rhk="usdt"] { display: none !important; }
+html.loc-fx .top .field-rate:nth-child(1) { grid-column: 1 / 4; }
+html.loc-fx .top .field-rate:nth-child(2) { grid-column: 4 / 7; }
+html.loc-norates .top .rate-card, html.loc-norates #rates-tog, html.loc-norates #rate-ref { display: none !important; }
 </style>
 </head>
 <body>
@@ -2451,6 +2457,7 @@ html.loc-none .top .field-rate:nth-child(3) { grid-column: 4 / 7; }
 
     <div class="set-h">País y moneda</div>
     <div class="set-group">
+      <button type="button" class="set-row" id="set-rates" hidden><span class="tx"><b>Tasas del día</b><small id="set-rates-v"></small></span><svg class="chev-r" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 5l7 7-7 7"></path></svg></button>
       <button type="button" class="set-row" id="set-country"><span class="tx"><b>País</b><small id="set-country-v"></small></span><svg class="chev-r" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 5l7 7-7 7"></path></svg></button>
     </div>
     <div id="cloud-sec" hidden>
@@ -3332,6 +3339,7 @@ html.loc-none .top .field-rate:nth-child(3) { grid-column: 4 / 7; }
         if (d && d.onb) state.onb = true;
         if (d && typeof d.msumSeen === "string") state.msumSeen = d.msumSeen;
         if (d && typeof d.country === "string") state.country = d.country;
+        if (d && typeof d.ratesOn === "boolean") state.ratesOn = d.ratesOn;
         if (d && d.instSeen) state.instSeen = true;
         if (d && d.notif) state.notif = true;
         if (d && d.subs && typeof d.subs === "object") state.subs = d.subs;
@@ -3354,7 +3362,7 @@ html.loc-none .top .field-rate:nth-child(3) { grid-column: 4 / 7; }
   }
   function save() {
     try {
-      localStorage.setItem(KEY, JSON.stringify({ items: state.items, rate: state.rate, rateDate: state.rateDate, hideSav: state.hideSav, rateManual: state.rateManual, rateAutoAt: state.rateAutoAt, accounts: state.accounts, templates: state.templates, goals: state.goals, payments: state.payments, paySeries: state.paySeries, earn: state.earn, limits: state.limits, rateHist: state.rateHist, rateHistAt: state.rateHistAt, theme: state.theme, pin: state.pin, backupAt: state.backupAt, onb: state.onb, msumSeen: state.msumSeen, country: state.country, instSeen: state.instSeen, notif: state.notif, subs: state.subs, limCur: state.limCur, lastAcc: state.lastAcc, bn: state.bn, btcUsd: state.btcUsd, btcAt: state.btcAt, rateEur: state.rateEur, rateEurDate: state.rateEurDate, rateEurManual: state.rateEurManual, rateUsdt: state.rateUsdt, rateUsdtDate: state.rateUsdtDate, rateUsdtManual: state.rateUsdtManual, rateUsdtSrc: state.rateUsdtSrc, collapsed: state.collapsed, disp: state.disp, sav: state.sav }));
+      localStorage.setItem(KEY, JSON.stringify({ items: state.items, rate: state.rate, rateDate: state.rateDate, hideSav: state.hideSav, rateManual: state.rateManual, rateAutoAt: state.rateAutoAt, accounts: state.accounts, templates: state.templates, goals: state.goals, payments: state.payments, paySeries: state.paySeries, earn: state.earn, limits: state.limits, rateHist: state.rateHist, rateHistAt: state.rateHistAt, theme: state.theme, pin: state.pin, backupAt: state.backupAt, onb: state.onb, msumSeen: state.msumSeen, country: state.country, ratesOn: !!state.ratesOn, instSeen: state.instSeen, notif: state.notif, subs: state.subs, limCur: state.limCur, lastAcc: state.lastAcc, bn: state.bn, btcUsd: state.btcUsd, btcAt: state.btcAt, rateEur: state.rateEur, rateEurDate: state.rateEurDate, rateEurManual: state.rateEurManual, rateUsdt: state.rateUsdt, rateUsdtDate: state.rateUsdtDate, rateUsdtManual: state.rateUsdtManual, rateUsdtSrc: state.rateUsdtSrc, collapsed: state.collapsed, disp: state.disp, sav: state.sav }));
       window.__saveFail = 0;
     } catch (e) {
       if (!window.__saveFail && window.__toast) window.__toast("No se pudo guardar en este teléfono (puede estar sin espacio). Guarda una copia en Archivos desde Ajustes.");
@@ -3414,7 +3422,8 @@ html.loc-none .top .field-rate:nth-child(3) { grid-column: 4 / 7; }
     var c = countryById(id) || countryById("VE");
     var none = c.code === "USD" || c.code === "EUR";
     LOC = { id: c.id, country: c.n, flag: c.f, code: c.code, none: none, base: none ? c.code : "VES",
-      sym: none ? "$" : c.sym, name: none ? "dólares" : c.name, src: c.id === "VE" ? "BCV" : "", rate: c.rate || 0 };
+      sym: none ? "$" : c.sym, name: none ? "dólares" : c.name, src: c.id === "VE" ? "BCV" : "", rate: c.rate || 0,
+      tier: none ? "none" : (c.id === "VE" || c.id === "AR") ? "full" : "fx" };
   }
   setLocale("VE");
   function locCap() { return LOC.name.charAt(0).toUpperCase() + LOC.name.slice(1); }
@@ -4995,6 +5004,10 @@ html.loc-none .top .field-rate:nth-child(3) { grid-column: 4 / 7; }
         $(f.input).value = num(state[f.v]); histPut(t, o[0], state[f.v]);
       });
       state.rateUsdtSrc = ""; state.rateFail = false; state.rateErr = ""; state.rateAutoAt = Date.now(); save();
+      if (LOC.tier === "full") return getJSON("https://api.coingecko.com/api/v3/simple/price?ids=tether&vs_currencies=" + LOC.code.toLowerCase(), 10000).then(function (g) {
+        var v = g && g.tether && g.tether[LOC.code.toLowerCase()];
+        if (v > 0) { var f = RATE_FIELDS.usdt; state[f.v] = Math.round(v * 10000) / 10000; $(f.input).value = num(state[f.v]); histPut(t, "usdt", state[f.v]); state.rateUsdtSrc = "CoinGecko"; save(); }
+      }).catch(function () {});
     }).catch(function () { state.rateFail = true; state.rateErr = "red"; })
       .then(function () { state.rateLoading = false; render(); });
   }
@@ -5317,6 +5330,9 @@ html.loc-none .top .field-rate:nth-child(3) { grid-column: 4 / 7; }
   function applyLocale() {
     setLocale(state.country || "VE");
     document.documentElement.classList.toggle("loc-none", LOC.none);
+    document.documentElement.classList.toggle("loc-fx", LOC.tier === "fx");
+    document.documentElement.classList.toggle("loc-norates", LOC.tier === "none" && !state.ratesOn);
+    var srr = $("set-rates"); if (srr) { srr.hidden = LOC.tier !== "none"; $("set-rates-v").textContent = state.ratesOn ? "Se muestran arriba en Inicio" : "Ocultas (tu moneda ya es " + (LOC.base === "EUR" ? "el euro" : "el dólar") + ")"; }
     if (LOC.none && state.disp === "VES") state.disp = LOC.base;
     if (typeof ACC_CUR !== "undefined") ACC_CUR.VES.n = locCap();
     document.querySelectorAll('[data-disp="VES"]').forEach(function (b) { b.textContent = LOC.sym; b.hidden = LOC.none; });
@@ -8806,6 +8822,10 @@ html.loc-none .top .field-rate:nth-child(3) { grid-column: 4 / 7; }
       if (cb) cb(); else showToast("Listo: " + LOC.country + ".");
     });
     $("set-country").addEventListener("click", function () { showCtry(false); });
+    $("set-rates").addEventListener("click", function () {
+      state.ratesOn = !state.ratesOn; save(); applyLocale(); render();
+      showToast(state.ratesOn ? "Las tasas del día se muestran en Inicio." : "Tasas del día ocultas.");
+    });
     function startOnb() {
       document.documentElement.classList.add("locked");
       var go = function () { if (!state.country) showCtry(true, function () { showOnb(true); }); else showOnb(true); };
