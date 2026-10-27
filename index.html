@@ -2245,6 +2245,14 @@ html.ai-off .ai-fab { display: none !important; }
 .acc-r .acc-av { width: 30px; height: 30px; transition: transform 0.25s cubic-bezier(0.32, 0.72, 0, 1); }
 .acc-r .acc-av.sym svg { width: 16px; height: 16px; }
 .acc-r:active .acc-av { transform: scale(0.92); }
+
+/* Cambio de página con la barra pequeña: barra, resaltado, etiquetas, + y página se mueven juntos */
+@media (prefers-reduced-motion: no-preference) {
+  body.nav-sync .tabbar { transition: left 0.38s cubic-bezier(0.25, 0.8, 0.25, 1), right 0.38s cubic-bezier(0.25, 0.8, 0.25, 1), height 0.38s cubic-bezier(0.25, 0.8, 0.25, 1), border-radius 0.38s cubic-bezier(0.25, 0.8, 0.25, 1), opacity 0.3s ease !important; }
+  body.nav-sync .tab-lens { transition: transform 0.38s cubic-bezier(0.25, 0.8, 0.25, 1), border-radius 0.38s cubic-bezier(0.25, 0.8, 0.25, 1) !important; }
+  body.nav-sync .tab > :not(svg) { transition: opacity 0.26s ease 0.1s, max-height 0.38s cubic-bezier(0.25, 0.8, 0.25, 1), padding 0.38s cubic-bezier(0.25, 0.8, 0.25, 1) !important; }
+  body.nav-sync .fab, body.nav-sync .ai-fab { transition: bottom 0.38s cubic-bezier(0.25, 0.8, 0.25, 1), transform 0.38s var(--spring), opacity 0.27s ease !important; }
+}
 </style>
 </head>
 <body>
@@ -7961,8 +7969,14 @@ html.ai-off .ai-fab { display: none !important; }
     }
     var navIdx = 0, navT = 0;
     var NAV_I = { goals: 1, pay: 2, hist: 3, accd: 4, bn: 4, set: 4 };
+    // Al cambiar de página con la barra pequeña, la barra crece al mismo ritmo que entra la página
+    var navSyncT = 0;
     function navDir(n) {
       var b = document.body;
+      b.classList.add("nav-sync");
+      b.classList.remove("tb-min");
+      clearTimeout(navSyncT);
+      navSyncT = setTimeout(function () { b.classList.remove("nav-sync"); }, 480);
       b.classList.remove("nav-fwd", "nav-back");
       void b.offsetWidth;
       b.classList.add(n >= navIdx ? "nav-fwd" : "nav-back");
@@ -9081,6 +9095,7 @@ html.ai-off .ai-fab { display: none !important; }
       function onScroll() {
         ticking = false;
         var y = window.scrollY || 0, dy = y - lastY;
+        if (document.body.classList.contains("nav-sync")) dy = 0;
         if (y < 40) document.body.classList.remove("tb-min");
         else if (dy > 6) document.body.classList.add("tb-min");
         else if (dy < -6) document.body.classList.remove("tb-min");
