@@ -24,6 +24,27 @@ Sirve para **varios tipos de negocio**. Al empezar, el dueño elige su **país**
 
 Lo común a todos: ventas o cobros, clientes, gastos, ganancia real, cierre del día, reportes y equipo.
 
+## 1b. Referencia: Fina (el objetivo es parecido)
+
+[Fina](https://www.finapartner.com/) es una startup de Caracas (2023) con un sistema administrativo en la nube para pymes venezolanas:
+- Inventario, ventas, cuentas por cobrar y por pagar, y reportes de ganancia, en bolívares y dólares, desde el navegador o el teléfono.
+- Páginas por tipo de negocio: bodegas, ferreterías, ropa, restaurantes y barberías (con comisiones y cuadre de caja).
+- IA, crédito para negocios (Fina Presta) e integración con Cashea.
+- Según sus propios datos: unos 4.000–5.000 negocios. Levantó una ronda semilla de US$1 millón en agosto de 2026.
+
+**Orbe Negocios persigue lo mismo** (que un negocio pequeño sepa cuánto vende, cuánto le deben, qué tiene y cuánto gana), **pero se diferencia en:**
+1. **Internacional desde el inicio:** monedas, formas de pago e impuestos de cada país. Fina se centra en Venezuela.
+2. **Pensada para el teléfono:** instalable, rápida, con gestos y el estilo de Orbe, en vez de un sistema administrativo de escritorio llevado al móvil.
+3. **Funciona sin internet** y sincroniza después: clave en Venezuela y otros países con mala conexión.
+4. **Automática:** recordatorios de cobro, pedido a proveedores, cierre del día y confirmación de pagos.
+5. **Personal y negocio juntos:** la misma cuenta de Orbe separa el dinero del dueño del dinero del negocio.
+6. **Precio de entrada bajo** y prueba gratis sin tarjeta.
+
+**Lo que conviene copiar de Fina:**
+- Cuentas por pagar (proveedores y deudas del negocio), además de las de cobrar.
+- Páginas y ajustes listos para cada tipo de negocio.
+- A largo plazo, alianzas de crédito o de compra a cuotas (como Cashea), cuando haya historial de ventas.
+
 ## 2. Por qué es una app aparte
 
 | | Orbe personal | Orbe Negocios |
@@ -103,7 +124,7 @@ Todo esto ya está probado en `index.html` y se copia o adapta:
    - Lista «Orbe trabajó por ti».
 2. **Cobrar / Vender:** formas de pago del país, pago mixto, vuelto y recibo por WhatsApp.
 3. **Clientes:** historial, lo que deben (fiado o cuentas por cobrar), recordatorios automáticos y notas.
-4. **Gastos del negocio:** alquiler, servicios, sueldos y compras, para calcular la ganancia real.
+4. **Gastos y cuentas por pagar:** alquiler, servicios, sueldos, compras y lo que el negocio debe a proveedores (con fecha de vencimiento y aviso), para calcular la ganancia real.
 5. **Cierre del día:**
    - Lo esperado contra lo contado en cada forma de pago.
    - Resumen enviado al dueño.
