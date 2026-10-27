@@ -2384,12 +2384,6 @@ html.ai-off .ai-fab { display: none !important; }
       </div>
       </div>
     </section>
-    <div class="bn-entry" id="bn-entry" role="button" tabindex="0" aria-label="Abrir la guía para ahorrar en Binance" hidden>
-      <span class="bn-ic" aria-hidden="true">₮</span>
-      <span><b id="bn-entry-t">Pon tu ahorro a trabajar</b><small id="bn-entry-s"></small></span>
-      <span class="bn-go" aria-hidden="true">›</span>
-      <button type="button" class="bn-x" id="bn-hide" aria-label="Ocultar esta sugerencia">✕</button>
-    </div>
     <div class="gv-mrow"><h2 class="gv-h2 gv-mh" id="gv-metas-h">Metas</h2><button type="button" class="gs-btn" id="goal-sort" hidden><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 4v16M3 8l4-4 4 4M17 20V4M13 16l4 4 4-4"></path></svg>Ordenar</button></div>
     <div class="gv-hero" id="gv-hero">
       <div id="hero-ring"></div>
@@ -2543,10 +2537,6 @@ html.ai-off .ai-fab { display: none !important; }
     </div>
     <div class="set-h">Binance</div>
     <div class="set-group">
-      <div class="set-row">
-        <div class="tx"><b>Tarjeta en el Inicio</b><small>Acceso a la guía para ahorrar en Binance.</small></div>
-        <button type="button" class="switch" id="set-bn" role="switch" aria-checked="true" aria-label="Mostrar la tarjeta de Binance en el Inicio"><span></span></button>
-      </div>
       <button type="button" class="set-row " id="set-bn-open"><span class="tx"><b>Abrir la guía</b><small>Paso a paso para poner tu ahorro a generar rendimiento.</small></span><svg class="chev-r" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 5l7 7-7 7"></path></svg></button>
     </div>
 
@@ -2705,10 +2695,6 @@ html.ai-off .ai-fab { display: none !important; }
       </div>
     </div>
     <ol class="bn-steps" id="bn-steps"></ol>
-    <div class="bn-pin">
-      <div><b>Mostrar en el Inicio</b><small>Una tarjeta en el Inicio para volver a esta guía.</small></div>
-      <button type="button" class="switch" id="bn-pin" role="switch" aria-checked="true" aria-label="Mostrar la tarjeta de Binance en el Inicio"><span></span></button>
-    </div>
     <p class="bn-disc">El botón «Crear mi cuenta» usa un enlace de referido de Orbe: si abres tu cuenta con él, Orbe puede recibir una comisión de Binance y a ti no te cuesta nada. Orbe no es parte de Binance y esto no es asesoría financiera. Binance Earn no es un plazo fijo bancario: el rendimiento cambia, no está garantizado y no tiene garantía de depósito. Orbe nunca te pedirá tu contraseña ni tus códigos.</p>
   </div>
   <div class="pay-view" id="pay-view" role="region" aria-label="Pagos" aria-hidden="true">
@@ -4245,8 +4231,6 @@ html.ai-off .ai-fab { display: none !important; }
     for (var i = 1; i <= total; i++) if (!state.bn.done[i]) { now = i; break; }
     $("bn-prog-t").textContent = now ? "Vas por el paso " + now + " de " + total : "¡Listo! Tu ahorro ya está trabajando";
     $("bn-pct").textContent = Math.round(done / total * 100) + "%";
-    $("bn-pin").setAttribute("aria-checked", state.bn.hide ? "false" : "true");
-    $("set-bn").setAttribute("aria-checked", state.bn.hide ? "false" : "true");
     $("bn-bar").style.width = (done / total * 100) + "%";
     $("bn-ring").innerHTML = ringsSvg([{ p: done / total, c: "#f0b90b" }], 76, 8, 0) + '<span class="bn-ring-n">' + (now ? now : "✓") + "</span>";
     var base0 = bnSavedUsd();
@@ -4274,20 +4258,9 @@ html.ai-off .ai-fab { display: none !important; }
     if (!keepApr) { $("bn-steps").innerHTML = h; }
     renderBnEst();
   }
+  // La guía de Binance ya no se anuncia con una tarjeta: se entra desde el + o desde Ajustes
   function renderBnEntry() {
-    var el = $("bn-entry"), done = bnDoneCount(), total = BN_STEPS.length;
-    var show = !state.bn.hide && !bnHideNow && done < total;
-    $("set-bn").setAttribute("aria-checked", state.bn.hide ? "false" : "true");
-    el.hidden = !show;
-    if ($("earn-add")) $("earn-add").classList.toggle("by-bn", show);
-    if (!show) return;
-    var base = bnSavedUsd();
-    $("bn-entry-t").textContent = done ? "Sigue con tu ahorro en Binance" : "Pon tu ahorro a trabajar";
-    $("bn-entry-s").textContent = done
-      ? "Vas por el paso " + (done + 1) + " de " + total + "."
-      : base > 0
-        ? "Tus " + money(base, "USD") + " ahorrados podrían ganar ~" + money(base * (Math.pow(1 + state.bn.apr / 100 / 365, 365) - 1), "USD") + " al año en USDT."
-        : "Pásalo a USDT en Binance y gana rendimiento, como un plazo fijo.";
+    if ($("earn-add")) $("earn-add").classList.remove("by-bn");
   }
 
   var pay = { y: new Date().getFullYear(), m: new Date().getMonth(), sel: null, tab: "pago" };
@@ -8037,9 +8010,6 @@ html.ai-off .ai-fab { display: none !important; }
     $("pv-back").addEventListener("click", function () { closeViews(); setTab(currentTab()); });
     $("hv-back").addEventListener("click", function () { closeViews(); setTab(currentTab()); });
     $("bv-back").addEventListener("click", function () { closeViews(); setTab(currentTab()); });
-    $("bn-entry").addEventListener("click", function (e) { if (e.target.closest("#bn-hide")) return; openView("bn"); });
-    $("bn-entry").addEventListener("keydown", function (e) { if ((e.key === "Enter" || e.key === " ") && e.target === $("bn-entry")) { e.preventDefault(); openView("bn"); } });
-    $("bn-hide").addEventListener("click", function () { bnHideNow = true; renderBnEntry(); showToast("Tarjeta oculta por ahora. Volverá a salir la próxima vez que abras la app."); });
     $("bn-steps").addEventListener("click", function (e) {
       var b = e.target.closest("[data-bn-toggle]");
       if (b) { var k = b.getAttribute("data-bn-toggle"); state.bn.done[k] = !state.bn.done[k]; save(); renderBn(); renderBnEntry(); return; }
@@ -8054,10 +8024,6 @@ html.ai-off .ai-fab { display: none !important; }
       }
       var a = e.target.closest("a[data-bn-step]");
       if (a) { var st = a.getAttribute("data-bn-step"); state.bn.opened = state.bn.opened || {}; state.bn.opened[st] = Date.now(); save(); }
-    });
-    $("bn-pin").addEventListener("click", function () {
-      state.bn.hide = !state.bn.hide; if (!state.bn.hide) bnHideNow = false; save(); renderBn(); renderBnEntry();
-      showToast(state.bn.hide ? "La tarjeta ya no saldrá en el Inicio." : "Listo, la tarjeta vuelve a salir en el Inicio.");
     });
     /* ---------- Ajustes ---------- */
     var LEGAL_DATE = "14 de octubre de 2026";
@@ -8169,7 +8135,6 @@ html.ai-off .ai-fab { display: none !important; }
         bs.textContent = "Última copia: " + d.getDate() + " " + MESES_C[d.getMonth()] + " " + d.getFullYear() + (backupDue() ? ". Ya toca guardar otra." : ".");
       } else bs.textContent = state.items.length ? "Aún no has guardado ninguna copia. Guárdala en Archivos (iCloud Drive) para no perderla si cambias de teléfono." : "Un archivo con todos tus movimientos. Guárdalo en Archivos (iCloud Drive).";
       bs.parentNode.parentNode.querySelector("b").style.color = backupDue() ? "var(--out)" : "";
-      $("set-bn").setAttribute("aria-checked", state.bn.hide ? "false" : "true");
       renderSetDot();
     }
     $("set-open").addEventListener("click", function () { openView("set"); });
@@ -8182,11 +8147,6 @@ html.ai-off .ai-fab { display: none !important; }
     $("set-ai").addEventListener("click", function () {
       state.aiHide = !state.aiHide; save(); applyAiHide();
       showToast(state.aiHide ? "El asistente ya no saldrá en el Inicio." : "El asistente vuelve a salir en el Inicio.");
-    });
-    $("set-bn").addEventListener("click", function () {
-      state.bn.hide = !state.bn.hide; if (!state.bn.hide) bnHideNow = false;
-      save(); renderBnEntry(); renderSettings();
-      showToast(state.bn.hide ? "La tarjeta ya no saldrá en el Inicio." : "La tarjeta vuelve a salir en el Inicio.");
     });
     $("set-bn-open").addEventListener("click", function () { openView("bn"); });
 
