@@ -2220,6 +2220,9 @@ html.loc-fx .rc-usdt, html.loc-fx [data-rhk="usdt"] { display: none !important; 
 html.loc-fx .top .field-rate:nth-child(1) { grid-column: 1 / 4; }
 html.loc-fx .top .field-rate:nth-child(2) { grid-column: 4 / 7; }
 html.loc-norates .top .rate-card, html.loc-norates #rates-tog, html.loc-norates #rate-ref { display: none !important; }
+
+/* Asistente oculto desde Ajustes */
+html.ai-off .ai-fab { display: none !important; }
 </style>
 </head>
 <body>
@@ -2515,6 +2518,13 @@ html.loc-norates .top .rate-card, html.loc-norates #rates-tog, html.loc-norates 
     </div>
     <p class="hint" style="margin:8px 6px 0;font-size:0.8rem">Tus datos se guardan solo en este teléfono. Si lo pierdes, borras los datos de Safari o cambias de teléfono, solo podrás recuperarlos con una copia. Al guardarla, elige <b>Guardar en Archivos › iCloud Drive</b> o envíatela por correo para tenerla fuera del teléfono.</p>
 
+    <div class="set-h">Asistente financiero</div>
+    <div class="set-group">
+      <div class="set-row">
+        <div class="tx"><b>Botón del asistente</b><small>El botón ✦ sobre el + del Inicio, para pedir un diagnóstico de tu mes con IA.</small></div>
+        <button type="button" class="switch" id="set-ai" role="switch" aria-checked="true" aria-label="Mostrar el botón del asistente financiero"><span></span></button>
+      </div>
+    </div>
     <div class="set-h">Binance</div>
     <div class="set-group">
       <div class="set-row">
@@ -3340,6 +3350,7 @@ html.loc-norates .top .rate-card, html.loc-norates #rates-tog, html.loc-norates 
         if (d && typeof d.msumSeen === "string") state.msumSeen = d.msumSeen;
         if (d && typeof d.country === "string") state.country = d.country;
         if (d && typeof d.ratesOn === "boolean") state.ratesOn = d.ratesOn;
+        if (d && typeof d.aiHide === "boolean") state.aiHide = d.aiHide;
         if (d && d.instSeen) state.instSeen = true;
         if (d && d.notif) state.notif = true;
         if (d && d.subs && typeof d.subs === "object") state.subs = d.subs;
@@ -3362,7 +3373,7 @@ html.loc-norates .top .rate-card, html.loc-norates #rates-tog, html.loc-norates 
   }
   function save() {
     try {
-      localStorage.setItem(KEY, JSON.stringify({ items: state.items, rate: state.rate, rateDate: state.rateDate, hideSav: state.hideSav, rateManual: state.rateManual, rateAutoAt: state.rateAutoAt, accounts: state.accounts, templates: state.templates, goals: state.goals, payments: state.payments, paySeries: state.paySeries, earn: state.earn, limits: state.limits, rateHist: state.rateHist, rateHistAt: state.rateHistAt, theme: state.theme, pin: state.pin, backupAt: state.backupAt, onb: state.onb, msumSeen: state.msumSeen, country: state.country, ratesOn: !!state.ratesOn, instSeen: state.instSeen, notif: state.notif, subs: state.subs, limCur: state.limCur, lastAcc: state.lastAcc, bn: state.bn, btcUsd: state.btcUsd, btcAt: state.btcAt, rateEur: state.rateEur, rateEurDate: state.rateEurDate, rateEurManual: state.rateEurManual, rateUsdt: state.rateUsdt, rateUsdtDate: state.rateUsdtDate, rateUsdtManual: state.rateUsdtManual, rateUsdtSrc: state.rateUsdtSrc, collapsed: state.collapsed, disp: state.disp, sav: state.sav }));
+      localStorage.setItem(KEY, JSON.stringify({ items: state.items, rate: state.rate, rateDate: state.rateDate, hideSav: state.hideSav, rateManual: state.rateManual, rateAutoAt: state.rateAutoAt, accounts: state.accounts, templates: state.templates, goals: state.goals, payments: state.payments, paySeries: state.paySeries, earn: state.earn, limits: state.limits, rateHist: state.rateHist, rateHistAt: state.rateHistAt, theme: state.theme, pin: state.pin, backupAt: state.backupAt, onb: state.onb, msumSeen: state.msumSeen, country: state.country, ratesOn: !!state.ratesOn, aiHide: !!state.aiHide, instSeen: state.instSeen, notif: state.notif, subs: state.subs, limCur: state.limCur, lastAcc: state.lastAcc, bn: state.bn, btcUsd: state.btcUsd, btcAt: state.btcAt, rateEur: state.rateEur, rateEurDate: state.rateEurDate, rateEurManual: state.rateEurManual, rateUsdt: state.rateUsdt, rateUsdtDate: state.rateUsdtDate, rateUsdtManual: state.rateUsdtManual, rateUsdtSrc: state.rateUsdtSrc, collapsed: state.collapsed, disp: state.disp, sav: state.sav }));
       window.__saveFail = 0;
     } catch (e) {
       if (!window.__saveFail && window.__toast) window.__toast("No se pudo guardar en este teléfono (puede estar sin espacio). Guarda una copia en Archivos desde Ajustes.");
@@ -8145,6 +8156,15 @@ html.loc-norates .top .rate-card, html.loc-norates #rates-tog, html.loc-norates 
     }
     $("set-open").addEventListener("click", function () { openView("set"); });
     $("sv2-back").addEventListener("click", function () { closeViews(); setTab(currentTab()); });
+    function applyAiHide() {
+      document.documentElement.classList.toggle("ai-off", !!state.aiHide);
+      $("set-ai").setAttribute("aria-checked", state.aiHide ? "false" : "true");
+    }
+    applyAiHide();
+    $("set-ai").addEventListener("click", function () {
+      state.aiHide = !state.aiHide; save(); applyAiHide();
+      showToast(state.aiHide ? "El asistente ya no saldrá en el Inicio." : "El asistente vuelve a salir en el Inicio.");
+    });
     $("set-bn").addEventListener("click", function () {
       state.bn.hide = !state.bn.hide; if (!state.bn.hide) bnHideNow = false;
       save(); renderBnEntry(); renderSettings();
