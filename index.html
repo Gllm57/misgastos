@@ -2253,6 +2253,11 @@ html.ai-off .ai-fab { display: none !important; }
   body.nav-sync .tab > :not(svg) { transition: opacity 0.26s ease 0.1s, max-height 0.38s cubic-bezier(0.25, 0.8, 0.25, 1), padding 0.38s cubic-bezier(0.25, 0.8, 0.25, 1) !important; }
   body.nav-sync .fab, body.nav-sync .ai-fab { transition: bottom 0.38s cubic-bezier(0.25, 0.8, 0.25, 1), transform 0.38s var(--spring), opacity 0.27s ease !important; }
 }
+
+/* Logo de cada meta junto a su nombre */
+.goal-name .g-av { display: inline-flex !important; vertical-align: -5px; margin-right: 8px; width: 24px !important; height: 24px !important; }
+.goal-name .g-av.sym svg { width: 14px; height: 14px; }
+.goal-name .g-av:not(.sym) { font-size: 0.55rem !important; }
 </style>
 </head>
 <body>
@@ -2908,6 +2913,17 @@ html.ai-off .ai-fab { display: none !important; }
         <div class="wide">
           <label for="ge-nombre">¿Para qué estás ahorrando?</label>
           <input type="text" id="ge-nombre" maxlength="30" placeholder="Ej: Viaje, celular nuevo">
+        </div>
+        <div class="wide">
+          <div class="acc-look">
+            <span class="acc-prev" id="ge-prev"></span>
+            <div class="acc-pick">
+              <div class="acc-pl">Símbolo</div>
+              <div class="acc-icons" id="ge-icons" role="radiogroup" aria-label="Símbolo de la meta"></div>
+              <div class="acc-pl">Color</div>
+              <div class="acc-colors" id="ge-colors" role="radiogroup" aria-label="Color de la meta"></div>
+            </div>
+          </div>
         </div>
         <div>
           <label for="ge-meta">Monto de la meta</label>
@@ -3984,8 +4000,30 @@ html.ai-off .ai-fab { display: none !important; }
   var goalsOpen = {};
   var gcRange = 0;
   function goalColor(g) {
+    if (g && g.color && HEX_RE.test(g.color)) return g.color;
     var i = state.goals.indexOf(g);
     return GOAL_COLORS[(i < 0 ? 0 : i) % GOAL_COLORS.length];
+  }
+  // Símbolos para las metas (de línea, toman el color de la meta)
+  var GOAL_SVG = {
+    plane: '<path d="M10.5 13.5L4 11l1.5-1.5 7 1L17 6c.8-.8 2.2-.8 2.5 0 .3.4.2 1.4-.6 2.2l-4.4 4.4 1 7L14 21l-2.5-6.5"></path>',
+    car: '<path d="M4 15l2-5.5A2 2 0 0 1 7.9 8h8.2a2 2 0 0 1 1.9 1.5L20 15v3a1 1 0 0 1-1 1h-1M4 15v3a1 1 0 0 0 1 1h1M4 15h16"></path><circle cx="8" cy="18.5" r="1.5"></circle><circle cx="16" cy="18.5" r="1.5"></circle>',
+    home: '<path d="M4 11l8-6.5 8 6.5"></path><path d="M6 9.5V20h12V9.5"></path><path d="M10 20v-5h4v5"></path>',
+    phone: '<rect x="7" y="3" width="10" height="18" rx="2.5"></rect><path d="M11 17.5h2"></path>',
+    laptop: '<rect x="5" y="5" width="14" height="10" rx="1.5"></rect><path d="M3 19h18l-2-4H5z"></path>',
+    gift: '<rect x="3" y="8" width="18" height="4" rx="1"></rect><path d="M5 12v8h14v-8M12 8v12M12 8c-1.5-3-5-3.5-5-1s3 1 5 1zM12 8c1.5-3 5-3.5 5-1s-3 1-5 1z"></path>',
+    grad: '<path d="M2 9l10-5 10 5-10 5z"></path><path d="M6 11v5c3 2 9 2 12 0v-5M22 9v6"></path>',
+    heart: '<path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10z"></path>',
+    shield: '<path d="M12 3l7 3v6c0 4.5-3 7.5-7 9-4-1.5-7-4.5-7-9V6z"></path><path d="M9 12l2 2 4-4"></path>',
+    paw: '<circle cx="6.5" cy="10.5" r="1.7"></circle><circle cx="10" cy="6.5" r="1.7"></circle><circle cx="14.5" cy="6.5" r="1.7"></circle><circle cx="18" cy="10.5" r="1.7"></circle><path d="M8 17.5c0-2.6 1.8-5 4-5s4 2.4 4 5c0 1.5-1.6 2-4 2s-4-.5-4-2z"></path>',
+    piggy: '<path d="M5 11a7 6 0 0 1 12.5-3.5H20l-.6 2.6 2 1v3.4l-2.2.5-1.6 2.8h-2.2l-.5-1.7H10l-.5 1.7H7.2l-1.4-2.6C5.3 14 5 12.6 5 11z"></path><path d="M15 11h.01"></path>'
+  };
+  var GOAL_ICONS = ["", "plane", "car", "home", "phone", "laptop", "gift", "grad", "heart", "shield", "paw", "piggy"];
+  var GOAL_ICON_N = { "": "Iniciales", plane: "Viaje", car: "Carro", home: "Casa", phone: "Celular", laptop: "Computadora", gift: "Regalo", grad: "Estudios", heart: "Salud", shield: "Emergencias", paw: "Mascota", piggy: "Ahorro" };
+  function goalSvg(k) { return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' + GOAL_SVG[k] + "</svg>"; }
+  function goalAvatar(g, cls) {
+    var ic = g.icon && GOAL_SVG[g.icon] ? g.icon : "";
+    return '<span class="acc-av' + (cls ? " " + cls : "") + (ic ? " sym" : "") + '" style="--c:' + goalColor(g) + '" aria-hidden="true">' + (ic ? goalSvg(ic) : esc(accInitials(g.nombre))) + "</span>";
   }
   function addDaysIso(iso, n) {
     var p = iso.split("-"), d = new Date(Number(p[0]), Number(p[1]) - 1, Number(p[2]) + n);
@@ -4117,7 +4155,7 @@ html.ai-off .ai-fab { display: none !important; }
         '<button type="button" class="goal-head" data-goal-open="' + g.id + '" aria-expanded="false" aria-controls="gd-' + g.id + '">' +
         '<span class="ring"><svg viewBox="0 0 42 42" aria-hidden="true"><circle class="trk" cx="21" cy="21" r="15.9155"></circle><circle class="bar" cx="21" cy="21" r="15.9155" style="--p:' + o.pct.toFixed(2) + '"></circle></svg>' +
         '<span class="pct">' + (o.done ? "✓" : fmtPct(o.pct)) + "</span></span>" +
-        '<span class="goal-main"><span class="goal-name">' + esc(g.nombre) + '</span><span class="goal-amt">' + mask(money(bal, g.moneda) + " de " + money(g.meta, g.moneda)) +
+        '<span class="goal-main"><span class="goal-name">' + goalAvatar(g, "xs g-av") + esc(g.nombre) + '</span><span class="goal-amt">' + mask(money(bal, g.moneda) + " de " + money(g.meta, g.moneda)) +
         '</span><span class="goal-sub">' + (o.done ? "¡Meta lograda!" : "Te faltan " + mask(money(rem, g.moneda))) + "</span>" + goalAccs(evs) + "</span>" + chev +
         '<span class="goal-short' + (o.done || o.pct >= 85 ? " hot" : "") + '">' + shortEta + "</span></button>" +
         '<div class="gbar" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="' + Math.round(o.pct) + '"><span style="width:' + o.pct.toFixed(2) + '%"></span>' + ticks + "</div>" +
@@ -7244,8 +7282,26 @@ html.ai-off .ai-fab { display: none !important; }
         return it.tipo === "traspaso" && ((it.hacia.k === "meta" && it.hacia.id === g.id) || (it.desde.k === "meta" && it.desde.id === g.id));
       });
     }
+    var geLook = { icon: "", color: "" };
+    function renderGeLook() {
+      var g0 = geId ? goalById(geId) : null;
+      var fake = { nombre: $("ge-nombre").value || "Meta", icon: geLook.icon, color: geLook.color };
+      var col = geLook.color || (g0 ? goalColor(g0) : GOAL_COLORS[state.goals.length % GOAL_COLORS.length]);
+      fake.color = col;
+      $("ge-prev").innerHTML = goalAvatar(fake, "big");
+      $("ge-icons").innerHTML = GOAL_ICONS.map(function (ic) {
+        return '<button type="button" role="radio" data-ge-ic="' + ic + '" aria-checked="' + (ic === geLook.icon ? "true" : "false") + '" aria-label="' + GOAL_ICON_N[ic] + '">' + (ic ? goalSvg(ic) : '<span class="ini">Aa</span>') + "</button>";
+      }).join("");
+      $("ge-colors").innerHTML = GOAL_COLORS.concat(["#d6502b"]).map(function (c) {
+        return '<button type="button" role="radio" data-ge-col="' + c + '" aria-checked="' + (c === col ? "true" : "false") + '" aria-label="Color" style="--c:' + c + '"></button>';
+      }).join("");
+    }
+    $("ge-icons").addEventListener("click", function (e) { var b = e.target.closest("[data-ge-ic]"); if (b) { geLook.icon = b.getAttribute("data-ge-ic"); renderGeLook(); } });
+    $("ge-colors").addEventListener("click", function (e) { var b = e.target.closest("[data-ge-col]"); if (b) { geLook.color = b.getAttribute("data-ge-col"); renderGeLook(); } });
+    $("ge-nombre").addEventListener("input", function () { if (!geLook.icon) renderGeLook(); });
     function openGe(g) {
       geId = g ? g.id : null;
+      geLook = { icon: g && g.icon && GOAL_SVG[g.icon] ? g.icon : "", color: g && g.color && HEX_RE.test(g.color) ? g.color : "" };
       $("h-ge").textContent = g ? "Editar meta" : "Nueva meta";
       $("ge-save").textContent = g ? "Guardar cambios" : "Crear meta";
       $("ge-nombre").value = g ? g.nombre : "";
@@ -7253,6 +7309,7 @@ html.ai-off .ai-fab { display: none !important; }
       $("ge-moneda").value = g ? g.moneda : (state.disp === "VES" ? "VES" : "USD");
       $("ge-moneda").disabled = !!(g && goalUsed(g));
       $("ge-err").textContent = "";
+      renderGeLook();
       $("ge-sheet").hidden = false;
 
     }
@@ -7266,9 +7323,12 @@ html.ai-off .ai-fab { display: none !important; }
       if (!(meta > 0)) { err.textContent = "Escribe el monto que quieres juntar."; $("ge-meta").focus(); return; }
       if (geId) {
         var g = goalById(geId);
-        if (g) { g.nombre = nombre; g.meta = meta; if (!goalUsed(g)) g.moneda = $("ge-moneda").value; }
+        if (g) { g.nombre = nombre; g.meta = meta; if (!goalUsed(g)) g.moneda = $("ge-moneda").value; g.icon = geLook.icon || undefined; if (geLook.color) g.color = geLook.color; }
       } else {
-        state.goals.push({ id: Date.now(), nombre: nombre, meta: meta, moneda: $("ge-moneda").value });
+        var ng = { id: Date.now(), nombre: nombre, meta: meta, moneda: $("ge-moneda").value };
+        if (geLook.icon) ng.icon = geLook.icon;
+        ng.color = geLook.color || GOAL_COLORS[state.goals.length % GOAL_COLORS.length];
+        state.goals.push(ng);
       }
       var wasEditG = !!geId;
       save(); render();
@@ -7326,7 +7386,7 @@ html.ai-off .ai-fab { display: none !important; }
       var out = mvOut(v, c.from, c.to, r);
       var left = gm.mode === "dep" ? "Sale de " + c.o.label.split(" · ")[0] : "Sale de la meta";
       var right = gm.mode === "dep" ? "Entra a la meta" : "Llega a " + c.o.label;
-      var gav = '<span class="acc-av xs" style="--c:' + goalColor(c.g) + '" aria-hidden="true">' + esc(accInitials(c.g.nombre)) + "</span>";
+      var gav = goalAvatar(c.g, "xs");
       var lav = gm.mode === "dep" ? accAvatarXs(c.o.acc) : gav, rav = gm.mode === "dep" ? gav : accAvatarXs(c.o.acc);
       p.innerHTML = '<div class="pv"><span class="pv-l">' + lav + esc(left) + "</span><strong>" + money(v, c.from) + "</strong></div>" +
         '<div class="pv"><span class="pv-l">' + rav + esc(right) + "</span><strong>" + money(out, c.to) + "</strong></div>" +
