@@ -26,4 +26,10 @@ La clave publicable puede ir en la app: no da acceso a los datos de nadie. Las r
 
 ## Pendiente para más adelante
 
+- **Correos propios con Resend (antes de publicar Orbe para todo el mundo).** El correo que trae Supabase es de prueba: envía muy pocos correos por hora y no garantiza que lleguen, así que fallarían el registro y la recuperación de contraseña. Se necesita un dominio propio (por ejemplo `orbeapp.com`). Pasos:
+  1. En resend.com: **Domains → Add Domain**, copiar los registros DNS donde se compró el dominio y esperar a que salga **Verified**. Luego **API Keys → Create API Key** (Sending access).
+  2. En Supabase (a-fuego), **Authentication → Emails → SMTP Settings → Enable Custom SMTP**: remitente `no-reply@tudominio.com`, nombre `Orbe`, host `smtp.resend.com`, puerto `465`, usuario `resend`, contraseña la clave `re_...`. La clave se pega solo ahí, nunca en el código.
+  3. **Authentication → Rate Limits**: subir el límite de correos a unos 100 por hora.
+  4. Opcional: correos de confirmación y de recuperar contraseña en español con el estilo de Orbe (**Authentication → Emails → Templates**).
+
 - Borrar la cuenta completa (correo y contraseña) desde la app necesita una función en el servidor (Edge Function). Hoy la app borra los datos de la nube; la cuenta se borra desde el panel de Supabase.
