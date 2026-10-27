@@ -733,7 +733,7 @@ button.set-row:active { background: var(--bg); }
 .btn-danger:disabled { opacity: 0.4; cursor: not-allowed; }
 
 /* Bloqueo con código */
-html.locked body > *:not(#lock):not(#cf-sheet):not(#toast):not(#onb):not(#lg-sheet):not(#splash) { visibility: hidden; }
+html.locked body > *:not(#lock):not(#cf-sheet):not(#toast):not(#onb):not(#lg-sheet):not(#ctry):not(#splash) { visibility: hidden; }
 #lg-sheet { z-index: 95; }
 .lock { position: fixed; inset: 0; z-index: 100; background: var(--bg); display: flex; flex-direction: column; align-items: center; justify-content: center; padding: calc(24px + env(safe-area-inset-top, 0px)) max(16px, env(safe-area-inset-right, 0px)) calc(24px + env(safe-area-inset-bottom, 0px)) max(16px, env(safe-area-inset-left, 0px)); }
 .lock[hidden] { display: none; }
@@ -823,6 +823,7 @@ html.sheet-open .tabbar, html.sheet-open .fab, html.sheet-open .ai-fab, html.she
 .acc-sum > div { min-width: 0; }
 .acc-sum .l { display: block; color: var(--muted); font-size: 0.8rem; }
 .acc-sum strong { display: block; font-family: var(--display); font-size: 1.45rem; line-height: 1.2; font-variant-numeric: tabular-nums; }
+.acc-n { flex: none; font-size: 0.78rem; font-weight: 600; color: var(--muted); padding: 4px 10px; border-radius: 999px; border: 1px solid var(--line); }
 .acc-list li { list-style: none; }
 .acc-av { --c: var(--accent); width: 42px; height: 42px; display: flex; align-items: center; justify-content: center; font-family: var(--display); font-weight: 700; font-size: 0.95rem; color: var(--c); flex: none; }
 .acc-av.big { width: 56px; height: 56px; border-radius: 18px; font-size: 1.2rem; }
@@ -1897,6 +1898,40 @@ html, body, button, a, input, select, textarea, label, [role="button"] { touch-a
 /* ===== Cuentas: anillo más grande en el mismo espacio ===== */
 .acc3 { grid-template-columns: 128px minmax(0, 1fr) !important; gap: 12px !important; }
 .acc3 .acc-sum, .acc3 .acc-sum svg { width: 128px !important; height: 128px !important; }
+
+/* ===== Selector de país ===== */
+.ctry { position: fixed; inset: 0; z-index: 92; background: var(--bg); display: flex; flex-direction: column; gap: 12px; padding: calc(10px + env(safe-area-inset-top, 0px)) max(16px, env(safe-area-inset-right, 0px)) calc(16px + env(safe-area-inset-bottom, 0px)) max(16px, env(safe-area-inset-left, 0px)); animation: fadeIn 0.4s ease backwards; }
+.ctry[hidden] { display: none; }
+.ctry > * { width: 100%; max-width: 520px; margin-left: auto; margin-right: auto; }
+.ctry-top { display: flex; justify-content: flex-end; min-height: 36px; }
+.ctry-x { width: 36px; height: 36px; border-radius: 50%; border: 0; background: var(--fill); color: var(--ink); cursor: pointer; }
+.ctry-x[hidden] { visibility: hidden; display: block; }
+.ctry-head { display: grid; justify-items: center; text-align: center; gap: 6px; }
+.ctry-globe { width: 64px; height: 64px; border-radius: 50%; display: grid; place-items: center; color: var(--accent); background: color-mix(in srgb, var(--accent) 15%, transparent); animation: dotPop 0.68s cubic-bezier(0.32, 0.72, 0, 1) backwards; }
+.ctry-globe svg { width: 32px; height: 32px; }
+.ctry-head h2 { margin: 4px 0 0; font-size: 1.7rem; letter-spacing: -0.03em; }
+.ctry-head p { margin: 0; color: var(--muted); max-width: 30ch; }
+.ctry-search { display: flex; align-items: center; gap: 8px; padding: 0 14px; height: 46px; border-radius: 99px; background: var(--fill); color: var(--muted); }
+.ctry-search svg { width: 18px; height: 18px; flex: none; }
+.ctry-search input { flex: 1; min-width: 0; border: 0 !important; background: none !important; box-shadow: none !important; font: inherit; font-size: 16px; color: var(--ink); padding: 0; outline: none; }
+.ctry-list { list-style: none; margin: 0; padding: 0; overflow-y: auto; flex: 1; min-height: 0; -webkit-overflow-scrolling: touch; }
+.ctry-list li { animation: fadeUp 0.47s cubic-bezier(0.32, 0.72, 0, 1) calc(var(--i, 0) * 25ms) backwards; }
+.ctry-list button { width: 100%; display: flex; align-items: center; gap: 12px; padding: 10px 8px; border: 0; border-radius: 16px; background: none; font: inherit; color: var(--ink); text-align: left; cursor: pointer; transition: background 0.27s ease; }
+.ctry-list button[aria-pressed="true"] { background: color-mix(in srgb, var(--accent) 14%, transparent); }
+.ctry-list .cf { font-size: 1.6rem; line-height: 1; width: 34px; text-align: center; }
+.ctry-list .cn { flex: 1; display: grid; min-width: 0; }
+.ctry-list .cn b { font-weight: 600; }
+.ctry-list .cn small { color: var(--muted); font-size: 0.8rem; }
+.ctry-list i { width: 22px; height: 22px; border-radius: 50%; box-shadow: inset 0 0 0 2px var(--line); flex: none; transition: background 0.27s, box-shadow 0.27s; display: grid; place-items: center; }
+.ctry-list [aria-pressed="true"] i { background: var(--accent); box-shadow: none; }
+.ctry-list [aria-pressed="true"] i::after { content: ""; width: 9px; height: 5px; border: 2px solid #fff; border-top: 0; border-right: 0; transform: translateY(-1px) rotate(-45deg); }
+.ctry-none { color: var(--muted); text-align: center; padding: 20px; }
+.ctry-warn { margin: 0; font-size: 0.82rem; color: var(--muted); text-align: center; }
+.ctry-go { margin: 0 auto !important; min-height: 52px; border-radius: 99px !important; }
+.ctry-go:disabled { opacity: 0.45; }
+html.loc-none [data-disp="VES"], html.loc-none .rc-usd { display: none !important; }
+.flow { min-width: 0; }
+.flow .v { max-width: 100%; overflow: hidden; white-space: nowrap; }
 .bal-note { font-size: 0.8rem !important; font-weight: 500; margin-top: 4px !important; }
 .bal-note b { color: var(--ink); font-weight: 600; font-variant-numeric: tabular-nums; }
 .bal-note b.pos { color: var(--in); }
@@ -1938,7 +1973,6 @@ html, body, button, a, input, select, textarea, label, [role="button"] { touch-a
 /* Inicio no anima hasta que se ve (pantalla de carga o clave delante) */
 html.hold main, html.hold main *, html.hold .tabbar, html.hold .tabbar *, html.hold .fab { animation-play-state: paused !important; }
 
-/* La página nunca se mueve de lado: solo los carruseles de pastillas se deslizan horizontalmente */
 html { overflow-x: hidden; overscroll-behavior-x: none; }
 body { overflow-x: clip; }
 main, .goals-view, .pay-view, .hist-view, .bn-view, .set-view, .accd-view { touch-action: pan-y; }
@@ -2148,6 +2182,44 @@ html.touring #inst { display: none !important; }
 .goal-accs .ga-av .acc-av { width: 20px !important; height: 20px !important; box-shadow: 0 0 0 2px var(--surface); background: color-mix(in srgb, var(--c) 18%, var(--surface)) !important; }
 .goal-accs .ga-av .acc-av + .acc-av { margin-left: -6px; }
 .goal-accs .ga-t { font-size: 0.74rem; color: var(--muted); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+/* Pantalla de países: cuadrada en iPhone (alto real, fondo quieto, filas alineadas, teclado) */
+html.ctry-open, html.ctry-open body { overflow: hidden !important; overscroll-behavior: none; }
+.ctry { height: 100%; height: 100dvh; box-sizing: border-box; overflow: hidden; overscroll-behavior: contain; gap: 14px; align-items: stretch; }
+.ctry > * { flex: none; box-sizing: border-box; }
+.ctry > .ctry-list { flex: 1 1 auto; min-height: 0; }
+.ctry-top { min-height: 36px; margin-bottom: -18px; position: relative; z-index: 1; }
+.ctry-head { transition: opacity 0.3s ease; }
+.ctry-head p { line-height: 1.4; }
+.ctry-list { overscroll-behavior: contain; padding: 2px 0 8px; mask-image: linear-gradient(to bottom, #000 calc(100% - 22px), transparent); -webkit-mask-image: linear-gradient(to bottom, #000 calc(100% - 22px), transparent); }
+.ctry-list li { list-style: none; }
+.ctry-list button { min-height: 62px; padding: 10px 12px; box-sizing: border-box; }
+.ctry-list .cf { display: flex; align-items: center; justify-content: center; width: 36px; height: 36px; flex: none; font-size: 1.7rem; line-height: 1; font-family: "Apple Color Emoji", "Segoe UI Emoji", "Noto Color Emoji", sans-serif; }
+.ctry-list .cn { gap: 1px; }
+.ctry-list .cn b, .ctry-list .cn small { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.ctry-list li + li button { margin-top: 2px; }
+.ctry-search { flex: none; }
+.ctry-warn { line-height: 1.4; }
+.ctry-go { width: 100%; }
+.ctry.typing .ctry-head { display: none; }
+.ctry.typing .ctry-top { margin-bottom: 0; }
+@media (max-height: 740px) {
+  .ctry { gap: 10px; }
+  .ctry-globe { width: 48px; height: 48px; }
+  .ctry-globe svg { width: 24px; height: 24px; }
+  .ctry-head h2 { font-size: 1.4rem; margin-top: 0; }
+  .ctry-head p { font-size: 0.88rem; }
+  .ctry-list button { min-height: 56px; padding: 8px 10px; }
+}
+/* Países con dólar o euro: sin el hueco de la tasa del dólar, las otras dos se reparten el ancho */
+html.loc-none .top .field-rate:nth-child(2) { grid-column: 1 / 4; border-left: 0 !important; }
+html.loc-none .top .field-rate:nth-child(3) { grid-column: 4 / 7; }
+
+/* Tasas según el país: dólar y euro donde la moneda es estable; nada en países con dólar o euro (se puede activar en Ajustes) */
+html.loc-fx .rc-usdt, html.loc-fx [data-rhk="usdt"] { display: none !important; }
+html.loc-fx .top .field-rate:nth-child(1) { grid-column: 1 / 4; }
+html.loc-fx .top .field-rate:nth-child(2) { grid-column: 4 / 7; }
+html.loc-norates .top .rate-card, html.loc-norates #rates-tog, html.loc-norates #rate-ref { display: none !important; }
 </style>
 </head>
 <body>
@@ -2383,6 +2455,11 @@ html.touring #inst { display: none !important; }
     </div>
     <h1 class="gv-title">Ajustes</h1>
 
+    <div class="set-h">País y moneda</div>
+    <div class="set-group">
+      <button type="button" class="set-row" id="set-rates" hidden><span class="tx"><b>Tasas del día</b><small id="set-rates-v"></small></span><svg class="chev-r" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 5l7 7-7 7"></path></svg></button>
+      <button type="button" class="set-row" id="set-country"><span class="tx"><b>País</b><small id="set-country-v"></small></span><svg class="chev-r" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 5l7 7-7 7"></path></svg></button>
+    </div>
     <div id="cloud-sec" hidden>
       <div class="set-h">Tu cuenta</div>
       <div class="set-group">
@@ -2543,6 +2620,18 @@ html.touring #inst { display: none !important; }
       <div class="sheet-foot"><button type="button" class="primary btn-danger" id="cf-ok"></button>
       <button type="button" class="secondary" id="cf-cancel" style="width:100%;margin-top:8px">Cancelar</button></div>
     </section>
+  </div>
+  <div class="ctry" id="ctry" hidden role="dialog" aria-modal="true" aria-labelledby="ctry-t">
+    <div class="ctry-top"><button type="button" class="ctry-x" id="ctry-x" aria-label="Cerrar" hidden>✕</button></div>
+    <div class="ctry-head">
+      <div class="ctry-globe" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"></circle><path d="M3 12h18M12 3c2.5 2.6 3.8 5.6 3.8 9s-1.3 6.4-3.8 9c-2.5-2.6-3.8-5.6-3.8-9S9.5 5.6 12 3z"></path></svg></div>
+      <h2 id="ctry-t">¿Dónde vives?</h2>
+      <p>Usaremos la moneda de tu país junto al dólar, el euro y USDT.</p>
+    </div>
+    <div class="ctry-search"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"></circle><path d="M20 20l-3.5-3.5"></path></svg><input type="text" id="ctry-q" placeholder="Buscar país" autocomplete="off" aria-label="Buscar país"></div>
+    <ul class="ctry-list" id="ctry-list"></ul>
+    <p class="ctry-warn" id="ctry-warn" hidden></p>
+    <button type="button" class="primary ctry-go" id="ctry-go" disabled>Continuar</button>
   </div>
   <div class="tour" id="tour" hidden>
     <div class="tour-hole" id="tour-hole"></div>
@@ -3233,6 +3322,7 @@ html.touring #inst { display: none !important; }
         if (d && typeof d.rate === "number") state.rate = d.rate;
         if (d && typeof d.rateDate === "string") state.rateDate = d.rateDate;
         if (d && typeof d.hideSav === "boolean") state.hideSav = d.hideSav;
+        if (d && typeof d.rateManual === "string") state.rateManual = d.rateManual;
         if (d && typeof d.rateAutoAt === "number") state.rateAutoAt = d.rateAutoAt;
         if (d && Array.isArray(d.accounts)) state.accounts = d.accounts;
         if (d && Array.isArray(d.templates)) state.templates = d.templates;
@@ -3248,6 +3338,8 @@ html.touring #inst { display: none !important; }
         if (d && typeof d.backupAt === "number") state.backupAt = d.backupAt;
         if (d && d.onb) state.onb = true;
         if (d && typeof d.msumSeen === "string") state.msumSeen = d.msumSeen;
+        if (d && typeof d.country === "string") state.country = d.country;
+        if (d && typeof d.ratesOn === "boolean") state.ratesOn = d.ratesOn;
         if (d && d.instSeen) state.instSeen = true;
         if (d && d.notif) state.notif = true;
         if (d && d.subs && typeof d.subs === "object") state.subs = d.subs;
@@ -3257,8 +3349,10 @@ html.touring #inst { display: none !important; }
         if (d && typeof d.btcUsd === "number") { state.btcUsd = d.btcUsd; state.btcAt = d.btcAt || 0; }
         if (d && typeof d.rateEur === "number") state.rateEur = d.rateEur;
         if (d && typeof d.rateEurDate === "string") state.rateEurDate = d.rateEurDate;
+        if (d && typeof d.rateEurManual === "string") state.rateEurManual = d.rateEurManual;
         if (d && typeof d.rateUsdt === "number") state.rateUsdt = d.rateUsdt;
         if (d && typeof d.rateUsdtDate === "string") state.rateUsdtDate = d.rateUsdtDate;
+        if (d && typeof d.rateUsdtManual === "string") state.rateUsdtManual = d.rateUsdtManual;
         if (d && typeof d.rateUsdtSrc === "string") state.rateUsdtSrc = d.rateUsdtSrc;
         if (d && d.collapsed && typeof d.collapsed === "object") state.collapsed = d.collapsed;
         if (d && (d.disp === "USD" || d.disp === "VES" || d.disp === "EUR")) state.disp = d.disp;
@@ -3268,7 +3362,7 @@ html.touring #inst { display: none !important; }
   }
   function save() {
     try {
-      localStorage.setItem(KEY, JSON.stringify({ items: state.items, rate: state.rate, rateDate: state.rateDate, hideSav: state.hideSav, rateAutoAt: state.rateAutoAt, accounts: state.accounts, templates: state.templates, goals: state.goals, payments: state.payments, paySeries: state.paySeries, earn: state.earn, limits: state.limits, rateHist: state.rateHist, rateHistAt: state.rateHistAt, theme: state.theme, pin: state.pin, backupAt: state.backupAt, onb: state.onb, msumSeen: state.msumSeen, instSeen: state.instSeen, notif: state.notif, subs: state.subs, limCur: state.limCur, lastAcc: state.lastAcc, bn: state.bn, btcUsd: state.btcUsd, btcAt: state.btcAt, rateEur: state.rateEur, rateEurDate: state.rateEurDate, rateUsdt: state.rateUsdt, rateUsdtDate: state.rateUsdtDate, rateUsdtSrc: state.rateUsdtSrc, collapsed: state.collapsed, disp: state.disp, sav: state.sav }));
+      localStorage.setItem(KEY, JSON.stringify({ items: state.items, rate: state.rate, rateDate: state.rateDate, hideSav: state.hideSav, rateManual: state.rateManual, rateAutoAt: state.rateAutoAt, accounts: state.accounts, templates: state.templates, goals: state.goals, payments: state.payments, paySeries: state.paySeries, earn: state.earn, limits: state.limits, rateHist: state.rateHist, rateHistAt: state.rateHistAt, theme: state.theme, pin: state.pin, backupAt: state.backupAt, onb: state.onb, msumSeen: state.msumSeen, country: state.country, ratesOn: !!state.ratesOn, instSeen: state.instSeen, notif: state.notif, subs: state.subs, limCur: state.limCur, lastAcc: state.lastAcc, bn: state.bn, btcUsd: state.btcUsd, btcAt: state.btcAt, rateEur: state.rateEur, rateEurDate: state.rateEurDate, rateEurManual: state.rateEurManual, rateUsdt: state.rateUsdt, rateUsdtDate: state.rateUsdtDate, rateUsdtManual: state.rateUsdtManual, rateUsdtSrc: state.rateUsdtSrc, collapsed: state.collapsed, disp: state.disp, sav: state.sav }));
       window.__saveFail = 0;
     } catch (e) {
       if (!window.__saveFail && window.__toast) window.__toast("No se pudo guardar en este teléfono (puede estar sin espacio). Guarda una copia en Archivos desde Ajustes.");
@@ -3293,6 +3387,46 @@ html.touring #inst { display: none !important; }
     var k = d === undefined ? 2 : d;
     return n.toLocaleString("es-VE", { minimumFractionDigits: k, maximumFractionDigits: k });
   }
+  // País y moneda local. Internamente la moneda local usa la clave "VES"; aquí se decide cómo se llama y su símbolo.
+  var EURUSD = 1.13;
+  var COUNTRIES = [
+    { id: "AR", n: "Argentina", f: "🇦🇷", code: "ARS", sym: "AR$", name: "pesos argentinos", rate: 1200 },
+    { id: "BO", n: "Bolivia", f: "🇧🇴", code: "BOB", sym: "Bs.", name: "bolivianos", rate: 6.96 },
+    { id: "BR", n: "Brasil", f: "🇧🇷", code: "BRL", sym: "R$", name: "reales", rate: 5.4 },
+    { id: "CA", n: "Canadá", f: "🇨🇦", code: "CAD", sym: "CA$", name: "dólares canadienses", rate: 1.37 },
+    { id: "CL", n: "Chile", f: "🇨🇱", code: "CLP", sym: "CLP$", name: "pesos chilenos", rate: 940 },
+    { id: "CO", n: "Colombia", f: "🇨🇴", code: "COP", sym: "COL$", name: "pesos colombianos", rate: 4000 },
+    { id: "CR", n: "Costa Rica", f: "🇨🇷", code: "CRC", sym: "₡", name: "colones", rate: 510 },
+    { id: "EC", n: "Ecuador", f: "🇪🇨", code: "USD" },
+    { id: "SV", n: "El Salvador", f: "🇸🇻", code: "USD" },
+    { id: "ES", n: "España", f: "🇪🇸", code: "EUR" },
+    { id: "US", n: "Estados Unidos", f: "🇺🇸", code: "USD" },
+    { id: "FR", n: "Francia", f: "🇫🇷", code: "EUR" },
+    { id: "GT", n: "Guatemala", f: "🇬🇹", code: "GTQ", sym: "Q", name: "quetzales", rate: 7.7 },
+    { id: "HN", n: "Honduras", f: "🇭🇳", code: "HNL", sym: "L", name: "lempiras", rate: 26 },
+    { id: "IT", n: "Italia", f: "🇮🇹", code: "EUR" },
+    { id: "MX", n: "México", f: "🇲🇽", code: "MXN", sym: "MX$", name: "pesos mexicanos", rate: 18.5 },
+    { id: "NI", n: "Nicaragua", f: "🇳🇮", code: "NIO", sym: "C$", name: "córdobas", rate: 36.7 },
+    { id: "PA", n: "Panamá", f: "🇵🇦", code: "USD" },
+    { id: "PY", n: "Paraguay", f: "🇵🇾", code: "PYG", sym: "₲", name: "guaraníes", rate: 7700 },
+    { id: "PE", n: "Perú", f: "🇵🇪", code: "PEN", sym: "S/", name: "soles", rate: 3.7 },
+    { id: "PT", n: "Portugal", f: "🇵🇹", code: "EUR" },
+    { id: "DO", n: "República Dominicana", f: "🇩🇴", code: "DOP", sym: "RD$", name: "pesos dominicanos", rate: 61 },
+    { id: "GB", n: "Reino Unido", f: "🇬🇧", code: "GBP", sym: "£", name: "libras", rate: 0.76 },
+    { id: "UY", n: "Uruguay", f: "🇺🇾", code: "UYU", sym: "$U", name: "pesos uruguayos", rate: 40 },
+    { id: "VE", n: "Venezuela", f: "🇻🇪", code: "VES", sym: "Bs", name: "bolívares" }
+  ];
+  var LOC = {};
+  function countryById(id) { return COUNTRIES.filter(function (c) { return c.id === id; })[0] || null; }
+  function setLocale(id) {
+    var c = countryById(id) || countryById("VE");
+    var none = c.code === "USD" || c.code === "EUR";
+    LOC = { id: c.id, country: c.n, flag: c.f, code: c.code, none: none, base: none ? c.code : "VES",
+      sym: none ? "$" : c.sym, name: none ? "dólares" : c.name, src: c.id === "VE" ? "BCV" : "", rate: c.rate || 0,
+      tier: none ? "none" : (c.id === "VE" || c.id === "AR") ? "full" : "fx" };
+  }
+  setLocale("VE");
+  function locCap() { return LOC.name.charAt(0).toUpperCase() + LOC.name.slice(1); }
   function money(n, cur, d) {
     // Redondea antes de decidir el signo: nunca «−0,00»
     var dd = d === undefined ? 2 : d, f = Math.pow(10, dd);
@@ -3300,7 +3434,7 @@ html.touring #inst { display: none !important; }
     var sign = n < 0 ? "-" : "";
     var v = num(Math.abs(n), d);
     if (cur === "USDT") return sign + v + " USDT";
-    return (cur === "USD" ? sign + "$" : cur === "EUR" ? sign + "€" : sign + "Bs ") + v;
+    return (cur === "USD" ? sign + "$" : cur === "EUR" ? sign + "€" : sign + LOC.sym + " ") + v;
   }
   function moneyH(n, cur, d) {
     var s = money(n, cur, d);
@@ -3331,7 +3465,7 @@ html.touring #inst { display: none !important; }
     if ((from === "USDT" && to === "USD") || (from === "USD" && to === "USDT")) return amount;
     return fromVES(toVES(amount, from), to);
   }
-  function curLabel(c) { return c === "USD" ? "$" : c === "EUR" ? "€" : c === "USDT" ? "USDT" : "Bs"; }
+  function curLabel(c) { return c === "USD" ? "$" : c === "EUR" ? "€" : c === "USDT" ? "USDT" : LOC.sym; }
   // Monedas que solo se mueven entre cuentas de la misma moneda en ahorros y metas
   // Se puede mover dinero entre cualquier par de monedas; si son distintas se pide la tasa
   function curCompat(x, y) { return !!x && !!y; }
@@ -3571,6 +3705,19 @@ html.touring #inst { display: none !important; }
     for (var i = n; i > 0; i--) if (Math.abs(bal[i] - bal[i - 1]) > 0.004) return bal[i] > bal[i - 1] ? "up" : "down";
     return "up";
   }
+  function trendSegs(bal, X, Y) {
+    if (bal.length < 2) return '<path class="ln bal flat" d="M' + X(1).toFixed(1) + " " + Y(bal[0] || 0).toFixed(1) + '"></path>';
+    var out = "", cur = null, d = "";
+    for (var i = 1; i < bal.length; i++) {
+      var k = bal[i] > bal[i - 1] + 0.004 ? "up" : bal[i] < bal[i - 1] - 0.004 ? "down" : "flat";
+      if (k !== cur) {
+        if (d) out += '<path class="ln bal ' + cur + '" d="' + d + '"></path>';
+        cur = k; d = "M" + X(i).toFixed(1) + " " + Y(bal[i - 1]).toFixed(1);
+      }
+      d += " L" + X(i + 1).toFixed(1) + " " + Y(bal[i]).toFixed(1);
+    }
+    return out + '<path class="ln bal ' + cur + '" d="' + d + '"></path>';
+  }
   function drawTrend() {
     var wrap = $("trend-chart");
     if (!wrap) return;
@@ -3774,7 +3921,7 @@ html.touring #inst { display: none !important; }
     var names = {};
     Object.keys(cur.cat).concat(Object.keys(prev.cat)).forEach(function (c) { names[c] = 1; });
     var lines = [];
-    lines.push("Mes analizado: " + monthLabel(mstr) + ". Cifras en " + (D === "USD" ? "dólares (USD)" : D === "EUR" ? "euros (EUR)" : "bolívares (Bs)") + ".");
+    lines.push("Mes analizado: " + monthLabel(mstr) + ". Cifras en " + (D === "USD" ? "dólares (USD)" : D === "EUR" ? "euros (EUR)" : LOC.name + " (" + LOC.sym + ")") + ".");
     lines.push("Ingresos: " + f(cur.inc) + " | Gastos: " + f(cur.exp) + " | Ahorrado: " + f(cur.sav) + " | Cantidad de gastos: " + cur.nExp + ".");
     lines.push("Mes anterior: ingresos " + f(prev.inc) + ", gastos " + f(prev.exp) + ".");
     lines.push("Gastos por categoría (este mes / mes anterior):");
@@ -4034,14 +4181,14 @@ html.touring #inst { display: none !important; }
   var BN_APR = 5; // tasa promedio de referencia (% anual) para USDT en Simple Earn; la persona puede cambiarla
   var BN_LINKS = {
     home: "https://www.binance.com/es",
-    p2p: "https://p2p.binance.com/es/trade/all-payments/USDT?fiat=VES",
+    get p2p() { return "https://p2p.binance.com/es/trade/all-payments/USDT?fiat=" + (LOC.none ? LOC.base : LOC.code); },
     earn: "https://www.binance.com/es/simple-earn"
   };
   var BN_EXT = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 4h6v6"></path><path d="M20 4l-9 9"></path><path d="M18 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h5"></path></svg>';
   var BN_STEPS = [
     { t: "Crear tu cuenta", d: "Es gratis y toma unos minutos." },
     { t: "Verificar tu identidad", d: "Binance te pide tu cédula o pasaporte y una selfie. Sin esto no puedes comprar." },
-    { t: "Comprar USDT", d: "En P2P le compras a otra persona y pagas en bolívares por pago móvil o transferencia." },
+    { t: "Comprar USDT", d: "En P2P le compras a otra persona y pagas en tu moneda por transferencia o pago móvil." },
     { t: "Mover a Earn", d: "En Simple Earn eliges Flexible (lo sacas cuando quieras) o Bloqueado (a plazo fijo, suele rendir más)." },
     { t: "Anotarlo aquí", d: "Registra lo que suscribiste en Earn. Aparece en tus Ahorros con lo que vas ganando." }
   ];
@@ -4662,7 +4809,6 @@ html.touring #inst { display: none !important; }
     // Debajo: el total que hay hoy en todas las cuentas, para no confundirlo con lo del mes
     var bn = $("bal-note"), accTot = 0, accOk = false;
     state.accounts.forEach(function (a) { var v = conv(accBalance(a), a.moneda, D); if (v !== null) { accTot += v; accOk = true; } });
-    // Arriba va el saldo total de las cuentas; debajo, lo que te queda del mes
     $("h-bal").textContent = accOk ? "Saldo total" : "Te queda este mes";
     bn.hidden = !accOk;
     var curMo = state.month === today().slice(0, 7), mLbl = curMo ? "Te queda este mes" : "Te quedó en " + MESES[Number(state.month.slice(5, 7)) - 1];
@@ -4845,8 +4991,32 @@ html.touring #inst { display: none !important; }
     var names = { binance: "Binance", paralelo: "paralelo", manual: "manual", p2p: "P2P" };
     el.textContent = state.rateUsdt > 0 && state.rateUsdtSrc ? "· " + (names[state.rateUsdtSrc] || state.rateUsdtSrc) : "";
   }
+  // Fuera de Venezuela las tasas salen de un servicio mundial (moneda local por cada dólar)
+  function fetchRateWorld() {
+    state.rateLoading = true; renderRateNote();
+    getJSON("https://open.er-api.com/v6/latest/USD", 12000).then(function (j) {
+      var R = j && j.rates, t = today();
+      if (!R || !(R.EUR > 0)) throw new Error("x");
+      var usd = LOC.none ? 1 : R[LOC.code], eur = LOC.none ? 1 / R.EUR : R[LOC.code] / R.EUR;
+      if (!(usd > 0)) throw new Error("x");
+      [["usd", usd], ["eur", eur], ["usdt", usd]].forEach(function (o) {
+        var f = RATE_FIELDS[o[0]]; state[f.v] = Math.round(o[1] * 10000) / 10000; state[f.d] = t; state[f.m] = "";
+        $(f.input).value = num(state[f.v]); histPut(t, o[0], state[f.v]);
+      });
+      state.rateUsdtSrc = ""; state.rateFail = false; state.rateErr = ""; state.rateAutoAt = Date.now(); save();
+      if (LOC.tier === "full") return getJSON("https://api.coingecko.com/api/v3/simple/price?ids=tether&vs_currencies=" + LOC.code.toLowerCase(), 10000).then(function (g) {
+        var v = g && g.tether && g.tether[LOC.code.toLowerCase()];
+        if (v > 0) { var f = RATE_FIELDS.usdt; state[f.v] = Math.round(v * 10000) / 10000; $(f.input).value = num(state[f.v]); histPut(t, "usdt", state[f.v]); state.rateUsdtSrc = "CoinGecko"; save(); }
+      }).catch(function () {});
+    }).catch(function () { state.rateFail = true; state.rateErr = "red"; })
+      .then(function () { state.rateLoading = false; render(); });
+  }
   function fetchRate(force) {
     if (typeof fetch !== "function" || state.rateLoading) return;
+    if (LOC.id !== "VE") {
+      if (!force && state.rateDate === today() && Date.now() - state.rateAutoAt < 6 * 3600 * 1000) return;
+      fetchRateWorld(); return;
+    }
     var t = today();
     var keys = RATE_KEYS.filter(function (k) { return force || state[RATE_FIELDS[k].m] !== t; });
     if (!keys.length) return;
@@ -4906,7 +5076,7 @@ html.touring #inst { display: none !important; }
     usdt: "https://ve.dolarapi.com/v1/historicos/dolares/paralelo"
   };
   function fetchRateHist(force) {
-    if (typeof fetch !== "function") return Promise.resolve(false);
+    if (typeof fetch !== "function" || LOC.id !== "VE") return Promise.resolve(false);
     if (!force && Date.now() - (state.rateHistAt || 0) < 12 * 3600 * 1000) return Promise.resolve(false);
     var any = false;
     return Promise.all(Object.keys(HIST_URLS).map(function (k) {
@@ -4919,7 +5089,7 @@ html.touring #inst { display: none !important; }
       }, function () {});
     })).then(function () {
       var keys = Object.keys(state.rateHist).sort();
-      if (keys.length > 400) keys.slice(0, keys.length - 400).forEach(function (d) { delete state.rateHist[d]; });
+      if (keys.length > 800) keys.slice(0, keys.length - 800).forEach(function (d) { delete state.rateHist[d]; });
       state.rateHistAt = Date.now(); save();
       return any;
     });
@@ -4960,6 +5130,22 @@ html.touring #inst { display: none !important; }
   function accAvatar(a, big) {
     var c = accColor(a), ic = a.icon && ACC_SVG[a.icon] ? a.icon : "";
     return '<span class="acc-av' + (big ? " big" : "") + (ic ? " sym" : "") + '" style="--c:' + c + '" aria-hidden="true">' + (ic ? accSvg(ic) : esc(accInitials(a.nombre))) + "</span>";
+  }
+  function accMonthNet(a, mstr) {
+    var n = 0, any = false;
+    state.items.forEach(function (it) {
+      if (it.fecha.slice(0, 7) !== mstr) return;
+      var d = null;
+      if (it.tipo === "traspaso") {
+        if (it.hacia && it.hacia.k === "cuenta" && String(it.hacia.id) === String(a.id)) d = it.hacia.monto;
+        else if (it.desde && it.desde.k === "cuenta" && String(it.desde.id) === String(a.id)) d = -it.desde.monto;
+      } else if (String(it.cuenta) === String(a.id)) {
+        if (it.tipo === "ingreso" || it.tipo === "retiro") d = it.monto;
+        else if (it.tipo === "gasto" || it.tipo === "ahorro") d = -it.monto;
+      }
+      if (d !== null) { n += d; any = true; }
+    });
+    return any ? n : null;
   }
   function accAvatarXs(a) { return accAvatar(a).replace('class="acc-av', 'class="acc-av xs'); }
   // Convierte un <select> de cuentas en fichas con el logo de cada cuenta (el select sigue guardando el valor)
@@ -5020,7 +5206,7 @@ html.touring #inst { display: none !important; }
     var x = Math.abs(n), sign = n < 0 ? "−" : "", v;
     if (x >= 1e6) v = num(x / 1e6, x >= 1e8 ? 0 : x >= 1e7 ? 1 : 2) + " M";
     else v = num(x, x >= 10000 ? 0 : 2);
-    var sym = cur === "USD" ? "$" : cur === "EUR" ? "€" : cur === "USDT" ? "USDT" : "Bs";
+    var sym = cur === "USD" ? "$" : cur === "EUR" ? "€" : cur === "USDT" ? "USDT" : LOC.sym;
     return '<small>' + sign + sym + "</small>" + v;
   }
   function renderAccounts() {
@@ -5048,6 +5234,10 @@ html.touring #inst { display: none !important; }
     }
     var ah = $("acc-head");
     if (ah) { ah.hidden = true; ah.innerHTML = "<span>La barra indica qué parte de tu dinero está en cada cuenta</span>"; }
+    if (false) {
+      sum.innerHTML = '<div><span class="l">Saldo total en tus cuentas</span><strong class="fit">' + money(tot, D) + (miss ? "*" : "") + "</strong></div>" +
+        '<span class="acc-n">' + state.accounts.length + (state.accounts.length === 1 ? " cuenta" : " cuentas") + "</span>";
+    }
     if (typeof window.__accd === "function") window.__accd();
     if (typeof window.__nudge === "function") window.__nudge();
     if (typeof window.__payAlert === "function") window.__payAlert();
@@ -5136,6 +5326,45 @@ html.touring #inst { display: none !important; }
     });
   }
 
+  var CUR_OPTS = { USD: "Dólares ($)", EUR: "Euros (€)", USDT: "USDT" };
+  function applyLocale() {
+    setLocale(state.country || "VE");
+    document.documentElement.classList.toggle("loc-none", LOC.none);
+    document.documentElement.classList.toggle("loc-fx", LOC.tier === "fx");
+    document.documentElement.classList.toggle("loc-norates", LOC.tier === "none" && !state.ratesOn);
+    var srr = $("set-rates"); if (srr) { srr.hidden = LOC.tier !== "none"; $("set-rates-v").textContent = state.ratesOn ? "Se muestran arriba en Inicio" : "Ocultas (tu moneda ya es " + (LOC.base === "EUR" ? "el euro" : "el dólar") + ")"; }
+    if (LOC.none && state.disp === "VES") state.disp = LOC.base;
+    if (typeof ACC_CUR !== "undefined") ACC_CUR.VES.n = locCap();
+    document.querySelectorAll('[data-disp="VES"]').forEach(function (b) { b.textContent = LOC.sym; b.hidden = LOC.none; });
+    var loc = LOC.none ? [] : [["VES", locCap() + " (" + LOC.sym + ")"]];
+    var sets = { "pg-moneda": ["USD", "VES", "USDT", "EUR"], "ge-moneda": ["USD", "VES", "EUR", "USDT"], "acc-moneda": ["VES", "USD", "USDT", "EUR"], "moneda": ["USD", "VES", "USDT", "EUR"] };
+    Object.keys(sets).forEach(function (id) {
+      var el = $(id); if (!el) return; var v = el.value;
+      el.innerHTML = sets[id].filter(function (c) { return c !== "VES" || !LOC.none; }).map(function (c) { return '<option value="' + c + '">' + (c === "VES" ? locCap() + " (" + LOC.sym + ")" : CUR_OPTS[c]) + "</option>"; }).join("");
+      if (v) el.value = v;
+    });
+    var sfx = LOC.src ? " " + LOC.src : "";
+    var lu = document.querySelector('label[for="tasa"]'), le = document.querySelector('label[for="tasa-eur"]');
+    if (lu) lu.lastChild.textContent = "Dólar" + sfx;
+    if (le) le.lastChild.textContent = LOC.none ? "Euro ($)" : "Euro" + sfx;
+    var rcu = document.querySelector(".rc-usd"); if (rcu) rcu.hidden = LOC.none;
+    var rhu = document.querySelector('[data-rhk="usd"]'), rhe = document.querySelector('[data-rhk="eur"]');
+    if (rhu) { rhu.textContent = "Dólar" + sfx; rhu.hidden = LOC.none; } if (rhe) rhe.textContent = "Euro" + sfx;
+    ["gm", "sv", "tr"].forEach(function (k) { var h = $(k + "-rate-hint"); if (h) h.textContent = "Viene con la tasa " + (LOC.src ? "del " + LOC.src : "del día") + ". Cámbiala por la tasa a la que hiciste el cambio."; });
+    var mvh = $("mv-rate-hint"); if (mvh) mvh.textContent = "Puedes poner la tasa que te dieron (por ejemplo la de Binance), no solo la " + (LOC.src ? "del " + LOC.src : "del día") + ".";
+    var cxo = document.querySelector('label[for="cx-own-rate"]'); if (cxo) cxo.textContent = LOC.sym + " por $1";
+    $("acc-empty").textContent = "Agrega tus cuentas (por ejemplo, tu banco en " + LOC.name + " o Binance en dólares) para saber en cuál entra y sale tu dinero.";
+    $("acc-nombre").placeholder = LOC.id === "VE" ? "Ej: Banco de Venezuela, Binance" : "Ej: Mi banco, Binance";
+    if (typeof setPressed === "function") setPressed("[data-disp]", "data-disp", state.disp);
+    var sc = $("set-country-v"); if (sc) sc.textContent = LOC.flag + " " + LOC.country + " · " + (LOC.none ? (LOC.base === "EUR" ? "euros" : "dólares") : LOC.name);
+  }
+  // Tasas iniciales aproximadas para un país nuevo; luego se actualizan solas si hay internet
+  function seedCountryRates() {
+    if (LOC.id === "VE") { state.rate = 875.67; state.rateEur = 985.84; state.rateUsdt = 1012.35; state.rateDate = state.rateEurDate = state.rateUsdtDate = ""; state.rateHist = {}; state.rateHistAt = 0; state.rateAutoAt = 0; return; }
+    var t = today(), r = LOC.none ? 1 : LOC.rate;
+    state.rate = r; state.rateEur = LOC.none ? EURUSD : Math.round(r * EURUSD * 10000) / 10000; state.rateUsdt = r;
+    state.rateDate = state.rateEurDate = state.rateUsdtDate = t; state.rateUsdtSrc = ""; state.rateHist = {}; state.rateHistAt = 0; state.rateAutoAt = 0;
+  }
   function init() {
     // Las animaciones de Inicio esperan a que se vea: tras la pantalla de carga y tras la clave
     var released = false, H = document.documentElement;
@@ -5150,6 +5379,7 @@ html.touring #inst { display: none !important; }
     if (!$("splash")) window.__splashDone = true;
     setTimeout(function () { window.__splashDone = true; window.__release(); }, 4000);
     load();
+    applyLocale();
     state.rateManual = ""; state.rateEurManual = ""; state.rateUsdtManual = "";
     if (!state.rate) { state.rate = 875.67; state.rateDate = "2026-10-08"; save(); }
     state.month = today().slice(0, 7);
@@ -5249,7 +5479,7 @@ html.touring #inst { display: none !important; }
     function trRateInfo(a, b) {
       if (a === "VES" || b === "VES") {
         var x = a === "VES" ? b : a, unit = x === "USD" ? "$1" : x === "EUR" ? "€1" : "1 USDT";
-        return { label: "Tasa (Bs por " + unit + ")", def: dayRate(x), hint: "Bs " + "{r} por " + unit, chips: x === "USD" };
+        return { label: "Tasa (" + LOC.sym + " por " + unit + ")", def: dayRate(x), hint: LOC.sym + " {r} por " + unit, chips: x === "USD" && LOC.id === "VE" };
       }
       var u1 = a === "USD" ? "$1" : a === "EUR" ? "€1" : "1 USDT";
       var d = conv(1, a, b);
@@ -5518,7 +5748,7 @@ html.touring #inst { display: none !important; }
       $("h-acc-new").textContent = a ? "Editar cuenta" : "Nueva cuenta";
       $("acc-save").textContent = a ? "Guardar cambios" : "Guardar cuenta";
       $("acc-nombre").value = a ? a.nombre : "";
-      $("acc-moneda").value = a ? a.moneda : "VES";
+      $("acc-moneda").value = a ? a.moneda : LOC.none ? LOC.base : "VES";
       $("acc-moneda").disabled = !!(a && accUsed(a));
       $("acc-saldo-wrap").style.display = "";
       accLook = { icon: a ? a.icon || "" : "", color: a ? a.color || "" : "" };
@@ -5836,7 +6066,6 @@ html.touring #inst { display: none !important; }
         if (!ok) return; ok = false;
         var dx = e.changedTouches[0].clientX - x0, dy = e.changedTouches[0].clientY - y0;
         if (Math.abs(dx) < (monthZone ? 40 : 70) || Math.abs(dy) > Math.abs(dx) * 0.6 || Date.now() - t0 > 800) return;
-        // Solo sobre el selector de mes se cambia de mes
         if (monthZone) {
           if (monthZone.classList.contains("hist-month")) { var hb = $(dx < 0 ? "hist-next" : "hist-prev"); if (!hb.disabled) hb.click(); }
           else { var n2 = shiftM(state.month, dx < 0 ? 1 : -1); if (n2 <= today().slice(0, 7)) setMonth(n2); }
@@ -5849,7 +6078,6 @@ html.touring #inst { display: none !important; }
         var n = cur + (dx < 0 ? 1 : -1);
         if (cur < 0) return;
         if (n < 0 || n >= tabs.length) {
-          // Muro: en la primera y la última pestaña el contenido rebota en vez de moverse
           var box = v ? $(v === "goals" ? "goals-view" : v + "-view") : document.querySelector("main");
           if (box && box.animate && !(window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches)) {
             var d = dx < 0 ? -1 : 1;
@@ -6535,7 +6763,7 @@ html.touring #inst { display: none !important; }
     }
     /* ---------- Historial de tasas ---------- */
     var rh = { k: "usd", r: 30, pts: [] };
-    var RH_NAME = { usd: "dólar BCV", eur: "euro BCV", usdt: "USDT" };
+    var RH_NAME = { get usd() { return "dólar" + (LOC.src ? " " + LOC.src : ""); }, get eur() { return "euro" + (LOC.src ? " " + LOC.src : ""); }, usdt: "USDT" };
     function rhSeries() {
       var h = state.rateHist || {}, days = Object.keys(h).sort(), out = [];
       days.forEach(function (d) { var v = h[d] && h[d][rh.k]; if (v > 0) out.push([d, v]); });
@@ -6548,11 +6776,11 @@ html.touring #inst { display: none !important; }
       setPressed("[data-rhr]", "data-rhr", String(rh.r));
       var pts = rhSeries(), cur = { usd: state.rate, eur: state.rateEur, usdt: state.rateUsdt }[rh.k];
       rh.pts = pts;
-      $("rh-v").textContent = cur > 0 ? "Bs " + num(cur) : "—";
+      $("rh-v").textContent = cur > 0 ? LOC.sym + " " + num(cur) : "—";
       var dEl = $("rh-d");
       if (pts.length >= 2) {
         var a = pts[0][1], b = pts[pts.length - 1][1], diff = b - a;
-        dEl.textContent = (diff >= 0 ? "+" : "−") + "Bs " + num(Math.abs(diff)) + " (" + pctTxt(a, b) + ") " + (rh.r ? "en " + (rh.r === 7 ? "7 días" : rh.r === 30 ? "1 mes" : "3 meses") : "desde " + shortDate(pts[0][0]));
+        dEl.textContent = (diff >= 0 ? "+" : "−") + LOC.sym + " " + num(Math.abs(diff)) + " (" + pctTxt(a, b) + ") " + (rh.r ? "en " + (rh.r === 7 ? "7 días" : rh.r === 30 ? "1 mes" : "3 meses") : "desde " + shortDate(pts[0][0]));
         dEl.className = "rh-d " + (diff > 0.0001 ? "up" : diff < -0.0001 ? "down" : "");
       } else { dEl.textContent = ""; dEl.className = "rh-d"; }
       var ch = $("rh-chart");
@@ -6580,9 +6808,9 @@ html.touring #inst { display: none !important; }
       var rows = all.slice(-10).reverse();
       $("rh-list").innerHTML = rows.length ? rows.map(function (x, i) {
         var prev = all[all.length - 1 - i - 1], c = prev ? x[1] - prev[1] : 0, cls = c > 0.0001 ? "up" : c < -0.0001 ? "down" : "";
-        return "<li><span>" + dayLabel(x[0]) + "</span><b>Bs " + num(x[1]) + '</b><span class="c ' + cls + '">' + (prev ? pctTxt(prev[1], x[1]) : "—") + "</span></li>";
+        return "<li><span>" + dayLabel(x[0]) + "</span><b>" + LOC.sym + " " + num(x[1]) + '</b><span class="c ' + cls + '">' + (prev ? pctTxt(prev[1], x[1]) : "—") + "</span></li>";
       }).join("") : '<li><span class="hint">Sin datos todavía.</span></li>';
-      $("rh-note").textContent = "Tasas guardadas en este teléfono" + (state.rateHistAt ? " y completadas con el histórico de ve.dolarapi.com" : "") + ". Subir = el bolívar pierde valor.";
+      $("rh-note").textContent = "Tasas guardadas en este teléfono" + (state.rateHistAt && LOC.id === "VE" ? " y completadas con el histórico de ve.dolarapi.com" : "") + ". Subir = " + (LOC.id === "VE" ? "el bolívar" : "tu moneda") + " pierde valor.";
     }
     function rhScrub(clientX) {
       var ch = $("rh-chart"), xy = ch._xy, svg = ch.querySelector("svg");
@@ -6592,7 +6820,7 @@ html.touring #inst { display: none !important; }
       var q = xy[best], p = rh.pts[best];
       $("rh-dot").setAttribute("cx", q[0]); $("rh-dot").setAttribute("cy", q[1]);
       var cl = $("rh-cur"); cl.setAttribute("x1", q[0]); cl.setAttribute("x2", q[0]); cl.setAttribute("visibility", "visible");
-      var tip = $("rh-tip"); tip.hidden = false; tip.textContent = shortDate(p[0]) + " · Bs " + num(p[1]);
+      var tip = $("rh-tip"); tip.hidden = false; tip.textContent = shortDate(p[0]) + " · " + LOC.sym + " " + num(p[1]);
       tip.style.left = Math.max(40, Math.min(r.width - 40, q[0] / 320 * r.width)) + "px";
     }
     function rhScrubEnd() { var t = $("rh-tip"); if (t) t.hidden = true; var c = $("rh-cur"); if (c) c.setAttribute("visibility", "hidden"); var xy = $("rh-chart")._xy; if (xy && $("rh-dot")) { var l = xy[xy.length - 1]; $("rh-dot").setAttribute("cx", l[0]); $("rh-dot").setAttribute("cy", l[1]); } }
@@ -7163,8 +7391,8 @@ html.touring #inst { display: none !important; }
     }
     function closeGs() { $("gs-sheet").hidden = true; }
     function openLim() {
-      var D = state.disp, cur = { USD: "$", VES: "Bs", EUR: "€" }[D] || D;
-      $("lim-hint").textContent = "Cuánto quieres gastar como máximo al mes, en " + (D === "VES" ? "bolívares" : D === "EUR" ? "euros" : "dólares") + ". Déjalo vacío para no poner límite.";
+      var D = state.disp, cur = { USD: "$", VES: LOC.sym, EUR: "€" }[D] || D;
+      $("lim-hint").textContent = "Cuánto quieres gastar como máximo al mes, en " + (D === "VES" ? LOC.name : D === "EUR" ? "euros" : "dólares") + ". Déjalo vacío para no poner límite.";
       $("lim-list").innerHTML = CATS.gasto.map(function (c, i) {
         var lv = state.limits && state.limits[c], lc = state.limCur && state.limCur[c];
         var l = lv > 0 ? (lc && lc.cur === D ? lc.v : conv(lv, "USD", D)) : null;
@@ -8498,9 +8726,12 @@ html.touring #inst { display: none !important; }
       { art: '<div class="oa-safe"><svg class="oa-rings" viewBox="0 0 180 180" aria-hidden="true"><circle cx="90" cy="90" r="70" fill="none" stroke="var(--fill)" stroke-width="12"></circle><circle class="oa-arc" cx="90" cy="90" r="70" fill="none" stroke="var(--in)" stroke-width="12" stroke-linecap="round" stroke-dasharray="439.8 439.8" style="--len:439.8" transform="rotate(-90 90 90)"></circle></svg><svg class="oa-shield" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l8 3v6c0 4.5-3.4 8.3-8 9-4.6-.7-8-4.5-8-9V6z"></path><path d="M9 12l2 2 4-4"></path></svg><div class="oa-dots"><i></i><i></i><i></i><i></i></div></div>', t: "Tus datos se quedan aquí", p: "Todo se guarda solo en este teléfono, protegido con tu clave. Guarda una copia de vez en cuando.", last: true }
     ];
     var onb = { i: 0, first: false };
+    function locTxt(t) {
+      return String(t).replace("<span>Bs</span>", LOC.none ? "" : "<span>" + esc(LOC.sym) + "</span>").replace(/Bs 41\.800/g, (LOC.none ? "€" : LOC.sym) + " 41.800").replace("en bolívares, dólares, euros y USDT", LOC.none ? "en dólares, euros y USDT" : "en " + LOC.name + ", dólares, euros y USDT");
+    }
     function buildOnb() {
       $("onb-slides").innerHTML = ONB.map(function (s, k) {
-        return '<section class="onb-slide" aria-hidden="' + (k ? "true" : "false") + '"><div class="onb-art2">' + s.art + "</div><h2>" + s.t + "</h2><p>" + s.p + "</p>" +
+        return '<section class="onb-slide" aria-hidden="' + (k ? "true" : "false") + '"><div class="onb-art2">' + locTxt(s.art) + "</div><h2>" + s.t + "</h2><p>" + locTxt(s.p) + "</p>" +
           (s.last ? '<button type="button" class="onb-tour" id="onb-tour" aria-pressed="true"><i></i>Hacer un recorrido guiado al empezar</button>' +
             '<p class="onb-legal">Al continuar aceptas los <button type="button" data-onb-lg="terms">Términos de uso</button> y la <button type="button" data-onb-lg="priv">Política de privacidad</button>. Orbe no da asesoría financiera.</p>' : "") + "</section>";
       }).join("");
@@ -8538,10 +8769,68 @@ html.touring #inst { display: none !important; }
       if (onb.first && !(state.pin && state.pin.h)) openLock("set", done, { onb: true });
       else done();
     }
+    /* ---------- País ---------- */
+    var ctry = { sel: "", then: null, first: false };
+    function drawCtry() {
+      var q = $("ctry-q").value.trim().toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+      var L = COUNTRIES.filter(function (c) { return !q || c.n.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").indexOf(q) >= 0; });
+      $("ctry-list").innerHTML = L.map(function (c, i) {
+        var cur = c.code === "USD" ? "Dólar estadounidense ($)" : c.code === "EUR" ? "Euro (€)" : c.name.charAt(0).toUpperCase() + c.name.slice(1) + " (" + c.sym + ")";
+        return '<li style="--i:' + Math.min(i, 12) + '"><button type="button" data-ctry="' + c.id + '" aria-pressed="' + (c.id === ctry.sel) + '"><span class="cf">' + c.f + '</span><span class="cn"><b>' + esc(c.n) + "</b><small>" + esc(cur) + '</small></span><i aria-hidden="true"></i></button></li>';
+      }).join("") || '<li class="ctry-none">No encontramos ese país. Elige uno con la misma moneda.</li>';
+    }
+    function ctryWarn() {
+      var w = $("ctry-warn"), c = countryById(ctry.sel);
+      var had = !ctry.first && state.items.some(function (it) { return it.moneda === "VES" || (it.desde && it.desde.moneda === "VES"); }) || state.accounts.some(function (a) { return a.moneda === "VES"; });
+      w.hidden = !(c && had && c.id !== (state.country || "VE"));
+      if (!w.hidden) w.textContent = "Lo que ya anotaste en " + LOC.name + " se mostrará como " + (c.code === "USD" || c.code === "EUR" ? "dólares" : c.name) + ". Los montos no cambian.";
+    }
+    function showCtry(first, then) {
+      ctry.first = !!first; ctry.then = then || null; ctry.sel = state.country || (first ? "" : "VE");
+      $("ctry-q").value = ""; drawCtry(); ctryWarn();
+      $("ctry-go").disabled = !ctry.sel; $("ctry-go").textContent = first ? "Continuar" : "Guardar";
+      $("ctry-x").hidden = first;
+      $("ctry").hidden = false;
+    }
+    $("ctry-q").addEventListener("input", drawCtry);
+    // Al buscar, se esconde el encabezado para que el teclado no aplaste la lista
+    $("ctry-q").addEventListener("focus", function () { $("ctry").classList.add("typing"); });
+    $("ctry-q").addEventListener("blur", function () { setTimeout(function () { $("ctry").classList.remove("typing"); }, 120); });
+    // Con la pantalla de países abierta, el fondo no se mueve
+    new MutationObserver(function () { document.documentElement.classList.toggle("ctry-open", !$("ctry").hidden); if ($("ctry").hidden) $("ctry").classList.remove("typing"); }).observe($("ctry"), { attributes: true, attributeFilter: ["hidden"] });
+    $("ctry-list").addEventListener("click", function (e) {
+      var b = e.target.closest("[data-ctry]"); if (!b) return;
+      ctry.sel = b.getAttribute("data-ctry");
+      document.querySelectorAll("#ctry-list [data-ctry]").forEach(function (x) { x.setAttribute("aria-pressed", x === b ? "true" : "false"); });
+      $("ctry-go").disabled = false; ctryWarn();
+    });
+    $("ctry-x").addEventListener("click", function () { $("ctry").hidden = true; });
+    $("ctry-go").addEventListener("click", function () {
+      if (!ctry.sel) return;
+      var changed = ctry.sel !== (state.country || "VE") || ctry.first;
+      state.country = ctry.sel;
+      setLocale(ctry.sel);
+      if (changed) { seedCountryRates(); state.disp = LOC.base; }
+      applyLocale(); save();
+      if (changed && LOC.id !== "VE") fetchRate(true);
+      if (changed && LOC.id === "VE") fetchRate(true);
+      ["tasa", "tasa-eur", "tasa-usdt"].forEach(function (id, i) { var v = [state.rate, state.rateEur, state.rateUsdt][i]; if ($(id) && v) $(id).value = num(v); });
+      $("ctry").hidden = true;
+      if ($("onb-slides").children.length) { $("onb-slides").innerHTML = ""; }
+      render();
+      var cb = ctry.then; ctry.then = null;
+      if (cb) cb(); else showToast("Listo: " + LOC.country + ".");
+    });
+    $("set-country").addEventListener("click", function () { showCtry(false); });
+    $("set-rates").addEventListener("click", function () {
+      state.ratesOn = !state.ratesOn; save(); applyLocale(); render();
+      showToast(state.ratesOn ? "Las tasas del día se muestran en Inicio." : "Tasas del día ocultas.");
+    });
     function startOnb() {
       document.documentElement.classList.add("locked");
-      if (state.pin && state.pin.h) openLock("unlock", function () { showOnb(true); });
-      else showOnb(true);
+      var go = function () { if (!state.country) showCtry(true, function () { showOnb(true); }); else showOnb(true); };
+      if (state.pin && state.pin.h) openLock("unlock", go);
+      else go();
     }
     $("onb-next").addEventListener("click", function () { if (onb.i >= ONB.length - 1) endOnb(); else goOnb(onb.i + 1); });
     $("onb-prev").addEventListener("click", function () { goOnb(onb.i - 1); });
@@ -8568,7 +8857,7 @@ html.touring #inst { display: none !important; }
     /* ---------- Recorrido guiado ---------- */
     var TOUR = [
       { tab: 0, sel: ".rate-card", all: true, t: "Tasas del día", p: "Dólar BCV, euro y USDT. Se actualizan solas y te muestran si subieron ▲ o bajaron ▼." },
-      { tab: 0, sel: ".bal-hero", t: "Tu saldo", p: "Todo el dinero que tienes hoy en tus cuentas. Debajo, «Te queda este mes» es lo que entró este mes menos lo que gastaste y ahorraste; empieza de cero cada día 1." },
+      { tab: 0, sel: ".bal-hero", t: "Tu saldo", p: "" },
       { tab: 0, sel: '[data-panel="acc"]', t: "Tus cuentas", p: "El total y cuánto hay en cada cuenta. Toca una para ver sus movimientos. Con ⇄ transfieres y con + agregas otra." },
       { tab: 0, sel: '[data-panel="cat"]', t: "En qué se va el dinero", p: "Tus gastos por categoría, comparados con el mes pasado. En Límites pones un máximo para cada una." },
       { tab: 0, sel: "#fab", t: "El botón +", p: "Tócalo para anotar un gasto, un ingreso o un ahorro. Mantenlo presionado para usar tus plantillas.", round: true },
@@ -8657,6 +8946,8 @@ html.touring #inst { display: none !important; }
       }, needNav ? 40 : 0);
     }
     function startTour() {
+      TOUR[0].p = (LOC.none ? "Euro" : "Dólar" + (LOC.src ? " " + LOC.src : "") + ", euro") + " y USDT. Se actualizan solas y te muestran si subieron ▲ o bajaron ▼.";
+      TOUR[1].p = "Todo el dinero que tienes hoy en tus cuentas. Debajo, «Te queda este mes» es lo que entró este mes menos lo que gastaste y ahorraste; empieza de cero cada día 1.";
       closeDial();
       document.querySelectorAll(".sheet-backdrop").forEach(function (x) { x.hidden = true; });
       var t = $("tour"), hole = $("tour-hole"); tour.back = false; tour.i = -1;
@@ -8825,7 +9116,6 @@ html.touring #inst { display: none !important; }
         if (i === 1) { showGoals(); return; }
         if (i === 2) { showPay(); return; }
         if (i === 3) { showHist(); return; }
-        // Volver a Inicio desde otra pestaña deja la página donde estaba; tocar Inicio estando en Inicio sube arriba
         var fromView = !!activeView();
         if (fromView) closeViews();
         var el = tabTargets()[i];
@@ -8847,13 +9137,13 @@ html.touring #inst { display: none !important; }
     try { var cxs = JSON.parse(localStorage.getItem("gastos-calc") || "{}"); if (cxs.k) calc.k = cxs.k; if (cxs.src === "own") calc.src = "own"; if (cxs.own) calc.own = cxs.own; } catch (e) {}
     function cxSave() { try { localStorage.setItem("gastos-calc", JSON.stringify({ k: calc.k, src: calc.src, own: calc.own || 0 })); } catch (e) {} }
     var CC = {
-      VES: { ic: "cc-ves", sym: "Bs", name: "Bolívares" },
+      VES: { ic: "cc-ves", get sym() { return LOC.sym; }, get name() { return locCap(); } },
       USD: { ic: "cc-usd", sym: "$", name: "Dólar" },
       EUR: { ic: "cc-eur", sym: "€", name: "Euro" },
       USDT: { ic: "cc-usdt", sym: "₮", name: "USDT" },
       BTC: { ic: "cc-btc", sym: "₿", name: "Bitcoin" }
     };
-    var CX_ORDER = ["VES", "USD", "EUR", "USDT", "BTC"];
+    var CX_ALL = ["VES", "USD", "EUR", "USDT", "BTC"], CX_ORDER = CX_ALL.slice();
     function ccIcon(c) { return '<span class="cc-ic ' + CC[c].ic + '" aria-hidden="true">' + CC[c].sym + "</span>"; }
     // Precio del bitcoin en Bs: precio en dólares × tasa USDT (o la del BCV si no hay USDT).
     function btcVes() { var r = state.rateUsdt > 0 ? state.rateUsdt : state.rate; return state.btcUsd > 0 && r > 0 ? state.btcUsd * r : 0; }
@@ -8861,18 +9151,26 @@ html.touring #inst { display: none !important; }
     function cxBs(k) { return k === "VES" ? 1 : k === "USD" ? cxUsd() : k === "EUR" ? state.rateEur : k === "USDT" ? state.rateUsdt : btcVes(); }
     function cxDec(k) { return k === "BTC" ? 8 : 2; }
     function cxFmt(n, k) { return num(n, cxDec(k)); }
-    function cxLabel(n, k) { return k === "VES" ? "Bs " + cxFmt(n, k) : k === "USD" ? "$" + cxFmt(n, k) : k === "EUR" ? "€" + cxFmt(n, k) : k === "USDT" ? cxFmt(n, k) + " USDT" : cxFmt(n, k) + " BTC"; }
+    function cxLabel(n, k) { return k === "VES" ? LOC.sym + " " + cxFmt(n, k) : k === "USD" ? "$" + cxFmt(n, k) : k === "EUR" ? "€" + cxFmt(n, k) : k === "USDT" ? cxFmt(n, k) + " USDT" : cxFmt(n, k) + " BTC"; }
     function cxSub(k) {
       var r = cxBs(k);
       if (!(r > 0)) return k === "BTC" ? (navigator.onLine ? "Buscando el precio…" : "Sin conexión") : "Sin tasa disponible";
-      if (k === "USD") return (calc.src === "own" && calc.own > 0 ? "Tu tasa" : "BCV") + " · Bs " + num(r);
-      if (k === "EUR") return "BCV · Bs " + num(r);
-      if (k === "USDT") return "Bs " + num(r);
+      if (LOC.none) return k === "USD" ? "" : "$ " + num(r, r < 10 ? 4 : 2);
+      if (k === "USD") return (calc.src === "own" && calc.own > 0 ? "Tu tasa" : LOC.src || "Tasa del día") + " · " + LOC.sym + " " + num(r);
+      if (k === "EUR") return (LOC.src || "Tasa del día") + " · " + LOC.sym + " " + num(r);
+      if (k === "USDT") return LOC.sym + " " + num(r);
       if (k === "BTC") return "$" + num(state.btcUsd, 0) + " · USDT";
       return "";
     }
     function cxVal() { var v = parseNum(calc.buf); return v > 0 ? v : 0; }
+    function cxShowBuf() {
+      if (!calc.buf) return "0";
+      var parts = calc.buf.split(","), ip = parts[0] ? Number(parts[0]).toLocaleString("es-VE") : "0";
+      return ip + (parts.length > 1 ? "," + parts[1] : "");
+    }
     function renderCalc() {
+      CX_ORDER = CX_ALL.filter(function (c) { return c !== "VES" || !LOC.none; });
+      if (LOC.none && calc.k === "VES") calc.k = "USD";
       var k = calc.k;
       $("cx-ic").innerHTML = ccIcon(k);
       $("cx-name").textContent = CC[k].name + (k !== "VES" && cxSub(k) ? " · " + cxSub(k) : "");
@@ -8889,6 +9187,17 @@ html.touring #inst { display: none !important; }
           '<span class="nm"><b>' + CC[c].name + "</b><small>" + cxSub(c) + '</small></span><span class="v fit">' + (v === null ? "—" : cxLabel(v, c)) + "</span></button></li>";
       }).join("");
       scheduleFit();
+    }
+    function cxKey(x) {
+      if (x === "del") calc.buf = calc.buf.slice(0, -1);
+      else if (x === ",") { if (calc.buf.indexOf(",") < 0) calc.buf = (calc.buf || "0") + ","; }
+      else {
+        var parts = calc.buf.split(",");
+        if (parts.length > 1 && parts[1].length >= cxDec(calc.k)) return;
+        if (parts[0].replace(/^0+/, "").length >= 12 && parts.length === 1) return;
+        calc.buf = calc.buf === "0" ? x : calc.buf + x;
+      }
+      renderCalc();
     }
     var btcLoading = false;
     function fetchBtc() {
