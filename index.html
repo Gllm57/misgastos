@@ -2223,6 +2223,22 @@ html.loc-norates .top .rate-card, html.loc-norates #rates-tog, html.loc-norates 
 
 /* Asistente oculto desde Ajustes */
 html.ai-off .ai-fab { display: none !important; }
+
+/* Contraseñas: ojito para verla y confirmación al crear la cuenta */
+.pw-wrap { position: relative; }
+.pw-wrap input { width: 100%; padding-right: 50px !important; }
+.pw-eye { position: absolute; right: 4px; top: 50%; transform: translateY(-50%); width: 44px; height: 44px; border: 0; border-radius: 12px; background: none; color: var(--muted); display: grid; place-items: center; cursor: pointer; padding: 0; transition: color 0.2s ease; }
+.pw-eye:active { color: var(--ink); }
+.pw-eye svg { width: 20px; height: 20px; grid-area: 1 / 1; transition: opacity 0.2s ease, transform 0.25s cubic-bezier(0.32, 0.72, 0, 1); }
+.pw-eye .e-off { opacity: 0; transform: scale(0.8); }
+.pw-eye[aria-pressed="true"] .e-on { opacity: 0; transform: scale(0.8); }
+.pw-eye[aria-pressed="true"] .e-off { opacity: 1; transform: none; }
+.pw-eye[aria-pressed="true"] { color: var(--accent); }
+.cl-conf:not([hidden]) { animation: fadeUp 0.4s cubic-bezier(0.32, 0.72, 0, 1); }
+.pw-match { margin: 6px 2px 0; font-size: 0.8rem; min-height: 1em; color: var(--muted); }
+.pw-match.ok { color: var(--in); }
+.pw-match.bad { color: var(--out); }
+#cl-forgot[hidden] { display: none !important; }
 </style>
 </head>
 <body>
@@ -2815,7 +2831,8 @@ html.ai-off .ai-fab { display: none !important; }
         <p class="hint">Con tu cuenta, tus movimientos se guardan en la nube y los ves en cualquier teléfono donde entres. Solo tú puedes verlos.</p>
         <div class="grid">
           <div class="wide"><label for="cl-email">Correo</label><input type="email" id="cl-email" autocomplete="username" inputmode="email" autocapitalize="off" spellcheck="false" placeholder="tu@correo.com"></div>
-          <div class="wide"><label for="cl-pass">Contraseña</label><input type="password" id="cl-pass" autocomplete="current-password" placeholder="Mínimo 8 caracteres"></div>
+          <div class="wide"><label for="cl-pass">Contraseña</label><div class="pw-wrap"><input type="password" id="cl-pass" autocomplete="current-password" placeholder="Mínimo 8 caracteres"><button type="button" class="pw-eye" aria-label="Mostrar contraseña" aria-pressed="false"><svg class="e-on" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z"></path><circle cx="12" cy="12" r="3"></circle></svg><svg class="e-off" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 3l18 18"></path><path d="M10.6 5.1A10.4 10.4 0 0 1 12 5c6.4 0 10 7 10 7a17 17 0 0 1-3.2 4.1M6.6 6.6C3.8 8.4 2 12 2 12s3.6 7 10 7c1.6 0 3-.4 4.3-1"></path><path d="M9.9 9.9a3 3 0 0 0 4.2 4.2"></path></svg></button></div></div>
+          <div class="wide cl-conf" id="cl-conf" hidden><label for="cl-passc">Repite la contraseña</label><div class="pw-wrap"><input type="password" id="cl-passc" autocomplete="new-password" placeholder="Escríbela otra vez"><button type="button" class="pw-eye" aria-label="Mostrar contraseña" aria-pressed="false"><svg class="e-on" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z"></path><circle cx="12" cy="12" r="3"></circle></svg><svg class="e-off" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 3l18 18"></path><path d="M10.6 5.1A10.4 10.4 0 0 1 12 5c6.4 0 10 7 10 7a17 17 0 0 1-3.2 4.1M6.6 6.6C3.8 8.4 2 12 2 12s3.6 7 10 7c1.6 0 3-.4 4.3-1"></path><path d="M9.9 9.9a3 3 0 0 0 4.2 4.2"></path></svg></button></div><p class="pw-match" id="cl-match" aria-live="polite"></p></div>
         </div>
         <p class="error" id="cl-err" role="alert"></p>
         <button type="button" class="lock-forgot" id="cl-forgot">Olvidé mi contraseña</button>
@@ -2823,7 +2840,8 @@ html.ai-off .ai-fab { display: none !important; }
       </div>
       <div id="cl-new" hidden>
         <p class="hint">Escribe tu nueva contraseña.</p>
-        <div class="grid"><div class="wide"><label for="cl-pass2">Nueva contraseña</label><input type="password" id="cl-pass2" autocomplete="new-password" placeholder="Mínimo 8 caracteres"></div></div>
+        <div class="grid"><div class="wide"><label for="cl-pass2">Nueva contraseña</label><div class="pw-wrap"><input type="password" id="cl-pass2" autocomplete="new-password" placeholder="Mínimo 8 caracteres"><button type="button" class="pw-eye" aria-label="Mostrar contraseña" aria-pressed="false"><svg class="e-on" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z"></path><circle cx="12" cy="12" r="3"></circle></svg><svg class="e-off" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 3l18 18"></path><path d="M10.6 5.1A10.4 10.4 0 0 1 12 5c6.4 0 10 7 10 7a17 17 0 0 1-3.2 4.1M6.6 6.6C3.8 8.4 2 12 2 12s3.6 7 10 7c1.6 0 3-.4 4.3-1"></path><path d="M9.9 9.9a3 3 0 0 0 4.2 4.2"></path></svg></button></div></div>
+          <div class="wide"><label for="cl-pass2c">Repite la contraseña</label><div class="pw-wrap"><input type="password" id="cl-pass2c" autocomplete="new-password" placeholder="Escríbela otra vez"><button type="button" class="pw-eye" aria-label="Mostrar contraseña" aria-pressed="false"><svg class="e-on" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z"></path><circle cx="12" cy="12" r="3"></circle></svg><svg class="e-off" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 3l18 18"></path><path d="M10.6 5.1A10.4 10.4 0 0 1 12 5c6.4 0 10 7 10 7a17 17 0 0 1-3.2 4.1M6.6 6.6C3.8 8.4 2 12 2 12s3.6 7 10 7c1.6 0 3-.4 4.3-1"></path><path d="M9.9 9.9a3 3 0 0 0 4.2 4.2"></path></svg></button></div><p class="pw-match" id="cl-match2" aria-live="polite"></p></div></div>
         <p class="error" id="cl-err2" role="alert"></p>
         <div class="sheet-foot"><button type="button" class="primary" id="cl-pass-save">Guardar contraseña</button></div>
       </div>
@@ -8412,23 +8430,62 @@ html.ai-off .ai-fab { display: none !important; }
       if (p.length < 8) { $("cl-err").textContent = "La contraseña debe tener al menos 8 caracteres."; return null; }
       return { email: e, password: p };
     }
-    $("cloud-open").addEventListener("click", function () { $("cl-new").hidden = true; $("cl-err").textContent = ""; renderCloud(); $("cloud-sheet").hidden = false; });
+    // Ojito: muestra u oculta la contraseña sin abrir el teclado
+    document.querySelectorAll("#cloud-sheet .pw-eye").forEach(function (b) {
+      b.addEventListener("pointerdown", function (e) { e.preventDefault(); });
+      b.addEventListener("click", function () {
+        var inp = b.parentNode.querySelector("input"), show = inp.type === "password";
+        inp.type = show ? "text" : "password";
+        b.setAttribute("aria-pressed", show ? "true" : "false");
+        b.setAttribute("aria-label", show ? "Ocultar contraseña" : "Mostrar contraseña");
+      });
+    });
+    function pwReset() {
+      document.querySelectorAll("#cloud-sheet .pw-wrap input").forEach(function (i) { i.type = "password"; });
+      document.querySelectorAll("#cloud-sheet .pw-eye").forEach(function (b) { b.setAttribute("aria-pressed", "false"); b.setAttribute("aria-label", "Mostrar contraseña"); });
+    }
+    function pwMatch(a, b, out) {
+      var x = $(a).value, y = $(b).value, o = $(out);
+      if (!y) { o.textContent = ""; o.className = "pw-match"; return; }
+      var ok = x === y;
+      o.textContent = ok ? "✓ Las contraseñas coinciden" : "Las contraseñas no coinciden";
+      o.className = "pw-match " + (ok ? "ok" : "bad");
+    }
+    ["cl-pass", "cl-passc"].forEach(function (id) { $(id).addEventListener("input", function () { pwMatch("cl-pass", "cl-passc", "cl-match"); }); });
+    ["cl-pass2", "cl-pass2c"].forEach(function (id) { $(id).addEventListener("input", function () { pwMatch("cl-pass2", "cl-pass2c", "cl-match2"); }); });
+    // Modo «crear cuenta»: pide la contraseña dos veces
+    var clSignup = false;
+    function clMode(up) {
+      clSignup = up;
+      $("cl-conf").hidden = !up;
+      $("cl-forgot").hidden = up;
+      $("cl-in").textContent = up ? "Crear cuenta" : "Entrar";
+      $("cl-up").textContent = up ? "Ya tengo cuenta · Entrar" : "Crear cuenta nueva";
+      $("cl-pass").setAttribute("autocomplete", up ? "new-password" : "current-password");
+      $("h-cloud").textContent = up ? "Crear tu cuenta" : "Tu cuenta";
+      $("cl-err").textContent = ""; $("cl-passc").value = ""; pwMatch("cl-pass", "cl-passc", "cl-match");
+    }
+    $("cloud-open").addEventListener("click", function () { $("cl-new").hidden = true; $("cl-err").textContent = ""; pwReset(); clMode(false); renderCloud(); $("cloud-sheet").hidden = false; });
     $("cloud-close").addEventListener("click", function () { $("cloud-sheet").hidden = true; });
     $("cloud-sheet").addEventListener("click", function (e) { if (e.target === $("cloud-sheet")) $("cloud-sheet").hidden = true; });
     $("cl-in").addEventListener("click", function () {
+      if (clSignup) { doSignup(); return; }
       var c = clCreds(); if (!c) return;
       $("cl-err").textContent = "Entrando…";
       api("/auth/v1/token?grant_type=password", { method: "POST", body: c }).then(function (j) { keepSes(j); $("cl-pass").value = ""; afterLogin(); }, function (e) { $("cl-err").textContent = cloudErr(e); });
     });
-    $("cl-up").addEventListener("click", function () {
+    $("cl-up").addEventListener("click", function () { clMode(!clSignup); });
+    function doSignup() {
       var c = clCreds(); if (!c) return;
+      if (!$("cl-passc").value) { $("cl-err").textContent = "Repite la contraseña para confirmarla."; return; }
+      if ($("cl-passc").value !== c.password) { $("cl-err").textContent = ""; pwMatch("cl-pass", "cl-passc", "cl-match"); return; }
       $("cl-err").textContent = "Creando tu cuenta…";
       api("/auth/v1/signup", { method: "POST", body: { email: c.email, password: c.password } }).then(function (j) {
-        $("cl-pass").value = "";
-        if (j && j.access_token) { keepSes(j); afterLogin(); }
-        else $("cl-err").textContent = "Te enviamos un correo a " + c.email + ". Ábrelo para confirmar tu cuenta y vuelve aquí a entrar.";
+        $("cl-pass").value = ""; $("cl-passc").value = ""; pwReset();
+        if (j && j.access_token) { clMode(false); keepSes(j); afterLogin(); }
+        else { clMode(false); $("cl-err").textContent = "Te enviamos un correo a " + c.email + ". Ábrelo para confirmar tu cuenta y vuelve aquí a entrar."; }
       }, function (e) { $("cl-err").textContent = cloudErr(e); });
-    });
+    }
     $("cl-forgot").addEventListener("click", function () {
       var e = $("cl-email").value.trim();
       if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e)) { $("cl-err").textContent = "Escribe tu correo arriba y vuelve a tocar «Olvidé mi contraseña»."; return; }
@@ -8437,8 +8494,9 @@ html.ai-off .ai-fab { display: none !important; }
     $("cl-pass-save").addEventListener("click", function () {
       var p = $("cl-pass2").value;
       if (p.length < 8) { $("cl-err2").textContent = "La contraseña debe tener al menos 8 caracteres."; return; }
+      if ($("cl-pass2c").value !== p) { $("cl-err2").textContent = "Las contraseñas no coinciden. Revísalas con el ojito."; return; }
       tokenOk().then(function (s) { return api("/auth/v1/user", { method: "PUT", body: { password: p } }, s.at); })
-        .then(function () { $("cl-pass2").value = ""; $("cl-new").hidden = true; renderCloud(); showToast("Contraseña cambiada."); afterLogin(); }, function (e) { $("cl-err2").textContent = cloudErr(e); });
+        .then(function () { $("cl-pass2").value = ""; $("cl-pass2c").value = ""; pwReset(); $("cl-new").hidden = true; renderCloud(); showToast("Contraseña cambiada."); afterLogin(); }, function (e) { $("cl-err2").textContent = cloudErr(e); });
     });
     $("cl-sync").addEventListener("click", function () { cloudCheck(true); });
     $("cl-out-btn").addEventListener("click", function () {
