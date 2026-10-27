@@ -1,5 +1,7 @@
 # Orbe Negocios · plan completo
 
+El estilo (colores, letra, formas, animaciones y reglas) está en **`negocios/ESTILO.md`**: Orbe Negocios debe verse igual que Orbe personal.
+
 Este documento es el punto de partida de la app **Orbe Negocios**. Junta lo que se diseñó en la maqueta (https://claude.ai/artifact/G5XgQd56oAYGYSxnKFB5j4) y lo que ya funciona en **Orbe personal** (`index.html` de este repositorio).
 
 ---
