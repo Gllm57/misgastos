@@ -2262,12 +2262,13 @@ html.ai-off .ai-fab { display: none !important; }
 .goal-name .g-av:not(.sym) { font-size: 0.7rem !important; }
 .goals-view .goal-list .goal-main { align-items: center !important; }
 
-/* Cuentas y «En qué se va el dinero»: sin la línea de arriba y con el título en el morado de Orbe */
-:root { --sec-title: #5b4cff; }
-@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) { --sec-title: #a99cff; } }
-:root[data-theme="dark"] { --sec-title: #a99cff; }
+/* Cuentas y «En qué se va el dinero»: sin la línea de arriba */
 main > .panel[data-panel="acc"], main > .panel[data-panel="cat"] { border-top: 0 !important; padding-top: 6px; }
-#h-acc, #h-cat { color: var(--sec-title); font-size: 1.5rem !important; letter-spacing: -0.02em; }
+/* Títulos de sección: mismo tamaño y aire en toda la app (color normal) */
+#h-acc, #h-cat, .gv-mh, .pay-hrow .gv-h2, #pay-over-wrap .gv-h2, #gv-act-h { font-size: 1.5rem !important; letter-spacing: -0.02em; line-height: 1.2; }
+[data-panel="acc"] .phead, [data-panel="cat"] .phead { margin-bottom: 16px !important; }
+.gv-mrow { margin: 6px 0 16px !important; }
+.pay-hrow .gv-h2, #pay-over-wrap .gv-h2, #gv-act-h { margin-bottom: 14px !important; }
 /* Montos de categorías alineados con el total; nombres de cuenta en dos líneas en vez de cortarse */
 .cv-row { padding-right: 0 !important; }
 .acc-r .ar-n b { white-space: normal !important; overflow: hidden; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; line-height: 1.2; overflow-wrap: anywhere; }
