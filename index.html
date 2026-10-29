@@ -2261,6 +2261,13 @@ html.ai-off .ai-fab { display: none !important; }
 .goal-name .g-av.sym svg { width: 17px; height: 17px; }
 .goal-name .g-av:not(.sym) { font-size: 0.7rem !important; }
 .goals-view .goal-list .goal-main { align-items: center !important; }
+
+/* Cuentas y «En qué se va el dinero»: sin la línea de arriba y con el título en el morado de Orbe */
+:root { --sec-title: #5b4cff; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) { --sec-title: #a99cff; } }
+:root[data-theme="dark"] { --sec-title: #a99cff; }
+main > .panel[data-panel="acc"], main > .panel[data-panel="cat"] { border-top: 0 !important; padding-top: 6px; }
+#h-acc, #h-cat { color: var(--sec-title); }
 </style>
 </head>
 <body>
