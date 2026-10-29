@@ -2279,6 +2279,18 @@ main > .panel[data-panel="acc"], main > .panel[data-panel="cat"] { border-top: 0
 .top.rates-in .rate-card { animation: rateIn 0.5s cubic-bezier(0.32, 0.72, 0, 1) 0.08s backwards !important; }
 .top.rates-in .rate-card:nth-child(2) { animation-delay: 0.12s !important; }
 .top.rates-in .rate-card:nth-child(3) { animation-delay: 0.16s !important; }
+
+/* Sin selección azul al mantener presionado: solo se puede seleccionar lo que uno escribe */
+html, body { -webkit-user-select: none; user-select: none; -webkit-touch-callout: none; }
+input, textarea, [contenteditable="true"], .hd-rows, .siri-url code { -webkit-user-select: text; user-select: text; -webkit-touch-callout: default; }
+::selection { background: color-mix(in srgb, var(--accent) 30%, transparent); }
+/* Calculadora: botón para copiar el monto principal */
+.cx-acts { display: flex; align-items: center; gap: 8px; }
+.cx-copy { width: 36px; height: 36px; border-radius: 50%; border: 0; background: color-mix(in srgb, var(--accent) 16%, transparent); color: var(--accent); display: grid; place-items: center; cursor: pointer; padding: 0; transition: transform 0.15s ease, background 0.25s ease, color 0.25s ease, opacity 0.25s ease; }
+.cx-copy svg { width: 18px; height: 18px; }
+.cx-copy:active { transform: scale(0.9); }
+.cx-copy:disabled { opacity: 0.35; cursor: default; }
+.cx-copy.ok { background: color-mix(in srgb, var(--in) 18%, transparent); color: var(--in); }
 </style>
 </head>
 <body>
@@ -3153,7 +3165,7 @@ main > .panel[data-panel="acc"], main > .panel[data-panel="cat"] { border-top: 0
       <div class="cx-in" id="cx-in">
         <span id="cx-ic"></span>
         <div class="cx-in-main"><label class="cx-name" id="cx-name" for="cx-amt"></label><input type="text" class="cx-amt" id="cx-amt" inputmode="decimal" autocomplete="off" enterkeyhint="done" placeholder="0"></div>
-        <button type="button" class="cx-clear" id="cx-clear" aria-label="Borrar el monto">✕</button>
+        <div class="cx-acts"><button type="button" class="cx-copy" id="cx-copy" aria-label="Copiar el monto"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="9" width="11" height="11" rx="2.5"></rect><path d="M5 15V6.5A2.5 2.5 0 0 1 7.5 4H15"></path></svg></button><button type="button" class="cx-clear" id="cx-clear" aria-label="Borrar el monto">✕</button></div>
       </div>
       <div class="cx-srcs">
         <button type="button" id="cx-own-btn" aria-pressed="false">Tasa personalizada</button>
@@ -3163,7 +3175,7 @@ main > .panel[data-panel="acc"], main > .panel[data-panel="cat"] { border-top: 0
         <input type="text" id="cx-own-rate" inputmode="decimal" autocomplete="off" placeholder="Ej: 950,00">
       </div>
       <ul class="cx-list" id="cx-list"></ul>
-      <p class="cx-hint" id="cx-hint">Toca una moneda para escribir en ella. Mantén presionada una cifra para copiarla.</p>
+      <p class="cx-hint" id="cx-hint">Toca una moneda para escribir en ella. Copia el monto con el botón de arriba, o mantén presionada cualquier cifra para copiarla.</p>
     </section>
   </div>
   <div class="sheet-backdrop" id="mv-sheet" hidden>
@@ -9335,6 +9347,7 @@ main > .panel[data-panel="acc"], main > .panel[data-panel="cat"] { border-top: 0
       var amt = $("cx-amt");
       if (amt.value !== calc.buf) amt.value = calc.buf;
       $("cx-clear").style.visibility = calc.buf ? "visible" : "hidden";
+      $("cx-copy").disabled = !(cxVal() > 0);
       $("cx-own-btn").setAttribute("aria-pressed", calc.src === "own" ? "true" : "false");
       $("cx-own-btn").textContent = calc.src === "own" ? "Tasa personalizada · activada" : "Tasa personalizada";
       $("cx-own").hidden = calc.src !== "own";
@@ -9386,6 +9399,17 @@ main > .panel[data-panel="acc"], main > .panel[data-panel="cat"] { border-top: 0
     $("calc-sheet").addEventListener("click", function (e) { if (e.target === $("calc-sheet")) closeCalc(); });
     $("cx-amt").addEventListener("input", function () { calc.buf = $("cx-amt").value.replace(/[^0-9.,]/g, ""); if ($("cx-amt").value !== calc.buf) $("cx-amt").value = calc.buf; renderCalc(); });
     $("cx-clear").addEventListener("click", function () { calc.buf = ""; renderCalc(); });
+    // Copiar el monto de la moneda principal (la que está arriba), con su formato: 1.234,56
+    $("cx-copy").addEventListener("pointerdown", function (e) { e.preventDefault(); });
+    $("cx-copy").addEventListener("click", function () {
+      var n = cxVal(); if (!(n > 0)) return;
+      var v = cxFmt(n, calc.k), b = $("cx-copy");
+      var done = function () { b.classList.add("ok"); setTimeout(function () { b.classList.remove("ok"); }, 1100); showToast("Copiado: " + cxLabel(n, calc.k)); };
+      try {
+        if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(v).then(done, function () { showToast(v); });
+        else showToast(v);
+      } catch (e) { showToast(v); }
+    });
     $("cx-own-btn").addEventListener("click", function () {
       calc.src = calc.src === "own" ? "bcv" : "own"; cxSave(); renderCalc();
     });
