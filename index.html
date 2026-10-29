@@ -4878,7 +4878,7 @@ main > .panel[data-panel="acc"], main > .panel[data-panel="cat"] { border-top: 0
     var bn = $("bal-note"), accTot = 0, accOk = false;
     state.accounts.forEach(function (a) { var v = conv(accBalance(a), a.moneda, D); if (v !== null) { accTot += v; accOk = true; } });
     $("h-bal").textContent = accOk ? "Saldo total" : "Te queda este mes";
-    bn.hidden = !accOk;
+    bn.hidden = true; // Inicio limpio: solo el saldo total, sin la línea «Te queda este mes»
     var curMo = state.month === today().slice(0, 7), mLbl = curMo ? "Te queda este mes" : "Te quedó en " + MESES[Number(state.month.slice(5, 7)) - 1];
     if (accOk) bn.innerHTML = mLbl + ': <b class="' + (bal < 0 ? "neg" : "pos") + '">' + (bal < 0 ? "−" : "") + money(Math.abs(bal), D) + "</b>";
     if (accOk) bal = accTot;
@@ -9079,7 +9079,7 @@ main > .panel[data-panel="acc"], main > .panel[data-panel="cat"] { border-top: 0
     }
     function startTour() {
       TOUR[0].p = (LOC.none ? "Euro" : "Dólar" + (LOC.src ? " " + LOC.src : "") + ", euro") + " y USDT. Se actualizan solas y te muestran si subieron ▲ o bajaron ▼.";
-      TOUR[1].p = "Todo el dinero que tienes hoy en tus cuentas. Debajo, «Te queda este mes» es lo que entró este mes menos lo que gastaste y ahorraste; empieza de cero cada día 1.";
+      TOUR[1].p = "Todo el dinero que tienes hoy en tus cuentas. Toca USD, Bs o EUR para verlo en otra moneda.";
       closeDial();
       document.querySelectorAll(".sheet-backdrop").forEach(function (x) { x.hidden = true; });
       var t = $("tour"), hole = $("tour-hole"); tour.back = false; tour.i = -1;
