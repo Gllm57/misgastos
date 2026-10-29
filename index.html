@@ -2272,6 +2272,13 @@ main > .panel[data-panel="acc"], main > .panel[data-panel="cat"] { border-top: 0
 /* Montos de categorías alineados con el total; nombres de cuenta en dos líneas en vez de cortarse */
 .cv-row { padding-right: 0 !important; }
 .acc-r .ar-n b { white-space: normal !important; overflow: hidden; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; line-height: 1.2; overflow-wrap: anywhere; }
+
+/* Tasas: salida suave y corta, entrada con un leve retraso mientras baja el contenido */
+@keyframes rateOut2 { to { opacity: 0; transform: translateY(-6px) scale(0.97); } }
+.top.rates-out .rate-card { animation: rateOut2 0.22s ease forwards !important; }
+.top.rates-in .rate-card { animation: rateIn 0.5s cubic-bezier(0.32, 0.72, 0, 1) 0.08s backwards !important; }
+.top.rates-in .rate-card:nth-child(2) { animation-delay: 0.12s !important; }
+.top.rates-in .rate-card:nth-child(3) { animation-delay: 0.16s !important; }
 </style>
 </head>
 <body>
@@ -7238,6 +7245,21 @@ main > .panel[data-panel="acc"], main > .panel[data-panel="cat"] { border-top: 0
         bt.setAttribute("aria-label", (c ? "Mostrar" : "Ocultar") + " las tasas del día");
       }
       ap();
+      // Lo que está debajo de las tasas se desliza a su nuevo lugar (sin saltos)
+      function slideBelow(change) {
+        var below = [], el = top.nextElementSibling;
+        for (; el; el = el.nextElementSibling) if (el.offsetParent) below.push(el);
+        var y0 = below.length ? below[0].getBoundingClientRect().top : 0;
+        change();
+        if (!below.length) return;
+        var d = y0 - below[0].getBoundingClientRect().top;
+        if (Math.abs(d) < 1) return;
+        below.forEach(function (x) { x.style.transition = "none"; x.style.transform = "translateY(" + d + "px)"; });
+        void top.offsetWidth;
+        below.forEach(function (x) { x.style.transition = "transform 0.5s cubic-bezier(0.32, 0.72, 0, 1)"; x.style.transform = ""; });
+        clearTimeout(top._st);
+        top._st = setTimeout(function () { below.forEach(function (x) { x.style.transition = ""; x.style.transform = ""; }); }, 560);
+      }
       bt.addEventListener("click", function () {
         state.collapsed.rates = !state.collapsed.rates; save();
         clearTimeout(top._rt);
@@ -7245,10 +7267,11 @@ main > .panel[data-panel="acc"], main > .panel[data-panel="cat"] { border-top: 0
         if (state.collapsed.rates) {
           top.classList.add("rates-out");
           bt.setAttribute("aria-expanded", "false");
-          top._rt = setTimeout(function () { top.classList.remove("rates-out"); ap(); }, 260);
+          top._rt = setTimeout(function () { slideBelow(function () { top.classList.remove("rates-out"); ap(); }); }, 220);
         } else {
-          ap(); void top.offsetWidth; top.classList.add("rates-in");
-          top._rt = setTimeout(function () { top.classList.remove("rates-in"); }, 600);
+          slideBelow(function () { ap(); });
+          void top.offsetWidth; top.classList.add("rates-in");
+          top._rt = setTimeout(function () { top.classList.remove("rates-in"); }, 700);
         }
       });
     })();
@@ -8048,9 +8071,11 @@ main > .panel[data-panel="acc"], main > .panel[data-panel="cat"] { border-top: 0
     function navDir(n) {
       var b = document.body;
       b.classList.add("nav-sync");
-      b.classList.remove("tb-min");
       clearTimeout(navSyncT);
-      navSyncT = setTimeout(function () { b.classList.remove("nav-sync"); }, 480);
+      navSyncT = setTimeout(function () {
+        b.classList.remove("nav-sync");
+        if ((window.scrollY || 0) < 40) b.classList.remove("tb-min");
+      }, 380);
       b.classList.remove("nav-fwd", "nav-back");
       void b.offsetWidth;
       b.classList.add(n >= navIdx ? "nav-fwd" : "nav-back");
@@ -9169,7 +9194,7 @@ main > .panel[data-panel="acc"], main > .panel[data-panel="cat"] { border-top: 0
       function onScroll() {
         ticking = false;
         var y = window.scrollY || 0, dy = y - lastY;
-        if (document.body.classList.contains("nav-sync")) dy = 0;
+        if (document.body.classList.contains("nav-sync")) { lastY = y; return; }
         if (y < 40) document.body.classList.remove("tb-min");
         else if (dy > 6) document.body.classList.add("tb-min");
         else if (dy < -6) document.body.classList.remove("tb-min");
