@@ -2291,6 +2291,24 @@ input, textarea, [contenteditable="true"], .hd-rows, .siri-url code { -webkit-us
 .cx-copy:active { transform: scale(0.9); }
 .cx-copy:disabled { opacity: 0.35; cursor: default; }
 .cx-copy.ok { background: color-mix(in srgb, var(--in) 18%, transparent); color: var(--in); }
+
+/* Cuadrar con el banco */
+.ad-acts .k-fx { background: color-mix(in srgb, var(--accent) 16%, var(--surface)); color: var(--accent); }
+.cq-acc { display: flex; align-items: center; gap: 12px; padding: 10px 0 14px; }
+.cq-acc .cq-t { display: flex; flex-direction: column; line-height: 1.25; }
+.cq-acc .cq-t small { color: var(--muted); font-size: 0.82rem; font-variant-numeric: tabular-nums; }
+.cq-prev { margin-top: 12px; }
+.cq-prev .pv strong.neg { color: var(--out); }
+.cq-prev .pv strong.pos { color: var(--in); }
+.cq-ok { color: var(--in); font-weight: 600; padding: 6px 0; animation: fadeUp 0.35s cubic-bezier(0.32, 0.72, 0, 1); }
+.cq-alert { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 10px 12px; align-items: center; border-radius: 16px; padding: 12px 14px; margin: 0 0 14px; background: color-mix(in srgb, var(--accent) 8%, var(--surface)); animation: fadeUp 0.45s cubic-bezier(0.32, 0.72, 0, 1); }
+.cq-alert[hidden] { display: none; }
+.cq-alert .acc-av { width: 34px; height: 34px; }
+.cq-q { font-size: 0.9rem; line-height: 1.35; }
+.cq-q b { font-weight: 700; font-variant-numeric: tabular-nums; }
+.cq-btns { grid-column: 1 / -1; display: flex; gap: 8px; align-items: center; }
+.cq-btns .secondary { flex: 1; min-height: 38px !important; font-size: 0.88rem; }
+.cq-x { flex: none; width: 38px; height: 38px; border-radius: 50%; border: 0; background: none; color: var(--muted); font-size: 0.85rem; cursor: pointer; }
 </style>
 </head>
 <body>
@@ -2338,6 +2356,7 @@ input, textarea, [contenteditable="true"], .hd-rows, .siri-url code { -webkit-us
 
   <div class="inst" id="inst" hidden><span class="inst-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12M8 7l4-4 4 4"></path><rect x="5" y="11" width="14" height="10" rx="2"></rect></svg></span><div class="inst-t"><b>Instala Orbe</b><small>Toca Compartir y luego «Agregar a inicio». Se abrirá como una app, a pantalla completa.</small></div><button type="button" class="bn-x" id="inst-x" aria-label="Cerrar">✕</button></div>
   <button type="button" class="pay-alert" id="pay-alert" hidden></button>
+  <div class="cq-alert" id="cq-alert" hidden></div>
   <div class="msum" id="msum" hidden></div>
   <section class="panel bal-hero" aria-labelledby="h-bal">
     <div class="balance-head">
@@ -2494,6 +2513,7 @@ input, textarea, [contenteditable="true"], .hd-rows, .siri-url code { -webkit-us
       <button type="button" data-ad="in"><span class="i k-in"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5v14M5 12l7 7 7-7"></path></svg></span>Ingreso</button>
       <button type="button" data-ad="out"><span class="i k-out"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 19V5M5 12l7-7 7 7"></path></svg></span>Gasto</button>
       <button type="button" data-ad="tr"><span class="i k-tr"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 7h13M16 3l4 4-4 4M17 17H4M8 13l-4 4 4 4"></path></svg></span>Transferir</button>
+      <button type="button" data-ad="fix"><span class="i k-fx"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 4v16M6 20h12M5 8h14"></path><path d="M5 8l-3 6a3 3 0 0 0 6 0zM19 8l-3 6a3 3 0 0 0 6 0z"></path></svg></span>Cuadrar</button>
     </div>
     <div class="seg ad-per" role="group" aria-label="Periodo">
       <button type="button" data-adp="m" aria-pressed="true">Este mes</button>
@@ -2568,6 +2588,13 @@ input, textarea, [contenteditable="true"], .hd-rows, .siri-url code { -webkit-us
       </div>
     </div>
 
+    <div class="set-h">Cuentas</div>
+    <div class="set-group">
+      <div class="set-row">
+        <div class="tx"><b>Recordarme cuadrar con el banco</b><small>Una vez al mes te pregunta si el saldo de cada cuenta coincide con tu banco.</small></div>
+        <button type="button" class="switch" id="set-cq" role="switch" aria-checked="true" aria-label="Recordarme cuadrar mis cuentas con el banco"><span></span></button>
+      </div>
+    </div>
     <div class="set-h">Tus datos</div>
     <div class="set-group">
       <button type="button" class="set-row " id="bk-save"><span class="tx"><b>Guardar una copia</b><small><span id="bk-sub">Descarga un archivo con todos tus movimientos.</span></small></span><svg class="chev-r" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 5l7 7-7 7"></path></svg></button>
@@ -3035,6 +3062,22 @@ input, textarea, [contenteditable="true"], .hd-rows, .siri-url code { -webkit-us
       </div>
     </section>
   </div>
+  <div class="sheet-backdrop" id="cq-sheet" hidden>
+    <section class="panel sheet" role="dialog" aria-modal="true" aria-labelledby="h-cq">
+      <div class="sheet-head"><h2 id="h-cq">Cuadrar con tu banco</h2><button type="button" class="del" id="cq-close" aria-label="Cerrar">✕</button></div>
+      <p class="hint">Abre la app de tu banco y escribe el saldo que te muestra. Orbe anota la diferencia (comisiones, intereses o algo que no anotaste) para que las dos cifras sean iguales.</p>
+      <div class="cq-acc" id="cq-acc"></div>
+      <div class="grid">
+        <div class="wide">
+          <label for="cq-monto" id="cq-label">Saldo en tu banco</label>
+          <input type="text" id="cq-monto" inputmode="decimal" autocomplete="off" placeholder="0,00">
+        </div>
+      </div>
+      <div class="cq-prev" id="cq-prev" aria-live="polite"></div>
+      <p class="error" id="cq-err" role="alert"></p>
+      <div class="sheet-foot"><button type="button" class="primary" id="cq-go">Cuadrar</button></div>
+    </section>
+  </div>
   <div class="sheet-backdrop" id="sv-sheet" hidden>
     <section class="panel sheet" role="dialog" aria-modal="true" aria-labelledby="h-sv">
       <div class="sheet-head"><h2 id="h-sv">Agregar ahorro</h2><button type="button" class="del" id="sv-close" aria-label="Cerrar">✕</button></div>
@@ -3336,8 +3379,8 @@ input, textarea, [contenteditable="true"], .hd-rows, .siri-url code { -webkit-us
   // url: «Project URL» y key: clave publicable o «anon», de Supabase → Project Settings → API.
   var CLOUD = { url: "https://homninhiimgcpkbqbycg.supabase.co", key: "sb_publishable_qLFeqK-7ILdCkepqr1v9Kg_mY6HBksV" };
   var CATS = {
-    gasto: ["Alimentación", "Restaurantes", "Vivienda", "Hogar", "Servicios", "Suscripciones", "Transporte", "Salud", "Cuidado personal", "Ropa", "Educación", "Ocio", "Viajes", "Tecnología", "Mascotas", "Regalos", "Deudas", "Impuestos", "Negocio", "Otros"],
-    ingreso: ["Sueldo", "Ventas", "Freelance", "Negocio propio", "Inversiones", "Remesas", "Regalos recibidos", "Reembolsos", "Otros ingresos"]
+    gasto: ["Alimentación", "Restaurantes", "Vivienda", "Hogar", "Servicios", "Suscripciones", "Transporte", "Salud", "Cuidado personal", "Ropa", "Educación", "Ocio", "Viajes", "Tecnología", "Mascotas", "Regalos", "Deudas", "Impuestos", "Negocio", "Comisiones bancarias", "Otros"],
+    ingreso: ["Sueldo", "Ventas", "Freelance", "Negocio propio", "Inversiones", "Remesas", "Regalos recibidos", "Reembolsos", "Ajustes de saldo", "Otros ingresos"]
   };
   var COLORS = ["#5b4cff", "#e08a00", "#0e9aa7", "#8a3ffc", "#e5133f", "#00a651", "#6b7b86", "#d6502b", "#9a7b00"];
 
@@ -3418,6 +3461,7 @@ input, textarea, [contenteditable="true"], .hd-rows, .siri-url code { -webkit-us
         if (d && typeof d.country === "string") state.country = d.country;
         if (d && typeof d.ratesOn === "boolean") state.ratesOn = d.ratesOn;
         if (d && typeof d.aiHide === "boolean") state.aiHide = d.aiHide;
+        if (d && typeof d.cqOff === "boolean") state.cqOff = d.cqOff;
         if (d && d.instSeen) state.instSeen = true;
         if (d && d.notif) state.notif = true;
         if (d && d.subs && typeof d.subs === "object") state.subs = d.subs;
@@ -3440,7 +3484,7 @@ input, textarea, [contenteditable="true"], .hd-rows, .siri-url code { -webkit-us
   }
   function save() {
     try {
-      localStorage.setItem(KEY, JSON.stringify({ items: state.items, rate: state.rate, rateDate: state.rateDate, hideSav: state.hideSav, rateManual: state.rateManual, rateAutoAt: state.rateAutoAt, accounts: state.accounts, templates: state.templates, goals: state.goals, payments: state.payments, paySeries: state.paySeries, earn: state.earn, limits: state.limits, rateHist: state.rateHist, rateHistAt: state.rateHistAt, theme: state.theme, pin: state.pin, backupAt: state.backupAt, onb: state.onb, msumSeen: state.msumSeen, country: state.country, ratesOn: !!state.ratesOn, aiHide: !!state.aiHide, instSeen: state.instSeen, notif: state.notif, subs: state.subs, limCur: state.limCur, lastAcc: state.lastAcc, bn: state.bn, btcUsd: state.btcUsd, btcAt: state.btcAt, rateEur: state.rateEur, rateEurDate: state.rateEurDate, rateEurManual: state.rateEurManual, rateUsdt: state.rateUsdt, rateUsdtDate: state.rateUsdtDate, rateUsdtManual: state.rateUsdtManual, rateUsdtSrc: state.rateUsdtSrc, collapsed: state.collapsed, disp: state.disp, sav: state.sav }));
+      localStorage.setItem(KEY, JSON.stringify({ items: state.items, rate: state.rate, rateDate: state.rateDate, hideSav: state.hideSav, rateManual: state.rateManual, rateAutoAt: state.rateAutoAt, accounts: state.accounts, templates: state.templates, goals: state.goals, payments: state.payments, paySeries: state.paySeries, earn: state.earn, limits: state.limits, rateHist: state.rateHist, rateHistAt: state.rateHistAt, theme: state.theme, pin: state.pin, backupAt: state.backupAt, onb: state.onb, msumSeen: state.msumSeen, country: state.country, ratesOn: !!state.ratesOn, aiHide: !!state.aiHide, cqOff: !!state.cqOff, instSeen: state.instSeen, notif: state.notif, subs: state.subs, limCur: state.limCur, lastAcc: state.lastAcc, bn: state.bn, btcUsd: state.btcUsd, btcAt: state.btcAt, rateEur: state.rateEur, rateEurDate: state.rateEurDate, rateEurManual: state.rateEurManual, rateUsdt: state.rateUsdt, rateUsdtDate: state.rateUsdtDate, rateUsdtManual: state.rateUsdtManual, rateUsdtSrc: state.rateUsdtSrc, collapsed: state.collapsed, disp: state.disp, sav: state.sav }));
       window.__saveFail = 0;
     } catch (e) {
       if (!window.__saveFail && window.__toast) window.__toast("No se pudo guardar en este teléfono (puede estar sin espacio). Guarda una copia en Archivos desde Ajustes.");
@@ -4699,7 +4743,8 @@ input, textarea, [contenteditable="true"], .hd-rows, .siri-url code { -webkit-us
 
   var CAT_COL = { "Alimentación": "#5b4cff", "Vivienda": "#e08a00", "Transporte": "#0e9aa7", "Servicios": "#8a3ffc", "Salud": "#e5133f", "Educación": "#00a651", "Ocio": "#6b7b86", "Negocio": "#d6502b", "Otros": "#9a7b00",
     "Restaurantes": "#f0567e", "Hogar": "#b07a3a", "Suscripciones": "#4f86f7", "Cuidado personal": "#d65fb0", "Ropa": "#c2410c", "Viajes": "#0ea5e9", "Tecnología": "#6366f1", "Mascotas": "#a16207", "Regalos": "#db2777", "Deudas": "#475569", "Impuestos": "#7c8597" };
-  var CAT_COL_IN = { "Ventas": "#12a37a", "Sueldo": "#0e9aa7", "Otros ingresos": "#5b4cff", "Freelance": "#e08a00", "Negocio propio": "#8a3ffc", "Inversiones": "#0f9d58", "Remesas": "#14b8a6", "Regalos recibidos": "#db2777", "Reembolsos": "#64748b" };
+  CAT_COL["Comisiones bancarias"] = "#64748b";
+  var CAT_COL_IN = { "Ajustes de saldo": "#0e9aa7", "Ventas": "#12a37a", "Sueldo": "#0e9aa7", "Otros ingresos": "#5b4cff", "Freelance": "#e08a00", "Negocio propio": "#8a3ffc", "Inversiones": "#0f9d58", "Remesas": "#14b8a6", "Regalos recibidos": "#db2777", "Reembolsos": "#64748b" };
   var CAT_ICON = {
     "Alimentación": '<path d="M3 4h2.5l2 11h10l2-8H7"></path><circle cx="9.5" cy="19" r="1.3"></circle><circle cx="16.5" cy="19" r="1.3"></circle>',
     "Restaurantes": '<path d="M7 3v8M5 3v5a2 2 0 0 0 4 0V3M7 11v10M16 3c-1.7 0-3 2-3 5v4h3v9"></path>',
@@ -4729,6 +4774,8 @@ input, textarea, [contenteditable="true"], .hd-rows, .siri-url code { -webkit-us
     "Remesas": '<path d="M12 3v14M7 12l5 5 5-5M4 21h16"></path>',
     "Regalos recibidos": '<rect x="4" y="9" width="16" height="11" rx="1.5"></rect><path d="M3 9h18M12 9v11M12 9c-1-3-5-4-5-1.5S12 9 12 9zM12 9c1-3 5-4 5-1.5S12 9 12 9z"></path>',
     "Reembolsos": '<path d="M4 12a8 8 0 1 0 2.3-5.7"></path><path d="M4 4v5h5"></path>',
+    "Comisiones bancarias": '<path d="M3 10l9-6 9 6"></path><path d="M5 10v8M19 10v8M3 20h18"></path><path d="M9.5 16.5l5-5M10 12h.01M14 16h.01"></path>',
+    "Ajustes de saldo": '<path d="M12 4v16M5 20h14M5 8h14"></path><path d="M5 8l-3 6a3 3 0 0 0 6 0zM19 8l-3 6a3 3 0 0 0 6 0z"></path>',
     "Otros ingresos": '<circle cx="6" cy="12" r="1.3"></circle><circle cx="12" cy="12" r="1.3"></circle><circle cx="18" cy="12" r="1.3"></circle>'
   };
   function colorFor(cat) { return CAT_COL[cat] || CAT_COL["Otros"]; }
@@ -5328,6 +5375,7 @@ input, textarea, [contenteditable="true"], .hd-rows, .siri-url code { -webkit-us
     if (typeof window.__accd === "function") window.__accd();
     if (typeof window.__nudge === "function") window.__nudge();
     if (typeof window.__payAlert === "function") window.__payAlert();
+    if (typeof window.__cqAlert === "function") window.__cqAlert();
   }
 
   function savChart(D) {
@@ -6800,10 +6848,89 @@ input, textarea, [contenteditable="true"], .hd-rows, .siri-url code { -webkit-us
         showToast("Movimiento eliminado.");
       }
     });
+    /* ---------- Cuadrar con el banco ---------- */
+    var cq = { id: null };
+    function cqDiff() {
+      var a = accById(cq.id), v = amtVal($("cq-monto").value);
+      if (!a || !($("cq-monto").value.trim()) || !(v >= 0)) return null;
+      return Math.round((v - accBalance(a)) * 100) / 100;
+    }
+    function renderCq() {
+      var a = accById(cq.id); if (!a) return;
+      $("cq-acc").innerHTML = accAvatar(a) + '<span class="cq-t"><b>' + esc(a.nombre) + "</b><small>En Orbe: " + money(accBalance(a), a.moneda) + "</small></span>";
+      $("cq-label").textContent = "Saldo en tu banco (" + curLabel(a.moneda) + ")";
+      var d = cqDiff(), p = $("cq-prev");
+      if (d === null) { p.innerHTML = ""; $("cq-go").textContent = "Cuadrar"; return; }
+      if (Math.abs(d) < 0.005) {
+        p.innerHTML = '<div class="cq-ok">✓ Coincide. Tu cuenta está cuadrada.</div>';
+        $("cq-go").textContent = "Confirmar";
+        return;
+      }
+      var neg = d < 0;
+      p.innerHTML = '<div class="pv"><span>Diferencia</span><strong class="' + (neg ? "neg" : "pos") + '">' + (neg ? "−" : "+") + money(Math.abs(d), a.moneda) + "</strong></div>" +
+        '<span class="hint">' + (neg ? "Se anotará como gasto en «Comisiones bancarias»." : "Se anotará como ingreso en «Ajustes de saldo» (por ejemplo, intereses).") + "</span>";
+      $("cq-go").textContent = "Cuadrar";
+    }
+    function openCq(a) {
+      if (!a) return;
+      cq.id = a.id; $("cq-monto").value = ""; $("cq-err").textContent = "";
+      renderCq(); $("cq-sheet").hidden = false;
+    }
+    function closeCq() { $("cq-sheet").hidden = true; }
+    $("cq-close").addEventListener("click", closeCq);
+    $("cq-sheet").addEventListener("click", function (e) { if (e.target === $("cq-sheet")) closeCq(); });
+    $("cq-monto").addEventListener("input", renderCq);
+    $("cq-go").addEventListener("click", function () {
+      var a = accById(cq.id); if (!a) return;
+      var d = cqDiff();
+      if (d === null) { $("cq-err").textContent = "Escribe el saldo que te muestra tu banco."; return; }
+      if (Math.abs(d) >= 0.005) {
+        var neg = d < 0;
+        state.items.push({ id: Date.now(), tipo: neg ? "gasto" : "ingreso", cat: neg ? "Comisiones bancarias" : "Ajustes de saldo", monto: Math.abs(d), moneda: a.moneda, cuenta: a.id, fecha: today(), nota: "Ajuste para cuadrar con el banco" });
+      }
+      a.cuadre = today(); delete a.cqSnooze;
+      save(); render(); closeCq();
+      showToast(Math.abs(d) < 0.005 ? "Listo, " + a.nombre + " está cuadrada." : "Cuadrada. Se anotó " + (d < 0 ? "−" : "+") + money(Math.abs(d), a.moneda) + ".");
+    });
+    // Aviso mensual: «¿Tu saldo en X sigue siendo…?»
+    function cqDue() {
+      if (state.cqOff) return null;
+      var t = today(), lim = addDaysIso(t, -30);
+      for (var i = 0; i < state.accounts.length; i++) {
+        var a = state.accounts[i];
+        if (a.cqSnooze && a.cqSnooze > t) continue;
+        var last = a.cuadre || accCreated(a) || "";
+        if (!last) { var f = state.items.filter(function (it) { return String(it.cuenta) === String(a.id); }).map(function (it) { return it.fecha; }).sort()[0]; last = f || t; }
+        if (last <= lim) return a;
+      }
+      return null;
+    }
+    function renderCqAlert() {
+      var el = $("cq-alert"), a = cqDue(); if (!el) return;
+      el.hidden = !a; $("set-cq").setAttribute("aria-checked", state.cqOff ? "false" : "true");
+      if (!a) return;
+      el.innerHTML = accAvatar(a) + '<span class="cq-q">¿Tu saldo en <b>' + esc(a.nombre) + "</b> sigue siendo <b>" + money(accBalance(a), a.moneda) + '</b>?</span>' +
+        '<span class="cq-btns"><button type="button" class="secondary" data-cq="yes" data-id="' + esc(String(a.id)) + '">Sí</button><button type="button" class="secondary" data-cq="fix" data-id="' + esc(String(a.id)) + '">Ajustar</button>' +
+        '<button type="button" class="cq-x" data-cq="later" data-id="' + esc(String(a.id)) + '" aria-label="Recordar en unos días">✕</button></span>';
+    }
+    $("cq-alert").addEventListener("click", function (e) {
+      var b = e.target.closest("[data-cq]"); if (!b) return;
+      var a = accById(b.getAttribute("data-id")); if (!a) return;
+      var k = b.getAttribute("data-cq");
+      if (k === "yes") { a.cuadre = today(); delete a.cqSnooze; save(); renderCqAlert(); showToast("Listo, " + a.nombre + " está cuadrada."); }
+      else if (k === "later") { a.cqSnooze = addDaysIso(today(), 3); save(); renderCqAlert(); }
+      else openCq(a);
+    });
+    $("set-cq").addEventListener("click", function () {
+      state.cqOff = !state.cqOff; save(); renderCqAlert();
+      showToast(state.cqOff ? "Ya no te recordaré cuadrar tus cuentas." : "Te recordaré cuadrar tus cuentas una vez al mes.");
+    });
+    window.__cqAlert = renderCqAlert;
     document.querySelectorAll("[data-ad]").forEach(function (b) {
       b.addEventListener("click", function () {
         var a = accById(ad.id), act = b.getAttribute("data-ad");
         if (!a) return;
+        if (act === "fix") { openCq(a); return; }
         if (act === "in" || act === "out") {
           var t = act === "in" ? "ingreso" : "gasto";
           state.type = t; setPressed("[data-type]", "data-type", t); fillCats();
