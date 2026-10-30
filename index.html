@@ -2309,6 +2309,44 @@ input, textarea, [contenteditable="true"], .hd-rows, .siri-url code { -webkit-us
 .cq-btns { grid-column: 1 / -1; display: flex; gap: 8px; align-items: center; }
 .cq-btns .secondary { flex: 1; min-height: 38px !important; font-size: 0.88rem; }
 .cq-x { flex: none; width: 38px; height: 38px; border-radius: 50%; border: 0; background: none; color: var(--muted); font-size: 0.85rem; cursor: pointer; }
+
+/* Atajo de Siri: pasos con imágenes de ejemplo de la app Atajos */
+.siri-kind { margin: 4px 0 14px; }
+.sc-steps { list-style: none; margin: 0; padding: 0; display: grid; gap: 16px; }
+.sc-step { display: grid; grid-template-columns: 28px minmax(0, 1fr); gap: 12px; }
+.sc-n { width: 28px; height: 28px; border-radius: 50%; background: color-mix(in srgb, var(--accent) 18%, transparent); color: var(--accent); font-weight: 700; font-size: 0.9rem; display: grid; place-items: center; }
+.sc-body { min-width: 0; display: grid; gap: 8px; }
+.sc-body p { margin: 2px 0 0; font-size: 0.92rem; line-height: 1.45; }
+.sc-pic { border-radius: 16px; padding: 12px; background: #f2f2f7; color: #1c1c1e; border: 1px solid color-mix(in srgb, var(--ink) 8%, transparent); font-family: -apple-system, "SF Pro Text", Inter, system-ui, sans-serif; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .sc-pic { background: #1c1c1e; color: #f2f2f7; } }
+:root[data-theme="dark"] .sc-pic { background: #1c1c1e; color: #f2f2f7; }
+.sc-pic-top { display: flex; align-items: center; justify-content: space-between; }
+.sc-app { display: flex; align-items: center; gap: 10px; font-weight: 700; font-size: 1.05rem; }
+.sc-app-ic { width: 36px; height: 36px; border-radius: 9px; background: linear-gradient(135deg, #ff375f, #5e5ce6 55%, #0a84ff); display: grid; place-items: center; }
+.sc-app-ic svg { width: 20px; height: 20px; }
+.sc-plus { width: 34px; height: 34px; border-radius: 50%; background: color-mix(in srgb, #0a84ff 16%, transparent); color: #0a84ff; display: grid; place-items: center; font-size: 1.4rem; line-height: 1; box-shadow: 0 0 0 3px color-mix(in srgb, #0a84ff 35%, transparent); }
+.sc-act { display: flex; align-items: flex-start; gap: 10px; padding: 10px; border-radius: 12px; background: color-mix(in srgb, currentColor 6%, transparent); }
+.sc-act-ic { flex: none; width: 26px; height: 26px; border-radius: 7px; display: grid; place-items: center; }
+.sc-act-ic svg { width: 16px; height: 16px; }
+.sc-blue { background: #0a84ff; }
+.sc-safari { background: linear-gradient(180deg, #34aadc, #0a84ff); }
+.sc-act-t { font-size: 0.9rem; line-height: 1.7; min-width: 0; overflow-wrap: anywhere; }
+.sc-tok { display: inline; padding: 2px 7px; border-radius: 7px; background: color-mix(in srgb, #0a84ff 16%, transparent); color: #0a84ff; font-weight: 600; white-space: nowrap; }
+.sc-var { background: #0a84ff; color: #fff; }
+.sc-url { color: #0a84ff; word-break: break-all; }
+.sc-pic-siri { display: flex; align-items: center; gap: 12px; }
+.sc-orb { flex: none; width: 34px; height: 34px; border-radius: 50%; background: conic-gradient(from 0deg, #ff375f, #ff9f0a, #30d158, #0a84ff, #bf5af2, #ff375f); filter: blur(0.3px); animation: scOrb 3.5s linear infinite; }
+@keyframes scOrb { to { transform: rotate(360deg); } }
+@media (prefers-reduced-motion: reduce) { .sc-orb { animation: none; } }
+.sc-say { font-weight: 600; font-size: 0.95rem; }
+.siri-test { display: flex; align-items: center; gap: 12px; margin: 18px 0 6px; padding: 12px 14px; border-radius: 16px; background: color-mix(in srgb, var(--accent) 8%, var(--surface)); }
+.siri-test > div { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px; }
+.siri-test small { color: var(--muted); font-size: 0.8rem; line-height: 1.35; }
+.siri-test .secondary { flex: none; min-height: 40px; padding: 0 18px; }
+.siri-more { margin-top: 12px; font-size: 0.88rem; color: var(--muted); }
+.siri-more summary { cursor: pointer; color: var(--ink); font-weight: 600; min-height: 40px; display: flex; align-items: center; }
+.siri-more p { margin: 6px 0; line-height: 1.45; }
+.siri-more code { font-size: 0.78rem; word-break: break-all; -webkit-user-select: all; user-select: all; }
 </style>
 </head>
 <body>
@@ -2923,17 +2961,63 @@ input, textarea, [contenteditable="true"], .hd-rows, .siri-url code { -webkit-us
   <div class="sheet-backdrop" id="siri-sheet" hidden>
     <section class="panel sheet" role="dialog" aria-modal="true" aria-labelledby="h-siri">
       <div class="sheet-head"><h2 id="h-siri">Atajo de Siri</h2><button type="button" class="del" id="siri-close" aria-label="Cerrar">✕</button></div>
-      <ol class="siri-steps">
-        <li>Abre la app <b>Atajos</b> y toca <b>+</b> para crear uno nuevo.</li>
-        <li>Agrega la acción <b>Solicitar entrada</b>: tipo <b>Número</b>, pregunta «¿Cuánto gastaste?».</li>
-        <li>Agrega la acción <b>Abrir URL</b> y pega este enlace. Al final, toca y elige <b>Entrada proporcionada</b>:</li>
+      <p class="hint">Di «Oye Siri, agregar gasto», dile el monto y Orbe se abre con el gasto listo para guardar. Se configura una sola vez en la app <b>Atajos</b> del iPhone.</p>
+      <div class="seg siri-kind" role="group" aria-label="Tipo de atajo">
+        <button type="button" data-siri-k="gasto" aria-pressed="true">Gasto</button>
+        <button type="button" data-siri-k="ingreso" aria-pressed="false">Ingreso</button>
+      </div>
+      <ol class="sc-steps">
+        <li class="sc-step">
+          <div class="sc-n">1</div>
+          <div class="sc-body">
+            <p>Abre la app <b>Atajos</b> y toca <b>+</b> arriba a la derecha.</p>
+            <div class="sc-pic sc-pic-top" aria-hidden="true">
+              <span class="sc-app"><span class="sc-app-ic"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 4h9l3 3v9M4 8v9l3 3h9"></path><path d="M8 12h8"></path></svg></span>Atajos</span>
+              <span class="sc-plus">+</span>
+            </div>
+          </div>
+        </li>
+        <li class="sc-step">
+          <div class="sc-n">2</div>
+          <div class="sc-body">
+            <p>Toca <b>Agregar acción</b>, busca <b>Solicitar entrada</b> y elígela. Cambia <b>Texto</b> por <b>Número</b> y escribe la pregunta.</p>
+            <div class="sc-pic" aria-hidden="true">
+              <div class="sc-act"><span class="sc-act-ic sc-blue"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round"><path d="M4 6h16M4 12h10M4 18h7"></path></svg></span>
+                <span class="sc-act-t">Solicitar <span class="sc-tok">Número</span> con <span class="sc-tok" id="siri-q">¿Cuánto gastaste?</span></span></div>
+            </div>
+          </div>
+        </li>
+        <li class="sc-step">
+          <div class="sc-n">3</div>
+          <div class="sc-body">
+            <p>Agrega la acción <b>Abrir URL</b>. Copia este enlace y pégalo en ella:</p>
+            <div class="siri-url"><code id="siri-url"></code><button type="button" id="siri-copy">Copiar</button></div>
+            <p>Después, deja el cursor al final del enlace, toca <b>Variable</b> sobre el teclado y elige <b>Entrada proporcionada</b>. Debe verse así:</p>
+            <div class="sc-pic" aria-hidden="true">
+              <div class="sc-act"><span class="sc-act-ic sc-safari"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8.5"></circle><path d="M15.5 8.5l-2 5-5 2 2-5z"></path></svg></span>
+                <span class="sc-act-t">Abrir <span class="sc-url" id="siri-url-pic"></span><span class="sc-tok sc-var">Entrada proporcionada</span></span></div>
+            </div>
+          </div>
+        </li>
+        <li class="sc-step">
+          <div class="sc-n">4</div>
+          <div class="sc-body">
+            <p>Toca el nombre de arriba, ponle <b id="siri-name">Agregar gasto</b> y toca <b>OK</b>.</p>
+            <div class="sc-pic sc-pic-siri" aria-hidden="true">
+              <span class="sc-orb"></span><span class="sc-say">«Oye Siri, <span id="siri-say">agregar gasto</span>»</span>
+            </div>
+          </div>
+        </li>
       </ol>
-      <div class="siri-url"><code id="siri-url"></code><button type="button" id="siri-copy">Copiar</button></div>
-      <ol class="siri-steps" start="4">
-        <li>Ponle de nombre <b>Agregar gasto</b>. Listo: di «Oye Siri, agregar gasto».</li>
-      </ol>
-      <p class="hint">Puedes agregar al enlace la categoría y una nota, por ejemplo <code>&amp;cat=Transporte&amp;nota=Taxi</code>. Para un ingreso usa <code>?ingreso=</code> en vez de <code>?gasto=</code>.</p>
-      <p class="hint">Importante: en algunos iPhone, el atajo abre Orbe en Safari en vez de la app de tu pantalla de inicio, y Safari guarda los datos aparte. Si el gasto no aparece en tu app, avísanos.</p>
+      <div class="siri-test">
+        <div><b>Prueba el enlace</b><small>Abre Orbe como lo hará el atajo, con un monto de ejemplo.</small></div>
+        <button type="button" class="secondary" id="siri-try">Probar</button>
+      </div>
+      <details class="siri-more">
+        <summary>Opciones y preguntas</summary>
+        <p>Puedes elegir la categoría, la cuenta y una nota agregándolas al enlace, antes de la variable. Por ejemplo: <code id="siri-ex"></code></p>
+        <p><b>Si el gasto no aparece en tu app:</b> el iPhone abre los enlaces en Safari, y Safari guarda los datos aparte de la app de tu pantalla de inicio. Inicia sesión con tu cuenta de Orbe en los dos (Ajustes → Tu cuenta) y el gasto llegará a tu app por la nube.</p>
+      </details>
     </section>
   </div>
   <div class="sheet-backdrop" id="snap-sheet" hidden>
@@ -8755,8 +8839,28 @@ input, textarea, [contenteditable="true"], .hd-rows, .siri-url code { -webkit-us
     document.addEventListener("visibilitychange", function () { if (document.hidden) { if (sync().dirty) cloudPush(); } else setTimeout(function () { cloudCheck(false); }, 800); });
     window.addEventListener("online", function () { renderCloud(); cloudCheck(false); });
     window.addEventListener("offline", renderCloud);
-    function siriUrl() { return location.origin + location.pathname + "?gasto="; }
-    $("siri-open").addEventListener("click", function () { $("siri-url").textContent = siriUrl(); $("siri-sheet").hidden = false; });
+    var siriK = "gasto";
+    function siriBase() { return location.protocol === "file:" || window.__orbeDemo ? "https://tu-orbe.app/" : location.origin + location.pathname; }
+    function siriUrl() { return siriBase() + "?" + siriK + "="; }
+    function renderSiri() {
+      var g = siriK === "gasto";
+      setPressed("[data-siri-k]", "data-siri-k", siriK);
+      $("siri-url").textContent = siriUrl();
+      $("siri-url-pic").textContent = siriUrl().replace(/^https?:\/\//, "");
+      $("siri-q").textContent = g ? "¿Cuánto gastaste?" : "¿Cuánto recibiste?";
+      $("siri-name").textContent = g ? "Agregar gasto" : "Agregar ingreso";
+      $("siri-say").textContent = g ? "agregar gasto" : "agregar ingreso";
+      var cat = g ? "Transporte" : "Sueldo";
+      $("siri-ex").textContent = siriBase() + "?" + (g ? "cat=" + cat + "&nota=Taxi&" : "cat=" + cat + "&") + siriK + "=";
+    }
+    document.querySelectorAll("[data-siri-k]").forEach(function (b) { b.addEventListener("click", function () { siriK = b.getAttribute("data-siri-k"); renderSiri(); }); });
+    $("siri-open").addEventListener("click", function () { renderSiri(); $("siri-sheet").hidden = false; });
+    $("siri-try").addEventListener("click", function () {
+      if (!state.accounts.length) { showToast("Primero agrega una cuenta."); return; }
+      $("siri-sheet").hidden = true;
+      var q = new URLSearchParams(); q.set(siriK, "12,50");
+      setTimeout(function () { window.__orbeDeep(q); showToast("Así se abrirá Orbe con el monto que le digas a Siri."); }, 380);
+    });
     $("siri-close").addEventListener("click", function () { $("siri-sheet").hidden = true; });
     $("siri-sheet").addEventListener("click", function (e) { if (e.target === $("siri-sheet")) $("siri-sheet").hidden = true; });
     $("siri-copy").addEventListener("click", function () {
@@ -8764,12 +8868,10 @@ input, textarea, [contenteditable="true"], .hd-rows, .siri-url code { -webkit-us
       try { navigator.clipboard.writeText(t).then(function () { showToast("Enlace copiado."); }, function () { showToast("Mantén presionado el enlace para copiarlo."); }); } catch (e) { showToast("Mantén presionado el enlace para copiarlo."); }
     });
     // Abrir Orbe con un movimiento listo: ?gasto=12,50&cat=Transporte&nota=Taxi&cuenta=Zinli
-    (function () {
-      var q; try { q = new URLSearchParams(location.search); } catch (e) { return; }
+    window.__orbeDeep = function (q) {
       var tipo = q.has("gasto") ? "gasto" : q.has("ingreso") ? "ingreso" : "";
       if (!tipo) return;
       var amt = parseNum(String(q.get(tipo) || "").replace(/\s/g, ""));
-      try { history.replaceState(null, "", location.pathname); } catch (e) {}
       var tries = 0;
       (function go() {
         var busy = !$("lock").hidden || !$("onb").hidden || document.documentElement.classList.contains("hold");
@@ -8782,6 +8884,12 @@ input, textarea, [contenteditable="true"], .hd-rows, .siri-url code { -webkit-us
         if (amt > 0) { $("monto").value = moneyIn(amt); $("monto").dispatchEvent(new Event("input", { bubbles: true })); }
         if (q.get("nota")) $("nota").value = q.get("nota").slice(0, 80);
       })();
+    };
+    (function () {
+      var q; try { q = new URLSearchParams(location.search); } catch (e) { return; }
+      if (!q.has("gasto") && !q.has("ingreso")) return;
+      try { history.replaceState(null, "", location.pathname); } catch (e) {}
+      window.__orbeDeep(q);
     })();
     document.addEventListener("visibilitychange", function () { if (!document.hidden) setTimeout(snapTake, 1500); });
     // Pide al teléfono que no borre los datos de Orbe cuando falte espacio
