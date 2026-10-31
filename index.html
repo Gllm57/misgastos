@@ -2479,6 +2479,15 @@ input, textarea, [contenteditable="true"], .hd-rows, .siri-url code { -webkit-us
 .sgi-acts svg { width: 18px; height: 18px; }
 #sga-acc .ap:last-child .ap-t { padding-left: 7px; }
 #sgj-code { text-transform: uppercase; letter-spacing: 0.06em; }
+#sgn-sheet .sheet > .hint, #sgi-sheet .sheet > .hint, #sga-sub, #sgj-sheet .sheet > .hint, .sgd-note { text-align: center; text-wrap: balance; }
+#sgn-sheet .sheet > .hint, #sgi-sheet .sheet > .hint, #sga-sub, #sgj-sheet .sheet > .hint { margin: 0 auto 16px; max-width: 34ch; }
+.sgd-note { margin: 8px auto 0 !important; max-width: 36ch; }
+.sg-date { display: flex; gap: 8px; align-items: stretch; min-width: 0; }
+.sg-date .pick { flex: 1; min-width: 0; }
+.sg-date .pick.empty span { color: var(--muted); }
+.sg-clr { flex: none; width: 50px; border: 0; border-radius: 14px; background: var(--fill, color-mix(in srgb, var(--ink) 6%, transparent)); color: var(--muted); font: inherit; cursor: pointer; }
+.sgd-del { margin-top: 18px; border: 0 !important; background: color-mix(in srgb, var(--out) 10%, transparent) !important; border-radius: 999px !important; }
+.sgd-del:active { transform: scale(0.97); }
 </style>
 </head>
 <body>
@@ -3318,8 +3327,9 @@ input, textarea, [contenteditable="true"], .hd-rows, .siri-url code { -webkit-us
           <select id="sgn-moneda"></select>
         </div>
         <div class="wide">
-          <label for="sgn-fecha">¿Para cuándo? (opcional)</label>
-          <input type="date" id="sgn-fecha">
+          <label for="sgn-fecha-btn">¿Para cuándo? (opcional)</label>
+          <input type="hidden" id="sgn-fecha">
+          <div class="sg-date"><button type="button" class="pick" id="sgn-fecha-btn" aria-haspopup="dialog"><span id="sgn-fecha-label">Sin fecha</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="3"></rect><path d="M8 3v4M16 3v4M3 10h18"></path></svg></button><button type="button" class="sg-clr" id="sgn-fecha-clr" aria-label="Quitar la fecha" hidden>✕</button></div>
         </div>
         <div class="wide">
           <label id="sgn-split-l">¿Cómo se reparte?</label>
@@ -6627,7 +6637,7 @@ input, textarea, [contenteditable="true"], .hd-rows, .siri-url code { -webkit-us
     function openCal(target) {
       cal.target = target;
       var base;
-      if (target === "fecha" || target === "pago" || target === "tr") { cal.mode = "day"; cal.nav = false; cal.sel = $(target === "pago" ? "pg-fecha" : target === "tr" ? "tr-fecha" : "fecha").value || today(); base = cal.sel.split("-"); }
+      if (target === "fecha" || target === "pago" || target === "tr" || target === "sg") { cal.mode = "day"; cal.nav = false; cal.sel = $(target === "pago" ? "pg-fecha" : target === "tr" ? "tr-fecha" : target === "sg" ? "sgn-fecha" : "fecha").value || today(); base = cal.sel.split("-"); }
       else {
         cal.mode = "day"; cal.nav = false;
         var tt = today();
@@ -6640,7 +6650,7 @@ input, textarea, [contenteditable="true"], .hd-rows, .siri-url code { -webkit-us
     }
     function closeCal() {
       $("cal-backdrop").hidden = true;
-      (cal.target === "fecha" ? $("fecha-btn") : cal.target === "pago" ? $("pg-fecha-btn") : cal.target === "tr" ? $("tr-fecha-btn") : $("mes-btn")).focus();
+      (cal.target === "fecha" ? $("fecha-btn") : cal.target === "pago" ? $("pg-fecha-btn") : cal.target === "tr" ? $("tr-fecha-btn") : cal.target === "sg" ? $("sgn-fecha-btn") : $("mes-btn")).focus();
     }
     $("fecha-btn").addEventListener("click", function () { openCal("fecha"); });
     $("mes-btn").addEventListener("click", function () { openCal("mes"); });
@@ -9398,9 +9408,8 @@ input, textarea, [contenteditable="true"], .hd-rows, .siri-url code { -webkit-us
         more.push('<button type="button" class="set-row" data-sg-finish><span class="ic">' + sgSvg("flag") + '</span><span class="tx"><b>' + (c.done ? "Registrar la compra" : "Marcar como lograda") + "</b><small>La meta se cierra y nadie más puede aportar</small></span></button>");
       }
       if (c.lead && g.status === "done") more.push('<button type="button" class="set-row" data-sg-reopen><span class="ic">' + sgSvg("flag") + '</span><span class="tx"><b>Volver a abrir</b><small>Para seguir juntando</small></span></button>');
-      if (c.lead) more.push('<button type="button" class="set-row danger" data-sg-del><span class="ic">' + sgSvg("trash") + '</span><span class="tx"><b>Eliminar meta</b><small>Se borra para todos</small></span></button>');
-      else more.push('<button type="button" class="set-row danger" data-sg-leave><span class="ic">' + sgSvg("out") + '</span><span class="tx"><b>Salir de la meta</b><small>Tus aportes confirmados se quedan en la meta</small></span></button>');
       html += '<div class="sgd-more">' + more.join("") + "</div>";
+      html += c.lead ? '<button type="button" class="ad-del sgd-del" data-sg-del>Eliminar meta</button>' : '<button type="button" class="ad-del sgd-del" data-sg-leave>Salir de la meta</button>';
       $("sgd-body").innerHTML = html;
       var mine = c.mine.ok + c.mine.pend;
       $("sgd-foot").innerHTML = g.status === "done" ? '<button type="button" class="secondary" id="sgd-closeb">Cerrar</button>' :
@@ -9511,13 +9520,22 @@ input, textarea, [contenteditable="true"], .hd-rows, .siri-url code { -webkit-us
     function sgOpenNew() {
       if (!sgSes()) { sgLogin(); return; }
       sgNew = { icon: "gift", color: "", split: "equal" };
-      $("sgn-nombre").value = ""; $("sgn-meta").value = ""; $("sgn-fecha").value = ""; $("sgn-err").textContent = "";
+      $("sgn-nombre").value = ""; $("sgn-meta").value = ""; sgFecha(""); $("sgn-err").textContent = "";
       $("sgn-moneda").innerHTML = sgCurOpts(); $("sgn-moneda").value = state.disp === "VES" && !LOC.none ? LOC.code : "USD";
-      $("sgn-fecha").min = today();
       $("sgn-me-w").hidden = !!sgMeName(); $("sgn-me").value = "";
       setPressed("[data-sgs]", "data-sgs", "equal");
       sgNewLook(); $("sgn-sheet").hidden = false;
     }
+    function sgFecha(v) {
+      if (v && v < today()) v = today();
+      $("sgn-fecha").value = v || "";
+      $("sgn-fecha-label").textContent = v ? dateLabel(v) : "Sin fecha";
+      $("sgn-fecha-btn").classList.toggle("empty", !v);
+      $("sgn-fecha-clr").hidden = !v;
+    }
+    window.__sgFecha = sgFecha;
+    $("sgn-fecha-btn").addEventListener("click", function () { openCal("sg"); });
+    $("sgn-fecha-clr").addEventListener("click", function () { sgFecha(""); });
     $("sgn-icons").addEventListener("click", function (e) { var b = e.target.closest("[data-sg-ic]"); if (b) { sgNew.icon = b.getAttribute("data-sg-ic"); sgNewLook(); } });
     $("sgn-colors").addEventListener("click", function (e) { var b = e.target.closest("[data-sg-col]"); if (b) { sgNew.color = b.getAttribute("data-sg-col"); sgNewLook(); } });
     $("sgn-nombre").addEventListener("input", function () { if (!sgNew.icon) sgNewLook(); });
@@ -10488,6 +10506,7 @@ input, textarea, [contenteditable="true"], .hd-rows, .siri-url code { -webkit-us
       if (cal.target === "fecha") { setFecha(today()); closeCal(); return; }
       if (cal.target === "pago") { setPagoFecha(today()); closeCal(); return; }
       if (cal.target === "tr") { setTrFecha(today()); closeCal(); return; }
+      if (cal.target === "sg") { window.__sgFecha(today()); closeCal(); return; }
       var tt = today(), q = tt.split("-");
       cal.sel = tt; cal.y = Number(q[0]); cal.m = Number(q[1]) - 1; cal.mode = "day"; cal.nav = false;
       drawCal();
@@ -10502,6 +10521,7 @@ input, textarea, [contenteditable="true"], .hd-rows, .siri-url code { -webkit-us
         if (cal.target === "mes") { cal.sel = dd.getAttribute("data-d"); drawCal(); return; }
         if (cal.target === "pago") { setPagoFecha(dd.getAttribute("data-d")); closeCal(); return; }
         if (cal.target === "tr") { setTrFecha(dd.getAttribute("data-d")); closeCal(); return; }
+        if (cal.target === "sg") { window.__sgFecha(dd.getAttribute("data-d")); closeCal(); return; }
         setFecha(dd.getAttribute("data-d")); closeCal(); return;
       }
       var mm = e.target.closest("[data-m]");
