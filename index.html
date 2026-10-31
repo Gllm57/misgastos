@@ -1995,11 +1995,11 @@ html.bg-lock, html.bg-lock body { overflow: hidden !important; overscroll-behavi
 .sheet-backdrop, .sheet, .dial { overscroll-behavior: contain; }
 .sheet-backdrop { background: rgba(10, 8, 30, 0.38) !important; -webkit-backdrop-filter: blur(3px); backdrop-filter: blur(3px); }
 /* Historial: cada día en su tarjeta y más aire entre movimientos */
-#hist-list .hday { background: var(--surface); border-radius: 20px; padding: 4px 14px 2px; margin-top: 14px; }
-#hist-list .hday:first-child { margin-top: 6px; }
-#hist-list .hday-h { padding: 12px 2px 4px; }
-#hist-list .hrow { padding-top: 14px !important; padding-bottom: 14px !important; border-top-color: color-mix(in srgb, var(--line) 70%, transparent); }
-#hist-list .hday-h + .hrow { border-top: 0; }
+#hist-list .hday, #ad-list .hday { background: var(--surface); border-radius: 20px; padding: 4px 14px 2px; margin-top: 14px; }
+#hist-list .hday:first-child, #ad-list .hday:first-child { margin-top: 6px; }
+#hist-list .hday-h, #ad-list .hday-h { padding: 12px 2px 4px; }
+#hist-list .hrow, #ad-list .hrow { padding-top: 14px !important; padding-bottom: 14px !important; border-top-color: color-mix(in srgb, var(--line) 70%, transparent); }
+#hist-list .hday-h + .hrow, #ad-list .hday-h + .hrow { border-top: 0; }
 /* Transferir: dos cajas con botón para invertir */
 .tr-pair { position: relative; display: grid; gap: 8px; margin-bottom: 14px; }
 .tr-box { background: var(--fill, color-mix(in srgb, var(--ink) 5%, transparent)); border-radius: 16px; padding: 10px 12px 6px; }
@@ -2520,6 +2520,12 @@ p.hint.sel-none { text-align: left; text-wrap: wrap; }
 /* Sin líneas entre categorías (Tus gastos) ni entre metas */
 .cv-row { border-top: 0 !important; }
 .goal-list .goal, .goal-list .goal-add { border-top: 0 !important; }
+
+/* Metas: cada una en su tarjeta blanca, como Metas compartidas */
+.goals-view .goal-list { gap: 10px !important; }
+.goals-view .goal-list .goal { background: var(--surface) !important; border-radius: 22px !important; padding: 14px !important; }
+.goals-view .goal-list .goal-add { margin-top: 0; }
+.goals-view .goal-list .goal-add button.sg-act { padding-top: 4px !important; }
 </style>
 </head>
 <body>
@@ -7121,7 +7127,10 @@ p.hint.sel-none { text-align: left; text-wrap: wrap; }
         '<div class="menu-wrap"><button class="dots" type="button" aria-haspopup="menu" aria-expanded="false" aria-label="Opciones del movimiento">⋮</button>' +
         '<div class="menu" role="menu" hidden>' + (canEdit ? '<button type="button" role="menuitem" data-h-edit="' + it.id + '">Editar movimiento</button>' : "") +
         '<button type="button" role="menuitem" class="danger" data-h-del="' + it.id + '">Eliminar movimiento</button></div></div>';
-      return '<li class="hrow"><span class="hic k-' + k + '"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' + H_ICONS[k] + "</svg></span>" +
+      // Mismo ícono que en el Historial: el de la categoría con su color, o la bandera si es una meta
+      var hgo = histGoal(it), gstyle = hgo && hgo.g ? ' style="--gc:' + goalColor(hgo.g) + '"' : "", catIc = (it.tipo === "gasto" || it.tipo === "ingreso") && CAT_ICON[it.cat];
+      if (catIc) gstyle = ' style="--gc:' + (it.tipo === "gasto" ? colorFor(it.cat) : colorForIn(it.cat)) + '"';
+      return '<li class="hrow" data-hid="' + it.id + '"><span class="hic k-' + (hgo || catIc ? "goal" : k) + '"' + gstyle + '><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' + (hgo ? '<path d="M6.5 21V4M6.5 4h11l-2 4 2 4H6.5"></path>' : catIc || H_ICONS[k]) + "</svg></span>" +
         '<div class="hmain"><div class="ht">' + esc(adTitle(it)) + '</div><div class="hs">' + esc(sub) + '</div></div><div class="ha ' + cls + '">' + amt +
         '<small class="run">Saldo ' + money(r.run, a.moneda) + "</small></div>" + menu + "</li>";
     }
@@ -7204,6 +7213,9 @@ p.hint.sel-none { text-align: left; text-wrap: wrap; }
         ok: function () { state.accounts = state.accounts.filter(function (x) { return x.id !== a.id; }); save(); closeViews(); setTab(currentTab()); render(); showToast("Cuenta eliminada."); } });
     });
     $("ad-list").addEventListener("click", function (e) {
+      // Tocar un movimiento abre su detalle, como en el Historial
+      var hr = e.target.closest(".hrow[data-hid]");
+      if (hr && !e.target.closest(".menu-wrap")) { openHd(Number(hr.getAttribute("data-hid"))); return; }
       var dots = e.target.closest(".dots");
       if (dots) {
         var menu = dots.parentNode.querySelector(".menu"), willOpen = menu.hidden;
