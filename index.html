@@ -8803,7 +8803,7 @@ html.sheet-open .toast.show { transform: translateY(0); }
       $("pin-switch").setAttribute("aria-checked", on ? "true" : "false");
       $("pin-change").hidden = !on;
       renderBio();
-      $("pin-sub").textContent = on ? "Activado. Se pide al abrir la app y al volver después de 1 minuto." : "Pide un código de 4 dígitos al abrir la app.";
+      $("pin-sub").textContent = on ? "Activado. Se pide si pasaron más de 10 minutos desde la última vez que usaste la app." : "Pide un código de 4 dígitos al abrir la app.";
       var bs = $("bk-sub");
       if (state.backupAt) {
         var d = new Date(state.backupAt);
@@ -9911,7 +9911,7 @@ html.sheet-open .toast.show { transform: translateY(0); }
         .catch(function () { lockMsg("Usa tu código o vuelve a intentar con Face ID."); });
     }
     $("lock-bio").addEventListener("click", bioUnlock);
-    function closeLock() { $("lock").hidden = true; document.documentElement.classList.remove("locked"); lk.mode = ""; }
+    function closeLock() { $("lock").hidden = true; document.documentElement.classList.remove("locked"); lk.mode = ""; try { localStorage.setItem("orbe-act", String(Date.now())); } catch (e) {} }
     function lockInput(k) {
       if (!lk.mode) return;
       if (Date.now() < lk.until) { var sl = Math.ceil((lk.until - Date.now()) / 1000); lockMsg("Espera " + (sl < 60 ? sl + " segundos" : Math.ceil(sl / 60) + " min") + " e intenta de nuevo.", true); return; }
@@ -10282,15 +10282,19 @@ html.sheet-open .toast.show { transform: translateY(0); }
     window.addEventListener("scroll", tourScroll, { passive: true });
     document.addEventListener("scroll", tourScroll, { passive: true, capture: true });
     document.addEventListener("keydown", function (e) { if (tour.i >= 0 && e.key === "Escape") endTour(); });
-    var hiddenAt = 0;
+    // El PIN o Face ID se vuelve a pedir solo si pasaron más de 10 minutos sin usar la app
+    var LOCK_MS = 10 * 60000, hiddenAt = 0;
+    function markAct() { if ($("lock").hidden) try { localStorage.setItem("orbe-act", String(Date.now())); } catch (e) {} }
+    function lockRecent() { var t = 0; try { t = Number(localStorage.getItem("orbe-act")) || 0; } catch (e) {} var d = Date.now() - t; return t > 0 && d >= 0 && d < LOCK_MS; }
     document.addEventListener("visibilitychange", function () {
-      if (document.hidden) { hiddenAt = Date.now(); return; }
-      if (state.pin && state.pin.h && hiddenAt && Date.now() - hiddenAt > 60000 && $("lock").hidden) openLock("unlock");
+      if (document.hidden) { hiddenAt = Date.now(); markAct(); return; }
+      if (state.pin && state.pin.h && hiddenAt && Date.now() - hiddenAt > LOCK_MS && $("lock").hidden) openLock("unlock");
     });
+    window.addEventListener("pagehide", markAct);
     applyTheme();
     renderSetDot();
     if (!state.onb) startOnb();
-    else if (state.pin && state.pin.h) openLock("unlock");
+    else if (state.pin && state.pin.h && !lockRecent()) openLock("unlock");
     else document.documentElement.classList.remove("locked");
     setTimeout(function () { window.__release(); }, 0);
     $("bn-steps").addEventListener("input", function (e) {
