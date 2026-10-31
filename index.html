@@ -2491,6 +2491,18 @@ input, textarea, [contenteditable="true"], .hd-rows, .siri-url code { -webkit-us
 .goal-list .goal-add button.sg-act svg { width: 20px; height: 20px; flex: none; }
 .sgd-del { margin-top: 18px; border: 0 !important; background: color-mix(in srgb, var(--out) 10%, transparent) !important; border-radius: 999px !important; }
 .sgd-del:active { transform: scale(0.97); }
+
+/* Botones de eliminar: todos iguales (píldora con fondo rojo suave y texto rojo centrado) */
+.ad-del, .hd-btns .hd-del, .secondary.danger { display: block; width: 100%; min-height: 50px; font: inherit; font-weight: 600; text-align: center; color: var(--out) !important; border: 0 !important; background: color-mix(in srgb, var(--out) 10%, transparent) !important; border-radius: 999px !important; cursor: pointer; transition: transform 0.15s ease, background 0.3s ease; }
+.ad-del:active, .hd-btns .hd-del:active, .secondary.danger:active { transform: scale(0.97); }
+.hd-btns .hd-del { width: auto; min-height: 46px; }
+.hd-btns .hd-del.sure { background: var(--out) !important; color: #fff !important; }
+#data-del, #cl-del { margin-top: 22px; }
+.del-note { margin: 8px 0 0 !important; font-size: 0.78rem !important; }
+.sheet > p.hint:not([style]), #cl-out > p.hint, #cl-new > p.hint { margin-bottom: 14px; }
+/* Textos informativos (párrafos) centrados en toda la app; las notas de cada campo siguen alineadas al campo */
+p.hint { text-align: center; text-wrap: balance; }
+.grid p.hint, p.hint.wide, p.hint.sel-none, .sav-total p.hint { text-align: left; text-wrap: wrap; }
 </style>
 </head>
 <body>
@@ -2788,9 +2800,10 @@ input, textarea, [contenteditable="true"], .hd-rows, .siri-url code { -webkit-us
       <button type="button" class="set-row " id="snap-open"><span class="tx"><b>Copias automáticas</b><small id="snap-sub">Orbe guarda sola una copia cada día en este teléfono, por si necesitas volver atrás.</small></span><svg class="chev-r" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 5l7 7-7 7"></path></svg></button>
       <button type="button" class="set-row " id="ex-all"><span class="tx"><b>Exportar movimientos a Excel</b><small>Un archivo con todos tus movimientos para abrir en Excel o Numbers.</small></span><svg class="chev-r" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 5l7 7-7 7"></path></svg></button>
       <input type="file" id="bk-file" accept=".json,application/json" hidden>
-      <button type="button" class="set-row danger" id="data-del"><span class="tx"><b>Borrar todos los datos</b><small>Elimina todo lo guardado en este teléfono.</small></span><svg class="chev-r" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 5l7 7-7 7"></path></svg></button>
     </div>
     <p class="hint" style="margin:8px 6px 0;font-size:0.8rem">Tus datos se guardan solo en este teléfono. Si lo pierdes, borras los datos de Safari o cambias de teléfono, solo podrás recuperarlos con una copia. Al guardarla, elige <b>Guardar en Archivos › iCloud Drive</b> o envíatela por correo para tenerla fuera del teléfono.</p>
+    <button type="button" class="ad-del" id="data-del">Borrar todos los datos</button>
+    <p class="hint del-note">Elimina todo lo guardado en este teléfono.</p>
 
     <div class="set-h">Asistente financiero</div>
     <div class="set-group">
@@ -3100,8 +3113,9 @@ input, textarea, [contenteditable="true"], .hd-rows, .siri-url code { -webkit-us
         <div class="set-group">
           <button type="button" class="set-row" id="cl-sync"><span class="tx"><b>Sincronizar ahora</b><small>Sube tus cambios y trae los de tus otros teléfonos.</small></span></button>
           <button type="button" class="set-row" id="cl-out-btn"><span class="tx"><b>Cerrar sesión</b><small>Tus datos quedan guardados en tu cuenta.</small></span></button>
-          <button type="button" class="set-row danger" id="cl-del"><span class="tx"><b>Borrar mis datos de la nube</b><small>No borra lo que tienes en este teléfono.</small></span></button>
         </div>
+        <button type="button" class="ad-del" id="cl-del">Borrar mis datos de la nube</button>
+        <p class="hint del-note">No borra lo que tienes en este teléfono.</p>
       </div>
     </section>
   </div>
@@ -6104,8 +6118,7 @@ input, textarea, [contenteditable="true"], .hd-rows, .siri-url code { -webkit-us
         "cq-row": '<path d="M12 4v16M6 20h12M5 8h14"></path><path d="M5 8l-3 6a3 3 0 0 0 6 0zM19 8l-3 6a3 3 0 0 0 6 0z"></path>',
         "siri-open": '<rect x="9" y="3" width="6" height="11" rx="3"></rect><path d="M5 11a7 7 0 0 0 14 0M12 18v3"></path>',
         "snap-open": '<circle cx="12" cy="12" r="9"></circle><path d="M12 7v5l3 2"></path>',
-        "ex-all": '<rect x="3" y="4" width="18" height="16" rx="2"></rect><path d="M3 10h18M3 15h18M9 4v16"></path>',
-        "data-del": '<path d="M4 7h16M10 11v6M14 11v6M6 7l1 12a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2l1-12M9 7V4h6v3"></path>'
+        "ex-all": '<rect x="3" y="4" width="18" height="16" rx="2"></rect><path d="M3 10h18M3 15h18M9 4v16"></path>'
       };
       Object.keys(map).forEach(function (id) { var r = document.getElementById(id); if (r && !r.querySelector(".set-ic")) r.insertAdjacentHTML("afterbegin", I(map[id])); });
       var arr = { gasto: '<path d="M7 7l10 10M17 9v8H9"></path>', ingreso: '<path d="M17 17L7 7M7 15V7h8"></path>' };
