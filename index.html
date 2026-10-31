@@ -2504,7 +2504,18 @@ input, textarea, [contenteditable="true"], .hd-rows, .siri-url code { -webkit-us
 .sheet > p.hint:not([style]), #cl-out > p.hint, #cl-new > p.hint { margin-bottom: 14px; }
 /* Textos informativos (párrafos) centrados en toda la app; las notas de cada campo siguen alineadas al campo */
 p.hint { text-align: center; text-wrap: balance; }
-.grid p.hint, p.hint.wide, p.hint.sel-none, .sav-total p.hint { text-align: left; text-wrap: wrap; }
+p.hint.sel-none { text-align: left; text-wrap: wrap; }
+
+/* Pagos con tarjetas, como en Ahorro */
+.pay-list { display: grid !important; gap: 10px; }
+.pay-list > li.pay { background: var(--surface) !important; border: 0 !important; border-radius: 22px; padding: 12px 12px 12px 14px; }
+.pay-list > li.pay.over { box-shadow: inset 0 0 0 1.5px color-mix(in srgb, var(--out) 35%, transparent); }
+.pay-list > li.pay.paid { opacity: 0.85; }
+.over-h, #pay-h { display: flex; align-items: center; }
+.sg-n.red { background: var(--out); }
+#pay-acts { margin-top: 4px; }
+/* Títulos pequeños de cada campo, centrados en todas las hojas */
+.sheet label:not(.bn-rate):not(.cx-name), .sheet .acc-pl { display: block; text-align: center; }
 </style>
 </head>
 <body>
@@ -2987,11 +2998,12 @@ p.hint { text-align: center; text-wrap: balance; }
     <div class="pay-hero" id="pay-hero" hidden></div>
     <div class="pay-cal" id="pay-cal"></div>
     <div id="pay-over-wrap">
-      <h2 class="gv-h2 over-h">Vencidos</h2>
+      <h2 class="gv-h2 over-h"><span id="pay-over-t">Vencidos</span><span class="sg-n red" id="pay-over-n"></span></h2>
       <ul class="pay-list" id="pay-over"></ul>
     </div>
     <div class="pay-hrow"><h2 class="gv-h2" id="pay-h"></h2><button type="button" class="pay-clear" id="pay-clear" style="display:none">Ver todo el mes</button></div>
     <ul class="pay-list" id="pay-list"></ul>
+    <div class="sg-acts" id="pay-acts"><button type="button" class="sg-act" id="pay-new3"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5v14M5 12h14"></path></svg><span id="pay-new3-t">Agregar pago</span></button></div>
     <div class="gv-empty" id="pay-empty">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="3"></rect><path d="M8 3v4M16 3v4M3 10h18"></path></svg>
       <p id="pay-empty-t">No tienes pagos programados.</p>
@@ -4852,7 +4864,10 @@ p.hint { text-align: center; text-wrap: balance; }
     if (oEl._h !== okey) { oEl.innerHTML = showOver ? oh : ""; oEl._h = okey; }
     var sd = pay.sel ? pay.sel.split("-") : null;
     $("pay-h").textContent = (isC ? "Cobros " : "Pagos ") + (pay.sel ? "del " + Number(sd[2]) + " " + MESES_C[Number(sd[1]) - 1] : "de " + mName);
-    var ovh = document.querySelector("#pay-over-wrap .over-h"); if (ovh) ovh.textContent = isC ? "Atrasados" : "Vencidos";
+    $("pay-over-t").textContent = isC ? "Atrasados" : "Vencidos"; $("pay-over-n").textContent = overdue.length;
+    $("pay-h").innerHTML = esc($("pay-h").textContent) + (list.length ? '<span class="sg-n">' + list.length + "</span>" : "");
+    $("pay-new3-t").textContent = isC ? "Agregar cobro" : "Agregar pago";
+    $("pay-acts").style.display = list.length || showOver ? "" : "none";
     $("pay-clear").style.display = pay.sel ? "" : "none";
     var lh = list.map(payRow).join("");
     var lEl = $("pay-list");
@@ -8273,6 +8288,7 @@ p.hint { text-align: center; text-wrap: balance; }
     function closePg() { $("pg-sheet").hidden = true; pgId = null; }
     $("pay-new").addEventListener("click", function () { openPg(null); });
     $("pay-new2").addEventListener("click", function () { openPg(null); });
+    $("pay-new3").addEventListener("click", function () { openPg(null); });
     $("pg-close").addEventListener("click", closePg);
     $("pg-sheet").addEventListener("click", function (e) { if (e.target === $("pg-sheet")) closePg(); });
     $("pg-fecha-btn").addEventListener("click", function () { openCal("pago"); });
