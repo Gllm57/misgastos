@@ -2486,6 +2486,9 @@ input, textarea, [contenteditable="true"], .hd-rows, .siri-url code { -webkit-us
 .sg-date .pick { flex: 1; min-width: 0; }
 .sg-date .pick.empty span { color: var(--muted); }
 .sg-clr { flex: none; width: 50px; border: 0; border-radius: 14px; background: var(--fill, color-mix(in srgb, var(--ink) 6%, transparent)); color: var(--muted); font: inherit; cursor: pointer; }
+#goal-empty { margin-top: 4px; }
+.goal-list .goal-add button.sg-act { display: flex !important; align-items: center; gap: 10px; min-height: 46px !important; padding: 6px 2px 0 !important; font-weight: 600; }
+.goal-list .goal-add button.sg-act svg { width: 20px; height: 20px; flex: none; }
 .sgd-del { margin-top: 18px; border: 0 !important; background: color-mix(in srgb, var(--out) 10%, transparent) !important; border-radius: 999px !important; }
 .sgd-del:active { transform: scale(0.97); }
 </style>
@@ -2663,17 +2666,16 @@ input, textarea, [contenteditable="true"], .hd-rows, .siri-url code { -webkit-us
       </div>
     </div>
     <ul class="goal-list" id="goal-list"></ul>
+    <div class="goal-empty-c" id="goal-empty">
+      <div class="sg-empty"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6.5 21V4M6.5 4h11l-2 4 2 4H6.5"></path></svg><p><b>Ahorra para lo que quieras.</b> Un viaje, un celular o un fondo de emergencia: Orbe te dice cuánto te falta y cuándo llegas.</p></div>
+      <div class="sg-acts"><button type="button" class="sg-act" id="goal-new2"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5v14M5 12h14"></path></svg>Crear meta</button></div>
+    </div>
     <section class="sg-sec" id="sg-sec" hidden>
       <div class="gv-mrow"><h2 class="gv-h2 gv-mh" id="sg-h">Metas compartidas<span class="sg-n" id="sg-n" hidden></span></h2></div>
       <div id="sg-box"></div>
     </section>
     <h2 class="gv-h2" id="gv-act-h">Actividad reciente</h2>
     <ul class="gv-act" id="gv-act"></ul>
-    <div class="gv-empty" id="goal-empty">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6.5 21V4M6.5 4h11l-2 4 2 4H6.5"></path></svg>
-      <p>Crea tu primera meta de ahorro: un viaje, un celular o un fondo de emergencia.</p>
-      <button type="button" class="primary" id="goal-new2" style="width:auto;padding:0 28px">Crear meta</button>
-    </div>
   </div>
   <div class="accd-view" id="accd-view" role="region" aria-label="Detalle de la cuenta" aria-hidden="true">
     <div class="gv-head">
@@ -4581,7 +4583,7 @@ input, textarea, [contenteditable="true"], .hd-rows, .siri-url code { -webkit-us
         '<div class="menu" role="menu" hidden><button type="button" role="menuitem" data-goal-ret="' + g.id + '">Retirar fondos</button>' +
         '<button type="button" role="menuitem" data-goal-edit="' + g.id + '">Editar meta</button>' +
         '<button type="button" role="menuitem" class="danger" data-goal-del="' + g.id + '">Eliminar meta</button></div></div></div></li>';
-    }).join("") + (has ? '<li class="goal-add"><button type="button" data-goal-new>+ Nueva meta</button></li>' : "");
+    }).join("") + (has ? '<li class="goal-add"><button type="button" class="sg-act" data-goal-new><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5v14M5 12h14"></path></svg>Crear meta</button></li>' : "");
     if (list._h !== html) { list.innerHTML = html; list._h = html; }
     if (typeof window.__gdRefresh === "function") window.__gdRefresh();
 
