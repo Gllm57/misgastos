@@ -2378,6 +2378,107 @@ input, textarea, [contenteditable="true"], .hd-rows, .siri-url code { -webkit-us
 /* Historial: Ingresos y Gastos centrados, como en el Inicio */
 .hh-row > div { display: flex !important; flex-wrap: wrap; justify-content: center; align-items: center; column-gap: 6px; text-align: center; padding-left: 6px !important; padding-right: 6px; }
 .hh-row > div b { flex-basis: 100%; text-align: center; }
+/* Metas compartidas */
+.sg-sec { margin-top: 26px; }
+.sg-n { display: inline-flex; align-items: center; justify-content: center; min-width: 22px; height: 22px; padding: 0 7px; margin-left: 8px; border-radius: 11px; background: var(--accent); color: var(--accent-ink, #fff); font-size: 0.78rem; font-weight: 700; vertical-align: 3px; font-variant-numeric: tabular-nums; letter-spacing: 0; }
+.sg-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; }
+.sg-card { --gc: var(--accent); width: 100%; display: flex; flex-direction: column; gap: 10px; padding: 14px; border: 0; border-radius: 22px; background: var(--surface); color: var(--ink); font: inherit; text-align: left; cursor: pointer; transition: transform 0.15s ease; animation: fadeUp 0.4s var(--spring, ease) both; }
+.sg-card:active { transform: scale(0.98); }
+.sg-card.done { opacity: 0.72; }
+.sg-top { display: flex; align-items: center; gap: 12px; min-width: 0; }
+.sg-top .acc-av { width: 40px; height: 40px; }
+.sg-tt { flex: 1; min-width: 0; display: flex; flex-direction: column; line-height: 1.25; }
+.sg-tt b { font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.sg-tt small { font-size: 0.8rem; color: var(--muted); font-variant-numeric: tabular-nums; }
+.sg-tt em { font-style: normal; color: #e08a00; font-weight: 600; }
+.sg-pct { font-weight: 700; font-variant-numeric: tabular-nums; color: var(--gc); }
+.sg-bar { position: relative; height: 6px; border-radius: 3px; background: var(--fill, color-mix(in srgb, var(--ink) 7%, transparent)); overflow: hidden; }
+.sg-bar i { position: absolute; left: 0; top: 0; bottom: 0; border-radius: 3px; background: var(--gc); transition: width 0.6s var(--spring, ease); }
+.sg-bar i.p { opacity: 0.3; }
+.sg-foot { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+.sg-stack { display: flex; }
+.sg-stack .sg-av + .sg-av { margin-left: -7px; }
+.sg-av { --c: var(--accent); flex: none; width: 36px; height: 36px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; background: color-mix(in srgb, var(--c) 18%, var(--surface)); color: var(--c); font-weight: 700; font-size: 0.8rem; }
+.sg-av.sm { width: 26px; height: 26px; font-size: 0.62rem; box-shadow: 0 0 0 2px var(--surface); }
+.sg-av.more { --c: var(--muted); }
+.sg-tag { display: inline-flex; align-items: center; gap: 5px; font-size: 0.76rem; color: var(--muted); white-space: nowrap; }
+.sg-tag svg { width: 14px; height: 14px; }
+.sg-tag.lead { color: #e08a00; font-weight: 600; }
+.sg-tag.ok { color: var(--in); font-weight: 600; }
+.sg-acts { display: flex; flex-direction: column; margin-top: 6px; }
+.sg-act { display: flex; align-items: center; gap: 10px; min-height: 46px; padding: 0 2px; border: 0; background: none; color: var(--accent); font: inherit; font-weight: 600; cursor: pointer; text-align: left; }
+.sg-act svg { width: 20px; height: 20px; }
+.sg-act:active { opacity: 0.6; }
+.sg-empty { display: flex; flex-direction: column; align-items: center; text-align: center; gap: 10px; padding: 20px 16px; border-radius: 22px; background: var(--surface); }
+.sg-empty > svg { width: 34px; height: 34px; color: var(--accent); }
+.sg-empty p { margin: 0; color: var(--muted); font-size: 0.9rem; line-height: 1.45; }
+.sg-empty p b { color: var(--ink); display: block; margin-bottom: 2px; }
+.sg-empty .primary { width: auto; padding: 0 24px; margin-top: 4px; }
+.sg-empty small { color: var(--muted); font-size: 0.76rem; }
+.sg-load, .sg-err { margin: 8px 2px; }
+.sg-inv { --gc: var(--accent); display: grid; grid-template-columns: auto 1fr; gap: 12px; align-items: center; padding: 14px; margin-bottom: 10px; border-radius: 22px; background: color-mix(in srgb, var(--gc) 10%, var(--surface)); border: 1.5px solid color-mix(in srgb, var(--gc) 40%, transparent); animation: fadeUp 0.4s var(--spring, ease) both; }
+.sg-inv .acc-av { width: 44px; height: 44px; }
+.sg-inv-t { display: flex; flex-direction: column; min-width: 0; line-height: 1.3; }
+.sg-inv-t small, .sg-inv-t span { font-size: 0.8rem; color: var(--muted); }
+.sg-inv-t b { font-weight: 700; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.sg-inv-b { grid-column: 1 / -1; display: flex; gap: 8px; }
+.sg-inv-b button { flex: 1; min-height: 44px; }
+.sg-inv.solo { margin: 14px 0 0; }
+/* Detalle */
+.sgd-hero { --gc: var(--accent); display: flex; align-items: center; gap: 16px; margin: 4px 0 12px; }
+.sgd-ring { position: relative; width: 88px; height: 88px; flex: none; }
+.sgd-ring > span { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; }
+.sgd-ring .acc-av { width: 46px; height: 46px; }
+.sg-ring { width: 100%; height: 100%; transform: rotate(-90deg); }
+.sg-ring circle { fill: none; stroke-width: 7; stroke-linecap: round; }
+.sg-ring .t { stroke: var(--fill, color-mix(in srgb, var(--ink) 7%, transparent)); }
+.sg-ring .p { stroke: var(--gc); opacity: 0.3; }
+.sg-ring .v { stroke: var(--gc); transition: stroke-dashoffset 0.7s var(--spring, ease); }
+.sgd-hv { display: flex; flex-direction: column; min-width: 0; gap: 2px; }
+.sgd-hv b { font-size: 1.6rem; font-weight: 700; letter-spacing: -0.02em; font-variant-numeric: tabular-nums; }
+.sgd-hv small { color: var(--muted); font-size: 0.85rem; font-variant-numeric: tabular-nums; }
+.sgd-pend { align-self: flex-start; margin-top: 4px; padding: 3px 9px; border-radius: 10px; background: color-mix(in srgb, #f0a020 16%, transparent); color: #c07a00; font-size: 0.76rem; font-weight: 600; }
+.sgd-tags { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 6px; }
+.sgd-tags .sg-tag { padding: 5px 10px; border-radius: 12px; background: var(--fill, color-mix(in srgb, var(--ink) 6%, transparent)); }
+.sgd-h { font-size: 0.82rem; font-weight: 600; color: var(--muted); margin: 18px 0 6px; }
+.sgd-pl, .sgd-ml { list-style: none; margin: 0; padding: 0; }
+.sgd-pl li, .sgd-ml li { display: flex; align-items: center; gap: 12px; min-height: 56px; padding: 6px 0; }
+.sgd-ml li[data-sg-rm] { cursor: pointer; }
+.sgd-ml li[data-sg-rm]:active { opacity: 0.6; }
+.sgd-pl .tx, .sgd-ml .tx { flex: 1; min-width: 0; display: flex; flex-direction: column; line-height: 1.25; }
+.sgd-pl .tx b, .sgd-ml .tx b { font-weight: 600; display: flex; align-items: center; gap: 5px; }
+.sgd-pl .tx small, .sgd-ml .tx small { font-size: 0.78rem; color: var(--muted); font-variant-numeric: tabular-nums; }
+.sgd-cr { display: inline-flex; color: #e08a00; }
+.sgd-cr svg { width: 14px; height: 14px; }
+.sgd-st { font-size: 0.8rem; font-weight: 600; white-space: nowrap; font-variant-numeric: tabular-nums; }
+.sgd-st.ok { color: var(--in); }
+.sgd-st.pend { color: #c07a00; }
+.sgd-st.due { color: var(--muted); }
+.sgd-ok { min-height: 36px; padding: 0 14px; border: 0; border-radius: 18px; background: var(--accent); color: var(--accent-ink, #fff); font: inherit; font-size: 0.85rem; font-weight: 600; cursor: pointer; }
+.sgd-ok:disabled { opacity: 0.5; }
+.sgd-x { width: 36px; height: 36px; border: 0; border-radius: 50%; background: var(--fill, color-mix(in srgb, var(--ink) 6%, transparent)); color: var(--muted); font: inherit; cursor: pointer; }
+.sgd-note { margin: 4px 0 0; font-size: 0.78rem; }
+.sgd-more { margin-top: 18px; border-top: 1px solid var(--line); }
+.sgd-more .set-row { width: 100%; display: flex; align-items: center; justify-content: flex-start; gap: 12px; text-align: left; padding-left: 0; padding-right: 0; }
+.sgd-more .set-row .tx { flex: 1; min-width: 0; display: flex; flex-direction: column; align-items: flex-start; }
+.sgd-more .set-row .tx small { color: var(--muted); font-size: 0.78rem; }
+.sgd-more .set-row .ic { width: 34px; height: 34px; flex: none; display: flex; align-items: center; justify-content: center; border-radius: 50%; background: color-mix(in srgb, var(--accent) 12%, transparent); color: var(--accent); }
+.sgd-more .set-row .ic svg { width: 18px; height: 18px; }
+.sgd-more .set-row.danger .ic { background: color-mix(in srgb, var(--out) 12%, transparent); color: var(--out); }
+.sgd-more .set-row.danger b { color: var(--out); }
+#sgd-foot { display: flex; gap: 8px; align-items: center; }
+#sgd-foot > button { flex: 1; }
+.sgd-paid { flex: 1.3; display: flex; align-items: center; gap: 6px; color: var(--in); font-weight: 600; font-size: 0.92rem; }
+.sgd-paid svg { width: 18px; height: 18px; }
+/* Invitar */
+.sgi-code { display: flex; flex-direction: column; align-items: center; gap: 4px; margin: 16px 0; padding: 18px; border-radius: 22px; background: var(--fill, color-mix(in srgb, var(--ink) 6%, transparent)); }
+.sgi-code small { color: var(--muted); font-size: 0.78rem; }
+.sgi-code b { font-size: 1.7rem; font-weight: 700; letter-spacing: 0.08em; font-variant-numeric: tabular-nums; user-select: text; -webkit-user-select: text; }
+.sgi-acts { display: flex; gap: 8px; }
+.sgi-acts .secondary { flex: 1; display: inline-flex; align-items: center; justify-content: center; gap: 8px; }
+.sgi-acts svg { width: 18px; height: 18px; }
+#sga-acc .ap:last-child .ap-t { padding-left: 7px; }
+#sgj-code { text-transform: uppercase; letter-spacing: 0.06em; }
 </style>
 </head>
 <body>
@@ -2553,6 +2654,10 @@ input, textarea, [contenteditable="true"], .hd-rows, .siri-url code { -webkit-us
       </div>
     </div>
     <ul class="goal-list" id="goal-list"></ul>
+    <section class="sg-sec" id="sg-sec" hidden>
+      <div class="gv-mrow"><h2 class="gv-h2 gv-mh" id="sg-h">Metas compartidas<span class="sg-n" id="sg-n" hidden></span></h2></div>
+      <div id="sg-box"></div>
+    </section>
     <h2 class="gv-h2" id="gv-act-h">Actividad reciente</h2>
     <ul class="gv-act" id="gv-act"></ul>
     <div class="gv-empty" id="goal-empty">
@@ -3177,6 +3282,111 @@ input, textarea, [contenteditable="true"], .hd-rows, .siri-url code { -webkit-us
       </div>
     </section>
   </div>
+  <div class="sheet-backdrop" id="sgd-sheet" hidden>
+    <section class="panel sheet" role="dialog" aria-modal="true" aria-labelledby="h-sgd">
+      <div class="sheet-head"><h2 id="h-sgd">Meta compartida</h2><button type="button" class="del" id="sgd-close" aria-label="Cerrar">✕</button></div>
+      <div class="sgd-body" id="sgd-body"></div>
+      <div class="sheet-foot" id="sgd-foot"></div>
+    </section>
+  </div>
+  <div class="sheet-backdrop" id="sgn-sheet" hidden>
+    <section class="panel sheet" role="dialog" aria-modal="true" aria-labelledby="h-sgn">
+      <div class="sheet-head"><h2 id="h-sgn">Nueva meta compartida</h2><button type="button" class="del" id="sgn-close" aria-label="Cerrar">✕</button></div>
+      <p class="hint">Junten dinero entre amigos para algo en común. Tú eres el líder: invitas a los demás y confirmas cada aporte cuando te llega.</p>
+      <div class="grid">
+        <div class="wide">
+          <label for="sgn-nombre">¿Para qué van a juntar?</label>
+          <input type="text" id="sgn-nombre" maxlength="40" placeholder="Ej: Regalo de Ana, viaje a la playa">
+        </div>
+        <div class="wide">
+          <div class="acc-look">
+            <span class="acc-prev" id="sgn-prev"></span>
+            <div class="acc-pick">
+              <div class="acc-pl">Símbolo</div>
+              <div class="acc-icons" id="sgn-icons" role="radiogroup" aria-label="Símbolo de la meta"></div>
+              <div class="acc-pl">Color</div>
+              <div class="acc-colors" id="sgn-colors" role="radiogroup" aria-label="Color de la meta"></div>
+            </div>
+          </div>
+        </div>
+        <div>
+          <label for="sgn-meta">Monto total</label>
+          <input type="text" id="sgn-meta" inputmode="decimal" autocomplete="off" placeholder="0,00">
+        </div>
+        <div>
+          <label for="sgn-moneda">Divisa</label>
+          <select id="sgn-moneda"></select>
+        </div>
+        <div class="wide">
+          <label for="sgn-fecha">¿Para cuándo? (opcional)</label>
+          <input type="date" id="sgn-fecha">
+        </div>
+        <div class="wide">
+          <label id="sgn-split-l">¿Cómo se reparte?</label>
+          <div class="seg" role="group" aria-labelledby="sgn-split-l" id="sgn-split">
+            <button type="button" data-sgs="equal" aria-pressed="true">Partes iguales</button>
+            <button type="button" data-sgs="free" aria-pressed="false">Lo que cada uno pueda</button>
+          </div>
+        </div>
+        <div class="wide" id="sgn-me-w">
+          <label for="sgn-me">Tu nombre (lo verán tus amigos)</label>
+          <input type="text" id="sgn-me" maxlength="30" autocomplete="given-name" placeholder="Ej: Gabriel">
+        </div>
+      </div>
+      <p class="error" id="sgn-err" role="alert"></p>
+      <div class="sheet-foot"><button type="button" class="primary" id="sgn-save">Crear e invitar</button></div>
+    </section>
+  </div>
+  <div class="sheet-backdrop" id="sgi-sheet" hidden>
+    <section class="panel sheet" role="dialog" aria-modal="true" aria-labelledby="h-sgi">
+      <div class="sheet-head"><h2 id="h-sgi">Invitar amigos</h2><button type="button" class="del" id="sgi-close" aria-label="Cerrar">✕</button></div>
+      <p class="hint">Mándales el enlace. Si ya tienen Orbe, también pueden escribir el código en «Unirme con un código».</p>
+      <div class="sgi-code"><small>Código</small><b id="sgi-code"></b></div>
+      <div class="sgi-acts">
+        <button type="button" class="secondary" id="sgi-copy"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="9" width="11" height="11" rx="2"></rect><path d="M5 15V5a1 1 0 0 1 1-1h9"></path></svg>Copiar enlace</button>
+        <button type="button" class="secondary" id="sgi-wa"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 20l1.3-3.9A8 8 0 1 1 8 19z"></path></svg>WhatsApp</button>
+      </div>
+      <div class="sheet-foot"><button type="button" class="primary" id="sgi-share">Compartir invitación</button></div>
+    </section>
+  </div>
+  <div class="sheet-backdrop" id="sga-sheet" hidden>
+    <section class="panel sheet" role="dialog" aria-modal="true" aria-labelledby="h-sga">
+      <div class="sheet-head"><h2 id="h-sga">Aportar</h2><button type="button" class="del" id="sga-close" aria-label="Cerrar">✕</button></div>
+      <p class="hint" id="sga-sub"></p>
+      <div class="grid">
+        <div class="wide">
+          <label for="sga-monto" id="sga-monto-l">¿Cuánto aportaste?</label>
+          <input type="text" id="sga-monto" inputmode="decimal" autocomplete="off" placeholder="0,00">
+        </div>
+        <div class="wide">
+          <label id="sga-acc-l">¿De qué cuenta salió?</label>
+          <div class="mv-acc" id="sga-acc" role="radiogroup" aria-labelledby="sga-acc-l"></div>
+        </div>
+      </div>
+      <div class="cq-prev" id="sga-prev" aria-live="polite"></div>
+      <p class="error" id="sga-err" role="alert"></p>
+      <div class="sheet-foot"><button type="button" class="primary" id="sga-save">Registrar aporte</button></div>
+    </section>
+  </div>
+  <div class="sheet-backdrop" id="sgj-sheet" hidden>
+    <section class="panel sheet" role="dialog" aria-modal="true" aria-labelledby="h-sgj">
+      <div class="sheet-head"><h2 id="h-sgj">Unirme a una meta</h2><button type="button" class="del" id="sgj-close" aria-label="Cerrar">✕</button></div>
+      <p class="hint">Escribe el código que te mandó el líder de la meta.</p>
+      <div class="grid">
+        <div class="wide">
+          <label for="sgj-code">Código</label>
+          <input type="text" id="sgj-code" maxlength="14" autocomplete="off" autocapitalize="characters" spellcheck="false" placeholder="ORBE-XXXXXX">
+        </div>
+        <div class="wide" id="sgj-me-w">
+          <label for="sgj-me">Tu nombre (lo verán tus amigos)</label>
+          <input type="text" id="sgj-me" maxlength="30" autocomplete="given-name" placeholder="Ej: Gabriel">
+        </div>
+      </div>
+      <div id="sgj-prev"></div>
+      <p class="error" id="sgj-err" role="alert"></p>
+      <div class="sheet-foot"><button type="button" class="primary" id="sgj-go">Buscar meta</button></div>
+    </section>
+  </div>
   <div class="sheet-backdrop" id="cq-sheet" hidden>
     <section class="panel sheet" role="dialog" aria-modal="true" aria-labelledby="h-cq">
       <div class="sheet-head"><h2 id="h-cq">Cuadrar con tu banco</h2><button type="button" class="del" id="cq-close" aria-label="Cerrar">✕</button></div>
@@ -3494,7 +3704,7 @@ input, textarea, [contenteditable="true"], .hd-rows, .siri-url code { -webkit-us
   // url: «Project URL» y key: clave publicable o «anon», de Supabase → Project Settings → API.
   var CLOUD = { url: "https://homninhiimgcpkbqbycg.supabase.co", key: "sb_publishable_qLFeqK-7ILdCkepqr1v9Kg_mY6HBksV" };
   var CATS = {
-    gasto: ["Alimentación", "Restaurantes", "Vivienda", "Hogar", "Servicios", "Suscripciones", "Transporte", "Salud", "Cuidado personal", "Ropa", "Educación", "Ocio", "Viajes", "Tecnología", "Mascotas", "Regalos", "Deudas", "Impuestos", "Negocio", "Comisiones bancarias", "Otros"],
+    gasto: ["Alimentación", "Restaurantes", "Vivienda", "Hogar", "Servicios", "Suscripciones", "Transporte", "Salud", "Cuidado personal", "Ropa", "Educación", "Ocio", "Viajes", "Tecnología", "Mascotas", "Regalos", "Deudas", "Impuestos", "Negocio", "Comisiones bancarias", "Metas compartidas", "Otros"],
     ingreso: ["Sueldo", "Ventas", "Freelance", "Negocio propio", "Inversiones", "Remesas", "Regalos recibidos", "Reembolsos", "Ajustes de saldo", "Otros ingresos"]
   };
   var COLORS = ["#5b4cff", "#e08a00", "#0e9aa7", "#8a3ffc", "#e5133f", "#00a651", "#6b7b86", "#d6502b", "#9a7b00"];
@@ -3577,6 +3787,7 @@ input, textarea, [contenteditable="true"], .hd-rows, .siri-url code { -webkit-us
         if (d && typeof d.ratesOn === "boolean") state.ratesOn = d.ratesOn;
         if (d && typeof d.aiHide === "boolean") state.aiHide = d.aiHide;
         if (d && typeof d.cqOff === "boolean") state.cqOff = d.cqOff;
+        if (d && typeof d.sgName === "string") state.sgName = d.sgName.slice(0, 30);
         if (d && d.instSeen) state.instSeen = true;
         if (d && d.notif) state.notif = true;
         if (d && d.subs && typeof d.subs === "object") state.subs = d.subs;
@@ -3599,7 +3810,7 @@ input, textarea, [contenteditable="true"], .hd-rows, .siri-url code { -webkit-us
   }
   function save() {
     try {
-      localStorage.setItem(KEY, JSON.stringify({ items: state.items, rate: state.rate, rateDate: state.rateDate, hideSav: state.hideSav, rateManual: state.rateManual, rateAutoAt: state.rateAutoAt, accounts: state.accounts, templates: state.templates, goals: state.goals, payments: state.payments, paySeries: state.paySeries, earn: state.earn, limits: state.limits, rateHist: state.rateHist, rateHistAt: state.rateHistAt, theme: state.theme, pin: state.pin, backupAt: state.backupAt, onb: state.onb, msumSeen: state.msumSeen, country: state.country, ratesOn: !!state.ratesOn, aiHide: !!state.aiHide, cqOff: !!state.cqOff, instSeen: state.instSeen, notif: state.notif, subs: state.subs, limCur: state.limCur, lastAcc: state.lastAcc, bn: state.bn, btcUsd: state.btcUsd, btcAt: state.btcAt, rateEur: state.rateEur, rateEurDate: state.rateEurDate, rateEurManual: state.rateEurManual, rateUsdt: state.rateUsdt, rateUsdtDate: state.rateUsdtDate, rateUsdtManual: state.rateUsdtManual, rateUsdtSrc: state.rateUsdtSrc, collapsed: state.collapsed, disp: state.disp, sav: state.sav }));
+      localStorage.setItem(KEY, JSON.stringify({ items: state.items, rate: state.rate, rateDate: state.rateDate, hideSav: state.hideSav, rateManual: state.rateManual, rateAutoAt: state.rateAutoAt, accounts: state.accounts, templates: state.templates, goals: state.goals, payments: state.payments, paySeries: state.paySeries, earn: state.earn, limits: state.limits, rateHist: state.rateHist, rateHistAt: state.rateHistAt, theme: state.theme, pin: state.pin, backupAt: state.backupAt, onb: state.onb, msumSeen: state.msumSeen, country: state.country, ratesOn: !!state.ratesOn, aiHide: !!state.aiHide, cqOff: !!state.cqOff, sgName: state.sgName || "", instSeen: state.instSeen, notif: state.notif, subs: state.subs, limCur: state.limCur, lastAcc: state.lastAcc, bn: state.bn, btcUsd: state.btcUsd, btcAt: state.btcAt, rateEur: state.rateEur, rateEurDate: state.rateEurDate, rateEurManual: state.rateEurManual, rateUsdt: state.rateUsdt, rateUsdtDate: state.rateUsdtDate, rateUsdtManual: state.rateUsdtManual, rateUsdtSrc: state.rateUsdtSrc, collapsed: state.collapsed, disp: state.disp, sav: state.sav }));
       window.__saveFail = 0;
     } catch (e) {
       if (!window.__saveFail && window.__toast) window.__toast("No se pudo guardar en este teléfono (puede estar sin espacio). Guarda una copia en Archivos desde Ajustes.");
@@ -4860,6 +5071,7 @@ input, textarea, [contenteditable="true"], .hd-rows, .siri-url code { -webkit-us
   var CAT_COL = { "Alimentación": "#5b4cff", "Vivienda": "#e08a00", "Transporte": "#0e9aa7", "Servicios": "#8a3ffc", "Salud": "#e5133f", "Educación": "#00a651", "Ocio": "#6b7b86", "Negocio": "#d6502b", "Otros": "#9a7b00",
     "Restaurantes": "#f0567e", "Hogar": "#b07a3a", "Suscripciones": "#4f86f7", "Cuidado personal": "#d65fb0", "Ropa": "#c2410c", "Viajes": "#0ea5e9", "Tecnología": "#6366f1", "Mascotas": "#a16207", "Regalos": "#db2777", "Deudas": "#475569", "Impuestos": "#7c8597" };
   CAT_COL["Comisiones bancarias"] = "#64748b";
+  CAT_COL["Metas compartidas"] = "#e08a00";
   var CAT_COL_IN = { "Ajustes de saldo": "#0e9aa7", "Ventas": "#12a37a", "Sueldo": "#0e9aa7", "Otros ingresos": "#5b4cff", "Freelance": "#e08a00", "Negocio propio": "#8a3ffc", "Inversiones": "#0f9d58", "Remesas": "#14b8a6", "Regalos recibidos": "#db2777", "Reembolsos": "#64748b" };
   var CAT_ICON = {
     "Alimentación": '<path d="M3 4h2.5l2 11h10l2-8H7"></path><circle cx="9.5" cy="19" r="1.3"></circle><circle cx="16.5" cy="19" r="1.3"></circle>',
@@ -4891,6 +5103,7 @@ input, textarea, [contenteditable="true"], .hd-rows, .siri-url code { -webkit-us
     "Regalos recibidos": '<rect x="4" y="9" width="16" height="11" rx="1.5"></rect><path d="M3 9h18M12 9v11M12 9c-1-3-5-4-5-1.5S12 9 12 9zM12 9c1-3 5-4 5-1.5S12 9 12 9z"></path>',
     "Reembolsos": '<path d="M4 12a8 8 0 1 0 2.3-5.7"></path><path d="M4 4v5h5"></path>',
     "Comisiones bancarias": '<path d="M3 10l9-6 9 6"></path><path d="M5 10v8M19 10v8M3 20h18"></path><path d="M9.5 16.5l5-5M10 12h.01M14 16h.01"></path>',
+    "Metas compartidas": '<circle cx="9" cy="8" r="3.5"></circle><path d="M2.5 20c.5-3.5 3.2-5.5 6.5-5.5s6 2 6.5 5.5"></path><path d="M16 4.6a3.5 3.5 0 0 1 0 6.8M18 14.8c2 .7 3.2 2.5 3.5 5.2"></path>',
     "Ajustes de saldo": '<path d="M12 4v16M5 20h14M5 8h14"></path><path d="M5 8l-3 6a3 3 0 0 0 6 0zM19 8l-3 6a3 3 0 0 0 6 0z"></path>',
     "Otros ingresos": '<circle cx="6" cy="12" r="1.3"></circle><circle cx="12" cy="12" r="1.3"></circle><circle cx="18" cy="12" r="1.3"></circle>'
   };
@@ -8373,7 +8586,7 @@ input, textarea, [contenteditable="true"], .hd-rows, .siri-url code { -webkit-us
         if (name === "set") renderSettings();
         if (name === "pay") renderPay();
         if (name === "hist") renderHistory();
-        if (name === "goals") drawGoalsChart();
+        if (name === "goals") { drawGoalsChart(); if (window.__sgLoad) window.__sgLoad(true); }
         try { fitAll(); } catch (e) { scheduleFit(); }
       } catch (e) {
         closeViews();
@@ -8757,6 +8970,8 @@ input, textarea, [contenteditable="true"], .hd-rows, .siri-url code { -webkit-us
       $("cloud-s").textContent = s ? st : "Guarda tus datos en la nube y úsalos en cualquier teléfono.";
       $("cl-out").hidden = !!s || !$("cl-new").hidden; $("cl-inn").hidden = !s || !$("cl-new").hidden;
       if (s) { $("cl-mail").textContent = s.email || ""; $("cl-state").textContent = st; }
+      // Al entrar o salir de la cuenta, las metas compartidas se recargan
+      if (window.__sgLoad && window.__sgHad !== !!s) { window.__sgHad = !!s; setTimeout(function () { window.__sgLoad(true); }, 300); }
     }
     function relTime(t) {
       var m = Math.round((Date.now() - t) / 60000);
@@ -8927,6 +9142,545 @@ input, textarea, [contenteditable="true"], .hd-rows, .siri-url code { -webkit-us
       try { history.replaceState(null, "", location.pathname); } catch (e) {}
       window.__orbeDeep(q);
     })();
+    /* ---------- Metas compartidas (entre amigos, con un líder) ---------- */
+    // Orbe no mueve dinero: cada quien paga por su lado, anota su aporte y el líder lo confirma.
+    var SGK = "orbe-sg", SGINV = "orbe-sg-inv";
+    var SG = { goals: [], me: "", busy: false, loaded: false, err: "", inv: null, invBusy: false };
+    var sgOpen = null, sgNew = { icon: "gift", color: "", split: "equal" }, sgAp = { id: null, acc: "" }, sgJoin = null;
+    var SG_CODE = "ABCDEFGHJKMNPQRSTUVWXYZ23456789";
+    var SG_PAL = ["#8f84ff", "#12a37a", "#e08a00", "#0e9aa7", "#e5133f", "#8a3ffc", "#d6502b", "#2f7de1"];
+    var SG_SV = {
+      crown: '<path d="M4 18h16M5 18L3.5 8l5 4L12 6l3.5 6 5-4L19 18"></path>',
+      users: '<circle cx="9" cy="8" r="3.5"></circle><path d="M2.5 20c.5-3.5 3.2-5.5 6.5-5.5s6 2 6.5 5.5"></path><path d="M16 4.6a3.5 3.5 0 0 1 0 6.8M18 14.8c2 .7 3.2 2.5 3.5 5.2"></path>',
+      key: '<circle cx="8" cy="15" r="4"></circle><path d="M11 12l9-9M17 6l3 3M14 9l2 2"></path>',
+      plus: '<path d="M12 5v14M5 12h14"></path>',
+      check: '<path d="M5 12.5l4.5 4.5L19 7"></path>',
+      bell: '<path d="M6 16V11a6 6 0 0 1 12 0v5l1.5 2h-15z"></path><path d="M10 20.5a2 2 0 0 0 4 0"></path>',
+      out: '<path d="M14 4h5v16h-5M10 8l-4 4 4 4M6 12h10"></path>',
+      trash: '<path d="M4 7h16M10 11v6M14 11v6M6 7l1 13h10l1-13M9 7V4h6v3"></path>',
+      flag: '<path d="M6.5 21V4M6.5 4h11l-2 4 2 4H6.5"></path>',
+      cloud: '<path d="M7 18a4.5 4.5 0 0 1-.6-9A6 6 0 0 1 18 9.5a4 4 0 0 1-.5 8.5z"></path>'
+    };
+    function sgSvg(k, w) { return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="' + (w || 2) + '" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' + SG_SV[k] + "</svg>"; }
+    function sgOn() { return !!window.__orbeDemo || cloudOn(); }
+    function sgSes() { return window.__orbeDemo ? { id: "demo-yo" } : jget(SES); }
+    function sgMe() { var s = sgSes(); return s ? s.id : ""; }
+    // La divisa de la meta se guarda con su código real (USD, EUR, COP…); aquí se traduce a la de la app
+    function sgCur(c) { if (c === "USD" || c === "EUR" || c === "USDT") return c; if (c === LOC.code && !LOC.none) return "VES"; return null; }
+    function sgMoney(n, c) { var k = sgCur(c); return k ? money(n, k) : num(n) + " " + c; }
+    function sgPal(id) { var h = 0; String(id).split("").forEach(function (ch) { h = (h * 31 + ch.charCodeAt(0)) | 0; }); return SG_PAL[Math.abs(h) % SG_PAL.length]; }
+    function sgAv(m, cls) { return '<span class="sg-av' + (cls ? " " + cls : "") + '" style="--c:' + sgPal(m.user_id) + '" aria-hidden="true">' + esc(sgIni(m.name)) + "</span>"; }
+    function sgIni(n) { var w = String(n || "?").trim().split(/\s+/); return (w[0].charAt(0) + (w[1] ? w[1].charAt(0) : "")).toUpperCase(); }
+    function sgLook(g) { return { nombre: g.name, icon: g.icon, color: g.color }; }
+    function sgFmtCode(c) { return "ORBE-" + c; }
+    function sgClean(c) { c = String(c || "").toUpperCase().replace(/[^A-Z0-9]/g, ""); if (c.length > 6 && c.indexOf("ORBE") === 0) c = c.slice(4); return c; }
+    function sgLink(c) { return location.origin + location.pathname + "?meta=" + sgFmtCode(c); }
+    function sgById(id) { return SG.goals.filter(function (g) { return g.id === id; })[0] || null; }
+    function sgCalc(g) {
+      var me = sgMe(), mem = g.sg_members || [], ap = g.sg_aportes || [], n = Math.max(1, mem.length);
+      var ok = 0, pend = 0, by = {};
+      mem.forEach(function (m) { by[m.user_id] = { ok: 0, pend: 0 }; });
+      ap.forEach(function (a) {
+        var v = Number(a.amount) || 0, b = by[a.user_id] || (by[a.user_id] = { ok: 0, pend: 0 });
+        if (a.status === "ok") { ok += v; b.ok += v; } else { pend += v; b.pend += v; }
+      });
+      var share = g.split === "equal" ? Math.round(g.target / n * 100) / 100 : 0;
+      return { ok: ok, pend: pend, by: by, n: mem.length, share: share, lead: g.leader === me, mine: by[me] || { ok: 0, pend: 0 },
+        pct: Math.min(100, ok / g.target * 100), pctP: Math.min(100, (ok + pend) / g.target * 100), done: g.status === "done" || ok >= g.target - 0.005 };
+    }
+    (function () { var c = jget(SGK); if (c && c.me && c.me === sgMe() && Array.isArray(c.goals)) { SG.goals = c.goals; SG.loaded = true; } })();
+    function sgSort(list) {
+      return list.slice().sort(function (a, b) { return (a.status === "done" ? 1 : 0) - (b.status === "done" ? 1 : 0) || (a.created_at < b.created_at ? 1 : -1); });
+    }
+    /* Servidor (Supabase) y, en las demos, uno de mentira en el teléfono */
+    var sgDemo = null;
+    function sgDemoDb() {
+      if (sgDemo) return sgDemo;
+      var t = new Date(Date.now() - 3 * 864e5).toISOString(), due = addDaysIso(today(), 9);
+      sgDemo = {
+        goals: [
+          { id: "d1", code: "K7Q2MX", leader: "demo-yo", name: "Botella para el viernes", target: 40, cur: "USD", due: addDaysIso(today(), 2), icon: "gift", color: "#e08a00", split: "equal", status: "open", created_at: t,
+            sg_members: [{ user_id: "demo-yo", name: "Tú" }, { user_id: "demo-ana", name: "Ana" }, { user_id: "demo-luis", name: "Luis" }, { user_id: "demo-mari", name: "Mari" }],
+            sg_aportes: [{ id: "a1", user_id: "demo-yo", amount: 10, status: "ok", created_at: t }, { id: "a2", user_id: "demo-ana", amount: 10, status: "pend", created_at: t }] },
+          { id: "d2", code: "P4WZ8N", leader: "demo-luis", name: "Viaje a la playa", target: 600, cur: "USD", due: due, icon: "plane", color: "#0e9aa7", split: "free", status: "open", created_at: t,
+            sg_members: [{ user_id: "demo-luis", name: "Luis" }, { user_id: "demo-yo", name: "Tú" }, { user_id: "demo-ana", name: "Ana" }],
+            sg_aportes: [{ id: "a3", user_id: "demo-luis", amount: 150, status: "ok", created_at: t }, { id: "a4", user_id: "demo-ana", amount: 120, status: "ok", created_at: t }] }
+        ],
+        hidden: [{ id: "d3", code: "7K2Q4M", leader: "demo-mari", name: "Regalo para mamá", target: 90, cur: "USD", due: null, icon: "heart", color: "#e5133f", split: "equal", status: "open", created_at: t,
+          sg_members: [{ user_id: "demo-mari", name: "Mari" }, { user_id: "demo-luis", name: "Luis" }], sg_aportes: [] }]
+      };
+      return sgDemo;
+    }
+    function sgUid() { return "x" + Date.now().toString(36) + Math.random().toString(36).slice(2, 7); }
+    var sgApi = {
+      list: function () {
+        if (window.__orbeDemo) return Promise.resolve(JSON.parse(JSON.stringify(sgDemoDb().goals)));
+        return tokenOk().then(function (s) {
+          return api("/rest/v1/sg_goals?select=*,sg_members(user_id,name,joined_at),sg_aportes(id,user_id,amount,status,created_at)&order=created_at.desc", {}, s.at);
+        });
+      },
+      create: function (g, name) {
+        if (window.__orbeDemo) {
+          var x = Object.assign({ id: sgUid(), leader: "demo-yo", status: "open", created_at: new Date().toISOString(), sg_members: [{ user_id: "demo-yo", name: name }], sg_aportes: [] }, g);
+          sgDemoDb().goals.unshift(x); return Promise.resolve(x);
+        }
+        return tokenOk().then(function (s) {
+          var body = Object.assign({ leader: s.id }, g);
+          return api("/rest/v1/sg_goals", { method: "POST", prefer: "return=representation", body: body }, s.at).then(function (r) {
+            var row = r && r[0]; if (!row) throw new Error("sin respuesta");
+            return api("/rest/v1/sg_members", { method: "POST", prefer: "return=minimal", body: { goal_id: row.id, user_id: s.id, name: name } }, s.at).then(function () { return row; });
+          });
+        });
+      },
+      preview: function (code) {
+        if (window.__orbeDemo) {
+          var db = sgDemoDb(), g = db.goals.concat(db.hidden).filter(function (x) { return x.code === code; })[0];
+          if (!g) return Promise.resolve(null);
+          var ld = g.sg_members.filter(function (m) { return m.user_id === g.leader; })[0];
+          return Promise.resolve({ id: g.id, name: g.name, target: g.target, cur: g.cur, icon: g.icon, color: g.color, status: g.status, leader: ld ? ld.name : "", n: g.sg_members.length, mine: g.sg_members.some(function (m) { return m.user_id === "demo-yo"; }) });
+        }
+        return tokenOk().then(function (s) { return api("/rest/v1/rpc/sg_preview", { method: "POST", body: { p_code: code } }, s.at); });
+      },
+      join: function (code, name) {
+        if (window.__orbeDemo) {
+          var db = sgDemoDb(), i = -1;
+          db.hidden.forEach(function (x, k) { if (x.code === code) i = k; });
+          if (i >= 0) { var g = db.hidden.splice(i, 1)[0]; g.sg_members.push({ user_id: "demo-yo", name: name }); db.goals.unshift(g); }
+          return Promise.resolve();
+        }
+        return tokenOk().then(function (s) { return api("/rest/v1/rpc/sg_join", { method: "POST", body: { p_code: code, p_name: name } }, s.at); });
+      },
+      aporte: function (gid, amount, lead) {
+        if (window.__orbeDemo) {
+          var g = sgDemoDb().goals.filter(function (x) { return x.id === gid; })[0], a = { id: sgUid(), user_id: "demo-yo", amount: amount, status: g.leader === "demo-yo" ? "ok" : "pend", created_at: new Date().toISOString() };
+          g.sg_aportes.push(a); return Promise.resolve(a);
+        }
+        return tokenOk().then(function (s) {
+          return api("/rest/v1/sg_aportes", { method: "POST", prefer: "return=representation", body: { goal_id: gid, user_id: s.id, amount: amount } }, s.at).then(function (r) {
+            var row = r && r[0];
+            // El aporte del líder se confirma solo
+            return row && lead ? sgApi.confirm(gid, row.id).then(function () { return row; }, function () { return row; }) : row;
+          });
+        });
+      },
+      confirm: function (gid, aid) {
+        if (window.__orbeDemo) { sgDemoDb().goals.forEach(function (g) { g.sg_aportes.forEach(function (a) { if (a.id === aid) a.status = "ok"; }); }); return Promise.resolve(); }
+        return tokenOk().then(function (s) { return api("/rest/v1/sg_aportes?id=eq." + encodeURIComponent(aid), { method: "PATCH", prefer: "return=minimal", body: { status: "ok", confirmed_at: new Date().toISOString() } }, s.at); });
+      },
+      delAporte: function (gid, aid) {
+        if (window.__orbeDemo) { sgDemoDb().goals.forEach(function (g) { g.sg_aportes = g.sg_aportes.filter(function (a) { return a.id !== aid; }); }); return Promise.resolve(); }
+        return tokenOk().then(function (s) { return api("/rest/v1/sg_aportes?id=eq." + encodeURIComponent(aid), { method: "DELETE", prefer: "return=minimal" }, s.at); });
+      },
+      removeMember: function (gid, uid) {
+        if (window.__orbeDemo) {
+          var db = sgDemoDb();
+          db.goals.forEach(function (g) { if (g.id === gid) g.sg_members = g.sg_members.filter(function (m) { return m.user_id !== uid; }); });
+          if (uid === "demo-yo") db.goals = db.goals.filter(function (g) { return g.id !== gid; });
+          return Promise.resolve();
+        }
+        return tokenOk().then(function (s) { return api("/rest/v1/sg_members?goal_id=eq." + encodeURIComponent(gid) + "&user_id=eq." + encodeURIComponent(uid), { method: "DELETE", prefer: "return=minimal" }, s.at); });
+      },
+      finish: function (gid, done) {
+        var st = done ? "done" : "open";
+        if (window.__orbeDemo) { sgDemoDb().goals.forEach(function (g) { if (g.id === gid) g.status = st; }); return Promise.resolve(); }
+        return tokenOk().then(function (s) { return api("/rest/v1/sg_goals?id=eq." + encodeURIComponent(gid), { method: "PATCH", prefer: "return=minimal", body: { status: st } }, s.at); });
+      },
+      remove: function (gid) {
+        if (window.__orbeDemo) { var db = sgDemoDb(); db.goals = db.goals.filter(function (g) { return g.id !== gid; }); return Promise.resolve(); }
+        return tokenOk().then(function (s) { return api("/rest/v1/sg_goals?id=eq." + encodeURIComponent(gid), { method: "DELETE", prefer: "return=minimal" }, s.at); });
+      }
+    };
+    function sgFail(e) { showToast(cloudErr(e).replace("No se pudo completar. ", "No se pudo. ")); }
+    function sgLoad(quiet) {
+      if (!sgOn() || !sgSes()) { if (SG.goals.length || SG.loaded) { SG.goals = []; SG.loaded = false; jset(SGK, null); } sgRender(); return Promise.resolve(); }
+      if (SG.busy) return Promise.resolve();
+      SG.busy = true; if (!quiet && !SG.loaded) sgRender();
+      return sgApi.list().then(function (rows) {
+        SG.goals = Array.isArray(rows) ? rows : []; SG.loaded = true; SG.err = "";
+        if (!window.__orbeDemo) jset(SGK, { goals: SG.goals, me: sgMe() });
+      }, function (e) { SG.err = cloudErr(e); }).then(function () { SG.busy = false; sgRender(); if (sgOpen) sgFillD(); sgInvCheck(); });
+    }
+    /* Lista en la página de Ahorro */
+    function sgCard(g) {
+      var c = sgCalc(g), mem = g.sg_members || [];
+      var tag = c.done ? '<span class="sg-tag ok">' + sgSvg("check", 2.4) + "Lograda</span>" :
+        c.lead ? '<span class="sg-tag lead">' + sgSvg("crown") + "Eres el líder</span>" :
+        '<span class="sg-tag">Líder: ' + esc((mem.filter(function (m) { return m.user_id === g.leader; })[0] || {}).name || "—") + "</span>";
+      var pendN = (g.sg_aportes || []).filter(function (a) { return a.status !== "ok"; }).length;
+      return '<li><button type="button" class="sg-card' + (c.done ? " done" : "") + '" data-sg="' + esc(g.id) + '" style="--gc:' + esc(g.color) + '">' +
+        '<span class="sg-top">' + goalAvatar(sgLook(g)) + '<span class="sg-tt"><b>' + esc(g.name) + "</b><small>" + sgMoney(c.ok, g.cur) + " de " + sgMoney(g.target, g.cur) +
+        (c.lead && pendN && !c.done ? ' · <em>' + pendN + " por confirmar</em>" : "") + "</small></span><span class=\"sg-pct\">" + fmtPct(c.pct) + "</span></span>" +
+        '<span class="sg-bar"><i class="p" style="width:' + c.pctP.toFixed(1) + '%"></i><i style="width:' + c.pct.toFixed(1) + '%"></i></span>' +
+        '<span class="sg-foot"><span class="sg-stack">' + mem.slice(0, 5).map(function (m) { return sgAv(m, "sm"); }).join("") + (mem.length > 5 ? '<span class="sg-av sm more">+' + (mem.length - 5) + "</span>" : "") + "</span>" + tag + "</span></button></li>";
+    }
+    function sgInvCard() {
+      var v = SG.inv; if (!v) return "";
+      return '<div class="sg-inv" style="--gc:' + esc(v.color) + '">' + goalAvatar(sgLook(v)) + '<div class="sg-inv-t"><small>' + esc(v.leader || "Un amigo") + " te invitó a</small><b>" + esc(v.name) + "</b><span>" + sgMoney(v.target, v.cur) + " · " + v.n + (v.n === 1 ? " persona" : " personas") + "</span></div>" +
+        '<div class="sg-inv-b"><button type="button" class="secondary" data-sg-inv="no">Ahora no</button><button type="button" class="primary" data-sg-inv="yes">Unirme</button></div></div>';
+    }
+    function sgRender() {
+      var sec = $("sg-sec"); if (!sec) return;
+      sec.hidden = !sgOn();
+      if (!sgOn()) return;
+      var box = $("sg-box"), has = !!sgSes(), list = sgSort(SG.goals), open = list.filter(function (g) { return g.status !== "done"; }).length;
+      $("sg-n").hidden = !has || !open; $("sg-n").textContent = open;
+      var acts = '<div class="sg-acts"><button type="button" class="sg-act" data-sg-new>' + sgSvg("plus", 2.2) + "Crear meta compartida</button>" +
+        '<button type="button" class="sg-act" data-sg-join>' + sgSvg("key") + "Unirme con un código</button></div>";
+      if (!has) {
+        box.innerHTML = '<div class="sg-empty">' + sgSvg("users", 1.8) + "<p><b>Junten dinero entre amigos.</b> Un regalo, un viaje o la cuenta de la fiesta: cada uno aporta su parte y el líder la confirma.</p>" +
+          '<button type="button" class="primary" data-sg-login>Inicia sesión para empezar</button><small>Se necesita una cuenta de Orbe para compartir metas.</small></div>';
+        return;
+      }
+      if (!list.length) {
+        box.innerHTML = sgInvCard() + (SG.busy && !SG.loaded ? '<p class="hint sg-load">Cargando…</p>' :
+          '<div class="sg-empty">' + sgSvg("users", 1.8) + "<p><b>Junten dinero entre amigos.</b> Tú creas la meta, invitas con un enlace y confirmas cada aporte cuando te llega.</p></div>") +
+          (SG.err ? '<p class="hint sg-err">' + esc(SG.err) + "</p>" : "") + acts;
+        return;
+      }
+      box.innerHTML = sgInvCard() + '<ul class="sg-list">' + list.map(sgCard).join("") + "</ul>" + (SG.err ? '<p class="hint sg-err">' + esc(SG.err) + "</p>" : "") + acts;
+    }
+    /* Detalle de una meta compartida */
+    function sgRing(c, col) {
+      var r = 34, L = 2 * Math.PI * r;
+      return '<svg class="sg-ring" viewBox="0 0 80 80" aria-hidden="true" style="--gc:' + esc(col) + '"><circle cx="40" cy="40" r="' + r + '" class="t"></circle>' +
+        '<circle cx="40" cy="40" r="' + r + '" class="p" stroke-dasharray="' + L.toFixed(1) + '" stroke-dashoffset="' + (L * (1 - c.pctP / 100)).toFixed(1) + '"></circle>' +
+        '<circle cx="40" cy="40" r="' + r + '" class="v" stroke-dasharray="' + L.toFixed(1) + '" stroke-dashoffset="' + (L * (1 - c.pct / 100)).toFixed(1) + '"></circle></svg>';
+    }
+    function sgFillD() {
+      var g = sgById(sgOpen);
+      if (!g) { $("sgd-sheet").hidden = true; sgOpen = null; return; }
+      var c = sgCalc(g), me = sgMe(), mem = (g.sg_members || []).slice(), ap = g.sg_aportes || [];
+      mem.sort(function (a, b) { return (a.user_id === g.leader ? -1 : 0) - (b.user_id === g.leader ? -1 : 0) || (a.user_id === me ? -1 : 0) - (b.user_id === me ? -1 : 0); });
+      $("h-sgd").textContent = g.name;
+      var lead = (mem.filter(function (m) { return m.user_id === g.leader; })[0] || {}).name || "—";
+      var html = '<div class="sgd-hero" style="--gc:' + esc(g.color) + '"><div class="sgd-ring">' + sgRing(c, g.color) + '<span>' + goalAvatar(sgLook(g)) + "</span></div>" +
+        '<div class="sgd-hv"><b class="fit">' + sgMoney(c.ok, g.cur) + "</b><small>de " + sgMoney(g.target, g.cur) + " · " + fmtPct(c.pct) + "</small>" +
+        (c.pend > 0.004 ? '<span class="sgd-pend">+' + sgMoney(c.pend, g.cur) + " por confirmar</span>" : "") + "</div></div>";
+      var meta = [];
+      meta.push(c.lead ? '<span class="sg-tag lead">' + sgSvg("crown") + "Eres el líder</span>" : '<span class="sg-tag">' + sgSvg("crown") + "Líder: " + esc(lead) + "</span>");
+      if (g.due) meta.push('<span class="sg-tag">Para el ' + esc(shortDate(g.due)) + "</span>");
+      meta.push('<span class="sg-tag">' + (g.split === "equal" ? "Cada uno pone " + sgMoney(c.share, g.cur) : "Cada uno pone lo que pueda") + "</span>");
+      if (c.done) meta.unshift('<span class="sg-tag ok">' + sgSvg("check", 2.4) + (g.status === "done" ? "Lograda" : "Meta alcanzada") + "</span>");
+      html += '<div class="sgd-tags">' + meta.join("") + "</div>";
+      // Aportes por confirmar: el líder los aprueba cuando le llega el dinero
+      var pend = ap.filter(function (a) { return a.status !== "ok"; });
+      var nameOf = function (u) { var m = mem.filter(function (x) { return x.user_id === u; })[0]; return u === me ? "Tú" : m ? m.name : "Alguien que salió"; };
+      if (pend.length && (c.lead || pend.some(function (a) { return a.user_id === me; }))) {
+        html += '<h3 class="sgd-h">Por confirmar</h3><ul class="sgd-pl">' + pend.filter(function (a) { return c.lead || a.user_id === me; }).map(function (a) {
+          var mine = a.user_id === me;
+          return '<li>' + sgAv({ user_id: a.user_id, name: nameOf(a.user_id) }) + '<span class="tx"><b>' + esc(nameOf(a.user_id)) + "</b><small>" + (c.lead ? "Dice que aportó " : "Aportaste ") + sgMoney(Number(a.amount), g.cur) + "</small></span>" +
+            (c.lead ? '<button type="button" class="sgd-ok" data-sg-ok="' + esc(a.id) + '">Confirmar</button>' : "") +
+            (mine || c.lead ? '<button type="button" class="sgd-x" data-sg-undo="' + esc(a.id) + '" aria-label="' + (mine ? "Cancelar aporte" : "Rechazar aporte") + '">✕</button>' : "") + "</li>";
+        }).join("") + "</ul>" + (c.lead ? "" : '<p class="hint sgd-note">Le avisamos a ' + esc(lead) + ". Lo confirma cuando le llegue el dinero.</p>");
+      }
+      // Participantes
+      html += '<h3 class="sgd-h">Participantes · ' + mem.length + '</h3><ul class="sgd-ml">' + mem.map(function (m) {
+        var b = c.by[m.user_id] || { ok: 0, pend: 0 }, st, cls = "";
+        if (g.split === "equal") {
+          if (b.ok >= c.share - 0.005) { st = "✓ Listo"; cls = "ok"; }
+          else if (b.pend > 0.004) { st = "Por confirmar"; cls = "pend"; }
+          else { st = "Falta " + sgMoney(Math.max(0, c.share - b.ok), g.cur); cls = "due"; }
+        } else {
+          st = b.ok > 0.004 ? sgMoney(b.ok, g.cur) : b.pend > 0.004 ? "Por confirmar" : "Sin aportar";
+          cls = b.ok > 0.004 ? "ok" : b.pend > 0.004 ? "pend" : "due";
+        }
+        var who = m.user_id === me ? "Tú" : m.name;
+        var sub = (m.user_id === g.leader ? "Líder · " : "") + (b.ok > 0.004 ? "aportó " + sgMoney(b.ok, g.cur) : "sin aportes confirmados");
+        var canRm = c.lead && m.user_id !== me && g.status !== "done";
+        return '<li' + (canRm ? ' data-sg-rm="' + esc(m.user_id) + '" role="button" tabindex="0"' : "") + ">" + sgAv(m) + '<span class="tx"><b>' + esc(who) + (m.user_id === g.leader ? ' <i class="sgd-cr">' + sgSvg("crown") + "</i>" : "") + "</b><small>" + esc(sub) + '</small></span><span class="sgd-st ' + cls + '">' + esc(st) + "</span></li>";
+      }).join("") + "</ul>";
+      if (c.lead && g.status !== "done") html += '<p class="hint sgd-note">Toca a una persona para quitarla de la meta.</p>';
+      // Acciones secundarias
+      var more = [];
+      if (g.status !== "done") more.push('<button type="button" class="set-row" data-sg-invite><span class="ic">' + sgSvg("users") + '</span><span class="tx"><b>Invitar amigos</b><small>Código ' + esc(sgFmtCode(g.code)) + "</small></span></button>");
+      if (c.lead && g.status !== "done") {
+        more.push('<button type="button" class="set-row" data-sg-remind><span class="ic">' + sgSvg("bell") + '</span><span class="tx"><b>Recordar a quien falta</b><small>Manda un mensaje con lo que le toca a cada uno</small></span></button>');
+        more.push('<button type="button" class="set-row" data-sg-finish><span class="ic">' + sgSvg("flag") + '</span><span class="tx"><b>' + (c.done ? "Registrar la compra" : "Marcar como lograda") + "</b><small>La meta se cierra y nadie más puede aportar</small></span></button>");
+      }
+      if (c.lead && g.status === "done") more.push('<button type="button" class="set-row" data-sg-reopen><span class="ic">' + sgSvg("flag") + '</span><span class="tx"><b>Volver a abrir</b><small>Para seguir juntando</small></span></button>');
+      if (c.lead) more.push('<button type="button" class="set-row danger" data-sg-del><span class="ic">' + sgSvg("trash") + '</span><span class="tx"><b>Eliminar meta</b><small>Se borra para todos</small></span></button>');
+      else more.push('<button type="button" class="set-row danger" data-sg-leave><span class="ic">' + sgSvg("out") + '</span><span class="tx"><b>Salir de la meta</b><small>Tus aportes confirmados se quedan en la meta</small></span></button>');
+      html += '<div class="sgd-more">' + more.join("") + "</div>";
+      $("sgd-body").innerHTML = html;
+      var mine = c.mine.ok + c.mine.pend;
+      $("sgd-foot").innerHTML = g.status === "done" ? '<button type="button" class="secondary" id="sgd-closeb">Cerrar</button>' :
+        (g.split === "equal" && c.mine.ok >= c.share - 0.005 ? '<div class="sgd-paid">' + sgSvg("check", 2.4) + "Ya pusiste tu parte</div><button type=\"button\" class=\"secondary\" data-sg-ap>Aportar más</button>" :
+        '<button type="button" class="primary" data-sg-ap>' + (mine > 0.004 ? "Aportar más" : g.split === "equal" ? "Aportar mi parte · " + sgMoney(Math.max(0, c.share - mine), g.cur) : "Aportar") + "</button>");
+      try { fitAll(); } catch (e) {}
+    }
+    function sgOpenD(id) { sgOpen = id; sgFillD(); $("sgd-sheet").hidden = false; sgLoad(true); }
+    function sgCloseD() { $("sgd-sheet").hidden = true; sgOpen = null; }
+    $("sgd-close").addEventListener("click", sgCloseD);
+    $("sgd-sheet").addEventListener("click", function (e) {
+      if (e.target === $("sgd-sheet") || e.target.id === "sgd-closeb") { sgCloseD(); return; }
+      var g = sgById(sgOpen); if (!g) return;
+      var b;
+      if (e.target.closest("[data-sg-ap]")) { sgOpenAp(g); return; }
+      if (e.target.closest("[data-sg-invite]")) { sgOpenInv(g); return; }
+      if ((b = e.target.closest("[data-sg-ok]"))) {
+        b.disabled = true;
+        sgApi.confirm(g.id, b.getAttribute("data-sg-ok")).then(function () { showToast("Aporte confirmado."); return sgLoad(true); }, function (er) { b.disabled = false; sgFail(er); });
+        return;
+      }
+      if ((b = e.target.closest("[data-sg-undo]"))) {
+        var aid = b.getAttribute("data-sg-undo"), mineA = (g.sg_aportes || []).some(function (a) { return a.id === aid && a.user_id === sgMe(); });
+        openCf({ title: mineA ? "¿Cancelar tu aporte?" : "¿Rechazar este aporte?", text: mineA ? "Se quita de la meta y también el gasto que se anotó en tu cuenta." : "Úsalo si el dinero no te llegó. La persona puede volver a anotarlo.", btn: mineA ? "Cancelar aporte" : "Rechazar", ok: function () {
+          sgApi.delAporte(g.id, aid).then(function () {
+            if (mineA) { var n0 = state.items.length; state.items = state.items.filter(function (it) { return it.sgId !== aid; }); if (state.items.length !== n0) { save(); render(); } }
+            showToast(mineA ? "Aporte cancelado." : "Aporte rechazado."); return sgLoad(true);
+          }, sgFail);
+        } });
+        return;
+      }
+      if ((b = e.target.closest("[data-sg-rm]"))) {
+        var uid = b.getAttribute("data-sg-rm"), m = (g.sg_members || []).filter(function (x) { return x.user_id === uid; })[0];
+        openCf({ title: "¿Quitar a " + (m ? m.name : "esta persona") + "?", text: "Ya no verá la meta. Sus aportes confirmados se quedan.", btn: "Quitar", ok: function () {
+          sgApi.removeMember(g.id, uid).then(function () { showToast("Listo."); return sgLoad(true); }, sgFail);
+        } });
+        return;
+      }
+      if (e.target.closest("[data-sg-remind]")) { sgRemind(g); return; }
+      if (e.target.closest("[data-sg-finish]")) {
+        var c = sgCalc(g);
+        openCf({ title: c.done ? "¿Registrar la compra?" : "¿Marcar como lograda?", text: c.done ? "La meta se cierra para todos. ¡Felicidades!" : "Todavía faltan " + sgMoney(Math.max(0, g.target - c.ok), g.cur) + ". La meta se cierra para todos.", btn: c.done ? "Registrar" : "Marcar como lograda", ok: function () {
+          sgApi.finish(g.id, true).then(function () { showToast("¡Meta lograda!"); return sgLoad(true); }, sgFail);
+        } });
+        return;
+      }
+      if (e.target.closest("[data-sg-reopen]")) { sgApi.finish(g.id, false).then(function () { showToast("La meta está abierta otra vez."); return sgLoad(true); }, sgFail); return; }
+      if (e.target.closest("[data-sg-del]")) {
+        openCf({ title: "¿Eliminar «" + g.name + "»?", text: "Se borra para todos los participantes. Los gastos que cada uno anotó en sus cuentas se quedan.", btn: "Eliminar", ok: function () {
+          sgApi.remove(g.id).then(function () { sgCloseD(); showToast("Meta eliminada."); return sgLoad(true); }, sgFail);
+        } });
+        return;
+      }
+      if (e.target.closest("[data-sg-leave]")) {
+        openCf({ title: "¿Salir de «" + g.name + "»?", text: "Ya no verás la meta. Tus aportes confirmados se quedan.", btn: "Salir", ok: function () {
+          sgApi.removeMember(g.id, sgMe()).then(function () { sgCloseD(); showToast("Saliste de la meta."); return sgLoad(true); }, sgFail);
+        } });
+      }
+    });
+    $("sgd-sheet").addEventListener("keydown", function (e) { if ((e.key === "Enter" || e.key === " ") && e.target.matches && e.target.matches("[data-sg-rm]")) { e.preventDefault(); e.target.click(); } });
+    function sgShare(text, url) {
+      var full = text + (url ? " " + url : "");
+      if (navigator.share) { navigator.share({ text: text, url: url || undefined }).catch(function () {}); return; }
+      try { navigator.clipboard.writeText(full).then(function () { showToast("Mensaje copiado. Pégalo en el chat."); }, function () { showToast(full); }); } catch (e) { showToast(full); }
+    }
+    function sgRemind(g) {
+      var c = sgCalc(g), me = sgMe(), falta = [];
+      (g.sg_members || []).forEach(function (m) {
+        if (m.user_id === me) return;
+        var b = c.by[m.user_id] || { ok: 0, pend: 0 };
+        if (g.split === "equal") { var f = c.share - b.ok - b.pend; if (f > 0.004) falta.push(m.name + ": " + sgMoney(f, g.cur)); }
+        else if (b.ok + b.pend < 0.005) falta.push(m.name);
+      });
+      if (!falta.length) { showToast("Nadie tiene aportes pendientes."); return; }
+      sgShare("Recordatorio de «" + g.name + "» en Orbe. Falta: " + falta.join(", ") + ". Cuando aportes, anótalo en Orbe para que lo confirme.");
+    }
+    /* Invitar */
+    var sgInvG = null;
+    function sgOpenInv(g) { sgInvG = g; $("sgi-code").textContent = sgFmtCode(g.code); $("sgi-sheet").hidden = false; }
+    function sgInvText(g) { return "Únete a mi meta compartida «" + g.name + "» en Orbe (" + sgMoney(g.target, g.cur) + "). Código: " + sgFmtCode(g.code); }
+    $("sgi-close").addEventListener("click", function () { $("sgi-sheet").hidden = true; });
+    $("sgi-sheet").addEventListener("click", function (e) { if (e.target === $("sgi-sheet")) $("sgi-sheet").hidden = true; });
+    $("sgi-copy").addEventListener("click", function () {
+      if (!sgInvG) return;
+      var t = sgLink(sgInvG.code);
+      try { navigator.clipboard.writeText(t).then(function () { showToast("Enlace copiado."); }, function () { showToast(t); }); } catch (e) { showToast(t); }
+    });
+    $("sgi-wa").addEventListener("click", function () { if (sgInvG) window.open("https://wa.me/?text=" + encodeURIComponent(sgInvText(sgInvG) + " " + sgLink(sgInvG.code)), "_blank", "noopener"); });
+    $("sgi-share").addEventListener("click", function () { if (sgInvG) sgShare(sgInvText(sgInvG), sgLink(sgInvG.code)); });
+    /* Crear */
+    function sgMeName() { return (state.sgName || "").trim(); }
+    function sgCurOpts() {
+      var o = ['<option value="USD">Dólares ($)</option>'];
+      if (LOC.none) { if (LOC.code === "EUR") o.push('<option value="EUR">Euros (€)</option>'); }
+      else o.push('<option value="' + esc(LOC.code) + '">' + esc(locCap()) + " (" + esc(LOC.sym) + ")</option>");
+      return o.join("");
+    }
+    function sgNewLook() {
+      var col = sgNew.color || GOAL_COLORS[SG.goals.length % GOAL_COLORS.length];
+      $("sgn-prev").innerHTML = goalAvatar({ nombre: $("sgn-nombre").value || "Meta", icon: sgNew.icon, color: col }, "big");
+      $("sgn-icons").innerHTML = GOAL_ICONS.map(function (ic) {
+        return '<button type="button" role="radio" data-sg-ic="' + ic + '" aria-checked="' + (ic === sgNew.icon ? "true" : "false") + '" aria-label="' + GOAL_ICON_N[ic] + '">' + (ic ? goalSvg(ic) : '<span class="ini">Aa</span>') + "</button>";
+      }).join("");
+      $("sgn-colors").innerHTML = GOAL_COLORS.concat(["#d6502b"]).map(function (c) {
+        return '<button type="button" role="radio" data-sg-col="' + c + '" aria-checked="' + (c === col ? "true" : "false") + '" aria-label="Color" style="--c:' + c + '"></button>';
+      }).join("");
+    }
+    function sgOpenNew() {
+      if (!sgSes()) { sgLogin(); return; }
+      sgNew = { icon: "gift", color: "", split: "equal" };
+      $("sgn-nombre").value = ""; $("sgn-meta").value = ""; $("sgn-fecha").value = ""; $("sgn-err").textContent = "";
+      $("sgn-moneda").innerHTML = sgCurOpts(); $("sgn-moneda").value = state.disp === "VES" && !LOC.none ? LOC.code : "USD";
+      $("sgn-fecha").min = today();
+      $("sgn-me-w").hidden = !!sgMeName(); $("sgn-me").value = "";
+      setPressed("[data-sgs]", "data-sgs", "equal");
+      sgNewLook(); $("sgn-sheet").hidden = false;
+    }
+    $("sgn-icons").addEventListener("click", function (e) { var b = e.target.closest("[data-sg-ic]"); if (b) { sgNew.icon = b.getAttribute("data-sg-ic"); sgNewLook(); } });
+    $("sgn-colors").addEventListener("click", function (e) { var b = e.target.closest("[data-sg-col]"); if (b) { sgNew.color = b.getAttribute("data-sg-col"); sgNewLook(); } });
+    $("sgn-nombre").addEventListener("input", function () { if (!sgNew.icon) sgNewLook(); });
+    $("sgn-split").addEventListener("click", function (e) { var b = e.target.closest("[data-sgs]"); if (b) { sgNew.split = b.getAttribute("data-sgs"); setPressed("[data-sgs]", "data-sgs", sgNew.split); } });
+    $("sgn-close").addEventListener("click", function () { $("sgn-sheet").hidden = true; });
+    $("sgn-sheet").addEventListener("click", function (e) { if (e.target === $("sgn-sheet")) $("sgn-sheet").hidden = true; });
+    function sgCode() { var s = ""; var r = new Uint32Array(6); try { crypto.getRandomValues(r); } catch (e) { for (var k = 0; k < 6; k++) r[k] = Math.floor(Math.random() * 1e9); } for (var i = 0; i < 6; i++) s += SG_CODE[r[i] % SG_CODE.length]; return s; }
+    function sgSetName(inp) {
+      if (sgMeName()) return true;
+      var n = $(inp).value.trim();
+      if (!n) return false;
+      state.sgName = n.slice(0, 30); save(); return true;
+    }
+    $("sgn-save").addEventListener("click", function () {
+      var nombre = $("sgn-nombre").value.trim(), meta = amtVal($("sgn-meta").value), err = $("sgn-err"), btn = $("sgn-save");
+      if (!nombre) { err.textContent = "Ponle un nombre a la meta."; return; }
+      if (!(meta > 0)) { err.textContent = "Escribe cuánto quieren juntar."; return; }
+      if (!sgSetName("sgn-me")) { err.textContent = "Escribe tu nombre para que tus amigos sepan quién eres."; return; }
+      var g = { code: sgCode(), name: nombre.slice(0, 40), target: Math.round(meta * 100) / 100, cur: $("sgn-moneda").value, due: $("sgn-fecha").value || null, icon: sgNew.icon || "", color: sgNew.color || GOAL_COLORS[SG.goals.length % GOAL_COLORS.length], split: sgNew.split };
+      btn.disabled = true; err.textContent = "Creando…";
+      (function tryIt(n) {
+        sgApi.create(g, sgMeName()).then(function (row) {
+          btn.disabled = false; err.textContent = ""; $("sgn-sheet").hidden = true;
+          return sgLoad(true).then(function () { var x = sgById(row.id) || row; sgOpenInv(x); });
+        }, function (e) {
+          if (n < 3 && (e.status === 409 || /duplicate|unique/i.test(e.message))) { g.code = sgCode(); tryIt(n + 1); return; }
+          btn.disabled = false; err.textContent = cloudErr(e);
+        });
+      })(0);
+    });
+    /* Aportar */
+    function sgOpenAp(g) {
+      var c = sgCalc(g), mine = c.mine.ok + c.mine.pend;
+      sgAp = { id: g.id, acc: state.lastAcc && accById(state.lastAcc) ? String(state.lastAcc) : (state.accounts[0] ? String(state.accounts[0].id) : "none") };
+      $("sga-sub").textContent = c.lead ? "Como eres el líder, tu aporte se confirma solo." : "Paga por tu lado (transferencia, pago móvil o efectivo) y anótalo aquí. El líder lo confirma cuando le llegue.";
+      $("sga-monto-l").textContent = "¿Cuánto aportaste? (" + (sgCur(g.cur) ? curLabel(sgCur(g.cur)) : g.cur) + ")";
+      var def = g.split === "equal" ? Math.max(0, c.share - mine) : 0;
+      $("sga-monto").value = def > 0.004 ? moneyIn(def) : "";
+      $("sga-err").textContent = "";
+      sgApRender(); $("sga-sheet").hidden = false;
+    }
+    function sgApConv(g, a, v) {
+      if (!a) return null;
+      var k = sgCur(g.cur); if (!k) return null;
+      return a.moneda === k ? v : conv(v, k, a.moneda);
+    }
+    function sgApRender() {
+      var g = sgById(sgAp.id); if (!g) return;
+      var v = amtVal($("sga-monto").value);
+      var html = state.accounts.map(function (a) {
+        return '<button type="button" class="ap' + (String(a.id) === sgAp.acc ? " on" : "") + '" role="radio" aria-checked="' + (String(a.id) === sgAp.acc) + '" data-sga="' + esc(String(a.id)) + '">' + accAvatar(a) +
+          '<span class="ap-t"><b>' + esc(a.nombre) + "</b><small>" + money(accBalance(a), a.moneda) + "</small></span></button>";
+      }).join("") + '<button type="button" class="ap' + (sgAp.acc === "none" ? " on" : "") + '" role="radio" aria-checked="' + (sgAp.acc === "none") + '" data-sga="none"><span class="ap-t"><b>No anotar</b><small>Solo en la meta</small></span></button>';
+      var box = $("sga-acc");
+      if (box._h !== html) { box.innerHTML = html; box._h = html; }
+      var a = sgAp.acc === "none" ? null : accById(sgAp.acc), p = $("sga-prev");
+      if (!(v > 0)) { p.innerHTML = ""; return; }
+      if (!a) { p.innerHTML = '<span class="hint">El aporte queda solo en la meta. No se anota en tus cuentas.</span>'; return; }
+      var x = sgApConv(g, a, v);
+      p.innerHTML = x === null ? '<span class="hint">No hay tasa para pasar el monto a ' + esc(curLabel(a.moneda)) + '. Elige otra cuenta o «No anotar».</span>' :
+        '<div class="pv"><span>Gasto en ' + esc(a.nombre) + '</span><strong class="neg">−' + money(x, a.moneda) + '</strong></div><span class="hint">Se anota en «Metas compartidas».</span>';
+    }
+    $("sga-monto").addEventListener("input", sgApRender);
+    $("sga-acc").addEventListener("click", function (e) { var b = e.target.closest("[data-sga]"); if (b) { sgAp.acc = b.getAttribute("data-sga"); $("sga-acc")._h = ""; sgApRender(); } });
+    $("sga-close").addEventListener("click", function () { $("sga-sheet").hidden = true; });
+    $("sga-sheet").addEventListener("click", function (e) { if (e.target === $("sga-sheet")) $("sga-sheet").hidden = true; });
+    $("sga-save").addEventListener("click", function () {
+      var g = sgById(sgAp.id), v = amtVal($("sga-monto").value), err = $("sga-err"), btn = $("sga-save");
+      if (!g) return;
+      if (!(v > 0)) { err.textContent = "Escribe cuánto aportaste."; return; }
+      var a = sgAp.acc === "none" ? null : accById(sgAp.acc), x = a ? sgApConv(g, a, v) : null;
+      if (a && x === null) { err.textContent = "Elige otra cuenta o «No anotar»."; return; }
+      btn.disabled = true; err.textContent = "Guardando…";
+      sgApi.aporte(g.id, Math.round(v * 100) / 100, sgCalc(g).lead).then(function (row) {
+        btn.disabled = false; err.textContent = "";
+        if (a && row) {
+          state.items.push({ id: Date.now(), tipo: "gasto", cat: "Metas compartidas", monto: Math.round(x * 100) / 100, moneda: a.moneda, cuenta: a.id, fecha: today(), nota: "Aporte a «" + g.name + "»", sgId: row.id });
+          state.lastAcc = a.id; save(); render();
+        }
+        $("sga-sheet").hidden = true;
+        showToast(sgCalc(g).lead ? "Aporte anotado." : "Aporte anotado. Falta que el líder lo confirme.");
+        return sgLoad(true);
+      }, function (e) { btn.disabled = false; err.textContent = cloudErr(e); });
+    });
+    /* Unirse con código o enlace */
+    function sgOpenJoin(code) {
+      if (!sgSes()) { sgLogin(); return; }
+      sgJoin = null; $("sgj-code").value = code ? sgFmtCode(code) : ""; $("sgj-prev").innerHTML = ""; $("sgj-err").textContent = "";
+      $("sgj-me-w").hidden = !!sgMeName(); $("sgj-me").value = ""; $("sgj-go").textContent = "Buscar meta";
+      $("sgj-sheet").hidden = false;
+      if (code) sgJoinFind();
+    }
+    function sgJoinFind() {
+      var code = sgClean($("sgj-code").value), err = $("sgj-err");
+      if (code.length < 4) { err.textContent = "Escribe el código completo, por ejemplo ORBE-K7Q2MX."; return; }
+      err.textContent = "Buscando…";
+      sgApi.preview(code).then(function (v) {
+        if (!v) { sgJoin = null; $("sgj-prev").innerHTML = ""; err.textContent = "No encontramos una meta con ese código."; return; }
+        err.textContent = ""; sgJoin = { code: code, v: v };
+        $("sgj-prev").innerHTML = '<div class="sg-inv solo" style="--gc:' + esc(v.color) + '">' + goalAvatar(sgLook(v)) + '<div class="sg-inv-t"><small>Líder: ' + esc(v.leader || "—") + "</small><b>" + esc(v.name) + "</b><span>" + sgMoney(Number(v.target), v.cur) + " · " + v.n + (v.n === 1 ? " persona" : " personas") + "</span></div></div>";
+        $("sgj-go").textContent = v.mine ? "Ver la meta" : v.status === "done" ? "Esta meta ya se logró" : "Unirme";
+        $("sgj-go").disabled = !v.mine && v.status === "done";
+      }, function (e) { err.textContent = cloudErr(e); });
+    }
+    $("sgj-code").addEventListener("input", function () { if (sgJoin) { sgJoin = null; $("sgj-prev").innerHTML = ""; $("sgj-go").textContent = "Buscar meta"; $("sgj-go").disabled = false; } });
+    $("sgj-close").addEventListener("click", function () { $("sgj-sheet").hidden = true; });
+    $("sgj-sheet").addEventListener("click", function (e) { if (e.target === $("sgj-sheet")) $("sgj-sheet").hidden = true; });
+    function sgDoJoin(code, v, err, done) {
+      if (v.mine) { done(); sgLoad(true).then(function () { sgOpenD(v.id); }); return; }
+      sgApi.join(code, sgMeName()).then(function () {
+        done(); showToast("Te uniste a «" + v.name + "».");
+        return sgLoad(true).then(function () { if (sgById(v.id)) sgOpenD(v.id); });
+      }, function (e) { err(/meta_llena/.test(e.message) ? "Esta meta ya tiene el máximo de 30 personas." : /codigo_invalido/.test(e.message) ? "Esta meta ya se cerró." : cloudErr(e)); });
+    }
+    $("sgj-go").addEventListener("click", function () {
+      if (!sgJoin) { sgJoinFind(); return; }
+      if (!sgSetName("sgj-me")) { $("sgj-err").textContent = "Escribe tu nombre para que tus amigos sepan quién eres."; return; }
+      var j = sgJoin;
+      sgDoJoin(j.code, j.v, function (m) { $("sgj-err").textContent = m; }, function () { $("sgj-sheet").hidden = true; });
+    });
+    /* Invitación que llega por enlace: ?meta=ORBE-XXXXXX */
+    function sgInvCheck() {
+      var code = jget(SGINV);
+      if (!code || !sgSes() || SG.invBusy) return;
+      if (SG.inv && SG.inv.code === code) return;
+      SG.invBusy = true;
+      sgApi.preview(code).then(function (v) {
+        SG.invBusy = false;
+        if (!v || v.mine || v.status === "done") { jset(SGINV, null); SG.inv = null; if (v && v.mine) showToast("Ya estás en «" + v.name + "»."); sgRender(); return; }
+        v.code = code; SG.inv = v; sgRender();
+      }, function () { SG.invBusy = false; });
+    }
+    $("sg-box").addEventListener("click", function (e) {
+      var b;
+      if ((b = e.target.closest("[data-sg]"))) { sgOpenD(b.getAttribute("data-sg")); return; }
+      if (e.target.closest("[data-sg-new]")) { sgOpenNew(); return; }
+      if (e.target.closest("[data-sg-join]")) { sgOpenJoin(""); return; }
+      if (e.target.closest("[data-sg-login]")) { sgLogin(); return; }
+      if ((b = e.target.closest("[data-sg-inv]"))) {
+        var v = SG.inv; if (!v) return;
+        if (b.getAttribute("data-sg-inv") === "no") { jset(SGINV, null); SG.inv = null; sgRender(); showToast("Puedes unirte después con el código " + sgFmtCode(v.code) + "."); return; }
+        if (!sgMeName()) { sgOpenJoin(v.code); jset(SGINV, null); SG.inv = null; sgRender(); return; }
+        b.disabled = true;
+        sgDoJoin(v.code, v, function (m) { b.disabled = false; showToast(m); }, function () { jset(SGINV, null); SG.inv = null; sgRender(); });
+      }
+    });
+    function sgLogin() { var o = $("cloud-open"); if (o) o.click(); }
+    (function () {
+      var q; try { q = new URLSearchParams(location.search); } catch (e) { return; }
+      if (!q.has("meta")) return;
+      var c = sgClean(q.get("meta"));
+      try { history.replaceState(null, "", location.pathname); } catch (e) {}
+      if (c.length < 4) return;
+      jset(SGINV, c);
+      setTimeout(function () {
+        if (!sgSes()) showToast("Inicia sesión en Orbe para unirte a la meta compartida.");
+        try { showGoals(); } catch (e) {}
+      }, 900);
+    })();
+    sgRender();
+    setTimeout(function () { sgLoad(true); }, 1200);
+    document.addEventListener("visibilitychange", function () { if (!document.hidden && SG.loaded) sgLoad(true); });
+    window.__sgLoad = sgLoad;
     document.addEventListener("visibilitychange", function () { if (!document.hidden) setTimeout(snapTake, 1500); });
     // Pide al teléfono que no borre los datos de Orbe cuando falte espacio
     try { if (navigator.storage && navigator.storage.persist) navigator.storage.persisted().then(function (ok) { if (!ok) navigator.storage.persist(); }); } catch (e) {}
