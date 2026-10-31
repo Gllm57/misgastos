@@ -2262,7 +2262,7 @@ html.ai-off .ai-fab { display: none !important; }
 .goal-name .g-av:not(.sym) { font-size: 0.7rem !important; }
 .goals-view .goal-list .goal-main { align-items: center !important; }
 
-/* Cuentas y «En qué se va el dinero»: sin la línea de arriba */
+/* Cuentas y «Tus gastos»: sin la línea de arriba */
 main > .panel[data-panel="acc"], main > .panel[data-panel="cat"] { border-top: 0 !important; padding-top: 6px; }
 /* Títulos de sección: mismo tamaño y aire en toda la app (color normal) */
 #h-acc, #h-cat, .gv-mh, .pay-hrow .gv-h2, #pay-over-wrap .gv-h2, #gv-act-h { font-size: 1.5rem !important; letter-spacing: -0.02em; line-height: 1.2; }
@@ -2461,12 +2461,12 @@ input, textarea, [contenteditable="true"], .hd-rows, .siri-url code { -webkit-us
   </section>
 
   <section class="panel" data-panel="cat" aria-labelledby="h-cat">
-    <div class="phead"><h2 id="h-cat">En qué se va el dinero</h2></div>
+    <div class="phead"><h2 id="h-cat">Tus gastos</h2></div>
     <div class="cbody" id="b-cat"><div class="cbody-in">
     <div id="cv"></div>
     <div class="donuts" hidden>
       <div class="dcol">
-        <h3 class="dtitle">En qué se va el dinero</h3>
+        <h3 class="dtitle">Tus gastos</h3>
         <div class="split" id="split-out" data-key="out"></div>
         <ul class="legend" id="legend-out" data-key="out"></ul>
         <p class="empty" id="empty-out">Cuando registres gastos, aquí verás cuánto va a cada categoría.</p>
@@ -5014,6 +5014,8 @@ input, textarea, [contenteditable="true"], .hd-rows, .siri-url code { -webkit-us
     var w = $("cv");
     if (!w) return;
     var tab = state.cvTab === "ingreso" ? "ingreso" : "gasto";
+    var hc = $("h-cat"), ht = tab === "ingreso" ? "Tus ingresos" : "Tus gastos";
+    if (hc && hc.textContent !== ht) hc.textContent = ht;
     var html = '<div class="cv-top"><div class="seg cv-tabs" role="group" aria-label="Ver gastos o ingresos"><button type="button" data-cv-tab="gasto" aria-pressed="' + (tab === "gasto") + '">Gastos</button><button type="button" data-cv-tab="ingreso" aria-pressed="' + (tab === "ingreso") + '">Ingresos</button></div>' + (tab === "gasto" ? '<button type="button" class="cv-limbtn" data-cv-lim>Límites</button>' : "") + "</div>" + cvSection(tab);
     if (w._h !== html) { w.innerHTML = html; w._h = html; }
   }
@@ -9289,7 +9291,7 @@ input, textarea, [contenteditable="true"], .hd-rows, .siri-url code { -webkit-us
       { tab: 0, sel: ".rate-card", all: true, t: "Tasas del día", p: "Dólar BCV, euro y USDT. Se actualizan solas y te muestran si subieron ▲ o bajaron ▼." },
       { tab: 0, sel: ".bal-hero", t: "Tu saldo", p: "" },
       { tab: 0, sel: '[data-panel="acc"]', t: "Tus cuentas", p: "El total y cuánto hay en cada cuenta. Toca una para ver sus movimientos. Con ⇄ transfieres y con + agregas otra." },
-      { tab: 0, sel: '[data-panel="cat"]', t: "En qué se va el dinero", p: "Tus gastos por categoría, comparados con el mes pasado. En Límites pones un máximo para cada una." },
+      { tab: 0, sel: '[data-panel="cat"]', t: "Tus gastos e ingresos", p: "Tus gastos por categoría, comparados con el mes pasado. En Límites pones un máximo para cada una." },
       { tab: 0, sel: "#fab", t: "El botón +", p: "Tócalo para anotar un gasto, un ingreso o un ahorro. Mantenlo presionado para usar tus plantillas.", round: true },
       { tab: 0, sel: "#tabbar", t: "Secciones", p: "Muévete entre Inicio, Ahorro, Pagos e Historial. Desliza de lado para cambiar de pestaña; para cambiar de mes, desliza sobre el mes de arriba.", round: true },
       { tab: 1, sel: '#goals-view [data-panel="sav"]', t: "Tu ahorro", p: "Lo que tienes apartado. Desde aquí ahorras, retiras o cambias de moneda." },
