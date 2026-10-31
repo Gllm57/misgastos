@@ -2526,6 +2526,15 @@ p.hint.sel-none { text-align: left; text-wrap: wrap; }
 .goals-view .goal-list .goal { background: var(--surface) !important; border-radius: 22px !important; padding: 14px !important; }
 .goals-view .goal-list .goal-add { margin-top: 0; }
 .goals-view .goal-list .goal-add button.sg-act { padding-top: 4px !important; }
+
+/* Detalle de cuenta: Entradas, Salidas y Neto centrados, con su punto de color como en el Historial */
+.ad-stats div, .ad-stats div:first-child { text-align: center; padding: 0 6px !important; }
+.ad-stats span { font-size: 0.8rem; }
+.ad-stats span::before { content: ""; display: inline-block; width: 8px; height: 8px; border-radius: 50%; margin-right: 6px; vertical-align: 1px; background: var(--accent); }
+.ad-stats .in span::before { background: var(--in); }
+.ad-stats .out span::before { background: var(--out); }
+.ad-stats b { font-size: 1.05rem; }
+.ad-split > div { text-align: center; }
 </style>
 </head>
 <body>
