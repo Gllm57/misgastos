@@ -2545,6 +2545,9 @@ html.sheet-open .toast { top: calc(env(safe-area-inset-top, 0px) + 12px); bottom
 html.sheet-open .toast.show { transform: translateY(0); }
 /* Ahorro: sin líneas entre las cuentas */
 .sav-buckets .bk, .goals-view .sav-buckets > * { border-top: 0 !important; border-bottom: 0 !important; }
+/* Avisos centrados en la pantalla */
+.toast { left: 16px !important; right: 16px !important; margin: 0 auto; width: fit-content; max-width: min(420px, calc(100% - 32px)); display: flex; align-items: center; justify-content: center; gap: 12px; text-align: center; }
+.toast .t-act { margin-left: 0; }
 </style>
 </head>
 <body>
