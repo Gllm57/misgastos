@@ -1,0 +1,10 @@
+-- Metas compartidas (ya aplicado en a-fuego el 31 oct 2026).
+-- Tablas: sg_goals (la meta y su líder), sg_members (quién está), sg_aportes (cada aporte: pend → ok cuando el líder confirma).
+-- Seguridad:
+--   - Solo los miembros ven una meta.
+--   - Para unirse hay que usar sg_join(código, nombre).
+--   - sg_preview(código) muestra la meta antes de unirse.
+--   - Solo el líder confirma, edita o borra.
+--   - Cada quien puede salir o cancelar su aporte pendiente.
+-- Las funciones de ayuda sg_is_member / sg_is_leader viven en el esquema «private» (fuera de la API).
+-- Ver la migración «metas_compartidas» y «metas_compartidas_privado» en Supabase → Database → Migrations.
