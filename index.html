@@ -2537,6 +2537,12 @@ p.hint.sel-none { text-align: left; text-wrap: wrap; }
 .ad-split > div { text-align: center; }
 /* Sin líneas entre cuentas */
 .acc3 .acc-list li + li .acc-r, .acc3 .acc-list li, .acc-list > li, .acc { border-top: 0 !important; }
+
+/* Confirmaciones y avisos siempre por encima de las hojas; con una hoja abierta, el aviso sale arriba */
+#cf-sheet { z-index: 45; }
+.toast { z-index: 70 !important; }
+html.sheet-open .toast { top: calc(env(safe-area-inset-top, 0px) + 12px); bottom: auto !important; left: 16px; right: 16px; margin: 0 auto; transform: translateY(-14px); }
+html.sheet-open .toast.show { transform: translateY(0); }
 </style>
 </head>
 <body>
@@ -4199,6 +4205,16 @@ p.hint.sel-none { text-align: left; text-wrap: wrap; }
     var tb = document.getElementById("tabbar"), lim = Math.min(window.innerHeight, tb ? tb.getBoundingClientRect().top : window.innerHeight);
     if (m.getBoundingClientRect().bottom > lim - 6) m.classList.add("up");
   });
+  // Borra un movimiento y ofrece «Deshacer» durante unos segundos
+  function delMovUndo(did, after) {
+    var keepI = state.items.filter(function (it) { return it.id === did || it.linkId === did; });
+    var keepE = (state.earn || []).filter(function (x) { return x.ahorroId === did || x.id === did; });
+    delMov(did); save(); render(); if (after) after();
+    if (window.__toast2) window.__toast2("Movimiento eliminado.", "Deshacer", function () {
+      state.items = state.items.concat(keepI); state.earn = (state.earn || []).concat(keepE);
+      save(); render(); window.__toast2("Movimiento restaurado.");
+    });
+  }
   function delMov(did) {
     state.items = state.items.filter(function (it) { return it.id !== did && it.linkId !== did; });
     if (state.earn) state.earn = state.earn.filter(function (e) { return e.ahorroId !== did && e.id !== did; });
@@ -6168,7 +6184,7 @@ p.hint.sel-none { text-align: left; text-wrap: wrap; }
       var sh = e.target && e.target.closest && e.target.closest(".sheet"); if (!sh) return;
       sh.querySelectorAll(".error").forEach(function (x) { if (x.textContent && !/Un momento|Entrando|Creando/.test(x.textContent)) x.textContent = ""; });
     }, true);
-    function showToast(text, action, fn) {
+    function showToast(text, action, fn, ms) {
       var t = $("toast");
       t.textContent = text;
       if (action) {
@@ -6178,8 +6194,9 @@ p.hint.sel-none { text-align: left; text-wrap: wrap; }
       }
       t.classList.add("show");
       clearTimeout(toastTimer);
-      toastTimer = setTimeout(function () { t.classList.remove("show"); }, 3200);
+      toastTimer = setTimeout(function () { t.classList.remove("show"); }, ms || (action ? 5000 : 3200));
     }
+    window.__toast2 = showToast;
     function renderFormSav() {
       var show = state.type === "ingreso" && !state.editId;
       $("f-sav").style.display = show ? "" : "none";
@@ -7243,10 +7260,7 @@ p.hint.sel-none { text-align: left; text-wrap: wrap; }
       }
       if ((b = e.target.closest("[data-h-del]"))) {
         closeMenus();
-        var did = Number(b.getAttribute("data-h-del"));
-        delMov(did);
-        save(); render();
-        showToast("Movimiento eliminado.");
+        delMovUndo(Number(b.getAttribute("data-h-del")));
       }
     });
     /* ---------- Cuadrar con el banco ---------- */
@@ -8162,10 +8176,14 @@ p.hint.sel-none { text-align: left; text-wrap: wrap; }
         var g = goalById(b.getAttribute("data-goal-del"));
         if (!g) return;
         if ((goalMap()[g.id] || 0) > 0.004) { showToast("Retira los fondos de la meta antes de eliminarla."); return; }
+        var gi = state.goals.indexOf(g);
         state.goals = state.goals.filter(function (x) { return x.id !== g.id; });
         if (String(gdId) === String(g.id)) closeGd();
         save(); render();
-        showToast("Meta eliminada.");
+        showToast("Meta eliminada.", "Deshacer", function () {
+          if (!goalById(g.id)) state.goals.splice(Math.min(gi, state.goals.length), 0, g);
+          save(); render(); showToast("Meta restaurada.");
+        });
       }
     }
 
@@ -8454,10 +8472,7 @@ p.hint.sel-none { text-align: left; text-wrap: wrap; }
       }
       if ((b = e.target.closest("[data-h-del]"))) {
         closeMenus();
-        var did = Number(b.getAttribute("data-h-del"));
-        delMov(did);
-        save(); render();
-        showToast("Movimiento eliminado.");
+        delMovUndo(Number(b.getAttribute("data-h-del")));
         return;
       }
       var row = e.target.closest(".hrow[data-hid]");
@@ -8589,10 +8604,7 @@ p.hint.sel-none { text-align: left; text-wrap: wrap; }
     $("hd-del").addEventListener("click", function () {
       var b = $("hd-del");
       if (!b.classList.contains("sure")) { b.classList.add("sure"); b.textContent = "Toca otra vez para eliminar"; return; }
-      var did = hdId;
-      delMov(did);
-      save(); render(); closeHd();
-      showToast("Movimiento eliminado.");
+      delMovUndo(hdId, closeHd);
     });
 
     /* ---------- Pantalla de metas ---------- */
@@ -9366,7 +9378,7 @@ p.hint.sel-none { text-align: left; text-wrap: wrap; }
       if (SG.busy) return Promise.resolve();
       SG.busy = true; if (!quiet && !SG.loaded) sgRender();
       return sgApi.list().then(function (rows) {
-        SG.goals = Array.isArray(rows) ? rows : []; SG.loaded = true; SG.err = "";
+        SG.goals = (Array.isArray(rows) ? rows : []).filter(function (g) { return !sgPend[g.id]; }); SG.loaded = true; SG.err = "";
         if (!window.__orbeDemo) jset(SGK, { goals: SG.goals, me: sgMe() });
       }, function (e) { SG.err = cloudErr(e); }).then(function () { SG.busy = false; sgRender(); if (sgOpen) sgFillD(); sgInvCheck(); });
     }
@@ -9519,16 +9531,32 @@ p.hint.sel-none { text-align: left; text-wrap: wrap; }
       if (e.target.closest("[data-sg-reopen]")) { sgApi.finish(g.id, false).then(function () { showToast("La meta está abierta otra vez."); return sgLoad(true); }, sgFail); return; }
       if (e.target.closest("[data-sg-del]")) {
         openCf({ title: "¿Eliminar «" + g.name + "»?", text: "Se borra para todos los participantes. Los gastos que cada uno anotó en sus cuentas se quedan.", btn: "Eliminar", ok: function () {
-          sgApi.remove(g.id).then(function () { sgCloseD(); showToast("Meta eliminada."); return sgLoad(true); }, sgFail);
+          sgCloseD(); sgLater(g, "Meta eliminada.", function () { return sgApi.remove(g.id); });
         } });
         return;
       }
       if (e.target.closest("[data-sg-leave]")) {
         openCf({ title: "¿Salir de «" + g.name + "»?", text: "Ya no verás la meta. Tus aportes confirmados se quedan.", btn: "Salir", ok: function () {
-          sgApi.removeMember(g.id, sgMe()).then(function () { sgCloseD(); showToast("Saliste de la meta."); return sgLoad(true); }, sgFail);
+          sgCloseD(); sgLater(g, "Saliste de la meta.", function () { return sgApi.removeMember(g.id, sgMe()); });
         } });
       }
     });
+    // Quita la meta de la lista enseguida y espera unos segundos antes de borrarla en el servidor, por si toca «Deshacer»
+    var sgPend = {};
+    function sgLater(g, msg, run) {
+      var i = SG.goals.indexOf(g);
+      SG.goals = SG.goals.filter(function (x) { return x.id !== g.id; }); sgRender();
+      var t = setTimeout(function () {
+        delete sgPend[g.id];
+        run().then(function () { return sgLoad(true); }, function (e) { sgFail(e); sgLoad(true); });
+      }, 5500);
+      sgPend[g.id] = t;
+      showToast(msg, "Deshacer", function () {
+        clearTimeout(sgPend[g.id]); delete sgPend[g.id];
+        if (!sgById(g.id)) SG.goals.splice(Math.min(Math.max(i, 0), SG.goals.length), 0, g);
+        sgRender(); showToast("Listo, la meta sigue ahí.");
+      }, 5000);
+    }
     $("sgd-sheet").addEventListener("keydown", function (e) { if ((e.key === "Enter" || e.key === " ") && e.target.matches && e.target.matches("[data-sg-rm]")) { e.preventDefault(); e.target.click(); } });
     function sgShare(text, url) {
       var full = text + (url ? " " + url : "");
