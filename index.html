@@ -2347,6 +2347,29 @@ input, textarea, [contenteditable="true"], .hd-rows, .siri-url code { -webkit-us
 .siri-more summary { cursor: pointer; color: var(--ink); font-weight: 600; min-height: 40px; display: flex; align-items: center; }
 .siri-more p { margin: 6px 0; line-height: 1.45; }
 .siri-more code { font-size: 0.78rem; word-break: break-all; -webkit-user-select: all; user-select: all; }
+
+/* Inicio más limpio */
+.trend-cap.cap-off { display: none !important; }
+.acc-r .ar-n small { display: none; }
+.acc-r .ar-v { display: flex; flex-direction: column; align-items: flex-end; line-height: 1.2; }
+.acc-r .ar-v .ar-alt { font-size: 0.74rem; font-weight: 500; color: var(--muted); font-family: var(--body); margin-top: 2px; }
+.pay-alert.slim { padding: 9px 12px !important; border-radius: 12px !important; gap: 9px !important; font-size: 0.86rem; margin-bottom: 10px !important; }
+.pay-alert.slim .pa-dot { width: 8px; height: 8px; border-radius: 50%; flex: none; background: var(--accent); }
+.pay-alert.slim.late .pa-dot { background: var(--out); }
+.pay-alert.slim .pa-t { flex: 1; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.cq-alert { grid-template-columns: auto minmax(0, 1fr) auto auto !important; gap: 8px !important; padding: 7px 8px 7px 10px !important; border-radius: 12px !important; margin-bottom: 10px !important; }
+.cq-alert .acc-av { width: 24px !important; height: 24px !important; }
+.cq-alert .acc-av.sym svg { width: 13px; height: 13px; }
+.cq-alert .cq-q { font-size: 0.82rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.cq-b { min-height: 30px; padding: 0 11px; border: 0; border-radius: 15px; background: var(--fill); color: var(--ink); font: inherit; font-size: 0.8rem; font-weight: 600; cursor: pointer; transition: transform 0.15s ease; }
+.cq-b:active { transform: scale(0.94); }
+
+/* Metas: línea corta en la lista (como el Inicio), frase completa en el detalle */
+.goal-eta .ge-s { display: none; }
+.goal-list .goal-eta .ge-l { display: none; }
+.goal-list .goal-eta .ge-s { display: inline; }
+.gd-body .goal-eta .ge-l { display: inline; }
+.gd-body .goal-eta .ge-s { display: none; }
 </style>
 </head>
 <body>
@@ -3961,6 +3984,7 @@ input, textarea, [contenteditable="true"], .hd-rows, .siri-url code { -webkit-us
     var mN = MESES_C[mo - 1];
     $("trend-days").innerHTML = "<span>1 " + mN + "</span><span>" + nd + " " + mN + "</span>";
     var tt = $("trend-title"), pj = $("trend-proj");
+    var tcap = tt.closest(".trend-cap"); if (tcap) tcap.classList.toggle("cap-off", !!has);
     if (!has) { tt.textContent = isCur ? "Sin movimientos este mes" : "Sin movimientos en " + MESES[mo - 1]; pj.classList.add("none"); }
     else if (proj.length) { var ev = proj[proj.length - 1]; tt.innerHTML = "Si sigues así: <b>" + (ev < 0 ? "−" : "") + money(Math.abs(ev), D) + "</b> el " + nd + (cobT > 0 ? ' <span class="tp-c">(con ' + money(cobT, D) + " por cobrar)</span>" : ""); pj.classList.remove("none"); pj.classList.toggle("neg", ev < 0); }
     else { tt.innerHTML = (isPast ? "Cerraste el mes con " : "") + "<b>" + (run < 0 ? "−" : "") + money(Math.abs(run), D) + "</b>"; pj.classList.add("none"); }
@@ -4320,7 +4344,7 @@ input, textarea, [contenteditable="true"], .hd-rows, .siri-url code { -webkit-us
         '</span><span class="goal-sub">' + (o.done ? "¡Meta lograda!" : "Te faltan " + mask(money(rem, g.moneda))) + "</span>" + goalAccs(evs) + "</span>" + chev +
         '<span class="goal-short' + (o.done || o.pct >= 85 ? " hot" : "") + '">' + shortEta + "</span></button>" +
         '<div class="gbar" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="' + Math.round(o.pct) + '"><span style="width:' + o.pct.toFixed(2) + '%"></span>' + ticks + "</div>" +
-        '<div class="goal-eta">' + eta + "</div>" +
+        '<div class="goal-eta"><span class="ge-l">' + eta + '</span><span class="ge-s">' + (o.done ? "Lograda" : pace.kind === "eta" ? shortEta + " · " + mask(money(pace.monthly, g.moneda)) + "/mes" : shortEta) + "</span></div>" +
         '<div class="goal-detail" id="gd-' + g.id + '" hidden><div class="gd-spark">' + goalSpark(g, evs) + "</div>" + stats +
         (hist ? '<ul class="gd-hist">' + hist + "</ul>" : "") + "</div>" +
         '<div class="goal-act"><button type="button" class="secondary" data-goal-dep="' + g.id + '">Depositar</button>' +
@@ -5436,10 +5460,10 @@ input, textarea, [contenteditable="true"], .hd-rows, .siri-url code { -webkit-us
       var bal = accBalance(a), cv = conv(bal, a.moneda, D);
       if (cv === null) miss = true; else tot += cv;
       var u = conv(bal, a.moneda, "USD"), share = posUsd > 0 && u > 0 ? u / posUsd * 100 : 0;
-      var sub = (share > 0 && share < 1 ? "<1" : Math.round(share)) + "%" + (a.moneda !== D && cv !== null ? " · ≈ " + money(cv, D, Math.abs(cv) >= 10000 ? 0 : 2) : "");
+      var alt = a.moneda !== D && cv !== null ? "≈ " + money(cv, D, Math.abs(cv) >= 10000 ? 0 : 2) : "";
       return '<li><button type="button" class="acc-r" data-acc-open="' + a.id + '" style="--c:' + accColor(a) + '" aria-label="Ver la cuenta ' + esc(a.nombre) + '">' + accAvatar(a) +
-        '<span class="ar-n"><b>' + esc(a.nombre) + "</b><small>" + sub + "</small></span>" +
-        '<span class="ar-v' + (bal < 0 ? " neg" : "") + '">' + (a.moneda === "USDT" ? (bal < 0 ? "-" : "") + "USDT " + num(Math.abs(bal)) : money(bal, a.moneda)) + "</span></button></li>";
+        '<span class="ar-n"><b>' + esc(a.nombre) + "</b></span>" +
+        '<span class="ar-v' + (bal < 0 ? " neg" : "") + '">' + (a.moneda === "USDT" ? (bal < 0 ? "-" : "") + "USDT " + num(Math.abs(bal)) : money(bal, a.moneda)) + (alt ? '<small class="ar-alt">' + alt + "</small>" : "") + "</span></button></li>";
     }).join("");
     $("acc3").hidden = !state.accounts.length;
     var sum = $("acc-sum");
@@ -6991,12 +7015,12 @@ input, textarea, [contenteditable="true"], .hd-rows, .siri-url code { -webkit-us
       return null;
     }
     function renderCqAlert() {
-      var el = $("cq-alert"), a = cqDue(); if (!el) return;
+      var el = $("cq-alert"), a = $("pay-alert") && !$("pay-alert").hidden ? null : cqDue(); if (!el) return;
       el.hidden = !a; $("set-cq").setAttribute("aria-checked", state.cqOff ? "false" : "true");
       if (!a) return;
-      el.innerHTML = accAvatar(a) + '<span class="cq-q">¿Tu saldo en <b>' + esc(a.nombre) + "</b> sigue siendo <b>" + money(accBalance(a), a.moneda) + '</b>?</span>' +
-        '<span class="cq-btns"><button type="button" class="secondary" data-cq="yes" data-id="' + esc(String(a.id)) + '">Sí</button><button type="button" class="secondary" data-cq="fix" data-id="' + esc(String(a.id)) + '">Ajustar</button>' +
-        '<button type="button" class="cq-x" data-cq="later" data-id="' + esc(String(a.id)) + '" aria-label="Recordar en unos días">✕</button></span>';
+      var b0 = accBalance(a);
+      el.innerHTML = accAvatar(a) + '<span class="cq-q">¿' + esc(a.nombre) + " sigue en <b>" + money(b0, a.moneda, Math.abs(b0) >= 1000 ? 0 : 2) + '</b>?</span>' +
+        '<button type="button" class="cq-b" data-cq="yes" data-id="' + esc(String(a.id)) + '">Sí</button><button type="button" class="cq-b" data-cq="fix" data-id="' + esc(String(a.id)) + '">Ajustar</button>';
     }
     $("cq-alert").addEventListener("click", function (e) {
       var b = e.target.closest("[data-cq]"); if (!b) return;
@@ -7462,6 +7486,7 @@ input, textarea, [contenteditable="true"], .hd-rows, .siri-url code { -webkit-us
     /* ---------- Minimizar bloques ---------- */
     (function () {
       var bt = $("rates-tog"), top = document.querySelector(".top");
+      state.collapsed.rates = true; // las tasas empiezan plegadas cada vez que se abre la app
       function ap() {
         var c = !!state.collapsed.rates;
         top.classList.toggle("rates-off", c);
@@ -7861,8 +7886,8 @@ input, textarea, [contenteditable="true"], .hd-rows, .siri-url code { -webkit-us
       payBadge(due.length);
       if (!due.length) return;
       var p = due[0], when = p.fecha < t ? "venció" : p.fecha === t ? "vence hoy" : "vence mañana";
-      el.className = "pay-alert" + (p.fecha < t ? " late" : "");
-      el.innerHTML = (p.fecha < t ? '<span class="pa-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l9.5 17h-19z"></path><path d="M12 10v4M12 17.5h.01"></path></svg></span>' : '<span class="pa-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"></circle><path d="M12 7v5l3 2"></path></svg></span>') + '<span class="pa-t"><b>' + esc(p.titulo) + "</b> " + when + " · " + money(p.monto, p.moneda) + (due.length > 1 ? ' <small>y ' + (due.length - 1) + " más</small>" : "") + '</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6l6 6-6 6"></path></svg>';
+      el.className = "pay-alert slim" + (p.fecha < t ? " late" : "");
+      el.innerHTML = '<span class="pa-dot" aria-hidden="true"></span><span class="pa-t"><b>' + esc(p.titulo) + "</b> " + when + " · " + money(p.monto, p.moneda) + (due.length > 1 ? ' <small>y ' + (due.length - 1) + " más</small>" : "") + '</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6l6 6-6 6"></path></svg>';
     }
     window.__payAlert = function () { renderPayAlert(); renderMsum(); };
     // Avisos de pagos: número sobre el ícono de la app (iPhone: app instalada y permiso de notificaciones)
