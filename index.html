@@ -2548,6 +2548,12 @@ html.sheet-open .toast.show { transform: translateY(0); }
 /* Avisos centrados en la pantalla */
 .toast { left: 16px !important; right: 16px !important; margin: 0 auto; width: fit-content; max-width: min(420px, calc(100% - 32px)); display: flex; align-items: center; justify-content: center; gap: 12px; text-align: center; }
 .toast .t-act { margin-left: 0; }
+/* Pagos: título y «Ver todo el mes» a la misma altura; aviso vacío en tarjeta blanca */
+.pay-hrow { align-items: center !important; margin: 22px 0 10px; }
+.pay-hrow .gv-h2 { margin: 0 !important; }
+.pay-hrow .pay-clear { flex: none; }
+#pay-empty { margin-top: 6px; }
+#pay-empty .sg-empty p { margin: 0; }
 </style>
 </head>
 <body>
@@ -3036,10 +3042,9 @@ html.sheet-open .toast.show { transform: translateY(0); }
     <div class="pay-hrow"><h2 class="gv-h2" id="pay-h"></h2><button type="button" class="pay-clear" id="pay-clear" style="display:none">Ver todo el mes</button></div>
     <ul class="pay-list" id="pay-list"></ul>
     <div class="sg-acts" id="pay-acts"><button type="button" class="sg-act" id="pay-new3"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5v14M5 12h14"></path></svg><span id="pay-new3-t">Agregar pago</span></button></div>
-    <div class="gv-empty" id="pay-empty">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="3"></rect><path d="M8 3v4M16 3v4M3 10h18"></path></svg>
-      <p id="pay-empty-t">No tienes pagos programados.</p>
-      <button type="button" class="primary" id="pay-new2" style="width:auto;padding:0 28px">Programar pago</button>
+    <div class="goal-empty-c" id="pay-empty">
+      <div class="sg-empty"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="3"></rect><path d="M8 3v4M16 3v4M3 10h18"></path></svg><p id="pay-empty-t">No tienes pagos programados.</p></div>
+      <div class="sg-acts"><button type="button" class="sg-act" id="pay-new2"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5v14M5 12h14"></path></svg><span id="pay-new2-t">Programar pago</span></button></div>
     </div>
   </div>
   <div class="hist-view" id="hist-view" role="region" aria-label="Historial" aria-hidden="true">
@@ -4909,6 +4914,7 @@ html.sheet-open .toast.show { transform: translateY(0); }
     $("pay-over-t").textContent = isC ? "Atrasados" : "Vencidos"; $("pay-over-n").textContent = overdue.length;
     $("pay-h").innerHTML = esc($("pay-h").textContent) + (list.length ? '<span class="sg-n">' + list.length + "</span>" : "");
     $("pay-new3-t").textContent = isC ? "Agregar cobro" : "Agregar pago";
+    $("pay-new2-t").textContent = isC ? "Agregar cobro esperado" : "Programar pago";
     $("pay-acts").style.display = list.length || showOver ? "" : "none";
     $("pay-clear").style.display = pay.sel ? "" : "none";
     var lh = list.map(payRow).join("");
