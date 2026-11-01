@@ -2554,6 +2554,18 @@ html.sheet-open .toast.show { transform: translateY(0); }
 .pay-hrow .pay-clear { flex: none; }
 #pay-empty { margin-top: 6px; }
 #pay-empty .sg-empty p { margin: 0; }
+
+/* Menú ⋮: «Eliminar…» como texto rojo, sin fondo, en una sola línea */
+.menu button.danger { background: none !important; border-radius: 8px !important; white-space: nowrap; }
+.menu { min-width: max-content; }
+/* Pagos: deslizar para borrar */
+.pay-list .pay[data-pid] { position: relative; touch-action: pan-y; max-height: 180px; }
+.pay-list .pay[style*="--sx"] > * { transform: translateX(var(--sx, 0px)); transition: transform 0.32s cubic-bezier(0.32, 0.72, 0, 1); }
+.pay-list .pay.drag > * { transition: none; }
+.pay-list .pay[data-pid]::after { content: ""; position: absolute; right: 8px; top: 8px; bottom: 8px; width: 64px; border-radius: 16px; background: var(--out) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M4 7h16M10 11v6M14 11v6M6 7l1 12a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2l1-12M9 7V4h6v3'/%3E%3C/svg%3E") center / 22px no-repeat; opacity: 0; transform: scale(0.7); transition: opacity 0.2s ease, transform 0.3s cubic-bezier(0.32, 0.72, 0, 1); pointer-events: none; }
+.pay-list .pay.drag::after, .pay-list .pay.open::after { opacity: 1; transform: none; }
+.pay-list .pay.drag, .pay-list .pay.open, .pay-list .pay.gone { overflow: hidden; }
+.pay-list .pay.gone { transition: opacity 0.25s ease, max-height 0.26s ease, padding 0.26s ease, margin 0.26s ease; opacity: 0; max-height: 0 !important; padding-top: 0 !important; padding-bottom: 0 !important; }
 </style>
 </head>
 <body>
@@ -4841,7 +4853,7 @@ html.sheet-open .toast.show { transform: translateY(0); }
   function payRow(p) {
     var over = !p.paid && p.fecha < today(), dd = p.fecha.split("-");
     var check = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"></path></svg>';
-    return '<li class="pay' + (p.paid ? " paid" : "") + (over ? " over" : "") + (p.cobro ? " cobro" : "") + '">' +
+    return '<li class="pay' + (p.paid ? " paid" : "") + (over ? " over" : "") + (p.cobro ? " cobro" : "") + '" data-pid="' + esc(String(p.id)) + '">' +
       '<button type="button" class="pay-check" data-pay-toggle="' + p.id + '" aria-pressed="' + (p.paid ? "true" : "false") + '" aria-label="' + (p.paid ? "Marcar como pendiente" : p.cobro ? "Marcar como cobrado" : "Marcar como pagado") + '">' + check + "</button>" +
       '<div class="pay-main"><div class="pay-t">' + esc(p.titulo) + '</div><div class="pay-s">' + Number(dd[2]) + " " + MESES_C[Number(dd[1]) - 1] + " · " + payWhen(p) + (p.serie && seriesById(p.serie) ? ' · <span class="pay-rep"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M17 2l4 4-4 4"></path><path d="M3 11V9a3 3 0 0 1 3-3h15"></path><path d="M7 22l-4-4 4-4"></path><path d="M21 13v2a3 3 0 0 1-3 3H3"></path></svg>Cada mes</span>' : "") + "</div></div>" +
       '<div class="pay-a">' + moneyH(p.monto, p.moneda) + "</div>" +
@@ -6610,7 +6622,7 @@ html.sheet-open .toast.show { transform: translateY(0); }
     (function () {
       var x0 = 0, y0 = 0, t0 = 0, ok = false, monthZone = null;
       function shiftM(m, d) { var p = m.split("-"), dt = new Date(Number(p[0]), Number(p[1]) - 1 + d, 1); return dt.getFullYear() + "-" + pad2(dt.getMonth() + 1); }
-      var NO = ".trend-chart, input, select, textarea, .hist-chips, #hist-cats, .sav-chart, .sheet, .seg, .rate-fields, .hrow[data-hid], .cat-chips, .tabbar, .dial, .menu, .acc3";
+      var NO = ".trend-chart, input, select, textarea, .hist-chips, #hist-cats, .sav-chart, .sheet, .seg, .rate-fields, .hrow[data-hid], .pay[data-pid], .cat-chips, .tabbar, .dial, .menu, .acc3";
       function blocked() {
         if (document.querySelector(".sheet-backdrop:not([hidden])")) return true;
         return ["onb", "lock", "tour", "ctry", "splash", "cal-backdrop"].some(function (id) { var el = $(id); return el && !el.hidden; });
@@ -8437,15 +8449,68 @@ html.sheet-open .toast.show { transform: translateY(0); }
       }
       if ((b = e.target.closest("[data-pay-del]"))) {
         closeMenus();
-        var pd = payById(b.getAttribute("data-pay-del")), sd0 = pd && pd.serie ? seriesById(pd.serie) : null;
-        if (sd0) { sd0.skip = sd0.skip || {}; sd0.skip[pd.fecha.slice(0, 7)] = true; }
-        state.payments = state.payments.filter(function (x) { return String(x.id) !== b.getAttribute("data-pay-del"); });
-        save(); render();
-        showToast("Pago eliminado.");
+        payDel(b.getAttribute("data-pay-del"));
       }
+    }
+    // Borra un pago o cobro (si se repite, solo el de ese mes) y ofrece «Deshacer»
+    function payDel(id, row) {
+      var pd = payById(id); if (!pd) return;
+      var sd0 = pd.serie ? seriesById(pd.serie) : null, ym = pd.fecha.slice(0, 7);
+      var hadSkip = !!(sd0 && sd0.skip && sd0.skip[ym]), idx = state.payments.indexOf(pd);
+      function go() {
+        if (sd0) { sd0.skip = sd0.skip || {}; sd0.skip[ym] = true; }
+        state.payments = state.payments.filter(function (x) { return String(x.id) !== String(id); });
+        save(); render();
+        showToast(pd.cobro ? "Cobro eliminado." : "Pago eliminado.", "Deshacer", function () {
+          if (sd0 && sd0.skip && !hadSkip) delete sd0.skip[ym];
+          if (!payById(id)) state.payments.splice(Math.min(Math.max(idx, 0), state.payments.length), 0, pd);
+          save(); render(); showToast(pd.cobro ? "Cobro restaurado." : "Pago restaurado.");
+        });
+      }
+      if (row) { row.classList.add("gone"); setTimeout(go, 260); } else go();
     }
     $("pay-list").addEventListener("click", payClick);
     $("pay-over").addEventListener("click", payClick);
+    // Deslizar un pago hacia la izquierda muestra la papelera, como en el Historial
+    ["pay-list", "pay-over"].forEach(function (lid) {
+      var el = $(lid), row = null, x0 = 0, y0 = 0, dx = 0, dir = 0;
+      function reset(r) { r.style.setProperty("--sx", "0px"); setTimeout(function () { if (!r.classList.contains("open") && !r.classList.contains("drag")) r.style.removeProperty("--sx"); }, 360); }
+      function closeAll(except) { document.querySelectorAll(".pay-list .pay.open").forEach(function (r) { if (r !== except) { r.classList.remove("open"); reset(r); } }); }
+      el.addEventListener("touchstart", function (e) {
+        var r = e.target.closest(".pay[data-pid]");
+        closeAll(r);
+        if (!r || e.touches.length !== 1 || e.target.closest(".menu")) { row = null; return; }
+        row = r; x0 = e.touches[0].clientX; y0 = e.touches[0].clientY; dx = r.classList.contains("open") ? -80 : 0; dir = 0;
+      }, { passive: true });
+      el.addEventListener("touchmove", function (e) {
+        if (!row) return;
+        var mx = e.touches[0].clientX - x0, my = e.touches[0].clientY - y0;
+        if (!dir) { if (Math.abs(mx) < 8 && Math.abs(my) < 8) return; dir = Math.abs(mx) > Math.abs(my) ? 1 : 2; if (dir === 1) { row.classList.add("drag"); closeMenus(); } }
+        if (dir !== 1) { row = null; return; }
+        e.preventDefault();
+        var raw = (row.classList.contains("open") ? -80 : 0) + mx;
+        dx = raw < -80 ? -80 - Math.pow(-80 - raw, 0.7) : Math.min(0, raw);
+        row.style.setProperty("--sx", dx + "px");
+      }, { passive: false });
+      el.addEventListener("touchend", function () {
+        if (!row) return;
+        var r = row; row = null;
+        if (dir !== 1) return;
+        r.classList.remove("drag");
+        var open = dx < -40;
+        r.classList.toggle("open", open); if (open) r.style.setProperty("--sx", "-80px"); else reset(r);
+        r._swiped = Date.now();
+      });
+      el.addEventListener("click", function (e) {
+        var r = e.target.closest(".pay[data-pid]");
+        if (r && r._swiped && Date.now() - r._swiped < 350) { e.stopImmediatePropagation(); return; }
+        if (r && r.classList.contains("open")) {
+          e.stopImmediatePropagation();
+          if (e.clientX > r.getBoundingClientRect().right - 80) payDel(r.getAttribute("data-pid"), r);
+          else { r.classList.remove("open"); reset(r); }
+        }
+      }, true);
+    });
 
     /* ---------- Historial ---------- */
     $("hist-prev").addEventListener("click", function () {
