@@ -733,7 +733,7 @@ button.set-row:active { background: var(--bg); }
 .btn-danger:disabled { opacity: 0.4; cursor: not-allowed; }
 
 /* Bloqueo con código */
-html.locked body > *:not(#lock):not(#cf-sheet):not(#toast):not(#onb):not(#lg-sheet):not(#ctry):not(#splash) { visibility: hidden; }
+html.locked body > *:not(#lock):not(#cf-sheet):not(#toast):not(#onb):not(#lg-sheet):not(#ctry):not(#splash):not(#cloud-sheet) { visibility: hidden; }
 #lg-sheet { z-index: 95; }
 .lock { position: fixed; inset: 0; z-index: 100; background: var(--bg); display: flex; flex-direction: column; align-items: center; justify-content: center; padding: calc(24px + env(safe-area-inset-top, 0px)) max(16px, env(safe-area-inset-right, 0px)) calc(24px + env(safe-area-inset-bottom, 0px)) max(16px, env(safe-area-inset-left, 0px)); }
 .lock[hidden] { display: none; }
@@ -2566,6 +2566,23 @@ html.sheet-open .toast.show { transform: translateY(0); }
 .pay-list .pay.drag::after, .pay-list .pay.open::after { opacity: 1; transform: none; }
 .pay-list .pay.drag, .pay-list .pay.open, .pay-list .pay.gone { overflow: hidden; }
 .pay-list .pay.gone { transition: opacity 0.25s ease, max-height 0.26s ease, padding 0.26s ease, margin 0.26s ease; opacity: 0; max-height: 0 !important; padding-top: 0 !important; padding-bottom: 0 !important; }
+
+/* Hoja de cuenta */
+.cl-tabs { display: flex; width: 100%; margin: 2px 0 14px; }
+.cl-tabs button { flex: 1; }
+#cl-intro { margin: 0 auto 12px; }
+.cl-perks { list-style: none; margin: 0 0 14px; padding: 12px 14px; display: grid; gap: 10px; border-radius: 18px; background: color-mix(in srgb, var(--accent) 9%, transparent); }
+.cl-perks li { display: flex; align-items: center; gap: 10px; font-size: 0.9rem; font-weight: 500; }
+.cl-perks svg { width: 20px; height: 20px; color: var(--accent); flex: none; }
+.cl-pwhint { margin: 6px 2px 0; font-size: 0.78rem; color: var(--muted); text-align: center; transition: color 0.25s ease; }
+.cl-pwhint.ok { color: var(--in); font-weight: 600; }
+.cl-skip { display: block; width: 100%; margin-top: 10px; min-height: 44px; border: 0; background: none; color: var(--muted); font: inherit; font-weight: 600; cursor: pointer; }
+/* Mensajes de espera («Creando…», «Entrando…») y avisos informativos: no en rojo */
+.error.busy { color: var(--muted) !important; font-weight: 500; }
+.error.info { color: var(--in) !important; }
+.cl-perks[hidden], .cl-pwhint[hidden], .cl-skip[hidden] { display: none !important; }
+#cl-forgot { display: block; margin: 4px auto 0; }
+#cl-forgot[hidden] { display: none; }
 </style>
 </head>
 <body>
@@ -3154,15 +3171,21 @@ html.sheet-open .toast.show { transform: translateY(0); }
     <section class="panel sheet" role="dialog" aria-modal="true" aria-labelledby="h-cloud">
       <div class="sheet-head"><h2 id="h-cloud">Tu cuenta</h2><button type="button" class="del" id="cloud-close" aria-label="Cerrar">✕</button></div>
       <div id="cl-out">
-        <p class="hint">Con tu cuenta, tus movimientos se guardan en la nube y los ves en cualquier teléfono donde entres. Solo tú puedes verlos.</p>
+        <div class="seg cl-tabs" role="group" aria-label="Entrar o crear cuenta"><button type="button" data-clm="in" aria-pressed="true">Entrar</button><button type="button" data-clm="up" aria-pressed="false">Crear cuenta</button></div>
+        <p class="hint" id="cl-intro"></p>
+        <ul class="cl-perks" id="cl-perks" hidden>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 18a4.5 4.5 0 0 1-.6-9A6 6 0 0 1 18 9.5a4 4 0 0 1-.5 8.5z"></path></svg>Tus datos guardados en la nube</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="7" y="3" width="10" height="18" rx="2.5"></rect><path d="M11 17.5h2"></path></svg>Úsalos en cualquier teléfono</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9" cy="8" r="3.5"></circle><path d="M2.5 20c.5-3.5 3.2-5.5 6.5-5.5s6 2 6.5 5.5"></path><path d="M16 4.6a3.5 3.5 0 0 1 0 6.8M18 14.8c2 .7 3.2 2.5 3.5 5.2"></path></svg>Metas compartidas con tus amigos</li>
+        </ul>
         <div class="grid">
           <div class="wide"><label for="cl-email">Correo</label><input type="email" id="cl-email" autocomplete="username" inputmode="email" autocapitalize="off" spellcheck="false" placeholder="tu@correo.com"></div>
-          <div class="wide"><label for="cl-pass">Contraseña</label><div class="pw-wrap"><input type="password" id="cl-pass" autocomplete="current-password" placeholder="Mínimo 8 caracteres"><button type="button" class="pw-eye" aria-label="Mostrar contraseña" aria-pressed="false"><svg class="e-on" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z"></path><circle cx="12" cy="12" r="3"></circle></svg><svg class="e-off" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 3l18 18"></path><path d="M10.6 5.1A10.4 10.4 0 0 1 12 5c6.4 0 10 7 10 7a17 17 0 0 1-3.2 4.1M6.6 6.6C3.8 8.4 2 12 2 12s3.6 7 10 7c1.6 0 3-.4 4.3-1"></path><path d="M9.9 9.9a3 3 0 0 0 4.2 4.2"></path></svg></button></div></div>
+          <div class="wide"><label for="cl-pass">Contraseña</label><div class="pw-wrap"><input type="password" id="cl-pass" autocomplete="current-password" placeholder="Tu contraseña"><button type="button" class="pw-eye" aria-label="Mostrar contraseña" aria-pressed="false"><svg class="e-on" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z"></path><circle cx="12" cy="12" r="3"></circle></svg><svg class="e-off" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 3l18 18"></path><path d="M10.6 5.1A10.4 10.4 0 0 1 12 5c6.4 0 10 7 10 7a17 17 0 0 1-3.2 4.1M6.6 6.6C3.8 8.4 2 12 2 12s3.6 7 10 7c1.6 0 3-.4 4.3-1"></path><path d="M9.9 9.9a3 3 0 0 0 4.2 4.2"></path></svg></button></div><p class="cl-pwhint" id="cl-pwhint" hidden>Mínimo 8 caracteres</p></div>
           <div class="wide cl-conf" id="cl-conf" hidden><label for="cl-passc">Repite la contraseña</label><div class="pw-wrap"><input type="password" id="cl-passc" autocomplete="new-password" placeholder="Escríbela otra vez"><button type="button" class="pw-eye" aria-label="Mostrar contraseña" aria-pressed="false"><svg class="e-on" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z"></path><circle cx="12" cy="12" r="3"></circle></svg><svg class="e-off" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 3l18 18"></path><path d="M10.6 5.1A10.4 10.4 0 0 1 12 5c6.4 0 10 7 10 7a17 17 0 0 1-3.2 4.1M6.6 6.6C3.8 8.4 2 12 2 12s3.6 7 10 7c1.6 0 3-.4 4.3-1"></path><path d="M9.9 9.9a3 3 0 0 0 4.2 4.2"></path></svg></button></div><p class="pw-match" id="cl-match" aria-live="polite"></p></div>
         </div>
         <p class="error" id="cl-err" role="alert"></p>
         <button type="button" class="lock-forgot" id="cl-forgot">Olvidé mi contraseña</button>
-        <div class="sheet-foot"><button type="button" class="primary" id="cl-in">Entrar</button><button type="button" class="secondary" id="cl-up" style="width:100%;margin-top:8px">Crear cuenta nueva</button></div>
+        <div class="sheet-foot"><button type="button" class="primary" id="cl-in">Entrar</button><button type="button" class="cl-skip" id="cl-skip" hidden>Ahora no, seguir sin cuenta</button></div>
       </div>
       <div id="cl-new" hidden>
         <p class="hint">Escribe tu nueva contraseña.</p>
@@ -6207,6 +6230,11 @@ html.sheet-open .toast.show { transform: translateY(0); }
       var sh = e.target && e.target.closest && e.target.closest(".sheet"); if (!sh) return;
       sh.querySelectorAll(".error").forEach(function (x) { if (x.textContent && !/Un momento|Entrando|Creando/.test(x.textContent)) x.textContent = ""; });
     }, true);
+    // Los mensajes de espera («Entrando…») y los de aviso («Te enviamos un correo…») no se pintan de rojo
+    (function () {
+      function tone(el) { var t = el.textContent || ""; el.classList.toggle("busy", /…$/.test(t.trim())); el.classList.toggle("info", /^(Te enviamos|Listo)/.test(t)); }
+      document.querySelectorAll(".error").forEach(function (el) { tone(el); new MutationObserver(function () { tone(el); }).observe(el, { childList: true, characterData: true, subtree: true }); });
+    })();
     function showToast(text, action, fn, ms) {
       var t = $("toast");
       t.textContent = text;
@@ -9109,7 +9137,7 @@ html.sheet-open .toast.show { transform: translateY(0); }
       $("cl-err").textContent = "Un momento…";
       cloudPull().then(function (row) {
         $("cl-err").textContent = "";
-        if (!row) { jset(SYNC, { remoteAt: "", dirty: true, localAt: Date.now() }); cloudPush().then(function () { renderCloud(); showToast("Cuenta lista. Tus datos se guardan en la nube."); }); return; }
+        if (!row) { jset(SYNC, { remoteAt: "", dirty: true, localAt: Date.now() }); cloudPush().then(function () { renderCloud(); $("cloud-sheet").hidden = true; showToast("Cuenta lista. Tus datos se guardan en la nube."); }); return; }
         if (!state.items.length) { applyRemote(row, "Bienvenido de vuelta. Trajimos tus datos."); return; }
         $("cloud-sheet").hidden = true;
         var n = (row.data && row.data.items || []).length;
@@ -9173,10 +9201,15 @@ html.sheet-open .toast.show { transform: translateY(0); }
       clSignup = up;
       $("cl-conf").hidden = !up;
       $("cl-forgot").hidden = up;
-      $("cl-in").textContent = up ? "Crear cuenta" : "Entrar";
-      $("cl-up").textContent = up ? "Ya tengo cuenta · Entrar" : "Crear cuenta nueva";
+      $("cl-in").textContent = up ? "Crear mi cuenta" : "Entrar";
       $("cl-pass").setAttribute("autocomplete", up ? "new-password" : "current-password");
-      $("h-cloud").textContent = up ? "Crear tu cuenta" : "Tu cuenta";
+      $("cl-pass").placeholder = up ? "Mínimo 8 caracteres" : "Tu contraseña";
+      $("h-cloud").textContent = clGate ? "Guarda tus datos" : up ? "Crear tu cuenta" : "Entrar a tu cuenta";
+      $("cl-intro").textContent = up ? "Es gratis. Solo tú puedes ver tus datos." : "Entra con tu correo y tus datos llegan a este teléfono.";
+      $("cl-perks").hidden = !up;
+      $("cl-pwhint").hidden = !up; pwHint();
+      $("cl-skip").hidden = !clGate;
+      document.querySelectorAll("[data-clm]").forEach(function (b) { b.setAttribute("aria-pressed", String((b.getAttribute("data-clm") === "up") === up)); });
       $("cl-err").textContent = ""; $("cl-passc").value = ""; pwMatch("cl-pass", "cl-passc", "cl-match");
     }
     $("cloud-open").addEventListener("click", function () { $("cl-new").hidden = true; $("cl-err").textContent = ""; pwReset(); clMode(false); renderCloud(); $("cloud-sheet").hidden = false; });
@@ -9188,7 +9221,20 @@ html.sheet-open .toast.show { transform: translateY(0); }
       $("cl-err").textContent = "Entrando…";
       api("/auth/v1/token?grant_type=password", { method: "POST", body: c }).then(function (j) { keepSes(j); $("cl-pass").value = ""; afterLogin(); }, function (e) { $("cl-err").textContent = cloudErr(e); });
     });
-    $("cl-up").addEventListener("click", function () { clMode(!clSignup); });
+    document.querySelectorAll("[data-clm]").forEach(function (b) { b.addEventListener("click", function () { clMode(b.getAttribute("data-clm") === "up"); }); });
+    function pwHint() { var ok = $("cl-pass").value.length >= 8; $("cl-pwhint").textContent = ok ? "✓ Mínimo 8 caracteres" : "Mínimo 8 caracteres"; $("cl-pwhint").classList.toggle("ok", ok); }
+    $("cl-pass").addEventListener("input", pwHint);
+    // Paso de la cuenta en la bienvenida: crear cuenta, entrar o seguir sin cuenta
+    var clGate = null;
+    window.__accGate = function (next) {
+      if (!cloudOn() || jget(SES)) { next(); return; }
+      clGate = next; $("cl-new").hidden = true; $("cl-err").textContent = ""; pwReset(); clMode(true); renderCloud(); $("cloud-sheet").hidden = false;
+    };
+    $("cl-skip").addEventListener("click", function () { $("cloud-sheet").hidden = true; });
+    new MutationObserver(function () {
+      if (!$("cloud-sheet").hidden || !clGate) return;
+      var g = clGate; clGate = null; $("cl-skip").hidden = true; setTimeout(g, 250);
+    }).observe($("cloud-sheet"), { attributes: true, attributeFilter: ["hidden"] });
     function doSignup() {
       var c = clCreds(); if (!c) return;
       if (!$("cl-passc").value) { $("cl-err").textContent = "Repite la contraseña para confirmarla."; return; }
@@ -9197,7 +9243,7 @@ html.sheet-open .toast.show { transform: translateY(0); }
       api("/auth/v1/signup", { method: "POST", body: { email: c.email, password: c.password } }).then(function (j) {
         $("cl-pass").value = ""; $("cl-passc").value = ""; pwReset();
         if (j && j.access_token) { clMode(false); keepSes(j); afterLogin(); }
-        else { clMode(false); $("cl-err").textContent = "Te enviamos un correo a " + c.email + ". Ábrelo para confirmar tu cuenta y vuelve aquí a entrar."; }
+        else { clMode(false); $("cl-email").value = c.email; $("cl-err").textContent = "Te enviamos un correo a " + c.email + ". Ábrelo, confirma tu cuenta y vuelve aquí a entrar."; }
       }, function (e) { $("cl-err").textContent = cloudErr(e); });
     }
     $("cl-forgot").addEventListener("click", function () {
@@ -10106,11 +10152,11 @@ html.sheet-open .toast.show { transform: translateY(0); }
     var SVG = function (d) { return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' + d + "</svg>"; };
     var ONB = [
       { art: '<svg class="oa-rings" viewBox="0 0 180 180" aria-hidden="true"><circle cx="90" cy="90" r="80" fill="none" stroke="var(--fill)" stroke-width="13"></circle><circle class="oa-arc" cx="90" cy="90" r="80" fill="none" stroke="var(--accent)" stroke-width="13" stroke-linecap="round" stroke-dasharray="392.1 502.7" style="--len:392.1" transform="rotate(-90 90 90)"></circle><circle cx="90" cy="90" r="60" fill="none" stroke="var(--fill)" stroke-width="13"></circle><circle class="oa-arc" cx="90" cy="90" r="60" fill="none" stroke="var(--in)" stroke-width="13" stroke-linecap="round" stroke-dasharray="218.7 377.0" style="--len:218.7;--d:.12s" transform="rotate(-90 90 90)"></circle><circle cx="90" cy="90" r="40" fill="none" stroke="var(--fill)" stroke-width="13"></circle><circle class="oa-arc" cx="90" cy="90" r="40" fill="none" stroke="#f0a020" stroke-width="13" stroke-linecap="round" stroke-dasharray="216.1 251.3" style="--len:216.1;--d:.24s" transform="rotate(-90 90 90)"></circle></svg><div class="oa-pills"><span>Bs</span><span>$</span><span>€</span><span>USDT</span></div>', t: "Tu dinero, claro y en un solo lugar", p: "Gastos, ingresos, ahorro y pagos en bolívares, dólares, euros y USDT." },
-      { art: '<div class="oa-form"><small>Monto</small><b>12+8,50</b><div class="oa-ops"><i>+</i><i>−</i><i>×</i><em>= 20,50</em></div><div class="oa-cats"><span style="--c:#5b4cff">'+catSvg("Alimentación")+'Alimentación</span><span style="--c:#f0567e">'+catSvg("Restaurantes")+'Restaurantes</span></div></div>', t: "Anota en segundos", p: "Toca + para anotar. Suma montos mientras escribes y mantén presionado + para usar tus plantillas." },
-      { art: '<div class="oa-acc"><div class="oa-ring"><svg viewBox="0 0 104 104" aria-hidden="true"><circle cx="52" cy="52" r="44" fill="none" stroke="var(--fill)" stroke-width="10"></circle><circle class="oa-arc" cx="52" cy="52" r="44" fill="none" stroke="#00994f" stroke-width="10" stroke-linecap="round" stroke-dasharray="153.6 276.5" stroke-dashoffset="-7.5" style="--len:153.6;--d:0s" transform="rotate(-90 52 52)"></circle><circle class="oa-arc" cx="52" cy="52" r="44" fill="none" stroke="#f0a020" stroke-width="10" stroke-linecap="round" stroke-dasharray="62.4 276.5" stroke-dashoffset="-176.1" style="--len:62.4;--d:0.12s" transform="rotate(-90 52 52)"></circle><circle class="oa-arc" cx="52" cy="52" r="44" fill="none" stroke="#0e9aa7" stroke-width="10" stroke-linecap="round" stroke-dasharray="15.4 276.5" stroke-dashoffset="-253.5" style="--len:15.4;--d:0.24s" transform="rotate(-90 52 52)"></circle></svg><div><small>Total</small><b>$429</b></div></div><div class="oa-rows"><div style="--c:#00994f"><i></i><span>Zinli</span><b>$262</b></div><div style="--c:#f0a020"><i></i><span>Binance</span><b>USDT 120</b></div><div style="--c:#0e9aa7"><i></i><span>Banco</span><b>Bs 41.800</b></div><div class="oa-cat" style="--c:#5b4cff"><i></i><span>Alimentación</span><em class="b">▲ 12%</em></div></div></div>', t: "Mira a dónde va tu dinero", p: "Tus cuentas, tus categorías y lo que cambió desde el mes pasado." },
-      { art: '<div class="oa-goal"><svg class="oa-rings" viewBox="0 0 180 180" aria-hidden="true"><circle cx="90" cy="90" r="80" fill="none" stroke="var(--fill)" stroke-width="14"></circle><circle class="oa-arc" cx="90" cy="90" r="80" fill="none" stroke="#8a3ffc" stroke-width="14" stroke-linecap="round" stroke-dasharray="311.6 502.7" style="--len:311.6" transform="rotate(-90 90 90)"></circle><circle cx="90" cy="90" r="58" fill="none" stroke="var(--fill)" stroke-width="14"></circle><circle class="oa-arc" cx="90" cy="90" r="58" fill="none" stroke="var(--accent)" stroke-width="14" stroke-linecap="round" stroke-dasharray="109.3 364.4" style="--len:109.3;--d:.12s" transform="rotate(-90 90 90)"></circle><circle cx="90" cy="90" r="36" fill="none" stroke="var(--fill)" stroke-width="14"></circle><circle class="oa-arc" cx="90" cy="90" r="36" fill="none" stroke="#0e9aa7" stroke-width="14" stroke-linecap="round" stroke-dasharray="181.0 226.2" style="--len:181.0;--d:.24s" transform="rotate(-90 90 90)"></circle></svg><div class="oa-gl"><div style="--c:#8a3ffc"><i></i>Viaje<b>62%</b></div><div style="--c:var(--accent)"><i></i>Celular<b>30%</b></div><div style="--c:#0e9aa7"><i></i>Emergencia<b>80%</b></div></div></div>', t: "Ahorra y cumple tus metas", p: "Aparta parte de cada ingreso y mira cuánto te falta para cada meta." },
-      { art: '<div class="oa-pay"><div class="oa-week"><span class=""><small>L</small>13</span><span class="oa-d"><small>M</small>14</span><span class=""><small>M</small>15</span><span class="oa-d oa-l"><small>J</small>16</span><span class="oa-on"><small>V</small>17</span><span class=""><small>S</small>18</span><span class="oa-d oa-i"><small>D</small>19</span></div><div class="oa-pp late"><i></i><span><b>Internet</b> venció</span><em>$25</em></div><div class="oa-pp"><i></i><span><b>Netflix</b> en 3 días</span><em>$15</em></div><div class="oa-pp in"><i></i><span><b>Cliente</b> por cobrar</span><em>$350</em></div></div>', t: "Que no se te pase ningún pago", p: "Programa pagos y cobros. La app te avisa lo que vence." },
-      { art: '<div class="oa-safe"><svg class="oa-rings" viewBox="0 0 180 180" aria-hidden="true"><circle cx="90" cy="90" r="70" fill="none" stroke="var(--fill)" stroke-width="12"></circle><circle class="oa-arc" cx="90" cy="90" r="70" fill="none" stroke="var(--in)" stroke-width="12" stroke-linecap="round" stroke-dasharray="439.8 439.8" style="--len:439.8" transform="rotate(-90 90 90)"></circle></svg><svg class="oa-shield" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l8 3v6c0 4.5-3.4 8.3-8 9-4.6-.7-8-4.5-8-9V6z"></path><path d="M9 12l2 2 4-4"></path></svg><div class="oa-dots"><i></i><i></i><i></i><i></i></div></div>', t: "Tus datos se quedan aquí", p: "Todo se guarda solo en este teléfono, protegido con tu clave. Guarda una copia de vez en cuando.", last: true }
+      { art: '<div class="oa-form"><small>Monto</small><b>12+8,50</b><div class="oa-ops"><i>+</i><i>−</i><i>×</i><em>= 20,50</em></div><div class="oa-cats"><span style="--c:#5b4cff">'+catSvg("Alimentación")+'Alimentación</span><span style="--c:#f0567e">'+catSvg("Restaurantes")+'Restaurantes</span></div></div>', t: "Anota en segundos", p: "Toca + para anotar un gasto o ingreso. Puedes sumar montos mientras escribes, y ahí mismo tienes la calculadora y tus plantillas." },
+      { art: '<div class="oa-acc"><div class="oa-ring"><svg viewBox="0 0 104 104" aria-hidden="true"><circle cx="52" cy="52" r="44" fill="none" stroke="var(--fill)" stroke-width="10"></circle><circle class="oa-arc" cx="52" cy="52" r="44" fill="none" stroke="#00994f" stroke-width="10" stroke-linecap="round" stroke-dasharray="153.6 276.5" stroke-dashoffset="-7.5" style="--len:153.6;--d:0s" transform="rotate(-90 52 52)"></circle><circle class="oa-arc" cx="52" cy="52" r="44" fill="none" stroke="#f0a020" stroke-width="10" stroke-linecap="round" stroke-dasharray="62.4 276.5" stroke-dashoffset="-176.1" style="--len:62.4;--d:0.12s" transform="rotate(-90 52 52)"></circle><circle class="oa-arc" cx="52" cy="52" r="44" fill="none" stroke="#0e9aa7" stroke-width="10" stroke-linecap="round" stroke-dasharray="15.4 276.5" stroke-dashoffset="-253.5" style="--len:15.4;--d:0.24s" transform="rotate(-90 52 52)"></circle></svg><div><small>Total</small><b>$429</b></div></div><div class="oa-rows"><div style="--c:#00994f"><i></i><span>Zinli</span><b>$262</b></div><div style="--c:#f0a020"><i></i><span>Binance</span><b>USDT 120</b></div><div style="--c:#0e9aa7"><i></i><span>Banco</span><b>Bs 41.800</b></div><div class="oa-cat" style="--c:#5b4cff"><i></i><span>Alimentación</span><em class="b">▲ 12%</em></div></div></div>', t: "Mira a dónde va tu dinero", p: "Tus cuentas, tus gastos por categoría y lo que cambió desde el mes pasado. Toca una cuenta para ver sus movimientos." },
+      { art: '<div class="oa-goal"><svg class="oa-rings" viewBox="0 0 180 180" aria-hidden="true"><circle cx="90" cy="90" r="80" fill="none" stroke="var(--fill)" stroke-width="14"></circle><circle class="oa-arc" cx="90" cy="90" r="80" fill="none" stroke="#8a3ffc" stroke-width="14" stroke-linecap="round" stroke-dasharray="311.6 502.7" style="--len:311.6" transform="rotate(-90 90 90)"></circle><circle cx="90" cy="90" r="58" fill="none" stroke="var(--fill)" stroke-width="14"></circle><circle class="oa-arc" cx="90" cy="90" r="58" fill="none" stroke="var(--accent)" stroke-width="14" stroke-linecap="round" stroke-dasharray="109.3 364.4" style="--len:109.3;--d:.12s" transform="rotate(-90 90 90)"></circle><circle cx="90" cy="90" r="36" fill="none" stroke="var(--fill)" stroke-width="14"></circle><circle class="oa-arc" cx="90" cy="90" r="36" fill="none" stroke="#0e9aa7" stroke-width="14" stroke-linecap="round" stroke-dasharray="181.0 226.2" style="--len:181.0;--d:.24s" transform="rotate(-90 90 90)"></circle></svg><div class="oa-gl"><div style="--c:#8a3ffc"><i></i>Viaje<b>62%</b></div><div style="--c:var(--accent)"><i></i>Celular<b>30%</b></div><div style="--c:#0e9aa7"><i></i>Emergencia<b>80%</b></div></div></div>', t: "Ahorra y cumple tus metas", p: "Aparta parte de cada ingreso y mira cuánto te falta. Para un regalo o un viaje, crea una meta compartida con tus amigos." },
+      { art: '<div class="oa-pay"><div class="oa-week"><span class=""><small>L</small>13</span><span class="oa-d"><small>M</small>14</span><span class=""><small>M</small>15</span><span class="oa-d oa-l"><small>J</small>16</span><span class="oa-on"><small>V</small>17</span><span class=""><small>S</small>18</span><span class="oa-d oa-i"><small>D</small>19</span></div><div class="oa-pp late"><i></i><span><b>Internet</b> venció</span><em>$25</em></div><div class="oa-pp"><i></i><span><b>Netflix</b> en 3 días</span><em>$15</em></div><div class="oa-pp in"><i></i><span><b>Cliente</b> por cobrar</span><em>$350</em></div></div>', t: "Que no se te pase ningún pago", p: "Programa pagos y cobros, una vez o cada mes. Orbe te avisa lo que vence." },
+      { art: '<div class="oa-safe"><svg class="oa-rings" viewBox="0 0 180 180" aria-hidden="true"><circle cx="90" cy="90" r="70" fill="none" stroke="var(--fill)" stroke-width="12"></circle><circle class="oa-arc" cx="90" cy="90" r="70" fill="none" stroke="var(--in)" stroke-width="12" stroke-linecap="round" stroke-dasharray="439.8 439.8" style="--len:439.8" transform="rotate(-90 90 90)"></circle></svg><svg class="oa-shield" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l8 3v6c0 4.5-3.4 8.3-8 9-4.6-.7-8-4.5-8-9V6z"></path><path d="M9 12l2 2 4-4"></path></svg><div class="oa-dots"><i></i><i></i><i></i><i></i></div></div>', t: cloudOn() ? "Tus datos, seguros" : "Tus datos se quedan aquí", p: cloudOn() ? "Protegidos con tu clave o Face ID. Con tu cuenta gratis se guardan en la nube y los ves en cualquier teléfono." : "Todo se guarda solo en este teléfono, protegido con tu clave. Guarda una copia de vez en cuando.", last: true }
     ];
     var onb = { i: 0, first: false };
     function locTxt(t) {
@@ -10153,8 +10199,8 @@ html.sheet-open .toast.show { transform: translateY(0); }
         try { drawTrend(); } catch (e) {}
         if (tour) setTimeout(startTour, 450);
       }
-      if (onb.first && !(state.pin && state.pin.h)) openLock("set", done, { onb: true });
-      else done();
+      var pinStep = function () { if (onb.first && !(state.pin && state.pin.h)) openLock("set", done, { onb: true }); else done(); };
+      if (onb.first && window.__accGate) window.__accGate(pinStep); else pinStep();
     }
     /* ---------- País ---------- */
     var ctry = { sel: "", then: null, first: false };
@@ -10245,16 +10291,17 @@ html.sheet-open .toast.show { transform: translateY(0); }
     var TOUR = [
       { tab: 0, sel: ".rate-card", all: true, t: "Tasas del día", p: "Dólar BCV, euro y USDT. Se actualizan solas y te muestran si subieron ▲ o bajaron ▼." },
       { tab: 0, sel: ".bal-hero", t: "Tu saldo", p: "" },
-      { tab: 0, sel: '[data-panel="acc"]', t: "Tus cuentas", p: "El total y cuánto hay en cada cuenta. Toca una para ver sus movimientos. Con ⇄ transfieres y con + agregas otra." },
+      { tab: 0, sel: '[data-panel="acc"]', t: "Tus cuentas", p: "Cuánto hay en cada cuenta. Toca una para ver sus movimientos o cuadrarla con tu banco. Con ⇄ transfieres y con + agregas otra." },
       { tab: 0, sel: '[data-panel="cat"]', t: "Tus gastos e ingresos", p: "Tus gastos por categoría, comparados con el mes pasado. En Límites pones un máximo para cada una." },
-      { tab: 0, sel: "#fab", t: "El botón +", p: "Tócalo para anotar un gasto, un ingreso o un ahorro. Mantenlo presionado para usar tus plantillas.", round: true },
+      { tab: 0, sel: "#fab", t: "El botón +", p: "Tócalo para anotar un gasto o ingreso, ahorrar, usar una plantilla o abrir la calculadora.", round: true },
       { tab: 0, sel: "#tabbar", t: "Secciones", p: "Muévete entre Inicio, Ahorro, Pagos e Historial. Desliza de lado para cambiar de pestaña; para cambiar de mes, desliza sobre el mes de arriba.", round: true },
       { tab: 1, sel: '#goals-view [data-panel="sav"]', t: "Tu ahorro", p: "Lo que tienes apartado. Desde aquí ahorras, retiras o cambias de moneda." },
-      { tab: 1, sel: "#gv-hero", alt: "#goal-empty", t: "Metas", p: "Crea metas con el + de arriba y mira cuánto llevas de cada una." },
-      { tab: 2, sel: ".pay-tabs", t: "Pagos y cobros", p: "Por pagar es lo que debes. Por cobrar es lo que esperas recibir, y también cuenta en tu proyección." },
-      { tab: 2, sel: "#pay-cal", t: "Calendario", p: "Cada punto es un pago. Lo vencido se marca en rojo y te avisamos en el Inicio." },
-      { tab: 3, sel: "#hist-stats", t: "Historial", p: "Todos tus movimientos del mes. Busca, filtra y mira cómo cerró cada mes." },
-      { tab: 0, sel: "#set-open", t: "Ajustes", p: "Tema, tu clave, copias de seguridad y este recorrido cuando quieras repetirlo.", round: true }
+      { tab: 1, sel: "#gv-hero", alt: "#goal-empty", t: "Metas", p: "Crea una meta con «Crear meta» y mira cuánto llevas y cuándo llegas." },
+      { tab: 1, sel: "#sg-sec", t: "Metas compartidas", p: "Junten dinero con amigos para un regalo o un viaje. Invitas con un código y confirmas cada aporte." },
+      { tab: 2, sel: ".pay-tabs", t: "Pagos y cobros", p: "Por pagar es lo que debes, como el alquiler o el internet. Por cobrar es lo que esperas recibir, como tu sueldo." },
+      { tab: 2, sel: "#pay-cal", t: "Calendario", p: "Cada punto es un pago. Lo vencido se marca en rojo y te avisamos en el Inicio. Desliza un pago a la izquierda para borrarlo." },
+      { tab: 3, sel: "#hist-stats", t: "Historial", p: "Todos tus movimientos del mes. Busca, filtra y desliza uno a la izquierda para borrarlo. Si te equivocas, toca «Deshacer»." },
+      { tab: 0, sel: "#set-open", t: "Ajustes", p: "Tu cuenta, tu clave y Face ID, el país, las copias de seguridad y este recorrido cuando quieras repetirlo.", round: true }
     ];
     var tour = { i: -1, t: 0 };
     function tourRect(st, el) {
@@ -10334,7 +10381,7 @@ html.sheet-open .toast.show { transform: translateY(0); }
     }
     function startTour() {
       TOUR[0].p = (LOC.none ? "Euro" : "Dólar" + (LOC.src ? " " + LOC.src : "") + ", euro") + " y USDT. Se actualizan solas y te muestran si subieron ▲ o bajaron ▼.";
-      TOUR[1].p = "Todo el dinero que tienes hoy en tus cuentas. Toca USD, Bs o EUR para verlo en otra moneda.";
+      TOUR[1].p = "Todo el dinero que tienes hoy en tus cuentas. Toca las monedas de al lado para verlo en otra.";
       closeDial();
       document.querySelectorAll(".sheet-backdrop").forEach(function (x) { x.hidden = true; });
       var t = $("tour"), hole = $("tour-hole"); tour.back = false; tour.i = -1;
