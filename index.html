@@ -2583,6 +2583,24 @@ html.sheet-open .toast.show { transform: translateY(0); }
 .cl-perks[hidden], .cl-pwhint[hidden], .cl-skip[hidden] { display: none !important; }
 #cl-forgot { display: block; margin: 4px auto 0; }
 #cl-forgot[hidden] { display: none; }
+
+/* Binance: tarjetas blancas como en Ahorro y Metas compartidas */
+#bn-view .bn-prog { background: var(--surface) !important; border: 0 !important; border-radius: 22px !important; padding: 16px !important; box-shadow: none !important; margin-bottom: 0 !important; }
+#bn-view .bn-pct { background: color-mix(in srgb, #f0b90b 22%, transparent) !important; color: color-mix(in srgb, #b08300 80%, var(--ink)) !important; }
+#bn-view .bn-h { margin: 26px 0 10px; }
+#bn-view .bn-steps { display: grid; gap: 10px; background: none !important; border: 0 !important; padding: 0 !important; border-radius: 0 !important; }
+#bn-view .bn-step { position: relative; background: var(--surface) !important; border: 0 !important; border-radius: 22px !important; padding: 14px 16px 14px 12px !important; margin: 0 !important; box-shadow: none !important; transition: box-shadow 0.3s ease, opacity 0.3s ease; }
+#bn-view .bn-step::before, #bn-view .bn-step::after { display: none !important; }
+#bn-view .bn-step.now { box-shadow: inset 0 0 0 1.5px color-mix(in srgb, var(--accent) 55%, transparent) !important; }
+#bn-view .bn-step.ok { opacity: 0.75; }
+#bn-view .bn-dot { width: 36px !important; height: 36px !important; border: 0 !important; background: var(--fill, color-mix(in srgb, var(--ink) 7%, transparent)) !important; color: var(--muted) !important; font-weight: 700; }
+#bn-view .bn-step.now .bn-dot { background: var(--accent) !important; color: #fff !important; }
+#bn-view .bn-step.ok .bn-dot { background: var(--in) !important; color: #fff !important; }
+#bn-view .bn-step h3 { color: var(--ink); }
+#bn-view .bn-step.ok h3 { color: var(--muted); }
+#bn-view .bn-btn { border-radius: 999px !important; }
+#bn-view .bn-est { background: var(--bg) !important; border-radius: 16px !important; }
+#bn-view .bn-disc { text-align: center; font-size: 0.76rem; margin: 22px auto 0; max-width: 60ch; text-wrap: balance; }
 </style>
 </head>
 <body>
@@ -3051,6 +3069,7 @@ html.sheet-open .toast.show { transform: translateY(0); }
         <div class="bn-track"><i id="bn-bar"></i></div>
       </div>
     </div>
+    <h2 class="gv-h2 gv-mh bn-h">Paso a paso</h2>
     <ol class="bn-steps" id="bn-steps"></ol>
     <p class="bn-disc">El botón «Crear mi cuenta» usa un enlace de referido de Orbe: si abres tu cuenta con él, Orbe puede recibir una comisión de Binance y a ti no te cuesta nada. Orbe no es parte de Binance y esto no es asesoría financiera. Binance Earn no es un plazo fijo bancario: el rendimiento cambia, no está garantizado y no tiene garantía de depósito. Orbe nunca te pedirá tu contraseña ni tus códigos.</p>
   </div>
@@ -5762,6 +5781,10 @@ html.sheet-open .toast.show { transform: translateY(0); }
       var html = "";
       Array.prototype.forEach.call(sel.options, function (o) {
         var m = /(\d+)$/.exec(o.value), a = m ? accById(m[1]) : null;
+        if (!a && o.hasAttribute("data-chip")) {
+          html += '<button type="button" class="ap" role="radio" aria-checked="false" data-sv="' + esc(o.value) + '"><span class="acc-av sym" style="--c:' + esc(o.getAttribute("data-c") || "var(--accent)") + '" aria-hidden="true">' + (o.getAttribute("data-ic") || "+") + '</span><span class="ap-t"><b>' + esc(o.getAttribute("data-chip")) + "</b><small>" + esc(o.getAttribute("data-sub") || "") + "</small></span></button>";
+          return;
+        }
         if (!a) { html += '<p class="hint sel-none">' + esc(o.textContent) + "</p>"; return; }
         html += '<button type="button" class="ap" role="radio" aria-checked="false" data-sv="' + esc(o.value) + '">' + accAvatar(a) +
           '<span class="ap-t"><b>' + esc(a.nombre) + "</b><small>" + esc(sub(o, a)) + "</small></span></button>";
@@ -7604,7 +7627,7 @@ html.sheet-open .toast.show { transform: translateY(0); }
     function openEarn() {
       var bin = binanceAcc();
       var opts = state.accounts.map(function (a) { return '<option value="' + a.id + '">' + esc(a.nombre) + " · " + money(accBalance(a), a.moneda) + "</option>"; });
-      if (!bin) opts.unshift('<option value="new">Ya estaba en Binance (crear cuenta Binance en USDT)</option>');
+      if (!bin) opts.unshift('<option value="new" data-chip="Ya estaba en Binance" data-sub="Crea tu cuenta Binance" data-c="#f0b90b" data-ic="₮">Ya estaba en Binance (crear cuenta Binance en USDT)</option>');
       $("earn-from").innerHTML = opts.join("");
       $("earn-from").value = bin ? bin.id : "new";
       $("earn-monto").value = ""; $("earn-rate").value = ""; $("earn-rate")._pair = "";
@@ -7917,6 +7940,7 @@ html.sheet-open .toast.show { transform: translateY(0); }
     selChips("sv-to", function (o, a) { return "Ahorrado: " + savTxt(a); });
     selChips("mv-from", function (o, a) { return "Ahorrado: " + savTxt(a); });
     selChips("mv-dest", function (o, a) { return "Saldo: " + money(accBalance(a), a.moneda); });
+    selChips("earn-from", function (o, a) { return money(accBalance(a), a.moneda); });
 
     /* ---------- Metas ---------- */
     var geId = null, gm = { id: null, mode: "dep" };
