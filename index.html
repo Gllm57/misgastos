@@ -9021,11 +9021,14 @@ html.sheet-open .toast.show { transform: translateY(0); }
         var clean = JSON.parse(JSON.stringify(row.data || {})); LOCAL_ONLY.forEach(function (k) { delete clean[k]; });
         jset(SYNC, { remoteAt: row.updated_at, dirty: false, localAt: Date.now(), hash: hashOf(clean) });
         if (msg) try { sessionStorage.setItem("orbe-msg", msg); } catch (e) {}
+        if ($("lock").hidden) try { localStorage.setItem("orbe-act", String(Date.now())); } catch (e) {}
         location.reload();
       });
     }
     function cloudCheck(manual) {
       if (!cloudOn() || !jget(SES) || busy || !navigator.onLine) return;
+      // Con la pantalla del código abierta no se sincroniza: una recarga volvería a pedir Face ID
+      if ($("lock") && !$("lock").hidden) return;
       busy = true; renderCloud();
       cloudPull().then(function (row) {
         busy = false;
@@ -9145,6 +9148,7 @@ html.sheet-open .toast.show { transform: translateY(0); }
         .then(function () { $("cl-pass2").value = ""; $("cl-pass2c").value = ""; pwReset(); $("cl-new").hidden = true; renderCloud(); showToast("Contraseña cambiada."); afterLogin(); }, function (e) { $("cl-err2").textContent = cloudErr(e); });
     });
     $("cl-sync").addEventListener("click", function () { cloudCheck(true); });
+    window.__cloudCheck = function () { cloudCheck(false); };
     $("cl-out-btn").addEventListener("click", function () {
       var s = jget(SES);
       var bye = function (wipe) {
@@ -9913,14 +9917,21 @@ html.sheet-open .toast.show { transform: translateY(0); }
       $("bio-switch").setAttribute("aria-checked", bioOn() ? "true" : "false");
       $("lock-bio").hidden = !(bioOk && bioOn() && lk.mode === "unlock");
     }
+    var bioBusy = false;
     function bioUnlock() {
-      if (!bioOn() || lk.mode !== "unlock") return;
+      if (!bioOn() || lk.mode !== "unlock" || bioBusy) return;
+      bioBusy = true;
       navigator.credentials.get({ publicKey: { challenge: rnd(32), allowCredentials: [{ type: "public-key", id: unb64u(state.pin.wa) }], userVerification: "required", timeout: 60000 } })
-        .then(function (c) { if (c && b64u(c.rawId) === state.pin.wa && lk.mode === "unlock") lockOk(); })
-        .catch(function () { lockMsg("Usa tu código o vuelve a intentar con Face ID."); });
+        .then(function (c) { bioBusy = false; if (c && b64u(c.rawId) === state.pin.wa && lk.mode === "unlock") lockOk(); })
+        .catch(function () { bioBusy = false; lockMsg("Usa tu código o vuelve a intentar con Face ID."); });
     }
     $("lock-bio").addEventListener("click", bioUnlock);
-    function closeLock() { $("lock").hidden = true; document.documentElement.classList.remove("locked"); lk.mode = ""; try { localStorage.setItem("orbe-act", String(Date.now())); } catch (e) {} }
+    function closeLock() {
+      var wasUnlock = lk.mode === "unlock";
+      $("lock").hidden = true; document.documentElement.classList.remove("locked"); lk.mode = ""; bioBusy = false;
+      try { localStorage.setItem("orbe-act", String(Date.now())); } catch (e) {}
+      if (wasUnlock && window.__cloudCheck) setTimeout(window.__cloudCheck, 400);
+    }
     function lockInput(k) {
       if (!lk.mode) return;
       if (Date.now() < lk.until) { var sl = Math.ceil((lk.until - Date.now()) / 1000); lockMsg("Espera " + (sl < 60 ? sl + " segundos" : Math.ceil(sl / 60) + " min") + " e intenta de nuevo.", true); return; }
