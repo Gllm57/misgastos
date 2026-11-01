@@ -10341,6 +10341,17 @@ html.sheet-open .toast.show { transform: translateY(0); }
       $("tour-next").textContent = i === TOUR.length - 1 ? "Listo" : "Siguiente";
       $("tour-bar").style.width = ((i + 1) / TOUR.length * 100) + "%";
     }
+    // Durante un momento, si el elemento se mueve (por ejemplo la barra que se achica), el recuadro lo sigue
+    function tourFollow(el, tok) {
+      var last = "", t0 = Date.now();
+      (function f() {
+        if (tok !== tour.tok || tour.i < 0) return;
+        var r = el.getBoundingClientRect(), k = Math.round(r.top) + "," + Math.round(r.left) + "," + Math.round(r.width) + "," + Math.round(r.height);
+        if (last && k !== last) tourPlace(false);
+        last = k;
+        if (Date.now() - t0 < 1600) requestAnimationFrame(f);
+      })();
+    }
     // Espera a que el elemento deje de moverse (cambio de pestaña, animaciones) antes de medirlo
     function tourStable(el, cb) {
       var last = "", same = 0, t0 = Date.now();
@@ -10368,7 +10379,9 @@ html.sheet-open .toast.show { transform: translateY(0); }
         tourStable(el, function () {
           if (tok !== tour.tok) return;
           var r = el.getBoundingClientRect(), H = window.innerHeight;
-          if (r.top < 70 || r.bottom > H - 110) {
+          // Lo que está fijo en la pantalla (el +, la barra de abajo, Ajustes) no necesita mover la página
+          var fixed = false; for (var n = el; n && n !== document.body; n = n.parentElement) { var ps = getComputedStyle(n).position; if (ps === "fixed" || ps === "sticky") { fixed = true; break; } }
+          if (!fixed && (r.top < 70 || r.bottom > H - 110)) {
             // Mueve la página de una vez; el recuadro viaja suave hasta su nuevo lugar
             tour.quiet = Date.now() + 700;
             var y = (window.scrollY || 0) + r.top - Math.max(70, (H - r.height) / 2 - 40);
@@ -10376,6 +10389,7 @@ html.sheet-open .toast.show { transform: translateY(0); }
           }
           if (!first) { tourFill(st, i); body.className = "tt-body in " + dir; }
           tourPlace(false);
+          tourFollow(el, tok);
         });
       }, needNav ? 40 : 0);
     }
