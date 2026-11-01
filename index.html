@@ -2957,10 +2957,10 @@ html.sheet-open .toast.show { transform: translateY(0); }
   <div class="sheet-backdrop" id="earn-sheet" hidden>
     <section class="panel sheet" role="dialog" aria-modal="true" aria-labelledby="h-earn">
       <div class="sheet-head"><h2 id="h-earn">Ahorro en Binance Earn</h2><button type="button" class="del" id="earn-close" aria-label="Cerrar">✕</button></div>
-      <p class="hint" style="margin-bottom:12px">Anota lo que suscribiste en Binance Earn. La app lo guarda en tus ahorros y calcula cuánto vas ganando.</p>
+      <p class="hint" style="margin-bottom:12px">Anota los USDT que suscribiste en Binance Earn. La app los guarda en tus ahorros y calcula cuánto vas ganando.</p>
       <div class="grid">
         <div class="wide">
-          <label for="earn-from">¿De dónde salió el dinero?</label>
+          <label for="earn-from">¿De qué cuenta en USDT salió?</label>
           <select id="earn-from"></select>
         </div>
         <div class="wide">
@@ -7626,7 +7626,8 @@ html.sheet-open .toast.show { transform: translateY(0); }
     }
     function openEarn() {
       var bin = binanceAcc();
-      var opts = state.accounts.map(function (a) { return '<option value="' + a.id + '">' + esc(a.nombre) + " · " + money(accBalance(a), a.moneda) + "</option>"; });
+      // Earn se hace en USDT: solo se ofrecen las cuentas en USDT
+      var opts = state.accounts.filter(function (a) { return a.moneda === "USDT"; }).map(function (a) { return '<option value="' + a.id + '">' + esc(a.nombre) + " · " + money(accBalance(a), a.moneda) + "</option>"; });
       if (!bin) opts.unshift('<option value="new" data-chip="Ya estaba en Binance" data-sub="Crea tu cuenta Binance" data-c="#f0b90b" data-ic="₮">Ya estaba en Binance (crear cuenta Binance en USDT)</option>');
       $("earn-from").innerHTML = opts.join("");
       $("earn-from").value = bin ? bin.id : "new";
