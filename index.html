@@ -2683,6 +2683,24 @@ html.sheet-open .toast.show { transform: translateY(0); }
 #bn-view .bn-btn { border-radius: 999px !important; }
 #bn-view .bn-est { background: var(--bg) !important; border-radius: 16px !important; }
 #bn-view .bn-disc { text-align: center; font-size: 0.76rem; margin: 22px auto 0; max-width: 60ch; text-wrap: balance; }
+
+/* Modo ahorro forzoso con el estilo de Orbe: tarjeta blanca, sin líneas, textos pequeños centrados */
+.goals-view > .panel.fz-box { background: var(--surface) !important; border: 0 !important; border-radius: 22px !important; padding: 16px !important; margin: 6px 0 26px !important; box-shadow: none !important; }
+.fz-box .fz-on { justify-content: center; min-height: 40px; padding: 0; }
+.fz-list li + li, .fz-rule + .fz-rule { border-top: 0 !important; }
+.fz-rules { background: var(--fill) !important; }
+.fz-lbl { text-align: center; }
+.fz-lead, #fz-until, #fzt-body .hint { text-align: center !important; text-wrap: balance; }
+#fz-until { margin-top: 8px; }
+.fz-tips { border: 0 !important; background: var(--fill); text-align: center; }
+.fz-h3 { text-align: center; }
+.fz-back { display: block; }
+#fz-accw .mv-acc { margin-top: 2px; }
+main > .panel.fz-today { background: var(--surface) !important; border: 0 !important; border-radius: 22px !important; padding: 16px !important; margin: 4px 0 22px !important; box-shadow: none !important; }
+.fz-today .n { text-align: center; text-wrap: balance; }
+.fz-acts button { white-space: nowrap; font-size: 0.92rem; }
+.fz-box .fz-meta { text-align: center; }
+.msum-g { border-top: 0 !important; }
 </style>
 </head>
 <body>
@@ -2815,7 +2833,6 @@ html.sheet-open .toast.show { transform: translateY(0); }
     </div>
     <h1 class="gv-title">Ahorro</h1>
     <p class="gv-sub" id="goals-sub"></p>
-    <section class="panel fz-box" id="fz-box" aria-label="Bóveda"></section>
     <section class="panel gv-sav" data-panel="sav" aria-labelledby="h-sav">
       <div class="sav-hero" id="sav-hero"></div>
       <div id="b-sav">
@@ -2832,6 +2849,7 @@ html.sheet-open .toast.show { transform: translateY(0); }
       </div>
       </div>
     </section>
+    <section class="panel fz-box" id="fz-box" aria-label="Bóveda"></section>
     <div class="gv-mrow"><h2 class="gv-h2 gv-mh" id="gv-metas-h">Metas</h2><button type="button" class="gs-btn" id="goal-sort" hidden><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 4v16M3 8l4-4 4 4M17 20V4M13 16l4 4 4-4"></path></svg>Ordenar</button></div>
     <div class="gv-hero" id="gv-hero">
       <div id="hero-ring"></div>
@@ -10490,6 +10508,7 @@ html.sheet-open .toast.show { transform: translateY(0); }
       { tab: 0, sel: "#fab", t: "El botón +", p: "Tócalo para anotar un gasto o ingreso, ahorrar, usar una plantilla o abrir la calculadora.", round: true },
       { tab: 0, sel: "#tabbar", t: "Secciones", p: "Muévete entre Inicio, Ahorro, Pagos e Historial. Desliza de lado para cambiar de pestaña; para cambiar de mes, desliza sobre el mes de arriba.", round: true },
       { tab: 1, sel: '#goals-view [data-panel="sav"]', t: "Tu ahorro", p: "Lo que tienes apartado. Desde aquí ahorras, retiras o cambias de moneda." },
+      { tab: 1, sel: "#fz-box", t: "Modo ahorro forzoso", p: "Si te cuesta ahorrar, actívalo: aparta un % de cada ingreso, redondea tus gastos y bloquea ese dinero hasta la fecha que elijas." },
       { tab: 1, sel: "#gv-hero", alt: "#goal-empty", t: "Metas", p: "Crea una meta con «Crear meta» y mira cuánto llevas y cuándo llegas." },
       { tab: 1, sel: "#sg-sec", t: "Metas compartidas", p: "Junten dinero con amigos para un regalo o un viaje. Invitas con un código y confirmas cada aporte." },
       { tab: 2, sel: ".pay-tabs", t: "Pagos y cobros", p: "Por pagar es lo que debes, como el alquiler o el internet. Por cobrar es lo que esperas recibir, como tu sueldo." },
@@ -11096,7 +11115,7 @@ html.sheet-open .toast.show { transform: translateY(0); }
       var D = state.disp, f = state.forz;
       if (!fzOn()) {
         el.innerHTML = '<div class="fz-head"><span class="fz-lock">' + FZ_LOCK + '</span><div class="fz-cta"><h3>Modo ahorro forzoso</h3><p>Aparta un % de cada ingreso, redondea tus gastos y bloquea el ahorro hasta una fecha.</p></div></div>' +
-          '<button type="button" class="primary" data-fz="on">Activar</button>';
+          '<button type="button" class="sg-act fz-on" data-fz="on"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5v14M5 12h14"></path></svg>Activar</button>';
         return;
       }
       var lk = fzLocked(), m = today().slice(0, 7), inc = 0, ex = 0, nx = 0, dst = fzDest(), pend = fzPend(), pv = fzSum(pend, D);
