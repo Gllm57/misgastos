@@ -2748,6 +2748,12 @@ main > .panel.fz-today { background: none !important; padding: 0 !important; mar
 /* La Bóveda se quitó: su tarjeta ya no se muestra */
 #fz-box, #fz-alert { display: none !important; }
 .set-row[hidden] { display: none !important; }
+
+.dy-calc { display: grid; gap: 2px; padding: 6px 14px; border-radius: 18px; background: var(--fill, color-mix(in srgb, var(--ink) 6%, transparent)); margin-bottom: 12px; }
+.dy-r { display: flex; justify-content: space-between; gap: 12px; padding: 8px 0; font-size: 0.88rem; color: var(--muted); }
+.dy-r b { color: var(--ink); font-variant-numeric: tabular-nums; white-space: nowrap; }
+.dy-r.tot { color: var(--ink); font-weight: 600; }
+.dy-r.tot b { color: var(--in); }
 </style>
 </head>
 <body>
@@ -11197,7 +11203,7 @@ main > .panel.fz-today { background: none !important; padding: 0 !important; mar
       state.payments.forEach(function (p) { if (!p.paid && !p.cobro && p.fecha <= end) { var v = conv(p.monto, p.moneda, D); if (v !== null) pay += v; } });
       var daily = Math.max(0, (avail + spent - pay) / left), rest = fzR2(daily - spent), pc = daily > 0 ? Math.min(100, spent / daily * 100) : (spent > 0 ? 100 : 0);
       var bs = fzBs(rest, D);
-      fzTodayData = { rest: rest, daily: daily, spent: spent, pay: pay, left: left, pc: pc, bs: bs, D: D };
+      fzTodayData = { rest: rest, daily: daily, spent: spent, pay: pay, left: left, pc: pc, bs: bs, D: D, avail: avail };
       el.hidden = false;
       el.innerHTML = '<button type="button" class="fz-line" data-fzi="hoy"><span class="pa-dot" aria-hidden="true"></span><span class="pa-t">Puedes gastar hoy <b class="' + (rest < 0 ? "neg" : "") + '">' + (rest < 0 ? "−" : "") + mask(money(Math.abs(rest), D)) + "</b></span>" + FZ_CHEV + "</button>";
       return;
@@ -11322,7 +11328,33 @@ main > .panel.fz-today { background: none !important; padding: 0 !important; mar
       if (a === "on" || a === "edit") { $("fzi-sheet").hidden = true; setTimeout(fzOpen, 200); }
       else if (a === "off") fzOff();
     });
-    $("fz-today").addEventListener("click", function (e) { if (e.target.closest("[data-fzi]")) fzInfo(true); });
+    $("fz-today").addEventListener("click", function (e) { if (e.target.closest("[data-fzi]")) dayInfo(); });
+    // Hoja propia de «Puedes gastar hoy»: la cifra y cómo se calcula con tus números
+    function dayInfo() {
+      var d = fzTodayData; if (!d) return;
+      var m = function (n) { return money(n, d.D); };
+      var row = function (l, v, cls) { return '<div class="dy-r' + (cls ? " " + cls : "") + '"><span>' + l + "</span><b>" + v + "</b></div>"; };
+      $("h-fzi").textContent = "Puedes gastar hoy";
+      $("fzi-body").innerHTML = '<div class="fzi-hoy"><small>Hoy puedes gastar</small><b class="' + (d.rest < 0 ? "neg" : "") + '">' + (d.rest < 0 ? "−" : "") + m(Math.abs(d.rest)) + "</b>" + (d.bs ? "<span>" + d.bs + "</span>" : "") +
+        '<div class="fz-bar' + (d.rest < 0 ? " over" : "") + '"><i style="width:' + d.pc.toFixed(1) + '%"></i></div>' +
+        "<p>" + (d.rest < 0 ? "Hoy te pasaste " + m(Math.abs(d.rest)) + ". Mañana tu cifra será un poco más baja." : "Llevas " + m(d.spent) + " de " + m(d.daily) + " hoy.") + "</p></div>" +
+        '<p class="hint fzi-lead">Así se calcula:</p>' +
+        '<div class="dy-calc">' +
+          row("Dinero en tus cuentas", m(d.avail + d.spent)) +
+          (d.pay > 0.004 ? row("Menos pagos pendientes del mes", "−" + m(d.pay)) : "") +
+          row("Entre los días que quedan", d.left + (d.left === 1 ? " día" : " días")) +
+          row("Para cada día", m(d.daily), "tot") +
+          row("Ya gastaste hoy", (d.spent > 0.004 ? "−" : "") + m(d.spent)) +
+        "</div>" +
+        '<p class="hint fzi-lead">Lo que no gastes hoy se suma a los días que quedan. Tus ahorros no cuentan: solo el dinero disponible.</p>';
+      $("fzi-foot").innerHTML = '<button type="button" class="primary" data-dy="ok">Entendido</button><button type="button" class="fz-how" data-dy="hide">Ocultar del Inicio</button>';
+      $("fzi-sheet").hidden = false;
+    }
+    $("fzi-foot").addEventListener("click", function (e) {
+      var b = e.target.closest("[data-dy]"); if (!b) return;
+      $("fzi-sheet").hidden = true;
+      if (b.getAttribute("data-dy") === "hide") { state.dayOn = false; save(); render(); showToast("«Puedes gastar hoy» ya no sale en el Inicio. Lo vuelves a activar en Ajustes → Inicio."); }
+    });
     $("set-fz").addEventListener("click", function () { if (fzOn()) fzOff(); else fzInfo(); });
     $("set-fzt").addEventListener("click", function () {
       state.dayOn = !state.dayOn; save(); render();
