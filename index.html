@@ -2740,6 +2740,10 @@ main > .panel.fz-today { background: none !important; padding: 0 !important; mar
 #fz-s2 { margin-top: 4px; }
 .fz-acc-hint { margin: 8px 0 0 !important; font-size: 0.8rem; }
 #fz-acc .acc-av.sym svg { width: 20px; height: 20px; }
+
+#fz-lockbox[hidden], #fz-s2[hidden] { display: none !important; }
+.fz-lockr { margin-top: 10px; }
+#fz-lockbox { margin-top: 2px; }
 </style>
 </head>
 <body>
@@ -3052,17 +3056,20 @@ main > .panel.fz-today { background: none !important; padding: 0 !important; mar
         <button type="button" class="switch" id="set-ai" role="switch" aria-checked="true" aria-label="Mostrar el botón del asistente financiero"><span></span></button>
       </div>
     </div>
-    <div class="set-h">Ahorro forzoso</div>
+    <div class="set-h">Ahorro</div>
     <div class="set-group">
       <div class="set-row">
-        <div class="tx"><b>Modo ahorro forzoso</b><small id="set-fz-s">Aparta dinero solo de cada ingreso y gasto, y lo bloquea hasta una fecha.</small></div>
-        <button type="button" class="switch" id="set-fz" role="switch" aria-checked="false" aria-label="Modo ahorro forzoso"><span></span></button>
+        <div class="tx"><b>Ahorro automático</b><small id="set-fz-s">Aparta un % de cada ingreso. Puedes bloquearlo hasta una fecha.</small></div>
+        <button type="button" class="switch" id="set-fz" role="switch" aria-checked="false" aria-label="Ahorro automático"><span></span></button>
       </div>
+      <button type="button" class="set-row" id="set-fz-info"><span class="tx"><b>Cómo funciona</b><small>Qué aparta, la Bóveda y cómo sacarlo en una emergencia.</small></span><svg class="chev-r" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 5l7 7-7 7"></path></svg></button>
+    </div>
+    <div class="set-h">Inicio</div>
+    <div class="set-group">
       <div class="set-row" id="set-fzt-row">
-        <div class="tx"><b>«Puedes gastar hoy» en el Inicio</b><small>Una línea con lo que puedes gastar hoy sin pasarte.</small></div>
-        <button type="button" class="switch" id="set-fzt" role="switch" aria-checked="true" aria-label="Mostrar Puedes gastar hoy en el Inicio"><span></span></button>
+        <div class="tx"><b>«Puedes gastar hoy»</b><small>Tu presupuesto del día: saldo menos pagos del mes, entre los días que quedan.</small></div>
+        <button type="button" class="switch" id="set-fzt" role="switch" aria-checked="false" aria-label="Mostrar Puedes gastar hoy en el Inicio"><span></span></button>
       </div>
-      <button type="button" class="set-row" id="set-fz-info"><span class="tx"><b>Cómo funciona</b><small>Qué aparta, cuándo se abre y cómo sacarlo en una emergencia.</small></span><svg class="chev-r" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 5l7 7-7 7"></path></svg></button>
     </div>
     <div class="set-h">Binance</div>
     <div class="set-group">
@@ -3718,9 +3725,9 @@ main > .panel.fz-today { background: none !important; padding: 0 !important; mar
   </div>
   <div class="sheet-backdrop" id="fz-sheet" hidden>
     <section class="panel sheet" role="dialog" aria-modal="true" aria-labelledby="h-fz">
-      <div class="sheet-head"><h2 id="h-fz">Modo ahorro forzoso</h2><button type="button" class="del" id="fz-close" aria-label="Cerrar">✕</button></div>
+      <div class="sheet-head"><h2 id="h-fz">Ahorro automático</h2><button type="button" class="del" id="fz-close" aria-label="Cerrar">✕</button></div>
       <div id="fz-s1">
-        <p class="hint fz-lead">Orbe aparta una parte de cada ingreso y la bloquea hasta la fecha que elijas.</p>
+        <p class="hint fz-lead">Orbe aparta dinero por ti cada vez que cobras.</p>
         <div class="fz-lbl">¿Cuánto de cada ingreso?</div>
         <div class="seg fz-seg" role="group" aria-label="Porcentaje de cada ingreso">
           <button type="button" data-fzp="5" aria-pressed="false">5%</button>
@@ -3728,7 +3735,15 @@ main > .panel.fz-today { background: none !important; padding: 0 !important; mar
           <button type="button" data-fzp="15" aria-pressed="false">15%</button>
           <button type="button" data-fzp="20" aria-pressed="false">20%</button>
         </div>
-        <div class="fz-lbl">¿Por cuánto tiempo?</div>
+        <div class="fz-rules">
+          <div class="fz-rule" id="fz-up-row"><div><strong>Subida automática</strong><p class="hint">+1% cada 3 meses, hasta 20%.</p></div><button type="button" class="switch" id="fz-up" role="switch" aria-checked="false" aria-label="Subida automática"><span></span></button></div>
+          <div class="fz-rule"><div><strong>Redondear mis gastos</strong><p class="hint">Gastas $12,40 → se apartan $0,60. Gastas $2,75 → se apartan $0,25.</p></div><button type="button" class="switch" id="fz-round" role="switch" aria-checked="false" aria-label="Redondear mis gastos"><span></span></button></div>
+          <div class="fz-rule" id="fz-antojo-row"><div><strong>Impuesto antojo 10%</strong><p class="hint">En las categorías que elijas.</p></div><button type="button" class="switch" id="fz-antojo" role="switch" aria-checked="false" aria-label="Impuesto antojo"><span></span></button></div>
+          <div class="fz-cats" id="fz-cats"></div>
+        </div>
+        <div class="fz-rules fz-lockr"><div class="fz-rule"><div><strong>Bloquear hasta una fecha</strong><p class="hint">Tu Bóveda: no se puede retirar antes.</p></div><button type="button" class="switch" id="fz-lock" role="switch" aria-checked="false" aria-label="Bloquear hasta una fecha"><span></span></button></div></div>
+        <div id="fz-lockbox">
+        <div class="fz-lbl">¿Hasta cuándo?</div>
         <div class="seg fz-seg" role="group" aria-label="Tiempo bloqueado">
           <button type="button" data-fzm="1" aria-pressed="false">1 mes</button>
           <button type="button" data-fzm="3" aria-pressed="false">3 meses</button>
@@ -3736,11 +3751,6 @@ main > .panel.fz-today { background: none !important; padding: 0 !important; mar
           <button type="button" data-fzm="12" aria-pressed="false">1 año</button>
         </div>
         <p class="hint" id="fz-until"></p>
-        <div class="fz-rules">
-          <div class="fz-rule" id="fz-up-row"><div><strong>Subida automática</strong><p class="hint">+1% cada 3 meses, hasta 20%.</p></div><button type="button" class="switch" id="fz-up" role="switch" aria-checked="false" aria-label="Subida automática"><span></span></button></div>
-          <div class="fz-rule"><div><strong>Redondear mis gastos</strong><p class="hint">Si gastas $12,40, se apartan $1,20 más.</p></div><button type="button" class="switch" id="fz-round" role="switch" aria-checked="false" aria-label="Redondeo x2"><span></span></button></div>
-          <div class="fz-rule" id="fz-antojo-row"><div><strong>Impuesto antojo 10%</strong><p class="hint">En las categorías que elijas.</p></div><button type="button" class="switch" id="fz-antojo" role="switch" aria-checked="false" aria-label="Impuesto antojo"><span></span></button></div>
-          <div class="fz-cats" id="fz-cats"></div>
         </div>
       </div>
       <div id="fz-s2" hidden>
@@ -3752,7 +3762,7 @@ main > .panel.fz-today { background: none !important; padding: 0 !important; mar
           <div class="fz-lbl" id="fz-acc-l">¿Dónde lo guardas?</div>
           <div class="mv-acc" id="fz-acc" role="radiogroup" aria-labelledby="fz-acc-l"></div>
           <button type="button" class="fz-link" id="fz-bn" hidden>Ver la guía de Binance Earn</button>
-          <p class="hint fz-acc-hint">Funciona mejor en una cuenta aparte que no uses a diario.</p>
+          <p class="hint fz-acc-hint" id="fz-acc-hint">Funciona mejor en una cuenta aparte que no uses a diario.</p>
           <div class="fz-tips"><b>Para que funcione mejor</b><span>Pide la cuenta sin tarjeta de débito.</span><span>Quita la app de ese banco de tu pantalla de inicio.</span><span>No la uses para pagar nada del día a día.</span></div>
         </div>
       </div>
@@ -3762,7 +3772,7 @@ main > .panel.fz-today { background: none !important; padding: 0 !important; mar
   </div>
   <div class="sheet-backdrop" id="fzi-sheet" hidden>
     <section class="panel sheet" role="dialog" aria-modal="true" aria-labelledby="h-fzi">
-      <div class="sheet-head"><h2 id="h-fzi">Modo ahorro forzoso</h2><button type="button" class="del" id="fzi-close" aria-label="Cerrar">✕</button></div>
+      <div class="sheet-head"><h2 id="h-fzi">Ahorro automático</h2><button type="button" class="del" id="fzi-close" aria-label="Cerrar">✕</button></div>
       <div id="fzi-body"></div>
       <div class="sheet-foot fz-foot2" id="fzi-foot"></div>
     </section>
@@ -4157,12 +4167,14 @@ main > .panel.fz-today { background: none !important; padding: 0 !important; mar
         if (d && (d.disp === "USD" || d.disp === "VES" || d.disp === "EUR")) state.disp = d.disp;
         if (d && d.sav && typeof d.sav.pct === "number") state.sav = { on: !!d.sav.on, pct: d.sav.pct };
         if (d && d.forz && typeof d.forz === "object" && typeof d.forz.pct === "number" && typeof d.forz.until === "string") state.forz = d.forz;
+        if (d && typeof d.dayOn === "boolean") state.dayOn = d.dayOn;
+        else if (d && d.forz && d.forz.on && d.forz.today !== false) state.dayOn = true;
       }
     } catch (e) { window.__orbeCorrupt = true; }
   }
   function save() {
     try {
-      localStorage.setItem(KEY, JSON.stringify({ items: state.items, rate: state.rate, rateDate: state.rateDate, hideSav: state.hideSav, rateManual: state.rateManual, rateAutoAt: state.rateAutoAt, accounts: state.accounts, templates: state.templates, goals: state.goals, payments: state.payments, paySeries: state.paySeries, earn: state.earn, limits: state.limits, rateHist: state.rateHist, rateHistAt: state.rateHistAt, theme: state.theme, pin: state.pin, backupAt: state.backupAt, onb: state.onb, msumSeen: state.msumSeen, country: state.country, ratesOn: !!state.ratesOn, aiHide: !!state.aiHide, cqOff: !!state.cqOff, sgName: state.sgName || "", instSeen: state.instSeen, notif: state.notif, subs: state.subs, limCur: state.limCur, lastAcc: state.lastAcc, bn: state.bn, btcUsd: state.btcUsd, btcAt: state.btcAt, rateEur: state.rateEur, rateEurDate: state.rateEurDate, rateEurManual: state.rateEurManual, rateUsdt: state.rateUsdt, rateUsdtDate: state.rateUsdtDate, rateUsdtManual: state.rateUsdtManual, rateUsdtSrc: state.rateUsdtSrc, collapsed: state.collapsed, disp: state.disp, sav: state.sav, forz: state.forz }));
+      localStorage.setItem(KEY, JSON.stringify({ items: state.items, rate: state.rate, rateDate: state.rateDate, hideSav: state.hideSav, rateManual: state.rateManual, rateAutoAt: state.rateAutoAt, accounts: state.accounts, templates: state.templates, goals: state.goals, payments: state.payments, paySeries: state.paySeries, earn: state.earn, limits: state.limits, rateHist: state.rateHist, rateHistAt: state.rateHistAt, theme: state.theme, pin: state.pin, backupAt: state.backupAt, onb: state.onb, msumSeen: state.msumSeen, country: state.country, ratesOn: !!state.ratesOn, aiHide: !!state.aiHide, cqOff: !!state.cqOff, sgName: state.sgName || "", instSeen: state.instSeen, notif: state.notif, subs: state.subs, limCur: state.limCur, lastAcc: state.lastAcc, bn: state.bn, btcUsd: state.btcUsd, btcAt: state.btcAt, rateEur: state.rateEur, rateEurDate: state.rateEurDate, rateEurManual: state.rateEurManual, rateUsdt: state.rateUsdt, rateUsdtDate: state.rateUsdtDate, rateUsdtManual: state.rateUsdtManual, rateUsdtSrc: state.rateUsdtSrc, collapsed: state.collapsed, disp: state.disp, sav: state.sav, forz: state.forz, dayOn: !!state.dayOn }));
       window.__saveFail = 0;
     } catch (e) {
       if (!window.__saveFail && window.__toast) window.__toast("No se pudo guardar en este teléfono (puede estar sin espacio). Guarda una copia en Archivos desde Ajustes.");
@@ -5220,6 +5232,7 @@ main > .panel.fz-today { background: none !important; padding: 0 !important; mar
   function histTitle(it) {
     var hg = histGoal(it);
     if (hg) return (hg.dep ? "Depósito a " : "Retiro de ") + (hg.g ? hg.g.nombre : "una meta");
+    if (it._grp || (it.tipo === "ahorro" && it.fz)) return "Redondeo del día";
     if (it.tipo === "ahorro") return "Ahorro automático";
     if (it.tipo === "retiro") return "Retiro de ahorro";
     return it.cat;
@@ -5252,6 +5265,7 @@ main > .panel.fz-today { background: none !important; padding: 0 !important; mar
       return (hg.dep ? "Desde " : "Hacia ") + (o && o.k === "ahorro" ? "ahorros de " : "") + (oa ? oa.nombre : "tu cuenta");
     }
     if (it.tipo === "traspaso") return it.nota || "";
+    if (it._grp) return it._grp + (it._grp === 1 ? " gasto" : " gastos");
     var a = accById(it.cuenta), parts = [];
     if (a) parts.push(a.nombre);
     if (it.sub) parts.push(it.sub);
@@ -5367,6 +5381,19 @@ main > .panel.fz-today { background: none !important; padding: 0 !important; mar
       if (!q) return true;
       return (histTitle(it) + " " + histSub(it) + " " + (it.nota || "") + " " + (it.sub || "")).toLowerCase().indexOf(q) >= 0;
     }).sort(function (a, b) { return a.fecha < b.fecha ? 1 : a.fecha > b.fecha ? -1 : b.id - a.id; });
+    // Los redondeos de un mismo día se muestran en una sola línea
+    rows = (function (L) {
+      var out = [], g = {};
+      L.forEach(function (it) {
+        if (it.tipo === "ahorro" && it.fz) {
+          var k = it.fecha + "|" + it.cuenta + "|" + it.moneda;
+          if (g[k]) { g[k].monto = Math.round((g[k].monto + it.monto) * 100) / 100; g[k]._grp++; return; }
+          var c = Object.assign({}, it, { _grp: 1 }); g[k] = c; out.push(c); return;
+        }
+        out.push(it);
+      });
+      return out;
+    })(rows);
     var shown = rows.slice(0, hist.n);
     $("hist-more").style.display = rows.length > hist.n ? "" : "none";
     $("hist-more").textContent = "Ver más (" + Math.min(30, rows.length - hist.n) + ")";
@@ -6502,14 +6529,14 @@ main > .panel.fz-today { background: none !important; padding: 0 !important; mar
     function renderFormSav() {
       var show = state.type === "ingreso" && !state.editId;
       $("f-sav").style.display = show ? "" : "none";
-      var f = state.fsav, fzF = show && fzOn();
+      var f = state.fsav, fzF = show && fzLocked();
       if (fzF) { f.on = true; if (!(f.pct >= state.forz.pct)) f.pct = state.forz.pct; }
       $("f-sav").classList.toggle("f-sav-lock", fzF);
       $("f-sav-toggle").setAttribute("aria-checked", f.on ? "true" : "false");
       $("f-sav-body").style.display = f.on ? "" : "none";
       var amt = amtVal($("monto").value);
       $("f-sav-hint").textContent = fzF
-        ? "Obligatorio (ahorro forzoso): " + String(f.pct).replace(".", ",") + "% a tu Bóveda. Puedes subirlo, no bajarlo de " + String(state.forz.pct).replace(".", ",") + "%."
+        ? "Va a tu Bóveda: " + String(f.pct).replace(".", ",") + "%. Puedes subirlo, no bajarlo de " + String(state.forz.pct).replace(".", ",") + "%."
         : f.on
         ? "Se aparta el " + String(f.pct).replace(".", ",") + "% de este ingreso."
         : "Este ingreso no genera ahorro.";
@@ -6725,7 +6752,7 @@ main > .panel.fz-today { background: none !important; padding: 0 !important; mar
         $("nota").value = "";
         setFecha(today());
         fillAccounts(accById(state.lastAcc) ? state.lastAcc : state.accounts[0].id, false);
-        state.fsav = { on: false, pct: state.sav.pct };
+        state.fsav = window.__fzOn && window.__fzOn() ? { on: true, pct: state.forz.pct } : { on: false, pct: state.sav.pct };
         fSub = "";
       }
       splitParts = []; $("split-rows").innerHTML = ""; $("sub-new").hidden = true;
@@ -6805,9 +6832,9 @@ main > .panel.fz-today { background: none !important; padding: 0 !important; mar
       else if (a === "bn") openView("bn");
       else if (a === "plantilla") openTpl();
     });
-    function fzFormMin() { return state.type === "ingreso" && !state.editId && fzOn() ? state.forz.pct : 0; }
+    function fzFormMin() { return state.type === "ingreso" && !state.editId && fzLocked() ? state.forz.pct : 0; }
     $("f-sav-toggle").addEventListener("click", function () {
-      if (fzFormMin()) { showToast("Con el modo ahorro forzoso este ahorro es obligatorio."); return; }
+      if (fzFormMin()) { showToast("Con tu Bóveda bloqueada este ahorro es obligatorio."); return; }
       state.fsav.on = !state.fsav.on; renderFormSav();
     });
     $("f-pct").addEventListener("input", function (e) {
@@ -6818,7 +6845,7 @@ main > .panel.fz-today { background: none !important; padding: 0 !important; mar
     document.querySelectorAll("[data-fpct]").forEach(function (b) {
       b.addEventListener("click", function () {
         var v = Number(b.getAttribute("data-fpct"));
-        if (v < fzFormMin()) { showToast("Tu ahorro forzoso es de " + String(state.forz.pct).replace(".", ",") + "% como mínimo."); return; }
+        if (v < fzFormMin()) { showToast("Tu Bóveda aparta " + String(state.forz.pct).replace(".", ",") + "% como mínimo."); return; }
         state.fsav.pct = v; renderFormSav();
       });
     });
@@ -10570,7 +10597,7 @@ main > .panel.fz-today { background: none !important; padding: 0 !important; mar
       { tab: 0, sel: "#fab", t: "El botón +", p: "Tócalo para anotar un gasto o ingreso, ahorrar, usar una plantilla o abrir la calculadora.", round: true },
       { tab: 0, sel: "#tabbar", t: "Secciones", p: "Muévete entre Inicio, Ahorro, Pagos e Historial. Desliza de lado para cambiar de pestaña; para cambiar de mes, desliza sobre el mes de arriba.", round: true },
       { tab: 1, sel: '#goals-view [data-panel="sav"]', t: "Tu ahorro", p: "Lo que tienes apartado. Desde aquí ahorras, retiras o cambias de moneda." },
-      { tab: 1, sel: "#fz-box", t: "Modo ahorro forzoso", p: "Si te cuesta ahorrar, actívalo: aparta un % de cada ingreso, redondea tus gastos y bloquea ese dinero hasta la fecha que elijas." },
+      { tab: 1, sel: "#fz-box", t: "Ahorro automático", p: "Aparta un % de cada ingreso sin que lo pienses. Si te cuesta no tocarlo, bloquéalo hasta una fecha: tu Bóveda." },
       { tab: 1, sel: "#gv-hero", alt: "#goal-empty", t: "Metas", p: "Crea una meta con «Crear meta» y mira cuánto llevas y cuándo llegas." },
       { tab: 1, sel: "#sg-sec", t: "Metas compartidas", p: "Junten dinero con amigos para un regalo o un viaje. Invitas con un código y confirmas cada aporte." },
       { tab: 2, sel: ".pay-tabs", t: "Pagos y cobros", p: "Por pagar es lo que debes, como el alquiler o el internet. Por cobrar es lo que esperas recibir, como tu sueldo." },
@@ -11061,7 +11088,9 @@ main > .panel.fz-today { background: none !important; padding: 0 !important; mar
     function fzAddMonths(iso, n) { var p = iso.split("-"), d = new Date(Number(p[0]), Number(p[1]) - 1 + n, Number(p[2]), 12); return d.getFullYear() + "-" + pad2(d.getMonth() + 1) + "-" + pad2(d.getDate()); }
     function fzLong(iso) { var p = iso.split("-"); return Number(p[2]) + " de " + MESES[Number(p[1]) - 1] + " de " + p[0]; }
     function fzOn() { return !!(state.forz && state.forz.on); }
-    function fzLocked() { return fzOn() && today() < state.forz.until; }
+    // El bloqueo es opcional: sin él es el ahorro automático de siempre; con él, la Bóveda
+    function fzLockOn() { return fzOn() && state.forz.lock !== false; }
+    function fzLocked() { return fzLockOn() && today() < state.forz.until; }
     function fzPct(n) { return String(n).replace(".", ","); }
     function fzR2(n) { return Math.round(n * 100) / 100; }
     function fzItem(id) { return state.items.filter(function (x) { return x.id === id; })[0] || null; }
@@ -11073,12 +11102,12 @@ main > .panel.fz-today { background: none !important; padding: 0 !important; mar
         var st = 1;
         if (moneda === "VES" && state.rate >= 10) st = Math.pow(10, Math.floor(Math.log(state.rate) / Math.LN10));
         var up = Math.ceil(monto / st - 1e-9) * st - monto;
-        if (up > 0.004) r += up * 2;
+        if (up > 0.004) r += up;
       }
       if (f.antojo && (f.cats || []).indexOf(cat) >= 0) r += monto * 0.1;
       return fzR2(r);
     }
-    function fzDest() { var f = state.forz; return fzOn() && f.dest !== "orbe" ? accById(f.acc) : null; }
+    function fzDest() { var f = state.forz; return fzLockOn() && f.dest !== "orbe" ? accById(f.acc) : null; }
     // Pendientes de pasar a la Bóveda: solo los ahorros que siguen existiendo
     function fzPend() {
       var f = state.forz; if (!f || !Array.isArray(f.pend)) return [];
@@ -11089,7 +11118,7 @@ main > .panel.fz-today { background: none !important; padding: 0 !important; mar
     // Los ingresos se avisan enseguida; el redondeo y el antojo se juntan y se avisan los domingos
     function fzDue() {
       var t = today(), sun = new Date().getDay() === 0, old = addDaysIso(t, -6);
-      return fzPend().filter(function (it) { return it.cat !== "Ahorro forzoso" || sun || it.fecha <= old; });
+      return fzPend().filter(function (it) { return !it.fz || sun || it.fecha <= old; });
     }
     function fzSum(list, cur) { var s = 0, ok = true; list.forEach(function (it) { var v = conv(it.monto, it.moneda, cur); if (v === null) ok = false; else s += v; }); return ok || s ? fzR2(s) : null; }
     function fzGroups(list) {
@@ -11114,12 +11143,12 @@ main > .panel.fz-today { background: none !important; padding: 0 !important; mar
       if (it.tipo === "gasto") {
         var ex = fzExtra(it.monto, it.moneda, it.cat);
         if (ex > 0) {
-          sv = { id: it.id + 1, tipo: "ahorro", auto: true, fz: true, linkId: it.id, monto: ex, moneda: it.moneda, cuenta: it.cuenta, cat: "Ahorro forzoso", fecha: it.fecha, nota: "Redondeo y antojo" };
+          sv = { id: it.id + 1, tipo: "ahorro", auto: true, fz: true, linkId: it.id, monto: ex, moneda: it.moneda, cuenta: it.cuenta, cat: "Redondeo", fecha: it.fecha, nota: "Redondeo" };
           state.items.push(sv);
-          msg = state.hideSav ? "Se apartó una parte a tu Bóveda." : "Se apartaron " + money(ex, it.moneda) + " a tu Bóveda.";
+          msg = state.hideSav ? "Se apartó el redondeo." : "Se apartaron " + money(ex, it.moneda) + " del redondeo.";
         } else sv = null;
       }
-      if (it.tipo === "ingreso" && sv) msg = state.hideSav ? "Se apartó una parte a tu Bóveda." : "Se apartaron " + money(sv.monto, sv.moneda) + " a tu Bóveda.";
+      if (it.tipo === "ingreso" && sv) msg = state.hideSav ? "Se apartó una parte a tu ahorro." : "Se apartaron " + money(sv.monto, sv.moneda) + (fzLockOn() ? " a tu Bóveda." : " a tu ahorro.");
       if (sv && dst && sv.cuenta !== dst.id) { f.pend = (f.pend || []).concat([sv.id]); f.snooze = 0; }
       return { msg: msg, tr: !!(sv && dst && it.tipo === "ingreso" && sv.cuenta !== dst.id) };
     }
@@ -11147,7 +11176,7 @@ main > .panel.fz-today { background: none !important; padding: 0 !important; mar
     function fzToday() {
       var el = $("fz-today"); if (!el) return;
       var D = state.disp, t = today();
-      if (!fzOn() || state.month !== t.slice(0, 7) || !state.accounts.length) { el.hidden = true; return; }
+      if (!state.dayOn || state.month !== t.slice(0, 7) || !state.accounts.length) { el.hidden = true; fzTodayData = null; return; }
       var avail = 0, spent = 0, pay = 0, dt = new Date(), dim = new Date(dt.getFullYear(), dt.getMonth() + 1, 0).getDate(), left = dim - dt.getDate() + 1;
       var end = t.slice(0, 7) + "-" + pad2(dim);
       state.accounts.forEach(function (a) { var v = conv(accBalance(a), a.moneda, D); if (v !== null) avail += v; });
@@ -11156,7 +11185,6 @@ main > .panel.fz-today { background: none !important; padding: 0 !important; mar
       var daily = Math.max(0, (avail + spent - pay) / left), rest = fzR2(daily - spent), pc = daily > 0 ? Math.min(100, spent / daily * 100) : (spent > 0 ? 100 : 0);
       var bs = fzBs(rest, D);
       fzTodayData = { rest: rest, daily: daily, spent: spent, pay: pay, left: left, pc: pc, bs: bs, D: D };
-      if (state.forz.today === false) { el.hidden = true; return; }
       el.hidden = false;
       el.innerHTML = '<button type="button" class="fz-line" data-fzi="hoy"><span class="pa-dot" aria-hidden="true"></span><span class="pa-t">Puedes gastar hoy <b class="' + (rest < 0 ? "neg" : "") + '">' + (rest < 0 ? "−" : "") + mask(money(Math.abs(rest), D)) + "</b></span>" + FZ_CHEV + "</button>";
       return;
@@ -11181,7 +11209,7 @@ main > .panel.fz-today { background: none !important; padding: 0 !important; mar
       var D = state.disp, f = state.forz;
       if (!fzOn()) {
         el.classList.add("fz-off");
-        el.innerHTML = '<button type="button" class="fz-row" data-fz="info"><span class="fz-lock">' + FZ_LOCK + '</span><span class="fz-row-t"><b>Modo ahorro forzoso</b><small>Ahorra sin darte cuenta. Toca para ver cómo funciona.</small></span>' + FZ_CHEV + "</button>";
+        el.innerHTML = '<button type="button" class="fz-row" data-fz="info"><span class="fz-lock">' + FZ_LOCK + '</span><span class="fz-row-t"><b>Ahorro automático</b><small>Aparta dinero solo cada vez que cobras.</small></span>' + FZ_CHEV + "</button>";
         return;
       }
       el.classList.remove("fz-off");
@@ -11191,30 +11219,32 @@ main > .panel.fz-today { background: none !important; padding: 0 !important; mar
         var v = conv(it.monto, it.moneda, D); if (v === null) return;
         if (it.fz) { ex += v; nx++; } else if (it.auto && it.linkId) inc += v;
       });
-      var meta = [];
-      meta.push(lk ? "Se abre el <b>" + fzLong(f.until) + "</b>" : '<span class="ok">Se abrió el ' + fzLong(f.until) + ". Ya puedes usarla.</span>");
-      if (dst) meta.push("Guardada en <b>" + esc(dst.nombre) + "</b>");
-      else meta.push('<span class="warn">Solo en Orbe: el dinero sigue en tus cuentas de siempre.</span>');
+      var meta = [], lon = fzLockOn();
+      if (!lon) meta.push("Libre: puedes retirarlo cuando quieras.");
+      else meta.push(lk ? "Se abre el <b>" + fzLong(f.until) + "</b>" : '<span class="ok">Se abrió el ' + fzLong(f.until) + ". Ya puedes usarla.</span>");
+      if (lon && dst) meta.push("Guardada en <b>" + esc(dst.nombre) + "</b>");
+      else if (lon) meta.push("Marcada en Orbe: el dinero sigue en tu cuenta.");
       if (dst && pend.length && pv) meta.push('<span class="warn">Pendiente de pasar: ' + mask(money(pv, D)) + "</span>");
       if (f.ret) {
         var hl = Math.ceil((f.ret.at + FZ_WAIT - Date.now()) / FZ_H);
         meta.push(fzRetReady() ? '<span class="ok">Ya puedes retirar ' + money(f.ret.monto, f.ret.moneda) + " con Retirar (tienes 7 días).</span>" : '<span class="warn">Retiro pedido de ' + money(f.ret.monto, f.ret.moneda) + ": listo en " + hl + (hl === 1 ? " hora" : " horas") + ".</span>");
       }
-      var nextUp = f.up && f.pct < 20 ? "Sube a " + (f.pct + 1) + "% el " + shortDate(fzAddMonths(f.upAt || f.since, 3)) : "De cada ingreso";
-      var rows = '<li><span class="tx">Págate primero · ' + fzPct(f.pct) + "%<small>" + nextUp + "</small></span><b>+" + mask(money(inc, D)) + "</b></li>";
-      if (f.round || f.antojo) rows += '<li><span class="tx">' + (f.round && f.antojo ? "Redondeo x2 y antojo 10%" : f.round ? "Redondeo x2" : "Impuesto antojo 10%") + "<small>" + nx + (nx === 1 ? " gasto" : " gastos") + " este mes</small></span><b>+" + mask(money(ex, D)) + "</b></li>";
-      el.innerHTML = '<div class="fz-head"><span class="fz-lock">' + FZ_LOCK + '</span><div><div class="l">Bóveda · ' + (lk ? "bloqueada" : "desbloqueada") + '</div><div class="v">' + mask(moneyH(fzVault(D), D)) + "</div></div></div>" +
+      var nextUp = f.up && f.pct < 20 ? "Sube a " + (f.pct + 1) + "% el " + shortDate(fzAddMonths(f.upAt || f.since, 3)) : "Este mes";
+      var rows = '<li><span class="tx">' + fzPct(f.pct) + "% de cada ingreso<small>" + nextUp + "</small></span><b>+" + mask(money(inc, D)) + "</b></li>";
+      if (f.round || f.antojo) rows += '<li><span class="tx">' + (f.round && f.antojo ? "Redondeo y antojo 10%" : f.round ? "Redondeo de gastos" : "Impuesto antojo 10%") + "<small>" + nx + (nx === 1 ? " gasto" : " gastos") + " este mes</small></span><b>+" + mask(money(ex, D)) + "</b></li>";
+      el.innerHTML = '<div class="fz-head"><span class="fz-lock">' + FZ_LOCK + '</span><div><div class="l">' + (lon ? "Bóveda · " + (lk ? "bloqueada" : "desbloqueada") : "Ahorro automático · libre") + '</div><div class="v">' + mask(moneyH(fzVault(D), D)) + "</div></div></div>" +
         '<div class="fz-meta">' + meta.map(function (x) { return "<span>" + x + "</span>"; }).join("") + "</div>" +
         (dst && pend.length ? '<button type="button" class="secondary" data-fz="tr">Mover ahora</button>' : "") +
         '<ul class="fz-list">' + rows + "</ul>" +
         (lk ? '<div class="fz-acts"><button type="button" class="secondary" data-fz="edit">Reglas</button><button type="button" class="secondary" data-fz="ret">' + (f.ret ? "Ver retiro" : "Retiro anticipado") + "</button></div>"
-          : '<div class="fz-acts"><button type="button" class="primary" data-fz="renew">Bloquear 3 meses más</button><button type="button" class="secondary" data-fz="off">Desactivar</button></div>') +
+          : lon ? '<div class="fz-acts"><button type="button" class="primary" data-fz="renew">Bloquear 3 meses más</button><button type="button" class="secondary" data-fz="off">Desactivar</button></div>'
+          : '<div class="fz-acts"><button type="button" class="secondary" data-fz="edit">Ajustes</button><button type="button" class="secondary" data-fz="off">Desactivar</button></div>') +
         '<button type="button" class="fz-how" data-fz="info">¿Cómo funciona?</button>';
     }
     function fzTick() {
       var f = state.forz; if (!fzOn()) return;
       var ch = false;
-      if (f.up && f.pct < 20 && fzAddMonths(f.upAt || f.since, 3) <= today()) { f.pct += 1; f.upAt = today(); ch = true; setTimeout(function () { showToast("Tu ahorro forzoso subió a " + fzPct(f.pct) + "% de cada ingreso."); }, 1500); }
+      if (f.up && f.pct < 20 && fzAddMonths(f.upAt || f.since, 3) <= today()) { f.pct += 1; f.upAt = today(); ch = true; setTimeout(function () { showToast("Tu ahorro automático subió a " + fzPct(f.pct) + "% de cada ingreso."); }, 1500); }
       if (f.ret && Date.now() > f.ret.at + FZ_WAIT + FZ_WINDOW) { f.ret = null; ch = true; }
       if (ch) save();
     }
@@ -11224,9 +11254,8 @@ main > .panel.fz-today { background: none !important; padding: 0 !important; mar
       if (!$("set-fz")) return;
       var on = fzOn();
       $("set-fz").setAttribute("aria-checked", on ? "true" : "false");
-      $("set-fz-s").textContent = on ? (fzLocked() ? "Activado. Tu Bóveda se abre el " + fzLong(state.forz.until) + "." : "Activado. Tu Bóveda ya se abrió.") : "Aparta dinero solo de cada ingreso y gasto, y lo bloquea hasta una fecha.";
-      $("set-fzt-row").hidden = !on;
-      $("set-fzt").setAttribute("aria-checked", state.forz.today === false ? "false" : "true");
+      $("set-fz-s").textContent = on ? fzPct(state.forz.pct) + "% de cada ingreso" + (fzLocked() ? " · Bóveda hasta el " + fzLong(state.forz.until) : fzLockOn() ? " · Bóveda abierta" : " · libre") + "." : "Aparta un % de cada ingreso. Puedes bloquearlo hasta una fecha.";
+      $("set-fzt").setAttribute("aria-checked", state.dayOn ? "true" : "false");
     }
     window.__fzRender = function () { try { fzTick(); fzToday(); fzAlert(); fzBox(); fzSetRows(); } catch (e) {} };
     // Hoja «Cómo funciona»: explica cada regla con ejemplos y permite activar, cambiar o desactivar
@@ -11241,15 +11270,16 @@ main > .panel.fz-today { background: none !important; padding: 0 !important; mar
           '<div class="fz-bar' + (d.rest < 0 ? " over" : "") + '"><i style="width:' + d.pc.toFixed(1) + '%"></i></div>' +
           "<p>Gastaste " + money(d.spent, d.D) + " de " + money(d.daily, d.D) + " hoy. Es tu saldo" + (d.pay > 0.004 ? ", menos " + money(d.pay, d.D) + " de pagos pendientes," : "") + " dividido entre los " + d.left + (d.left === 1 ? " día" : " días") + " que quedan del mes. Lo que no gastes hoy se suma a mañana.</p></div>";
       }
-      h += '<p class="hint fzi-lead">' + (on ? "Así está funcionando tu Bóveda:" : "Orbe aparta dinero por ti sin que lo notes y lo guarda en una «Bóveda» que no puedes tocar hasta la fecha que elijas.") + "</p>";
+      var lon = fzLockOn();
+      h += '<p class="hint fzi-lead">' + (on ? "Así está funcionando tu ahorro:" : "Orbe aparta dinero por ti cada vez que cobras. Si quieres, lo bloqueas hasta una fecha: eso es tu Bóveda.") + "</p>";
       h += '<ol class="fzi-steps">' +
-        step(1, "Te pagas primero", "De cada ingreso se aparta el " + fzPct(pct) + "%. Si cobras " + ex(500) + ", " + ex(500 * pct / 100) + " van a la Bóveda. Puedes subirlo cuando quieras; bajarlo, solo una vez al mes." + (on && f.up ? " Sube 1% cada 3 meses, hasta 20%." : "")) +
-        (on && !f.round ? "" : step(2, "Redondeo x2", "Cada gasto se redondea y la diferencia se aparta el doble. Si gastas " + ex(12.40) + ", se apartan " + ex(1.20) + ".")) +
+        step(1, "Te pagas primero", "De cada ingreso se aparta el " + fzPct(pct) + "%. Si cobras " + ex(500) + ", " + ex(500 * pct / 100) + " van a tu ahorro." + (on && f.up ? " Sube 1% cada 3 meses, hasta 20%." : "")) +
+        (on && !f.round ? "" : step(2, "Redondear mis gastos" + (on ? "" : " (opcional)"), "Cada gasto se redondea al número entero de arriba y esos centavos se apartan. Gastas " + ex(12.40) + " → se apartan " + ex(0.60) + ".")) +
         (!(on && f.antojo) ? "" : step(on && !f.round ? 2 : 3, "Impuesto antojo", "En las categorías que elijas (por ejemplo Restaurantes u Ocio) se aparta un 10% más de cada gasto.")) +
-        step("", "La Bóveda se bloquea", on ? "No puedes retirar ni borrar ese ahorro hasta el " + fzLong(f.until) + "." : "Eliges por cuánto tiempo: 1, 3, 6 meses o un año. Hasta esa fecha no puedes retirar ni borrar ese ahorro.") +
-        step("", "Dónde se guarda", "Puede quedarse solo en Orbe o en una cuenta aparte (otro banco o USDT). Si eliges una cuenta aparte, Orbe te avisa cuánto mover y esa cuenta deja de salir en el Inicio.") +
-        step("", "Puedes gastar hoy", "En el Inicio verás una línea con lo que puedes gastar hoy sin pasarte. La puedes ocultar en Ajustes.") +
-        step("", "¿Una emergencia?", "Pide un retiro anticipado: dices para qué, esperas 72 horas y luego tienes 7 días para sacarlo.") +
+        (on && !lon ? step("", "Ahorro libre", "No está bloqueado: lo retiras cuando quieras. Si te cuesta no tocarlo, activa «Bloquear hasta una fecha».") :
+        step("", "Bóveda (opcional)", on ? "Está bloqueada hasta el " + fzLong(f.until) + ": no puedes retirar ni borrar ese ahorro antes." : "Si activas «Bloquear hasta una fecha», eliges 1, 3, 6 meses o un año y no puedes retirar ese ahorro antes.") +
+        step("", "Dónde se guarda", "«Lo marco en Orbe»: el dinero sigue en tu cuenta y Orbe solo lo separa en tus números. O en una cuenta aparte: Orbe te avisa cuánto pasarle y esa cuenta no sale en el Inicio.") +
+        step("", "¿Una emergencia?", "Con la Bóveda bloqueada, pides un retiro anticipado: dices para qué, esperas 72 horas y luego tienes 7 días para sacarlo.")) +
         step("", "Lo apagas cuando quieras", "Desde Ajustes. Lo que ya apartaste se queda en tus ahorros como ahorro libre.") +
         "</ol>";
       $("fzi-body").innerHTML = h;
@@ -11264,10 +11294,10 @@ main > .panel.fz-today { background: none !important; padding: 0 !important; mar
       var f = state.forz, lk = fzLocked();
       $("fzi-sheet").hidden = true;
       openCf({
-        title: "¿Desactivar el modo ahorro forzoso?",
-        text: (lk ? "Tu Bóveda está bloqueada hasta el " + fzLong(f.until) + ". " : "") + "Si lo desactivas, Orbe deja de apartar dinero solo y lo que ya está en la Bóveda queda como ahorro libre." + (lk ? " Para confirmar, escribe DESACTIVAR." : ""),
+        title: "¿Desactivar el ahorro automático?",
+        text: (lk ? "Tu Bóveda está bloqueada hasta el " + fzLong(f.until) + ". " : "") + "Si lo desactivas, Orbe deja de apartar dinero solo y lo que ya apartaste queda como ahorro libre." + (lk ? " Para confirmar, escribe DESACTIVAR." : ""),
         word: lk ? "DESACTIVAR" : "", btn: "Desactivar",
-        ok: function () { f.on = false; f.pend = []; f.ret = null; save(); render(); showToast("Modo ahorro forzoso desactivado. Tus ahorros siguen en Ahorro."); }
+        ok: function () { f.on = false; f.pend = []; f.ret = null; save(); render(); showToast("Ahorro automático desactivado. Tus ahorros siguen en Ahorro."); }
       });
     }
     $("fzi-close").addEventListener("click", function () { $("fzi-sheet").hidden = true; });
@@ -11281,9 +11311,10 @@ main > .panel.fz-today { background: none !important; padding: 0 !important; mar
     $("fz-today").addEventListener("click", function (e) { if (e.target.closest("[data-fzi]")) fzInfo(true); });
     $("set-fz").addEventListener("click", function () { if (fzOn()) fzOff(); else fzInfo(); });
     $("set-fzt").addEventListener("click", function () {
-      state.forz.today = state.forz.today === false; save(); render();
-      showToast(state.forz.today === false ? "«Puedes gastar hoy» ya no sale en el Inicio." : "«Puedes gastar hoy» vuelve al Inicio.");
+      state.dayOn = !state.dayOn; save(); render();
+      showToast(state.dayOn ? "«Puedes gastar hoy» aparece en el Inicio." : "«Puedes gastar hoy» ya no sale en el Inicio.");
     });
+    window.__fzOn = fzOn;
     $("set-fz-info").addEventListener("click", function () { fzInfo(); });
     $("fz-alert").addEventListener("click", function () { fzTrOpen(); });
     $("fz-box").addEventListener("click", function (e) {
@@ -11301,8 +11332,8 @@ main > .panel.fz-today { background: none !important; padding: 0 !important; mar
     var fzd = null, fzStep = 1;
     function fzOpen() {
       var f = state.forz;
-      fzd = fzOn() ? { pct: f.pct, up: f.up, round: f.round, antojo: f.antojo, cats: (f.cats || []).slice(), mo: 0, until: f.until, dest: f.dest, acc: f.acc }
-        : { pct: 10, up: false, round: true, antojo: false, cats: [], mo: 3, until: fzAddMonths(today(), 3), dest: "orbe", acc: null };
+      fzd = fzOn() ? { pct: f.pct, up: f.up, round: f.round, antojo: f.antojo, cats: (f.cats || []).slice(), mo: f.lock === false ? 3 : 0, until: f.lock === false ? fzAddMonths(today(), 3) : f.until, dest: f.dest, acc: f.acc, lock: f.lock !== false }
+        : { pct: 10, up: false, round: false, antojo: false, cats: [], mo: 3, until: fzAddMonths(today(), 3), dest: "orbe", acc: null, lock: false };
       // Las reglas avanzadas solo se muestran si ya estaban activas
       fzd.adv = !!(fzOn() && (f.up || f.antojo));
       fzStep = 2; $("fz-err").textContent = "";
@@ -11312,9 +11343,11 @@ main > .panel.fz-today { background: none !important; padding: 0 !important; mar
     function fzClose() { $("fz-sheet").hidden = true; }
     function fzSheetRender() {
       var d = fzd, on = fzOn();
-      $("fz-s1").hidden = false; $("fz-s2").hidden = false;
+      $("fz-s1").hidden = false;
       $("fz-up-row").hidden = !d.adv; $("fz-antojo-row").hidden = !d.adv; $("fz-cats").hidden = !d.adv;
-      $("h-fz").textContent = on ? "Reglas de tu Bóveda" : "Modo ahorro forzoso";
+      $("h-fz").textContent = "Ahorro automático";
+      $("fz-lock").setAttribute("aria-checked", d.lock ? "true" : "false");
+      $("fz-lockbox").hidden = !d.lock; $("fz-s2").hidden = !d.lock;
       document.querySelectorAll("[data-fzp]").forEach(function (b) { b.setAttribute("aria-pressed", Number(b.getAttribute("data-fzp")) === d.pct ? "true" : "false"); });
       document.querySelector("#fz-s1 .fz-lbl").textContent = "¿Cuánto de cada ingreso?" + ([5, 10, 15, 20].indexOf(d.pct) < 0 ? " (ahora " + fzPct(d.pct) + "%)" : "");
       $("fz-up").setAttribute("aria-checked", d.up ? "true" : "false");
@@ -11331,11 +11364,12 @@ main > .panel.fz-today { background: none !important; padding: 0 !important; mar
       }).join("");
       $("fz-accw").hidden = false;
       $("fz-bn").hidden = d.dest !== "usdt";
-      $("fz-acc").innerHTML = '<button type="button" class="ap' + (d.dest === "orbe" ? " on" : "") + '" role="radio" aria-checked="' + (d.dest === "orbe") + '" data-fzacc="orbe"><span class="acc-av sym" style="--c:var(--accent)" aria-hidden="true">' + FZ_LOCK + '</span><span class="ap-t"><b>Solo en Orbe</b><small>Sin mover dinero</small></span></button>' + state.accounts.map(function (a) {
+      $("fz-acc").innerHTML = '<button type="button" class="ap' + (d.dest === "orbe" ? " on" : "") + '" role="radio" aria-checked="' + (d.dest === "orbe") + '" data-fzacc="orbe"><span class="acc-av sym" style="--c:var(--accent)" aria-hidden="true">' + FZ_LOCK + '</span><span class="ap-t"><b>Lo marco en Orbe</b><small>Sigue en tu cuenta</small></span></button>' + state.accounts.map(function (a) {
         var sel = d.dest !== "orbe" && String(a.id) === String(d.acc);
         return '<button type="button" class="ap' + (sel ? " on" : "") + '" role="radio" aria-checked="' + sel + '" data-fzacc="' + a.id + '">' + accAvatar(a) + '<span class="ap-t"><b>' + esc(a.nombre) + "</b><small>" + curLabel(a.moneda) + "</small></span></button>";
       }).join("") + '<button type="button" class="ap" data-fzacc="new"><span class="ap-t"><b>+ Nueva cuenta</b><small>Para tu Bóveda</small></span></button>';
-      $("fz-go").textContent = on ? "Guardar cambios" : "Activar";
+      $("fz-go").textContent = on ? "Guardar" : "Activar";
+      $("fz-acc-hint").textContent = d.dest === "orbe" ? "El dinero sigue en tu cuenta de siempre. Orbe solo lo separa en tus números y te lo recuerda." : "Orbe te avisa cuánto pasar a esa cuenta, y ya no sale en el Inicio.";
     }
     $("fz-close").addEventListener("click", fzClose);
     $("fz-sheet").addEventListener("click", function (e) {
@@ -11353,6 +11387,7 @@ main > .panel.fz-today { background: none !important; padding: 0 !important; mar
       }
       else if (e.target.closest("#fz-up")) d.up = !d.up;
       else if (e.target.closest("#fz-round")) d.round = !d.round;
+      else if (e.target.closest("#fz-lock")) d.lock = !d.lock;
       else if (e.target.closest("#fz-antojo")) d.antojo = !d.antojo;
       else if (e.target.closest("#fz-back")) fzStep = 1;
       else if (e.target.closest("#fz-bn")) { fzClose(); openView("bn"); return; }
@@ -11365,7 +11400,9 @@ main > .panel.fz-today { background: none !important; padding: 0 !important; mar
       var d = fzd, f = state.forz, err = $("fz-err"), was = fzOn();
       if (d.antojo && !d.cats.length) { err.textContent = "Elige al menos una categoría de antojo, o apaga esa regla."; return; }
       if (fzStep === 1) { fzStep = 2; err.textContent = ""; fzSheetRender(); return; }
-      if (d.dest !== "orbe" && !accById(d.acc)) { err.textContent = "Elige la cuenta donde vas a guardar tu Bóveda, o crea una nueva."; return; }
+      if (was && fzLocked() && !d.lock) { err.textContent = "Mientras tu Bóveda está bloqueada no puedes quitar el bloqueo. Si lo necesitas, usa Desactivar."; return; }
+      if (!d.lock) { d.dest = "orbe"; d.acc = null; }
+      if (d.lock && d.dest !== "orbe" && !accById(d.acc)) { err.textContent = "Elige dónde guardas tu Bóveda, o «Lo marco en Orbe»."; return; }
       var downAt = was ? f.downAt || "" : "";
       if (was && fzLocked()) {
         var lower = d.pct < f.pct || (f.up && !d.up) || (f.round && !d.round) || (f.antojo && !d.antojo) || (f.antojo && d.antojo && (f.cats || []).some(function (c) { return d.cats.indexOf(c) < 0; }));
@@ -11373,11 +11410,11 @@ main > .panel.fz-today { background: none !important; padding: 0 !important; mar
         if (lower && downAt.slice(0, 7) === today().slice(0, 7)) { var nm = new Date(); nm.setMonth(nm.getMonth() + 1, 1); err.textContent = "Ya bajaste tus reglas este mes. Podrás volver a bajarlas el 1 de " + MESES[nm.getMonth()] + "."; return; }
         if (lower) downAt = today();
       }
-      state.forz = { on: true, pct: d.pct, up: d.up, round: d.round, antojo: d.antojo, cats: d.cats.slice(), until: d.until, dest: d.dest, acc: d.dest === "orbe" ? null : Number(d.acc),
+      state.forz = { on: true, lock: !!d.lock, pct: d.pct, up: d.up, round: d.round, antojo: d.antojo, cats: d.cats.slice(), until: d.until, dest: d.dest, acc: d.dest === "orbe" ? null : Number(d.acc),
         since: was ? f.since : today(), upAt: was ? f.upAt || f.since : today(), downAt: downAt, pend: was ? f.pend || [] : [], ret: was ? f.ret || null : null, snooze: 0 };
       if (state.forz.dest === "orbe") state.forz.pend = [];
       save(); render(); fzClose();
-      showToast(was ? "Cambios guardados." : "Modo ahorro forzoso activado. Tu Bóveda se abre el " + fzLong(d.until) + ".");
+      showToast(was ? "Cambios guardados." : d.lock ? "Ahorro automático activado. Tu Bóveda se abre el " + fzLong(d.until) + "." : "Ahorro automático activado: " + fzPct(d.pct) + "% de cada ingreso.");
     });
 
     /* Hoja «Mueve tu ahorro» */
