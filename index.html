@@ -2744,6 +2744,10 @@ main > .panel.fz-today { background: none !important; padding: 0 !important; mar
 #fz-lockbox[hidden], #fz-s2[hidden] { display: none !important; }
 .fz-lockr { margin-top: 10px; }
 #fz-lockbox { margin-top: 2px; }
+
+/* La Bóveda se quitó: su tarjeta ya no se muestra */
+#fz-box, #fz-alert { display: none !important; }
+.set-row[hidden] { display: none !important; }
 </style>
 </head>
 <body>
@@ -3059,10 +3063,14 @@ main > .panel.fz-today { background: none !important; padding: 0 !important; mar
     <div class="set-h">Ahorro</div>
     <div class="set-group">
       <div class="set-row">
+        <div class="tx"><b>Redondear mis gastos</b><small>Cada gasto se redondea al número entero de arriba y esos centavos van a tu ahorro. Gastas $12,40 → se apartan $0,60.</small></div>
+        <button type="button" class="switch" id="set-rd" role="switch" aria-checked="false" aria-label="Redondear mis gastos"><span></span></button>
+      </div>
+      <div class="set-row" hidden>
         <div class="tx"><b>Ahorro automático</b><small id="set-fz-s">Aparta un % de cada ingreso. Puedes bloquearlo hasta una fecha.</small></div>
         <button type="button" class="switch" id="set-fz" role="switch" aria-checked="false" aria-label="Ahorro automático"><span></span></button>
       </div>
-      <button type="button" class="set-row" id="set-fz-info"><span class="tx"><b>Cómo funciona</b><small>Qué aparta, la Bóveda y cómo sacarlo en una emergencia.</small></span><svg class="chev-r" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 5l7 7-7 7"></path></svg></button>
+      <button type="button" class="set-row" id="set-fz-info" hidden><span class="tx"><b>Cómo funciona</b><small>Qué aparta, la Bóveda y cómo sacarlo en una emergencia.</small></span><svg class="chev-r" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 5l7 7-7 7"></path></svg></button>
     </div>
     <div class="set-h">Inicio</div>
     <div class="set-group">
@@ -4167,14 +4175,17 @@ main > .panel.fz-today { background: none !important; padding: 0 !important; mar
         if (d && (d.disp === "USD" || d.disp === "VES" || d.disp === "EUR")) state.disp = d.disp;
         if (d && d.sav && typeof d.sav.pct === "number") state.sav = { on: !!d.sav.on, pct: d.sav.pct };
         if (d && d.forz && typeof d.forz === "object" && typeof d.forz.pct === "number" && typeof d.forz.until === "string") state.forz = d.forz;
+        if (d && typeof d.roundOn === "boolean") state.roundOn = d.roundOn;
+        else if (d && d.forz && d.forz.on && d.forz.round) state.roundOn = true;
         if (d && typeof d.dayOn === "boolean") state.dayOn = d.dayOn;
         else if (d && d.forz && d.forz.on && d.forz.today !== false) state.dayOn = true;
+        if (state.forz && state.forz.on) state.forz.on = false;
       }
     } catch (e) { window.__orbeCorrupt = true; }
   }
   function save() {
     try {
-      localStorage.setItem(KEY, JSON.stringify({ items: state.items, rate: state.rate, rateDate: state.rateDate, hideSav: state.hideSav, rateManual: state.rateManual, rateAutoAt: state.rateAutoAt, accounts: state.accounts, templates: state.templates, goals: state.goals, payments: state.payments, paySeries: state.paySeries, earn: state.earn, limits: state.limits, rateHist: state.rateHist, rateHistAt: state.rateHistAt, theme: state.theme, pin: state.pin, backupAt: state.backupAt, onb: state.onb, msumSeen: state.msumSeen, country: state.country, ratesOn: !!state.ratesOn, aiHide: !!state.aiHide, cqOff: !!state.cqOff, sgName: state.sgName || "", instSeen: state.instSeen, notif: state.notif, subs: state.subs, limCur: state.limCur, lastAcc: state.lastAcc, bn: state.bn, btcUsd: state.btcUsd, btcAt: state.btcAt, rateEur: state.rateEur, rateEurDate: state.rateEurDate, rateEurManual: state.rateEurManual, rateUsdt: state.rateUsdt, rateUsdtDate: state.rateUsdtDate, rateUsdtManual: state.rateUsdtManual, rateUsdtSrc: state.rateUsdtSrc, collapsed: state.collapsed, disp: state.disp, sav: state.sav, forz: state.forz, dayOn: !!state.dayOn }));
+      localStorage.setItem(KEY, JSON.stringify({ items: state.items, rate: state.rate, rateDate: state.rateDate, hideSav: state.hideSav, rateManual: state.rateManual, rateAutoAt: state.rateAutoAt, accounts: state.accounts, templates: state.templates, goals: state.goals, payments: state.payments, paySeries: state.paySeries, earn: state.earn, limits: state.limits, rateHist: state.rateHist, rateHistAt: state.rateHistAt, theme: state.theme, pin: state.pin, backupAt: state.backupAt, onb: state.onb, msumSeen: state.msumSeen, country: state.country, ratesOn: !!state.ratesOn, aiHide: !!state.aiHide, cqOff: !!state.cqOff, sgName: state.sgName || "", instSeen: state.instSeen, notif: state.notif, subs: state.subs, limCur: state.limCur, lastAcc: state.lastAcc, bn: state.bn, btcUsd: state.btcUsd, btcAt: state.btcAt, rateEur: state.rateEur, rateEurDate: state.rateEurDate, rateEurManual: state.rateEurManual, rateUsdt: state.rateUsdt, rateUsdtDate: state.rateUsdtDate, rateUsdtManual: state.rateUsdtManual, rateUsdtSrc: state.rateUsdtSrc, collapsed: state.collapsed, disp: state.disp, sav: state.sav, forz: state.forz, dayOn: !!state.dayOn, roundOn: !!state.roundOn }));
       window.__saveFail = 0;
     } catch (e) {
       if (!window.__saveFail && window.__toast) window.__toast("No se pudo guardar en este teléfono (puede estar sin espacio). Guarda una copia en Archivos desde Ajustes.");
@@ -10597,7 +10608,6 @@ main > .panel.fz-today { background: none !important; padding: 0 !important; mar
       { tab: 0, sel: "#fab", t: "El botón +", p: "Tócalo para anotar un gasto o ingreso, ahorrar, usar una plantilla o abrir la calculadora.", round: true },
       { tab: 0, sel: "#tabbar", t: "Secciones", p: "Muévete entre Inicio, Ahorro, Pagos e Historial. Desliza de lado para cambiar de pestaña; para cambiar de mes, desliza sobre el mes de arriba.", round: true },
       { tab: 1, sel: '#goals-view [data-panel="sav"]', t: "Tu ahorro", p: "Lo que tienes apartado. Desde aquí ahorras, retiras o cambias de moneda." },
-      { tab: 1, sel: "#fz-box", t: "Ahorro automático", p: "Aparta un % de cada ingreso sin que lo pienses. Si te cuesta no tocarlo, bloquéalo hasta una fecha: tu Bóveda." },
       { tab: 1, sel: "#gv-hero", alt: "#goal-empty", t: "Metas", p: "Crea una meta con «Crear meta» y mira cuánto llevas y cuándo llegas." },
       { tab: 1, sel: "#sg-sec", t: "Metas compartidas", p: "Junten dinero con amigos para un regalo o un viaje. Invitas con un código y confirmas cada aporte." },
       { tab: 2, sel: ".pay-tabs", t: "Pagos y cobros", p: "Por pagar es lo que debes, como el alquiler o el internet. Por cobrar es lo que esperas recibir, como tu sueldo." },
@@ -11087,7 +11097,8 @@ main > .panel.fz-today { background: none !important; padding: 0 !important; mar
     var FZ_H = 3600000, FZ_WAIT = 72 * FZ_H, FZ_WINDOW = 7 * 24 * FZ_H;
     function fzAddMonths(iso, n) { var p = iso.split("-"), d = new Date(Number(p[0]), Number(p[1]) - 1 + n, Number(p[2]), 12); return d.getFullYear() + "-" + pad2(d.getMonth() + 1) + "-" + pad2(d.getDate()); }
     function fzLong(iso) { var p = iso.split("-"); return Number(p[2]) + " de " + MESES[Number(p[1]) - 1] + " de " + p[0]; }
-    function fzOn() { return !!(state.forz && state.forz.on); }
+    // La Bóveda (ahorro bloqueado) se quitó de la app; solo quedan el redondeo y «Puedes gastar hoy»
+    function fzOn() { return false; }
     // El bloqueo es opcional: sin él es el ahorro automático de siempre; con él, la Bóveda
     function fzLockOn() { return fzOn() && state.forz.lock !== false; }
     function fzLocked() { return fzLockOn() && today() < state.forz.until; }
@@ -11096,16 +11107,11 @@ main > .panel.fz-today { background: none !important; padding: 0 !important; mar
     function fzItem(id) { return state.items.filter(function (x) { return x.id === id; })[0] || null; }
     // Redondeo x2 y antojo: cuánto aparta un gasto
     function fzExtra(monto, moneda, cat) {
-      if (!fzOn()) return 0;
-      var f = state.forz, r = 0;
-      if (f.round) {
-        var st = 1;
-        if (moneda === "VES" && state.rate >= 10) st = Math.pow(10, Math.floor(Math.log(state.rate) / Math.LN10));
-        var up = Math.ceil(monto / st - 1e-9) * st - monto;
-        if (up > 0.004) r += up;
-      }
-      if (f.antojo && (f.cats || []).indexOf(cat) >= 0) r += monto * 0.1;
-      return fzR2(r);
+      if (!state.roundOn) return 0;
+      var st = 1;
+      if (moneda === "VES" && state.rate >= 10) st = Math.pow(10, Math.floor(Math.log(state.rate) / Math.LN10));
+      var up = Math.ceil(monto / st - 1e-9) * st - monto;
+      return up > 0.004 ? fzR2(up) : 0;
     }
     function fzDest() { var f = state.forz; return fzLockOn() && f.dest !== "orbe" ? accById(f.acc) : null; }
     // Pendientes de pasar a la Bóveda: solo los ahorros que siguen existiendo
@@ -11138,7 +11144,7 @@ main > .panel.fz-today { background: none !important; padding: 0 !important; mar
     }
     // Lo que se suma al guardar un movimiento nuevo (lo llama «Agregar movimiento»)
     function fzAfterAdd(it, autoSav) {
-      if (!fzOn()) return { msg: "", tr: false };
+      if (!state.roundOn) return { msg: "", tr: false };
       var f = state.forz, dst = fzDest(), msg = "", sv = autoSav;
       if (it.tipo === "gasto") {
         var ex = fzExtra(it.monto, it.moneda, it.cat);
@@ -11256,6 +11262,7 @@ main > .panel.fz-today { background: none !important; padding: 0 !important; mar
       $("set-fz").setAttribute("aria-checked", on ? "true" : "false");
       $("set-fz-s").textContent = on ? fzPct(state.forz.pct) + "% de cada ingreso" + (fzLocked() ? " · Bóveda hasta el " + fzLong(state.forz.until) : fzLockOn() ? " · Bóveda abierta" : " · libre") + "." : "Aparta un % de cada ingreso. Puedes bloquearlo hasta una fecha.";
       $("set-fzt").setAttribute("aria-checked", state.dayOn ? "true" : "false");
+      $("set-rd").setAttribute("aria-checked", state.roundOn ? "true" : "false");
     }
     window.__fzRender = function () { try { fzTick(); fzToday(); fzAlert(); fzBox(); fzSetRows(); } catch (e) {} };
     // Hoja «Cómo funciona»: explica cada regla con ejemplos y permite activar, cambiar o desactivar
@@ -11315,6 +11322,10 @@ main > .panel.fz-today { background: none !important; padding: 0 !important; mar
       showToast(state.dayOn ? "«Puedes gastar hoy» aparece en el Inicio." : "«Puedes gastar hoy» ya no sale en el Inicio.");
     });
     window.__fzOn = fzOn;
+    $("set-rd").addEventListener("click", function () {
+      state.roundOn = !state.roundOn; save(); render();
+      showToast(state.roundOn ? "Listo: cada gasto redondea y aparta los centavos a tu ahorro." : "Ya no se redondean tus gastos.");
+    });
     $("set-fz-info").addEventListener("click", function () { fzInfo(); });
     $("fz-alert").addEventListener("click", function () { fzTrOpen(); });
     $("fz-box").addEventListener("click", function (e) {
@@ -11518,7 +11529,7 @@ main > .panel.fz-today { background: none !important; padding: 0 !important; mar
           cur.nota = $("nota").value.trim();
           state.items.forEach(function (x) {
             if (x.linkId === cur.id && x.fz) {
-              if (fzOn()) x.monto = fzExtra(monto, cur.moneda, cur.cat);
+              if (state.roundOn) x.monto = fzExtra(monto, cur.moneda, cur.cat);
               x.moneda = cur.moneda; x.cuenta = cur.cuenta; x.fecha = fecha;
             } else if (x.linkId === cur.id) {
               var pc = x.pct || parseFloat(x.nota) || state.sav.pct;
