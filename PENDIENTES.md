@@ -96,3 +96,12 @@ Hoy existe «Cuadrar con el banco», que corrige cualquier diferencia a mano. Es
 1. **A (comisión fija):** la más común y la más simple.
 2. **C (resumen):** muestra cuánto se va en el banco.
 3. **B (por operación):** la más útil en Venezuela, pero toca la hoja de movimientos y requiere más pruebas.
+
+## Modo ahorro forzoso (hecho; lo que falta)
+
+- **Hecho:** Bóveda bloqueada hasta una fecha, % obligatorio de cada ingreso con subida automática, redondeo x2 e impuesto antojo, «Puedes gastar hoy» en Inicio, dónde guardar la Bóveda, aviso para mover el ahorro y retiro anticipado con 72 h de espera. Maqueta: https://claude.ai/artifact/Rv9Ss3QSwh9Tmit71G84MW
+- **Falta:**
+  - Pestaña **Asesor** (proyección del mes, retos y preguntas). Por ahora sigue el resumen con IA.
+  - Pedir código o Face ID al liberar un retiro anticipado.
+  - Regla «Sobrante del mes» (apartar el 50 % de lo que no se gastó).
+  - Recordatorio de mover el ahorro con la app cerrada (necesita el servidor de notificaciones).
