@@ -7622,14 +7622,17 @@ main > .panel.fz-today { background: none !important; padding: 0 !important; mar
     });
     /* ---------- Cuadrar con el banco ---------- */
     var cq = { id: null };
+    // El banco muestra todo lo que hay en la cuenta: lo disponible más lo apartado como ahorro en ella
+    function cqSav(a) { return savMap()["a" + a.id] || 0; }
+    function cqTotal(a) { return Math.round((accBalance(a) + cqSav(a)) * 100) / 100; }
     function cqDiff() {
       var a = accById(cq.id), v = amtVal($("cq-monto").value);
       if (!a || !($("cq-monto").value.trim()) || !(v >= 0)) return null;
-      return Math.round((v - accBalance(a)) * 100) / 100;
+      return Math.round((v - cqTotal(a)) * 100) / 100;
     }
     function renderCq() {
       var a = accById(cq.id); if (!a) return;
-      $("cq-acc").innerHTML = accAvatar(a) + '<span class="cq-t"><b>' + esc(a.nombre) + "</b><small>En Orbe: " + money(accBalance(a), a.moneda) + "</small></span>";
+      $("cq-acc").innerHTML = accAvatar(a) + '<span class="cq-t"><b>' + esc(a.nombre) + "</b><small>En Orbe: " + money(cqTotal(a), a.moneda) + (cqSav(a) > 0.004 ? " (incluye " + money(cqSav(a), a.moneda) + " de ahorro)" : "") + "</small></span>";
       $("cq-label").textContent = "Saldo en tu banco (" + curLabel(a.moneda) + ")";
       var d = cqDiff(), p = $("cq-prev");
       if (d === null) { p.innerHTML = ""; $("cq-go").textContent = "Cuadrar"; return; }
@@ -7681,7 +7684,7 @@ main > .panel.fz-today { background: none !important; padding: 0 !important; mar
       var el = $("cq-alert"), a = $("pay-alert") && !$("pay-alert").hidden ? null : cqDue(); if (!el) return;
       el.hidden = !a; $("set-cq").setAttribute("aria-checked", state.cqOff ? "false" : "true");
       if (!a) return;
-      var b0 = accBalance(a);
+      var b0 = cqTotal(a);
       el.innerHTML = accAvatar(a) + '<span class="cq-q">¿' + esc(a.nombre) + " sigue en <b>" + money(b0, a.moneda, Math.abs(b0) >= 1000 ? 0 : 2) + '</b>?</span>' +
         '<button type="button" class="cq-b" data-cq="yes" data-id="' + esc(String(a.id)) + '">Sí</button><button type="button" class="cq-b" data-cq="fix" data-id="' + esc(String(a.id)) + '">Ajustar</button>';
     }
