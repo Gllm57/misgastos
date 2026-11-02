@@ -2772,6 +2772,14 @@ main > .panel.fz-today { background: none !important; padding: 0 !important; mar
 .ai-cloud-top { display: flex !important; flex-direction: column; align-items: center; gap: 8px; }
 .ai-cloud-top > div, .ai-cloud-top p { text-align: center; }
 .ai-cloud ol, .ai-cloud ul { text-align: left; }
+
+/* Transferir: cuentas en fichas a todo el ancho, como en el resto de las hojas */
+.tr-pair { gap: 4px !important; }
+.tr-box { background: none !important; padding: 0 !important; border-radius: 0 !important; }
+.tr-box .mv-acc { margin: 4px -20px 0 !important; padding: 2px 20px 6px !important; }
+.tr-swap { position: relative !important; left: auto !important; top: auto !important; right: auto !important; transform: none !important; margin: 2px auto !important; display: flex !important; }
+.tr-box label { display: block; text-align: center; margin: 0 0 2px !important; padding: 0 !important; }
+.tr-swap { justify-self: center; align-self: center; }
 </style>
 </head>
 <body>
@@ -3914,6 +3922,10 @@ main > .panel.fz-today { background: none !important; padding: 0 !important; mar
           <div class="rate-chips" data-for="tr-rate"></div>
         </div>
         <p class="hint wide" id="tr-rate-hint">Viene con la tasa del BCV; cámbiala si te hicieron el cambio a otra.</p>
+        <div class="wide" id="tr-llega-wrap" style="display:none">
+          <label for="tr-llega" id="tr-llega-l">¿Cuánto te llegó? (opcional)</label>
+          <input type="text" id="tr-llega" inputmode="decimal" autocomplete="off" placeholder="0,00">
+        </div>
       </div>
       <div class="sav-preview" id="tr-prev" aria-live="polite"></div>
       <p class="error" id="tr-err" role="alert"></p>
@@ -4464,7 +4476,7 @@ main > .panel.fz-today { background: none !important; padding: 0 !important; mar
     });
   }
   // Montos tipo cajero: los dígitos entran por la derecha y los 2 decimales ya están puestos (1234 → 12,34)
-  function isMoneyInput(el) { return /(^|-)monto$|^acc-saldo$|^ge-meta$|^cx-amt$/.test(el.id) || el.hasAttribute("data-lim"); }
+  function isMoneyInput(el) { return /(^|-)monto$|^acc-saldo$|^ge-meta$|^sgn-meta$|^tr-llega$|^cx-amt$/.test(el.id) || el.hasAttribute("data-lim"); }
   function fmtCents(v) {
     var parts = String(v).split(/([+\-−×xX*/])/), out = "";
     for (var i = 0; i < parts.length; i++) {
@@ -6374,7 +6386,10 @@ main > .panel.fz-today { background: none !important; padding: 0 !important; mar
     }
     function mvOut(v, src, dst, r) {
       if (src === dst) return Math.round(v * 100) / 100;
-      if (src !== "VES" && dst !== "VES") return Math.round(v * r * 100) / 100;
+      if (src !== "VES" && dst !== "VES") {
+        if (dst === "USDT") return Math.round(v / r * 100) / 100;
+        return Math.round(v * r * 100) / 100;
+      }
       return Math.round((src === "VES" ? v / r : v * r) * 100) / 100;
     }
     function dayRate(c) { return c === "EUR" ? state.rateEur : c === "USDT" ? state.rateUsdt : state.rate; }
@@ -6383,6 +6398,11 @@ main > .panel.fz-today { background: none !important; padding: 0 !important; mar
       if (a === "VES" || b === "VES") {
         var x = a === "VES" ? b : a, unit = x === "USD" ? "$1" : x === "EUR" ? "€1" : "1 USDT";
         return { label: "Tasa (" + LOC.sym + " por " + unit + ")", def: dayRate(x), hint: LOC.sym + " {r} por " + unit, chips: x === "USD" && LOC.id === "VE" };
+      }
+      // Con USDT la tasa es el precio de 1 USDT, como lo muestra Binance (1 USDT = 1,012 $)
+      if (a === "USDT" || b === "USDT") {
+        var f = a === "USDT" ? b : a, pu = conv(1, "USDT", f);
+        return { label: "Precio de 1 USDT (" + curLabel(f) + ")", def: pu, hint: "1 USDT = {r} " + curLabel(f), chips: false };
       }
       var u1 = a === "USD" ? "$1" : a === "EUR" ? "€1" : "1 USDT";
       var d = conv(1, a, b);
@@ -7144,8 +7164,12 @@ main > .panel.fz-today { background: none !important; padding: 0 !important; mar
     var trPair = "";
     function syncTr() {
       var rate = trNeedsRate(), a = trSrc(), b = trDst();
+      if ($("tr-from")._draw) $("tr-from")._draw();
+      if ($("tr-to")._draw) $("tr-to")._draw();
       $("tr-rate-wrap").style.display = rate ? "" : "none";
       $("tr-rate-hint").style.display = rate ? "" : "none";
+      $("tr-llega-wrap").style.display = rate ? "" : "none";
+      if (rate) $("tr-llega-l").textContent = "¿Cuánto te llegó? (" + curLabel(b.moneda) + ", opcional)";
       if (rate) {
         var info = trRateInfo(a.moneda, b.moneda), pair = a.moneda + ">" + b.moneda;
         $("tr-rate-wrap").querySelector("label").textContent = info.label;
@@ -7154,15 +7178,18 @@ main > .panel.fz-today { background: none !important; padding: 0 !important; mar
       }
       renderTrPrev();
     }
+    // Lo que de verdad llegó (con la comisión); si está vacío se usa la tasa
+    function trLlega(a, b) { if (!a || !b || a.moneda === b.moneda) return null; var x = amtVal($("tr-llega").value); return x > 0 ? Math.round(x * 100) / 100 : null; }
     function renderTrPrev() {
       var p = $("tr-prev"), v = amtVal($("tr-monto").value), a = trSrc(), b = trDst();
       if (!a || !b || !(v > 0)) { p.innerHTML = ""; return; }
       var r = parseNum($("tr-rate").value);
       if (a.moneda !== b.moneda && !(r > 0)) { p.innerHTML = '<span class="hint">Escribe la tasa para ver cuánto llega.</span>'; return; }
-      var out = mvOut(v, a.moneda, b.moneda, r);
+      var out = mvOut(v, a.moneda, b.moneda, r), real = trLlega(a, b);
       var html = '<div class="pv"><span>Sale de ' + esc(a.nombre) + '</span><strong>' + money(v, a.moneda) + '</strong></div>' +
-        '<div class="pv"><span>Llega a ' + esc(b.nombre) + '</span><strong>' + money(out, b.moneda) + "</strong></div>";
+        '<div class="pv"><span>Llega a ' + esc(b.nombre) + '</span><strong>' + money(real !== null ? real : out, b.moneda) + "</strong></div>";
       if (a.moneda !== b.moneda) html += '<span class="hint">Tasa usada: ' + trRateInfo(a.moneda, b.moneda).hint.replace("{r}", num(r, r < 10 ? 4 : 2)) + ".</span>";
+      if (real !== null && Math.abs(out - real) > 0.004) html += '<span class="hint">' + (out > real ? "Comisión" : "Diferencia") + ": " + money(Math.abs(out - real), b.moneda) + " (con la tasa serían " + money(out, b.moneda) + ").</span>";
       if (v > accBalance(a) + 0.005) html += '<span class="hint">Ojo: en la app esta cuenta quedará en negativo.</span>';
       p.innerHTML = html;
     }
@@ -7176,13 +7203,16 @@ main > .panel.fz-today { background: none !important; padding: 0 !important; mar
       $("h-tr").textContent = it ? "Editar transferencia" : "Transferir entre cuentas";
       $("tr-go").textContent = it ? "Guardar cambios" : "Transferir";
       $("tr-monto").value = it ? moneyIn(it.desde.monto) : "";
+      $("tr-llega").value = "";
       setTrFecha(it ? it.fecha : today());
       trPair = "";
       $("tr-err").textContent = "";
       if (it) {
         fillTrFrom(); $("tr-from").value = String(it.desde.id); fillTrTo();
         $("tr-to").value = String(it.hacia.id); syncTr();
-        if (it.tasa > 0) { $("tr-rate").value = fmtIn(it.tasa); renderTrPrev(); }
+        if (it.tasa > 0) { $("tr-rate").value = fmtIn(it.tasa); }
+        if (it.desde.moneda !== it.hacia.moneda && Math.abs(mvOut(it.desde.monto, it.desde.moneda, it.hacia.moneda, it.tasa || 0) - it.hacia.monto) > 0.004) $("tr-llega").value = moneyIn(it.hacia.monto);
+        renderTrPrev();
         $("tr-sheet").hidden = false;
         return;
       }
@@ -7207,6 +7237,7 @@ main > .panel.fz-today { background: none !important; padding: 0 !important; mar
     $("tr-to").addEventListener("change", syncTr);
     $("tr-monto").addEventListener("input", renderTrPrev);
     $("tr-rate").addEventListener("input", renderTrPrev);
+    $("tr-llega").addEventListener("input", renderTrPrev);
     $("tr-go").addEventListener("click", function () {
       var err = $("tr-err"), v = amtVal($("tr-monto").value), a = trSrc(), b = trDst();
       if (!a) { err.textContent = "Elige la cuenta de origen."; return; }
@@ -7214,7 +7245,8 @@ main > .panel.fz-today { background: none !important; padding: 0 !important; mar
       if (!(v > 0)) { err.textContent = "Escribe un monto mayor a cero."; $("tr-monto").focus(); return; }
       var r = parseNum($("tr-rate").value), diff = a.moneda !== b.moneda;
       if (diff && !(r > 0)) { err.textContent = "Escribe la tasa a la que te hicieron el cambio."; $("tr-rate").focus(); return; }
-      var out = mvOut(v, a.moneda, b.moneda, r);
+      var out = mvOut(v, a.moneda, b.moneda, r), real = trLlega(a, b);
+      if (real !== null) out = real;
       var trF = $("tr-fecha").value || today();
       var item = { id: trEditId || Date.now(), tipo: "traspaso", fecha: trF, cat: "Transferencia entre cuentas", moneda: a.moneda, monto: v,
         nota: a.nombre + " → " + b.nombre + (diff ? " · tasa " + num(r) : ""),
@@ -8252,6 +8284,8 @@ main > .panel.fz-today { background: none !important; padding: 0 !important; mar
     selChips("mv-from", function (o, a) { return "Ahorrado: " + savTxt(a); });
     selChips("mv-dest", function (o, a) { return "Saldo: " + money(accBalance(a), a.moneda); });
     selChips("earn-from", function (o, a) { return money(accBalance(a), a.moneda); });
+    selChips("tr-from", function (o, a) { return money(accBalance(a), a.moneda); });
+    selChips("tr-to", function (o, a) { return money(accBalance(a), a.moneda); });
 
     /* ---------- Metas ---------- */
     var geId = null, gm = { id: null, mode: "dep" };
