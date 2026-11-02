@@ -6041,9 +6041,12 @@ main > .panel.fz-today { background: none !important; padding: 0 !important; mar
   function renderAccounts() {
     var list = $("acc-list"), m = savMap(), D = state.disp, tot = 0, miss = false, posUsd = 0;
     $("acc-empty").style.display = state.accounts.length ? "none" : "";
-    state.accounts.forEach(function (a) { var u = conv(accBalance(a), a.moneda, "USD"); if (u > 0) posUsd += u; });
+    // La cuenta de la Bóveda (modo ahorro forzoso) no se muestra en el Inicio: se ve en Ahorro
+    var vid = window.__fzAccId ? window.__fzAccId() : null;
+    var accs = state.accounts.filter(function (a) { return vid === null || String(a.id) !== String(vid); });
+    accs.forEach(function (a) { var u = conv(accBalance(a), a.moneda, "USD"); if (u > 0) posUsd += u; });
     var mName = MESES[Number(state.month.slice(5, 7)) - 1];
-    list.innerHTML = state.accounts.map(function (a) {
+    list.innerHTML = accs.map(function (a) {
       var bal = accBalance(a), cv = conv(bal, a.moneda, D);
       if (cv === null) miss = true; else tot += cv;
       var u = conv(bal, a.moneda, "USD"), share = posUsd > 0 && u > 0 ? u / posUsd * 100 : 0;
@@ -6056,7 +6059,7 @@ main > .panel.fz-today { background: none !important; padding: 0 !important; mar
     var sum = $("acc-sum");
     if (state.accounts.length) {
       // Anillos concéntricos como en Metas: uno por cuenta, lleno según su parte del total
-      var segs = state.accounts.map(function (a) { return { a: a, u: Math.max(0, conv(accBalance(a), a.moneda, "USD") || 0) }; })
+      var segs = accs.map(function (a) { return { a: a, u: Math.max(0, conv(accBalance(a), a.moneda, "USD") || 0) }; })
         .filter(function (o) { return o.u > 0; }).sort(function (x, y) { return y.u - x.u; }).slice(0, 4);
       var sh = ringsSvg(segs.map(function (o) { return { p: posUsd > 0 ? o.u / posUsd : 0, c: accColor(o.a) }; }), 128, 11, 4);
       if (sum._h !== sh) { sum.innerHTML = sh; sum._h = sh; }
@@ -11208,6 +11211,7 @@ main > .panel.fz-today { background: none !important; padding: 0 !important; mar
       if (ch) save();
     }
     var fzTodayData = null;
+    window.__fzAccId = function () { var f = state.forz; return f && f.on && f.dest !== "orbe" && f.acc ? f.acc : null; };
     function fzSetRows() {
       if (!$("set-fz")) return;
       var on = fzOn();
