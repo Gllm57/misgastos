@@ -1590,6 +1590,88 @@ main > .bk-nudge { margin: 6px 0 0; }
 .ad-search[hidden] { display: none !important; }
 #fab { -webkit-touch-callout: none; -webkit-user-select: none; user-select: none; }
 .cv-lim .cv-amt { white-space: nowrap; }
+/* ---------- Modo ahorro forzoso ---------- */
+.fz-today { display: grid; gap: 8px; }
+.fz-today[hidden], .fz-alert[hidden] { display: none; }
+.fz-today .l { color: var(--muted); font-size: 0.85rem; font-weight: 600; display: flex; justify-content: space-between; align-items: center; gap: 8px; }
+.fz-today .big { font-size: 2.4rem; font-weight: 700; letter-spacing: -0.02em; font-variant-numeric: tabular-nums; line-height: 1.1; }
+.fz-today .big.neg { color: var(--out); }
+.fz-today .big small { font-size: 0.9rem; font-weight: 500; color: var(--muted); letter-spacing: 0; margin-left: 8px; }
+.fz-bar { height: 8px; border-radius: 4px; background: var(--fill); overflow: hidden; }
+.fz-bar i { display: block; height: 100%; border-radius: 4px; background: var(--in); transition: width 0.6s var(--spring, ease); }
+.fz-bar.over i { background: var(--out); }
+.fz-today .n { font-size: 0.8rem; color: var(--muted); }
+.fz-tag { display: inline-flex; align-items: center; gap: 5px; padding: 4px 10px; border-radius: 999px; font-size: 0.74rem; font-weight: 600; background: color-mix(in srgb, var(--in) 14%, transparent); color: var(--in); }
+.fz-tag svg { width: 12px; height: 12px; }
+.fz-alert { background: color-mix(in srgb, #f0a020 14%, var(--surface)); }
+.fz-alert .pa-dot { background: #f0a020; }
+.fz-box { display: grid; gap: 12px; margin-bottom: 16px; }
+.fz-box:empty { display: none; }
+.fz-head { display: flex; align-items: center; gap: 14px; }
+.fz-lock { width: 48px; height: 48px; border-radius: 16px; flex: none; display: flex; align-items: center; justify-content: center; background: color-mix(in srgb, var(--accent) 16%, transparent); color: var(--accent); }
+.fz-lock svg { width: 24px; height: 24px; }
+.fz-head .l { color: var(--muted); font-size: 0.82rem; font-weight: 600; }
+.fz-head .v { font-size: 1.6rem; font-weight: 700; letter-spacing: -0.02em; font-variant-numeric: tabular-nums; }
+.fz-meta { display: grid; gap: 4px; font-size: 0.84rem; color: var(--muted); }
+.fz-meta b { color: var(--ink); font-weight: 600; }
+.fz-meta .ok { color: var(--in); }
+.fz-meta .warn { color: #9a5a00; }
+html[data-theme="dark"] .fz-meta .warn { color: #f0a020; }
+@media (prefers-color-scheme: dark) { html:not([data-theme="light"]) .fz-meta .warn { color: #f0a020; } }
+.fz-list { list-style: none; margin: 0; padding: 0; border-radius: 16px; background: var(--fill); }
+.fz-list li { display: flex; align-items: center; gap: 10px; padding: 11px 14px; font-size: 0.88rem; }
+.fz-list li + li { border-top: 1px solid var(--line); }
+.fz-list li .tx { flex: 1; min-width: 0; }
+.fz-lead, .fz-rule .hint, #fz-until, #fzt-body .hint { text-align: left; }
+.fz-list li small { display: block; color: var(--muted); font-size: 0.76rem; }
+.fz-list li b { font-variant-numeric: tabular-nums; color: var(--in); }
+.fz-acts { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.fz-acts button { min-height: 44px; }
+.fz-cta p { margin: 0; color: var(--muted); font-size: 0.88rem; line-height: 1.45; }
+.fz-cta h3 { margin: 0; font-size: 1.05rem; letter-spacing: -0.02em; }
+.fz-lead { margin: 0 0 14px; line-height: 1.45; }
+.fz-lbl { font-size: 0.82rem; font-weight: 600; color: var(--muted); margin: 14px 0 8px; }
+.fz-seg { display: flex; width: 100%; }
+.fz-seg button { flex: 1; min-height: 40px; }
+.fz-rules { margin-top: 14px; border-radius: 18px; background: var(--fill); }
+.fz-rule { display: flex; align-items: center; gap: 12px; padding: 12px 14px; }
+.fz-rule + .fz-rule { border-top: 1px solid var(--line); }
+.fz-rule > div { flex: 1; min-width: 0; }
+.fz-rule p { margin: 2px 0 0; }
+.fz-cats { display: flex; flex-wrap: wrap; gap: 6px; padding: 0 14px 12px; }
+.fz-cats:empty { display: none; }
+.fz-cats button { min-height: 36px; padding: 0 12px; border-radius: 999px; border: 1.5px solid transparent; background: var(--surface); color: var(--ink); font: inherit; font-size: 0.82rem; cursor: pointer; transition: border-color 0.3s ease, background 0.3s ease; }
+.fz-cats button[aria-pressed="true"] { border-color: var(--accent); background: color-mix(in srgb, var(--accent) 12%, var(--surface)); font-weight: 600; }
+.fz-back { border: 0; background: none; color: var(--accent); font: inherit; font-weight: 600; padding: 8px 0; min-height: 44px; cursor: pointer; }
+.fz-h3 { margin: 0 0 6px; font-size: 1.15rem; letter-spacing: -0.02em; }
+.fz-opts { display: grid; gap: 8px; }
+.fz-opt { display: flex; gap: 12px; align-items: flex-start; width: 100%; text-align: left; padding: 12px 14px; border-radius: 18px; border: 1.5px solid transparent; background: var(--fill); color: var(--ink); font: inherit; cursor: pointer; transition: border-color 0.3s ease, background 0.3s ease, transform 0.15s ease; }
+.fz-opt:active { transform: scale(0.98); }
+.fz-opt[aria-checked="true"] { border-color: var(--accent); background: color-mix(in srgb, var(--accent) 12%, var(--surface)); }
+.fz-opt .rd { width: 20px; height: 20px; border-radius: 50%; border: 2px solid var(--muted); flex: none; margin-top: 1px; display: flex; align-items: center; justify-content: center; }
+.fz-opt[aria-checked="true"] .rd { border-color: var(--accent); }
+.fz-opt[aria-checked="true"] .rd::after { content: ""; width: 10px; height: 10px; border-radius: 50%; background: var(--accent); }
+.fz-opt .t { display: grid; gap: 3px; }
+.fz-opt b { font-size: 0.92rem; display: flex; flex-wrap: wrap; align-items: center; gap: 6px; }
+.fz-opt small { color: var(--muted); font-size: 0.8rem; line-height: 1.4; }
+.fz-opt .bd { padding: 2px 7px; border-radius: 6px; font-size: 0.66rem; font-weight: 700; letter-spacing: 0.02em; background: color-mix(in srgb, var(--in) 16%, transparent); color: var(--in); }
+.fz-opt .bd.am { background: color-mix(in srgb, #f0a020 16%, transparent); color: #9a5a00; }
+html[data-theme="dark"] .fz-opt .bd.am { color: #f0a020; }
+@media (prefers-color-scheme: dark) { html:not([data-theme="light"]) .fz-opt .bd.am { color: #f0a020; } }
+.fz-link { border: 0; background: none; color: var(--accent); font: inherit; font-size: 0.86rem; font-weight: 600; padding: 10px 0 0; min-height: 44px; cursor: pointer; }
+.fz-link[hidden] { display: none; }
+.fz-tips { margin-top: 12px; padding: 12px 14px; border-radius: 16px; border: 1px solid var(--line); display: grid; gap: 4px; font-size: 0.8rem; color: var(--muted); line-height: 1.4; }
+.fz-tips b { color: var(--ink); }
+.fz-foot2 { display: grid; gap: 8px; }
+.fz-big { text-align: center; padding: 6px 0 14px; }
+.fz-big .v { font-size: 2.2rem; font-weight: 700; letter-spacing: -0.02em; font-variant-numeric: tabular-nums; }
+.fz-big .s { color: var(--muted); font-size: 0.84rem; }
+.fz-card { border-radius: 18px; padding: 14px; background: color-mix(in srgb, var(--accent) 10%, var(--surface)); display: grid; gap: 8px; font-size: 0.88rem; line-height: 1.45; margin-bottom: 12px; }
+.fz-card.warn { background: color-mix(in srgb, #f0a020 12%, var(--surface)); }
+.fz-steps { list-style: none; margin: 12px 0 0; padding: 0; display: grid; gap: 10px; font-size: 0.85rem; color: var(--muted); }
+.fz-steps li { display: flex; gap: 10px; align-items: center; }
+.fz-steps li i { font-style: normal; width: 26px; height: 26px; flex: none; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.78rem; font-weight: 700; background: color-mix(in srgb, var(--accent) 15%, transparent); color: var(--accent); }
+.f-sav-lock .switch { opacity: 0.55; }
 #hero-share .rleg-tot b, #hero-share .rleg-tot b .sv-val { font-size: 1.6rem !important; }
 .goals-view .goal-list .goal .gbar { display: flex !important; height: 5px !important; margin: 8px 0 4px !important; }
 .goals-view .goal-list .goal .goal-eta { display: block !important; font-size: 0.76rem !important; color: var(--muted) !important; margin: 0 !important; }
@@ -2650,6 +2732,8 @@ html.sheet-open .toast.show { transform: translateY(0); }
   <button type="button" class="pay-alert" id="pay-alert" hidden></button>
   <div class="cq-alert" id="cq-alert" hidden></div>
   <div class="msum" id="msum" hidden></div>
+  <button type="button" class="pay-alert slim fz-alert" id="fz-alert" hidden></button>
+  <section class="panel fz-today" id="fz-today" aria-label="Puedes gastar hoy" hidden></section>
   <section class="panel bal-hero" aria-labelledby="h-bal">
     <div class="balance-head">
       <div>
@@ -2731,6 +2815,7 @@ html.sheet-open .toast.show { transform: translateY(0); }
     </div>
     <h1 class="gv-title">Ahorro</h1>
     <p class="gv-sub" id="goals-sub"></p>
+    <section class="panel fz-box" id="fz-box" aria-label="Bóveda"></section>
     <section class="panel gv-sav" data-panel="sav" aria-labelledby="h-sav">
       <div class="sav-hero" id="sav-hero"></div>
       <div id="b-sav">
@@ -3562,6 +3647,64 @@ html.sheet-open .toast.show { transform: translateY(0); }
       <div class="sheet-foot"><button type="button" class="primary" id="sv-go">Agregar ahorro</button></div>
     </section>
   </div>
+  <div class="sheet-backdrop" id="fz-sheet" hidden>
+    <section class="panel sheet" role="dialog" aria-modal="true" aria-labelledby="h-fz">
+      <div class="sheet-head"><h2 id="h-fz">Modo ahorro forzoso</h2><button type="button" class="del" id="fz-close" aria-label="Cerrar">✕</button></div>
+      <div id="fz-s1">
+        <p class="hint fz-lead">Orbe aparta dinero solo y tú no puedes bajarlo ni sacarlo cuando te dé la gana.</p>
+        <div class="fz-lbl">De cada ingreso aparto</div>
+        <div class="seg fz-seg" role="group" aria-label="Porcentaje de cada ingreso">
+          <button type="button" data-fzp="5" aria-pressed="false">5%</button>
+          <button type="button" data-fzp="10" aria-pressed="false">10%</button>
+          <button type="button" data-fzp="15" aria-pressed="false">15%</button>
+          <button type="button" data-fzp="20" aria-pressed="false">20%</button>
+        </div>
+        <div class="fz-rules">
+          <div class="fz-rule"><div><strong>Subida automática</strong><p class="hint">+1% cada 3 meses, hasta 20%.</p></div><button type="button" class="switch" id="fz-up" role="switch" aria-checked="false" aria-label="Subida automática"><span></span></button></div>
+          <div class="fz-rule"><div><strong>Redondeo x2</strong><p class="hint">Cada gasto se redondea y la diferencia se aparta doble.</p></div><button type="button" class="switch" id="fz-round" role="switch" aria-checked="false" aria-label="Redondeo x2"><span></span></button></div>
+          <div class="fz-rule"><div><strong>Impuesto antojo 10%</strong><p class="hint">En las categorías que elijas.</p></div><button type="button" class="switch" id="fz-antojo" role="switch" aria-checked="false" aria-label="Impuesto antojo"><span></span></button></div>
+          <div class="fz-cats" id="fz-cats"></div>
+        </div>
+        <div class="fz-lbl">Bloqueado hasta</div>
+        <div class="seg fz-seg" role="group" aria-label="Tiempo bloqueado">
+          <button type="button" data-fzm="1" aria-pressed="false">1 mes</button>
+          <button type="button" data-fzm="3" aria-pressed="false">3 meses</button>
+          <button type="button" data-fzm="6" aria-pressed="false">6 meses</button>
+          <button type="button" data-fzm="12" aria-pressed="false">1 año</button>
+        </div>
+        <p class="hint" id="fz-until"></p>
+      </div>
+      <div id="fz-s2" hidden>
+        <button type="button" class="fz-back" id="fz-back">‹ Volver</button>
+        <h3 class="fz-h3">¿Dónde vas a guardar tu Bóveda?</h3>
+        <p class="hint fz-lead">Orbe lleva la cuenta, pero el ahorro funciona de verdad cuando el dinero sale de la cuenta que usas a diario.</p>
+        <div class="fz-opts" id="fz-opts" role="radiogroup" aria-label="Dónde guardar la Bóveda"></div>
+        <div id="fz-accw">
+          <div class="fz-lbl" id="fz-acc-l">¿Cuál cuenta?</div>
+          <div class="mv-acc" id="fz-acc" role="radiogroup" aria-labelledby="fz-acc-l"></div>
+          <button type="button" class="fz-link" id="fz-bn" hidden>Ver la guía de Binance Earn</button>
+          <div class="fz-tips"><b>Para que funcione mejor</b><span>Pide la cuenta sin tarjeta de débito.</span><span>Quita la app de ese banco de tu pantalla de inicio.</span><span>No la uses para pagar nada del día a día.</span></div>
+        </div>
+      </div>
+      <p class="error" id="fz-err" role="alert"></p>
+      <div class="sheet-foot"><button type="button" class="primary" id="fz-go">Siguiente: dónde guardarlo</button></div>
+    </section>
+  </div>
+  <div class="sheet-backdrop" id="fzt-sheet" hidden>
+    <section class="panel sheet" role="dialog" aria-modal="true" aria-labelledby="h-fzt">
+      <div class="sheet-head"><h2 id="h-fzt">Mueve tu ahorro</h2><button type="button" class="del" id="fzt-close" aria-label="Cerrar">✕</button></div>
+      <div id="fzt-body"></div>
+      <div class="sheet-foot fz-foot2"><button type="button" class="primary" id="fzt-done">Ya lo transferí</button><button type="button" class="secondary" id="fzt-later">Recordar en 2 horas</button></div>
+    </section>
+  </div>
+  <div class="sheet-backdrop" id="fzr-sheet" hidden>
+    <section class="panel sheet" role="dialog" aria-modal="true" aria-labelledby="h-fzr">
+      <div class="sheet-head"><h2 id="h-fzr">Retiro anticipado</h2><button type="button" class="del" id="fzr-close" aria-label="Cerrar">✕</button></div>
+      <div id="fzr-body"></div>
+      <p class="error" id="fzr-err" role="alert"></p>
+      <div class="sheet-foot fz-foot2" id="fzr-foot"></div>
+    </section>
+  </div>
   <div class="sheet-backdrop" id="tpl-sheet" hidden>
     <section class="panel sheet" role="dialog" aria-modal="true" aria-labelledby="h-tpl">
       <div class="sheet-head"><h2 id="h-tpl">Plantillas</h2><button type="button" class="del" id="tpl-close" aria-label="Cerrar">✕</button></div>
@@ -3936,12 +4079,13 @@ html.sheet-open .toast.show { transform: translateY(0); }
         if (d && d.collapsed && typeof d.collapsed === "object") state.collapsed = d.collapsed;
         if (d && (d.disp === "USD" || d.disp === "VES" || d.disp === "EUR")) state.disp = d.disp;
         if (d && d.sav && typeof d.sav.pct === "number") state.sav = { on: !!d.sav.on, pct: d.sav.pct };
+        if (d && d.forz && typeof d.forz === "object" && typeof d.forz.pct === "number" && typeof d.forz.until === "string") state.forz = d.forz;
       }
     } catch (e) { window.__orbeCorrupt = true; }
   }
   function save() {
     try {
-      localStorage.setItem(KEY, JSON.stringify({ items: state.items, rate: state.rate, rateDate: state.rateDate, hideSav: state.hideSav, rateManual: state.rateManual, rateAutoAt: state.rateAutoAt, accounts: state.accounts, templates: state.templates, goals: state.goals, payments: state.payments, paySeries: state.paySeries, earn: state.earn, limits: state.limits, rateHist: state.rateHist, rateHistAt: state.rateHistAt, theme: state.theme, pin: state.pin, backupAt: state.backupAt, onb: state.onb, msumSeen: state.msumSeen, country: state.country, ratesOn: !!state.ratesOn, aiHide: !!state.aiHide, cqOff: !!state.cqOff, sgName: state.sgName || "", instSeen: state.instSeen, notif: state.notif, subs: state.subs, limCur: state.limCur, lastAcc: state.lastAcc, bn: state.bn, btcUsd: state.btcUsd, btcAt: state.btcAt, rateEur: state.rateEur, rateEurDate: state.rateEurDate, rateEurManual: state.rateEurManual, rateUsdt: state.rateUsdt, rateUsdtDate: state.rateUsdtDate, rateUsdtManual: state.rateUsdtManual, rateUsdtSrc: state.rateUsdtSrc, collapsed: state.collapsed, disp: state.disp, sav: state.sav }));
+      localStorage.setItem(KEY, JSON.stringify({ items: state.items, rate: state.rate, rateDate: state.rateDate, hideSav: state.hideSav, rateManual: state.rateManual, rateAutoAt: state.rateAutoAt, accounts: state.accounts, templates: state.templates, goals: state.goals, payments: state.payments, paySeries: state.paySeries, earn: state.earn, limits: state.limits, rateHist: state.rateHist, rateHistAt: state.rateHistAt, theme: state.theme, pin: state.pin, backupAt: state.backupAt, onb: state.onb, msumSeen: state.msumSeen, country: state.country, ratesOn: !!state.ratesOn, aiHide: !!state.aiHide, cqOff: !!state.cqOff, sgName: state.sgName || "", instSeen: state.instSeen, notif: state.notif, subs: state.subs, limCur: state.limCur, lastAcc: state.lastAcc, bn: state.bn, btcUsd: state.btcUsd, btcAt: state.btcAt, rateEur: state.rateEur, rateEurDate: state.rateEurDate, rateEurManual: state.rateEurManual, rateUsdt: state.rateUsdt, rateUsdtDate: state.rateUsdtDate, rateUsdtManual: state.rateUsdtManual, rateUsdtSrc: state.rateUsdtSrc, collapsed: state.collapsed, disp: state.disp, sav: state.sav, forz: state.forz }));
       window.__saveFail = 0;
     } catch (e) {
       if (!window.__saveFail && window.__toast) window.__toast("No se pudo guardar en este teléfono (puede estar sin espacio). Guarda una copia en Archivos desde Ajustes.");
@@ -4271,6 +4415,7 @@ html.sheet-open .toast.show { transform: translateY(0); }
   });
   // Borra un movimiento y ofrece «Deshacer» durante unos segundos
   function delMovUndo(did, after) {
+    if (window.__fzDelBlock && window.__fzDelBlock(did)) return;
     var keepI = state.items.filter(function (it) { return it.id === did || it.linkId === did; });
     var keepE = (state.earn || []).filter(function (x) { return x.ahorroId === did || x.id === did; });
     delMov(did); save(); render(); if (after) after();
@@ -5439,6 +5584,7 @@ html.sheet-open .toast.show { transform: translateY(0); }
     renderAccounts();
     renderGoals();
     renderPay();
+    if (window.__fzRender) window.__fzRender();
     renderBnEntry();
     if (document.body.classList.contains("view-bn")) renderBn();
     var sdot = $("set-dot");
@@ -6181,7 +6327,7 @@ html.sheet-open .toast.show { transform: translateY(0); }
 
     }
     function closeMv() { $("mv-sheet").hidden = true; $("mv-retirar").focus(); }
-    $("mv-retirar").addEventListener("click", function () { openMv("retirar"); });
+    $("mv-retirar").addEventListener("click", function () { if (window.__fzRetBlock && window.__fzRetBlock()) return; openMv("retirar"); });
     $("sav-add").addEventListener("click", function () { openSv(); });
     $("mv-convertir").addEventListener("click", function () { openMv("convertir"); });
     $("mv-close").addEventListener("click", closeMv);
@@ -6205,6 +6351,7 @@ html.sheet-open .toast.show { transform: translateY(0); }
       if (!(v > 0)) { err.textContent = "Escribe un monto mayor a cero."; $("mv-monto").focus(); return; }
       if (v > (m[src.key] || 0) + 0.005) { err.textContent = "No puedes mover más de lo que tienes ahorrado en esa cuenta."; return; }
       if (!d) { err.textContent = "Elige la cuenta que recibirá el dinero. Si no tienes una en esa divisa, créala primero."; return; }
+      if (mv.mode === "retirar" && window.__fzRetCheck) { var fze = window.__fzRetCheck(v, src.cur); if (fze) { err.textContent = fze; return; } }
       var item;
       if (mv.mode === "retirar") {
         item = { id: Date.now(), tipo: "traspaso", fecha: today(), cat: "Retiro de ahorro", nota: src.name + " → " + d.nombre, moneda: src.cur, monto: v,
@@ -6226,6 +6373,7 @@ html.sheet-open .toast.show { transform: translateY(0); }
       save(); render();
       closeMv();
       showToast(wasRetiro ? "Retiro listo." : "Conversión lista.");
+      if (wasRetiro && window.__fzRetUsed) window.__fzRetUsed();
     });
     var toastTimer = null;
     window.__toast = function (t) { showToast(t); };
@@ -6274,11 +6422,15 @@ html.sheet-open .toast.show { transform: translateY(0); }
     function renderFormSav() {
       var show = state.type === "ingreso" && !state.editId;
       $("f-sav").style.display = show ? "" : "none";
-      var f = state.fsav;
+      var f = state.fsav, fzF = show && fzOn();
+      if (fzF) { f.on = true; if (!(f.pct >= state.forz.pct)) f.pct = state.forz.pct; }
+      $("f-sav").classList.toggle("f-sav-lock", fzF);
       $("f-sav-toggle").setAttribute("aria-checked", f.on ? "true" : "false");
       $("f-sav-body").style.display = f.on ? "" : "none";
       var amt = amtVal($("monto").value);
-      $("f-sav-hint").textContent = f.on
+      $("f-sav-hint").textContent = fzF
+        ? "Obligatorio (ahorro forzoso): " + String(f.pct).replace(".", ",") + "% a tu Bóveda. Puedes subirlo, no bajarlo de " + String(state.forz.pct).replace(".", ",") + "%."
+        : f.on
         ? "Se aparta el " + String(f.pct).replace(".", ",") + "% de este ingreso."
         : "Este ingreso no genera ahorro.";
       var curr = $("moneda").value;
@@ -6573,13 +6725,22 @@ html.sheet-open .toast.show { transform: translateY(0); }
       else if (a === "bn") openView("bn");
       else if (a === "plantilla") openTpl();
     });
-    $("f-sav-toggle").addEventListener("click", function () { state.fsav.on = !state.fsav.on; renderFormSav(); });
+    function fzFormMin() { return state.type === "ingreso" && !state.editId && fzOn() ? state.forz.pct : 0; }
+    $("f-sav-toggle").addEventListener("click", function () {
+      if (fzFormMin()) { showToast("Con el modo ahorro forzoso este ahorro es obligatorio."); return; }
+      state.fsav.on = !state.fsav.on; renderFormSav();
+    });
     $("f-pct").addEventListener("input", function (e) {
       var v = parseNum(e.target.value);
-      if (v >= 1 && v <= 90) { state.fsav.pct = v; renderFormSav(); }
+      if (v >= 1 && v <= 90 && v >= fzFormMin()) { state.fsav.pct = v; renderFormSav(); }
     });
+    $("f-pct").addEventListener("blur", function () { renderFormSav(); });
     document.querySelectorAll("[data-fpct]").forEach(function (b) {
-      b.addEventListener("click", function () { state.fsav.pct = Number(b.getAttribute("data-fpct")); renderFormSav(); });
+      b.addEventListener("click", function () {
+        var v = Number(b.getAttribute("data-fpct"));
+        if (v < fzFormMin()) { showToast("Tu ahorro forzoso es de " + String(state.forz.pct).replace(".", ",") + "% como mínimo."); return; }
+        state.fsav.pct = v; renderFormSav();
+      });
     });
     $("monto").addEventListener("input", renderFormSav);
     $("moneda").addEventListener("change", renderFormSav);
@@ -6648,6 +6809,7 @@ html.sheet-open .toast.show { transform: translateY(0); }
         var na = { id: Date.now(), nombre: nombre, moneda: $("acc-moneda").value, saldo: isNaN(nuevo) ? 0 : Math.round(nuevo * 100) / 100, creado: today(), icon: accLook.icon || "", color: accLook.color || "" };
         state.accounts.push(na);
         state.lastAcc = na.id;
+        if (window.__fzAccNew) setTimeout(function () { window.__fzAccNew(na.id); }, 0);
       }
       save(); render();
       closeAccSheet();
@@ -8613,6 +8775,7 @@ html.sheet-open .toast.show { transform: translateY(0); }
     function sxReset(r) { r.style.setProperty("--sx", "0px"); setTimeout(function () { if (!r.classList.contains("open") && !r.classList.contains("drag")) r.style.removeProperty("--sx"); }, 360); }
     function closeSwipes(except) { document.querySelectorAll("#hist-list .hrow.open").forEach(function (r) { if (r !== except) { r.classList.remove("open"); sxReset(r); } }); }
     function quickDel(id, row) {
+      if (window.__fzDelBlock && window.__fzDelBlock(id)) { if (row) { row.classList.remove("open"); sxReset(row); } return; }
       var keepI = state.items.filter(function (it) { return it.id === id || it.linkId === id; });
       var keepE = (state.earn || []).filter(function (x) { return x.ahorroId === id || x.id === id; });
       function go() {
@@ -10796,6 +10959,341 @@ html.sheet-open .toast.show { transform: translateY(0); }
       cal.y = Number(q[0]); cal.m = Number(q[1]) - 1; cal.mode = "day"; cal.nav = false;
       drawCal();
     });
+    /* ---------- Modo ahorro forzoso: aparta solo, bloquea hasta una fecha y recuerda mover el dinero ---------- */
+    var FZ_LOCK = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="11" width="16" height="10" rx="2"></rect><path d="M8 11V7a4 4 0 0 1 8 0v4"></path></svg>';
+    var FZ_CHEV = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6l6 6-6 6"></path></svg>';
+    var FZ_ANTOJO = ["Restaurantes", "Ocio", "Ropa", "Tecnología"];
+    var FZ_NOCAT = ["Deudas", "Impuestos", "Comisiones bancarias", "Metas compartidas", "Vivienda", "Servicios", "Salud", "Educación"];
+    var FZ_DEST = [
+      { k: "banco", n: "Cuenta en otro banco", bd: "Más efectivo", d: "Una cuenta aparte solo para ahorrar. Ver el dinero lejos ayuda a no tocarlo." },
+      { k: "usdt", n: "USDT en Binance Earn", bd: "Protege de la inflación", d: "Guarda en dólares digitales y genera algo de interés." },
+      { k: "efectivo", n: "Efectivo en dólares aparte", d: "Un sobre o una caja que no sea tu cartera." },
+      { k: "orbe", n: "Por ahora, solo en Orbe", bd: "Menos efectivo", am: true, d: "El dinero sigue en tu cuenta de siempre. Es más fácil gastarlo sin darte cuenta." }
+    ];
+    var FZ_H = 3600000, FZ_WAIT = 72 * FZ_H, FZ_WINDOW = 7 * 24 * FZ_H;
+    function fzAddMonths(iso, n) { var p = iso.split("-"), d = new Date(Number(p[0]), Number(p[1]) - 1 + n, Number(p[2]), 12); return d.getFullYear() + "-" + pad2(d.getMonth() + 1) + "-" + pad2(d.getDate()); }
+    function fzLong(iso) { var p = iso.split("-"); return Number(p[2]) + " de " + MESES[Number(p[1]) - 1] + " de " + p[0]; }
+    function fzOn() { return !!(state.forz && state.forz.on); }
+    function fzLocked() { return fzOn() && today() < state.forz.until; }
+    function fzPct(n) { return String(n).replace(".", ","); }
+    function fzR2(n) { return Math.round(n * 100) / 100; }
+    function fzItem(id) { return state.items.filter(function (x) { return x.id === id; })[0] || null; }
+    // Redondeo x2 y antojo: cuánto aparta un gasto
+    function fzExtra(monto, moneda, cat) {
+      if (!fzOn()) return 0;
+      var f = state.forz, r = 0;
+      if (f.round) {
+        var st = 1;
+        if (moneda === "VES" && state.rate >= 10) st = Math.pow(10, Math.floor(Math.log(state.rate) / Math.LN10));
+        var up = Math.ceil(monto / st - 1e-9) * st - monto;
+        if (up > 0.004) r += up * 2;
+      }
+      if (f.antojo && (f.cats || []).indexOf(cat) >= 0) r += monto * 0.1;
+      return fzR2(r);
+    }
+    function fzDest() { var f = state.forz; return fzOn() && f.dest !== "orbe" ? accById(f.acc) : null; }
+    // Pendientes de pasar a la Bóveda: solo los ahorros que siguen existiendo
+    function fzPend() {
+      var f = state.forz; if (!f || !Array.isArray(f.pend)) return [];
+      var out = [];
+      f.pend = f.pend.filter(function (id) { var it = fzItem(id); if (it) out.push(it); return !!it; });
+      return out;
+    }
+    // Los ingresos se avisan enseguida; el redondeo y el antojo se juntan y se avisan los domingos
+    function fzDue() {
+      var t = today(), sun = new Date().getDay() === 0, old = addDaysIso(t, -6);
+      return fzPend().filter(function (it) { return it.cat !== "Ahorro forzoso" || sun || it.fecha <= old; });
+    }
+    function fzSum(list, cur) { var s = 0, ok = true; list.forEach(function (it) { var v = conv(it.monto, it.moneda, cur); if (v === null) ok = false; else s += v; }); return ok || s ? fzR2(s) : null; }
+    function fzGroups(list) {
+      var g = {}, out = [];
+      list.forEach(function (it) { var k = it.cuenta + "|" + it.moneda; if (!g[k]) { g[k] = { cuenta: it.cuenta, moneda: it.moneda, sum: 0, ids: [] }; out.push(g[k]); } g[k].sum = fzR2(g[k].sum + it.monto); g[k].ids.push(it.id); });
+      return out;
+    }
+    function fzBs(v, D) {
+      if (D === "VES" || LOC.none || !(state.rate > 0)) return "";
+      var b = conv(v, D, "VES");
+      return b === null ? "" : "≈ " + money(b, "VES") + " · tasa " + num(state.rate);
+    }
+    function fzVault(D) {
+      var m = savMap(), tot = 0;
+      state.accounts.forEach(function (a) { var c = conv(m["a" + a.id] || 0, a.moneda, D); if (c !== null) tot += c; });
+      return fzR2(tot);
+    }
+    // Lo que se suma al guardar un movimiento nuevo (lo llama «Agregar movimiento»)
+    function fzAfterAdd(it, autoSav) {
+      if (!fzOn()) return { msg: "", tr: false };
+      var f = state.forz, dst = fzDest(), msg = "", sv = autoSav;
+      if (it.tipo === "gasto") {
+        var ex = fzExtra(it.monto, it.moneda, it.cat);
+        if (ex > 0) {
+          sv = { id: it.id + 1, tipo: "ahorro", auto: true, fz: true, linkId: it.id, monto: ex, moneda: it.moneda, cuenta: it.cuenta, cat: "Ahorro forzoso", fecha: it.fecha, nota: "Redondeo y antojo" };
+          state.items.push(sv);
+          msg = state.hideSav ? "Se apartó una parte a tu Bóveda." : "Se apartaron " + money(ex, it.moneda) + " a tu Bóveda.";
+        } else sv = null;
+      }
+      if (it.tipo === "ingreso" && sv) msg = state.hideSav ? "Se apartó una parte a tu Bóveda." : "Se apartaron " + money(sv.monto, sv.moneda) + " a tu Bóveda.";
+      if (sv && dst && sv.cuenta !== dst.id) { f.pend = (f.pend || []).concat([sv.id]); f.snooze = 0; }
+      return { msg: msg, tr: !!(sv && dst && it.tipo === "ingreso" && sv.cuenta !== dst.id) };
+    }
+    window.__fzDelBlock = function (id) {
+      if (!fzLocked()) return false;
+      var it = fzItem(id); if (!it) return false;
+      if (it.tipo === "ahorro" && (it.auto || it.fz)) { showToast("Este ahorro está en tu Bóveda hasta el " + fzLong(state.forz.until) + "."); return true; }
+      var ln = state.items.filter(function (x) { return x.linkId === id && x.tipo === "ahorro"; })[0];
+      if (it.tipo === "ingreso" && ln && Date.now() - ln.id > 864e5) { showToast("Este ingreso ya apartó dinero a tu Bóveda. Solo se puede borrar el mismo día que lo registras."); return true; }
+      return false;
+    };
+    function fzRetReady() { var r = state.forz && state.forz.ret; return !!(r && Date.now() - r.at >= FZ_WAIT); }
+    window.__fzRetBlock = function () { if (!fzLocked() || fzRetReady()) return false; fzRetOpen(); return true; };
+    window.__fzRetCheck = function (v, cur) {
+      if (!fzLocked()) return "";
+      var r = state.forz.ret;
+      if (!fzRetReady()) return "Tu Bóveda está bloqueada hasta el " + fzLong(state.forz.until) + ". Pide un retiro anticipado desde la tarjeta de la Bóveda.";
+      var lim = conv(r.monto, r.moneda, cur);
+      if (lim !== null && v > lim + 0.005) return "Tu retiro aprobado es de " + money(r.monto, r.moneda) + ".";
+      return "";
+    };
+    window.__fzRetUsed = function () { if (fzLocked() && state.forz.ret) { state.forz.ret = null; save(); render(); } };
+
+    /* Inicio: «Puedes gastar hoy» y aviso de mover el ahorro */
+    function fzToday() {
+      var el = $("fz-today"); if (!el) return;
+      var D = state.disp, t = today();
+      if (!fzOn() || state.month !== t.slice(0, 7) || !state.accounts.length) { el.hidden = true; return; }
+      var avail = 0, spent = 0, pay = 0, dt = new Date(), dim = new Date(dt.getFullYear(), dt.getMonth() + 1, 0).getDate(), left = dim - dt.getDate() + 1;
+      var end = t.slice(0, 7) + "-" + pad2(dim);
+      state.accounts.forEach(function (a) { var v = conv(accBalance(a), a.moneda, D); if (v !== null) avail += v; });
+      state.items.forEach(function (it) { if (it.tipo === "gasto" && it.fecha === t) { var v = conv(it.monto, it.moneda, D); if (v !== null) spent += v; } });
+      state.payments.forEach(function (p) { if (!p.paid && !p.cobro && p.fecha <= end) { var v = conv(p.monto, p.moneda, D); if (v !== null) pay += v; } });
+      var daily = Math.max(0, (avail + spent - pay) / left), rest = fzR2(daily - spent), pc = daily > 0 ? Math.min(100, spent / daily * 100) : (spent > 0 ? 100 : 0);
+      var bs = fzBs(rest, D);
+      el.hidden = false;
+      el.innerHTML = '<div class="l"><span>Puedes gastar hoy</span><span class="fz-tag">' + FZ_LOCK + "Ahorro forzoso</span></div>" +
+        '<div class="big' + (rest < 0 ? " neg" : "") + '">' + (rest < 0 ? "−" : "") + moneyH(Math.abs(rest), D) + "</div>" +
+        (bs ? '<div class="n">' + bs + "</div>" : "") +
+        '<div class="fz-bar' + (rest < 0 ? " over" : "") + '"><i style="width:' + pc.toFixed(1) + '%"></i></div>' +
+        '<div class="n">Gastado hoy ' + money(spent, D) + " de " + money(daily, D) + " · " + (left === 1 ? "último día del mes" : "quedan " + left + " días del mes") + (pay > 0.004 ? " · ya descuenta " + money(pay, D) + " de pagos pendientes" : "") + ". Lo que no gastes hoy pasa a mañana.</div>";
+    }
+    function fzAlert() {
+      var el = $("fz-alert"); if (!el) return;
+      var dst = fzDest(), due = dst ? fzDue() : [], f = state.forz;
+      if (!due.length || (f.snooze || 0) > Date.now()) { el.hidden = true; return; }
+      var tot = fzSum(due, dst.moneda);
+      el.hidden = false;
+      el.innerHTML = '<span class="pa-dot" aria-hidden="true"></span><span class="pa-t"><b>Mueve ' + mask(money(tot || 0, dst.moneda)) + "</b> a tu Bóveda · " + esc(dst.nombre) + "</span>" + FZ_CHEV;
+    }
+
+    /* Pestaña Ahorro: la Bóveda */
+    function fzBox() {
+      var el = $("fz-box"); if (!el) return;
+      var D = state.disp, f = state.forz;
+      if (!fzOn()) {
+        el.innerHTML = '<div class="fz-head"><span class="fz-lock">' + FZ_LOCK + '</span><div class="fz-cta"><h3>Modo ahorro forzoso</h3><p>Aparta un % de cada ingreso, redondea tus gastos y bloquea el ahorro hasta una fecha.</p></div></div>' +
+          '<button type="button" class="primary" data-fz="on">Activar</button>';
+        return;
+      }
+      var lk = fzLocked(), m = today().slice(0, 7), inc = 0, ex = 0, nx = 0, dst = fzDest(), pend = fzPend(), pv = fzSum(pend, D);
+      state.items.forEach(function (it) {
+        if (it.tipo !== "ahorro" || it.fecha.slice(0, 7) !== m) return;
+        var v = conv(it.monto, it.moneda, D); if (v === null) return;
+        if (it.fz) { ex += v; nx++; } else if (it.auto && it.linkId) inc += v;
+      });
+      var meta = [];
+      meta.push(lk ? "Se abre el <b>" + fzLong(f.until) + "</b>" : '<span class="ok">Se abrió el ' + fzLong(f.until) + ". Ya puedes usarla.</span>");
+      if (dst) meta.push("Guardada en <b>" + esc(dst.nombre) + "</b>");
+      else meta.push('<span class="warn">Solo en Orbe: el dinero sigue en tus cuentas de siempre.</span>');
+      if (dst && pend.length && pv) meta.push('<span class="warn">Pendiente de pasar: ' + mask(money(pv, D)) + "</span>");
+      if (f.ret) {
+        var hl = Math.ceil((f.ret.at + FZ_WAIT - Date.now()) / FZ_H);
+        meta.push(fzRetReady() ? '<span class="ok">Ya puedes retirar ' + money(f.ret.monto, f.ret.moneda) + " con Retirar (tienes 7 días).</span>" : '<span class="warn">Retiro pedido de ' + money(f.ret.monto, f.ret.moneda) + ": listo en " + hl + (hl === 1 ? " hora" : " horas") + ".</span>");
+      }
+      var nextUp = f.up && f.pct < 20 ? "Sube a " + (f.pct + 1) + "% el " + shortDate(fzAddMonths(f.upAt || f.since, 3)) : "De cada ingreso";
+      var rows = '<li><span class="tx">Págate primero · ' + fzPct(f.pct) + "%<small>" + nextUp + "</small></span><b>+" + mask(money(inc, D)) + "</b></li>";
+      if (f.round || f.antojo) rows += '<li><span class="tx">' + (f.round && f.antojo ? "Redondeo x2 y antojo 10%" : f.round ? "Redondeo x2" : "Impuesto antojo 10%") + "<small>" + nx + (nx === 1 ? " gasto" : " gastos") + " este mes</small></span><b>+" + mask(money(ex, D)) + "</b></li>";
+      el.innerHTML = '<div class="fz-head"><span class="fz-lock">' + FZ_LOCK + '</span><div><div class="l">Bóveda · ' + (lk ? "bloqueada" : "desbloqueada") + '</div><div class="v">' + mask(moneyH(fzVault(D), D)) + "</div></div></div>" +
+        '<div class="fz-meta">' + meta.map(function (x) { return "<span>" + x + "</span>"; }).join("") + "</div>" +
+        (dst && pend.length ? '<button type="button" class="secondary" data-fz="tr">Mover ahora</button>' : "") +
+        '<ul class="fz-list">' + rows + "</ul>" +
+        (lk ? '<div class="fz-acts"><button type="button" class="secondary" data-fz="edit">Reglas</button><button type="button" class="secondary" data-fz="ret">' + (f.ret ? "Ver retiro" : "Retiro anticipado") + "</button></div>"
+          : '<div class="fz-acts"><button type="button" class="primary" data-fz="renew">Bloquear 3 meses más</button><button type="button" class="secondary" data-fz="off">Desactivar</button></div>');
+    }
+    function fzTick() {
+      var f = state.forz; if (!fzOn()) return;
+      var ch = false;
+      if (f.up && f.pct < 20 && fzAddMonths(f.upAt || f.since, 3) <= today()) { f.pct += 1; f.upAt = today(); ch = true; setTimeout(function () { showToast("Tu ahorro forzoso subió a " + fzPct(f.pct) + "% de cada ingreso."); }, 1500); }
+      if (f.ret && Date.now() > f.ret.at + FZ_WAIT + FZ_WINDOW) { f.ret = null; ch = true; }
+      if (ch) save();
+    }
+    window.__fzRender = function () { try { fzTick(); fzToday(); fzAlert(); fzBox(); } catch (e) {} };
+    $("fz-alert").addEventListener("click", function () { fzTrOpen(); });
+    $("fz-box").addEventListener("click", function (e) {
+      var b = e.target.closest("[data-fz]"); if (!b) return;
+      var a = b.getAttribute("data-fz"), f = state.forz;
+      if (a === "on" || a === "edit") fzOpen();
+      else if (a === "ret") fzRetOpen();
+      else if (a === "tr") fzTrOpen();
+      else if (a === "renew") { f.until = fzAddMonths(today(), 3); f.ret = null; save(); render(); showToast("Bloqueada hasta el " + fzLong(f.until) + "."); }
+      else if (a === "off") {
+        if (fzLocked()) return;
+        if (!b.classList.contains("sure")) { b.classList.add("sure"); b.textContent = "Toca otra vez para desactivar"; return; }
+        f.on = false; f.pend = []; f.ret = null; save(); render(); showToast("Modo ahorro forzoso desactivado. Tus ahorros siguen en Ahorro.");
+      }
+    });
+
+    /* Hoja de activar o cambiar reglas (dos pasos) */
+    var fzd = null, fzStep = 1;
+    function fzOpen() {
+      var f = state.forz;
+      fzd = fzOn() ? { pct: f.pct, up: f.up, round: f.round, antojo: f.antojo, cats: (f.cats || []).slice(), mo: 0, until: f.until, dest: f.dest, acc: f.acc }
+        : { pct: 10, up: true, round: true, antojo: true, cats: FZ_ANTOJO.slice(), mo: 3, until: fzAddMonths(today(), 3), dest: "banco", acc: null };
+      fzStep = 1; $("fz-err").textContent = "";
+      fzSheetRender();
+      $("fz-sheet").hidden = false;
+    }
+    function fzClose() { $("fz-sheet").hidden = true; }
+    function fzSheetRender() {
+      var d = fzd, on = fzOn();
+      $("fz-s1").hidden = fzStep !== 1; $("fz-s2").hidden = fzStep !== 2;
+      $("h-fz").textContent = on ? "Reglas de tu Bóveda" : "Modo ahorro forzoso";
+      document.querySelectorAll("[data-fzp]").forEach(function (b) { b.setAttribute("aria-pressed", Number(b.getAttribute("data-fzp")) === d.pct ? "true" : "false"); });
+      document.querySelector("#fz-s1 .fz-lbl").textContent = "De cada ingreso aparto" + ([5, 10, 15, 20].indexOf(d.pct) < 0 ? " (ahora " + fzPct(d.pct) + "%)" : "");
+      $("fz-up").setAttribute("aria-checked", d.up ? "true" : "false");
+      $("fz-round").setAttribute("aria-checked", d.round ? "true" : "false");
+      $("fz-antojo").setAttribute("aria-checked", d.antojo ? "true" : "false");
+      $("fz-cats").innerHTML = d.antojo ? CATS.gasto.filter(function (c) { return FZ_NOCAT.indexOf(c) < 0; }).map(function (c) {
+        return '<button type="button" data-fzc="' + esc(c) + '" aria-pressed="' + (d.cats.indexOf(c) >= 0 ? "true" : "false") + '">' + esc(c) + "</button>";
+      }).join("") : "";
+      document.querySelectorAll("[data-fzm]").forEach(function (b) { b.setAttribute("aria-pressed", Number(b.getAttribute("data-fzm")) === d.mo ? "true" : "false"); });
+      $("fz-until").textContent = "Se abre el " + fzLong(d.until) + "." + (on && fzLocked() ? " Mientras esté bloqueada solo puedes alargar la fecha." : "");
+      $("fz-opts").innerHTML = FZ_DEST.map(function (o) {
+        return '<button type="button" class="fz-opt" role="radio" data-fzd="' + o.k + '" aria-checked="' + (d.dest === o.k ? "true" : "false") + '"><span class="rd" aria-hidden="true"></span><span class="t"><b>' + o.n +
+          (o.bd ? '<span class="bd' + (o.am ? " am" : "") + '">' + o.bd + "</span>" : "") + "</b><small>" + o.d + "</small></span></button>";
+      }).join("");
+      $("fz-accw").hidden = d.dest === "orbe";
+      $("fz-bn").hidden = d.dest !== "usdt";
+      $("fz-acc").innerHTML = state.accounts.map(function (a) {
+        var sel = String(a.id) === String(d.acc);
+        return '<button type="button" class="ap' + (sel ? " on" : "") + '" role="radio" aria-checked="' + sel + '" data-fzacc="' + a.id + '">' + accAvatar(a) + '<span class="ap-t"><b>' + esc(a.nombre) + "</b><small>" + curLabel(a.moneda) + "</small></span></button>";
+      }).join("") + '<button type="button" class="ap" data-fzacc="new"><span class="ap-t"><b>+ Nueva cuenta</b><small>Para tu Bóveda</small></span></button>';
+      $("fz-go").textContent = fzStep === 1 ? "Siguiente: dónde guardarlo" : on ? "Guardar cambios" : "Activar y bloquear";
+    }
+    $("fz-close").addEventListener("click", fzClose);
+    $("fz-sheet").addEventListener("click", function (e) {
+      if (e.target === $("fz-sheet")) { fzClose(); return; }
+      var d = fzd, b;
+      if ((b = e.target.closest("[data-fzp]"))) d.pct = Number(b.getAttribute("data-fzp"));
+      else if ((b = e.target.closest("[data-fzm]"))) { d.mo = Number(b.getAttribute("data-fzm")); d.until = fzAddMonths(today(), d.mo); }
+      else if ((b = e.target.closest("[data-fzc]"))) { var c = b.getAttribute("data-fzc"), i = d.cats.indexOf(c); if (i >= 0) d.cats.splice(i, 1); else d.cats.push(c); }
+      else if ((b = e.target.closest("[data-fzd]"))) d.dest = b.getAttribute("data-fzd");
+      else if ((b = e.target.closest("[data-fzacc]"))) {
+        var v = b.getAttribute("data-fzacc");
+        if (v === "new") { openAccSheet(null); return; }
+        d.acc = Number(v);
+      }
+      else if (e.target.closest("#fz-up")) d.up = !d.up;
+      else if (e.target.closest("#fz-round")) d.round = !d.round;
+      else if (e.target.closest("#fz-antojo")) d.antojo = !d.antojo;
+      else if (e.target.closest("#fz-back")) fzStep = 1;
+      else if (e.target.closest("#fz-bn")) { fzClose(); openView("bn"); return; }
+      else return;
+      $("fz-err").textContent = "";
+      fzSheetRender();
+    });
+    window.__fzAccNew = function (id) { if (fzd && !$("fz-sheet").hidden) { fzd.acc = id; fzSheetRender(); } };
+    $("fz-go").addEventListener("click", function () {
+      var d = fzd, f = state.forz, err = $("fz-err"), was = fzOn();
+      if (d.antojo && !d.cats.length) { err.textContent = "Elige al menos una categoría de antojo, o apaga esa regla."; return; }
+      if (fzStep === 1) { fzStep = 2; err.textContent = ""; fzSheetRender(); return; }
+      if (d.dest !== "orbe" && !accById(d.acc)) { err.textContent = "Elige la cuenta donde vas a guardar tu Bóveda, o crea una nueva."; return; }
+      var downAt = was ? f.downAt || "" : "";
+      if (was && fzLocked()) {
+        var lower = d.pct < f.pct || (f.up && !d.up) || (f.round && !d.round) || (f.antojo && !d.antojo) || (f.antojo && d.antojo && (f.cats || []).some(function (c) { return d.cats.indexOf(c) < 0; }));
+        if (d.until < f.until) { err.textContent = "Mientras está bloqueada solo puedes alargar la fecha, no acortarla."; return; }
+        if (lower && downAt.slice(0, 7) === today().slice(0, 7)) { var nm = new Date(); nm.setMonth(nm.getMonth() + 1, 1); err.textContent = "Ya bajaste tus reglas este mes. Podrás volver a bajarlas el 1 de " + MESES[nm.getMonth()] + "."; return; }
+        if (lower) downAt = today();
+      }
+      state.forz = { on: true, pct: d.pct, up: d.up, round: d.round, antojo: d.antojo, cats: d.cats.slice(), until: d.until, dest: d.dest, acc: d.dest === "orbe" ? null : Number(d.acc),
+        since: was ? f.since : today(), upAt: was ? f.upAt || f.since : today(), downAt: downAt, pend: was ? f.pend || [] : [], ret: was ? f.ret || null : null, snooze: 0 };
+      if (state.forz.dest === "orbe") state.forz.pend = [];
+      save(); render(); fzClose();
+      showToast(was ? "Cambios guardados." : "Modo ahorro forzoso activado. Tu Bóveda se abre el " + fzLong(d.until) + ".");
+    });
+
+    /* Hoja «Mueve tu ahorro» */
+    function fzTrOpen() {
+      var dst = fzDest(); if (!dst) return;
+      var list = fzPend();
+      if (!list.length) { showToast("No tienes nada pendiente por mover."); render(); return; }
+      var tot = fzSum(list, dst.moneda) || 0, gs = fzGroups(list);
+      $("fzt-body").innerHTML = '<p class="hint fz-lead">Si lo haces hoy, ni lo notas. Si esperas, se mezcla con tus gastos.</p>' +
+        '<div class="fz-big"><div class="v">' + money(tot, dst.moneda) + '</div><div class="s">a <b>' + esc(dst.nombre) + "</b>" + (dst.moneda !== "VES" && fzBs(tot, dst.moneda) ? "<br>" + fzBs(tot, dst.moneda) : "") + "</div></div>" +
+        '<ul class="fz-list">' + gs.map(function (g) { var a = accById(g.cuenta); return "<li>" + (a ? accAvatarXs(a) : "") + '<span class="tx">Desde ' + esc(a ? a.nombre : "otra cuenta") + "<small>" + g.ids.length + (g.ids.length === 1 ? " movimiento" : " movimientos") + "</small></span><b>" + money(g.sum, g.moneda) + "</b></li>"; }).join("") + "</ul>" +
+        '<button type="button" class="secondary" id="fzt-copy" style="width:100%;margin-top:12px">Copiar monto</button>' +
+        '<p class="hint">Hasta que lo confirmes, se muestra como pendiente en tu Bóveda.</p>';
+      $("fzt-copy").addEventListener("click", function () {
+        var s = tot.toFixed(2).replace(".", ",");
+        if (navigator.clipboard) navigator.clipboard.writeText(s).then(function () { showToast("Monto copiado: " + s); }, function () { showToast(s); });
+        else showToast(s);
+      });
+      $("fzt-sheet").hidden = false;
+    }
+    function fzTrClose() { $("fzt-sheet").hidden = true; }
+    $("fzt-close").addEventListener("click", fzTrClose);
+    $("fzt-sheet").addEventListener("click", function (e) { if (e.target === $("fzt-sheet")) fzTrClose(); });
+    $("fzt-later").addEventListener("click", function () { state.forz.snooze = Date.now() + 2 * FZ_H; save(); render(); fzTrClose(); showToast("Te lo recuerdo en 2 horas."); });
+    $("fzt-done").addEventListener("click", function () {
+      var dst = fzDest(); if (!dst) return;
+      var f = state.forz, gs = fzGroups(fzPend()), moved = [], miss = 0, base = Date.now();
+      gs.forEach(function (g, i) {
+        var out = conv(g.sum, g.moneda, dst.moneda), src = accById(g.cuenta);
+        if (out === null) { miss++; return; }
+        state.items.push({ id: base + i, tipo: "traspaso", fecha: today(), cat: "Traspaso de ahorro", moneda: g.moneda, monto: g.sum, nota: (src ? src.nombre : "") + " → " + dst.nombre + " (Bóveda)",
+          desde: { k: "ahorro", id: g.cuenta, moneda: g.moneda, monto: g.sum }, hacia: { k: "ahorro", id: dst.id, moneda: dst.moneda, monto: fzR2(out) } });
+        moved = moved.concat(g.ids);
+      });
+      f.pend = (f.pend || []).filter(function (id) { return moved.indexOf(id) < 0; });
+      f.snooze = 0;
+      save(); render(); fzTrClose();
+      showToast(miss ? "Falta la tasa del día para mover una parte. Inténtalo cuando cargue." : "Listo. Tu Bóveda está en " + dst.nombre + ".");
+    });
+
+    /* Hoja «Retiro anticipado»: 72 horas de espera y un motivo */
+    function fzRetOpen() {
+      var f = state.forz, D = state.disp, body = $("fzr-body"), foot = $("fzr-foot");
+      $("fzr-err").textContent = "";
+      if (f.ret) {
+        var ready = fzRetReady(), hl = Math.max(1, Math.ceil((f.ret.at + FZ_WAIT - Date.now()) / FZ_H));
+        body.innerHTML = '<div class="fz-card"><b>' + (ready ? "Ya puedes retirar " : "Pediste retirar ") + money(f.ret.monto, f.ret.moneda) + "</b><span>Motivo: " + esc(f.ret.motivo) + "</span><span>" +
+          (ready ? "Ve a Ahorro y toca Retirar. Tienes 7 días; después la Bóveda se vuelve a cerrar." : "Faltan " + hl + (hl === 1 ? " hora" : " horas") + ". Puedes cancelarlo cuando quieras.") + "</span></div>";
+        foot.innerHTML = '<button type="button" class="secondary" data-fzr="cancel">Cancelar el retiro</button><button type="button" class="primary" data-fzr="close">Entendido</button>';
+      } else {
+        var tot = fzVault(D);
+        body.innerHTML = '<div class="fz-card warn"><b>Antes de sacar, piénsalo</b><span>Tu Bóveda tiene ' + money(tot, D) + " y está bloqueada hasta el " + fzLong(f.until) + ". Lo que saques ya no estará ahí.</span></div>" +
+          '<div class="grid"><div class="wide"><label for="fzr-monto">¿Cuánto necesitas? (' + curLabel(D) + ')</label><input type="text" id="fzr-monto" inputmode="decimal" autocomplete="off" placeholder="0,00"></div>' +
+          '<div class="wide"><label for="fzr-motivo">¿Para qué? (obligatorio)</label><input type="text" id="fzr-motivo" maxlength="80" placeholder="Ej.: medicina, reparación del carro"></div></div>' +
+          '<ol class="fz-steps"><li><i>1</i>Pides el retiro y escribes el motivo.</li><li><i>2</i>Esperas 72 horas. Puedes cancelarlo cuando quieras.</li><li><i>3</i>Después tienes 7 días para sacarlo con Retirar.</li></ol>';
+        foot.innerHTML = '<button type="button" class="secondary" data-fzr="ask">Pedir retiro (72 h de espera)</button><button type="button" class="primary" data-fzr="close">Mejor lo dejo ahí</button>';
+      }
+      $("fzr-sheet").hidden = false;
+    }
+    function fzRetClose() { $("fzr-sheet").hidden = true; }
+    $("fzr-close").addEventListener("click", fzRetClose);
+    $("fzr-sheet").addEventListener("click", function (e) {
+      if (e.target === $("fzr-sheet")) { fzRetClose(); return; }
+      var b = e.target.closest("[data-fzr]"); if (!b) return;
+      var a = b.getAttribute("data-fzr"), f = state.forz, D = state.disp, err = $("fzr-err");
+      if (a === "close") { fzRetClose(); if (!f.ret) showToast("Bien hecho. Tu Bóveda sigue intacta."); return; }
+      if (a === "cancel") { f.ret = null; save(); render(); fzRetClose(); showToast("Retiro cancelado. Tu Bóveda sigue intacta."); return; }
+      var v = amtVal($("fzr-monto").value), why = $("fzr-motivo").value.trim();
+      if (!(v > 0)) { err.textContent = "Escribe cuánto necesitas."; return; }
+      if (v > fzVault(D) + 0.005) { err.textContent = "Es más de lo que tiene tu Bóveda."; return; }
+      if (why.length < 3) { err.textContent = "Escribe para qué lo necesitas."; return; }
+      f.ret = { monto: fzR2(v), moneda: D, motivo: why, at: Date.now() };
+      save(); render(); fzRetClose();
+      showToast("Retiro pedido. Podrás sacarlo en 72 horas.");
+    });
+
     $("add").addEventListener("click", function () {
       var monto = amtVal($("monto").value);
       var fecha = $("fecha").value;
@@ -10803,6 +11301,7 @@ html.sheet-open .toast.show { transform: translateY(0); }
       if (!(monto > 0)) { err.textContent = "Escribe un monto mayor a cero."; $("monto").focus(); return; }
       if (!fecha) { err.textContent = "Elige la fecha del movimiento."; $("fecha").focus(); return; }
       if (!state.editId && !$("cuenta").value) { err.textContent = "Elige la cuenta del movimiento."; $("cuenta").focus(); return; }
+      if (fzFormMin()) { state.fsav.on = true; if (!(state.fsav.pct >= state.forz.pct)) state.fsav.pct = state.forz.pct; renderFormSav(); }
       var fv = parseNum($("f-pct").value);
       if (!state.editId && state.type === "ingreso" && state.fsav.on && !(fv >= 1 && fv <= 90)) {
         err.textContent = "Elige un porcentaje de ahorro entre 1 y 90.";
@@ -10821,7 +11320,10 @@ html.sheet-open .toast.show { transform: translateY(0); }
           cur.fecha = fecha;
           cur.nota = $("nota").value.trim();
           state.items.forEach(function (x) {
-            if (x.linkId === cur.id) {
+            if (x.linkId === cur.id && x.fz) {
+              if (fzOn()) x.monto = fzExtra(monto, cur.moneda, cur.cat);
+              x.moneda = cur.moneda; x.cuenta = cur.cuenta; x.fecha = fecha;
+            } else if (x.linkId === cur.id) {
               var pc = x.pct || parseFloat(x.nota) || state.sav.pct;
               x.monto = Math.round(monto * pc) / 100;
               x.moneda = cur.moneda;
@@ -10873,6 +11375,9 @@ html.sheet-open .toast.show { transform: translateY(0); }
         state.items.push({ id: last.id + 1, tipo: "ahorro", auto: true, linkId: last.id, pct: state.fsav.pct, monto: ap, moneda: last.moneda, cuenta: last.cuenta, cat: "Ahorro automático", fecha: fecha, nota: String(state.fsav.pct).replace(".", ",") + "% del ingreso" });
         ok.textContent = state.hideSav ? "Se apartó una parte a tu ahorro." : "Se apartaron " + money(ap, last.moneda) + " a tu ahorro.";
       }
+      var fzr = fzAfterAdd(newIt, newIt.tipo === "ingreso" ? state.items.filter(function (x) { return x.linkId === newIt.id && x.tipo === "ahorro"; })[0] || null : null);
+      if (fzr.msg) ok.textContent = fzr.msg;
+      if (fzr.tr) setTimeout(fzTrOpen, 450);
       state.lastAcc = Number($("cuenta").value);
       save();
       state.month = fecha.slice(0, 7);
