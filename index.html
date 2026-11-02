@@ -9283,6 +9283,8 @@ html.sheet-open .toast.show { transform: translateY(0); }
           .then(function () { var y = sync(); y.remoteAt = at; y.dirty = false; y.hash = hashOf(d); jset(SYNC, y); renderCloud(); });
       }).catch(function () {});
     }
+    function atMs(t) { return t ? Date.parse(String(t).replace(/(\.\d{3})\d+/, "$1")) : NaN; }
+    function sameAt(a, b) { return !!a && !!b && (a === b || atMs(a) === atMs(b)); }
     function cloudPull() {
       return tokenOk().then(function (s) {
         return api("/rest/v1/orbe_data?select=data,updated_at&user_id=eq." + encodeURIComponent(s.id), {}, s.at).then(function (rows) { return rows && rows[0] ? rows[0] : null; });
@@ -9315,8 +9317,12 @@ html.sheet-open .toast.show { transform: translateY(0); }
         busy = false;
         var y = sync();
         if (!row) return cloudPush().then(function () { if (manual) showToast("Tus datos ya están en tu cuenta."); });
-        if (row.updated_at === y.remoteAt) { if (y.dirty) return cloudPush().then(function () { if (manual) showToast("Sincronizado."); }); if (manual) showToast("Todo está al día."); renderCloud(); return; }
+        // La nube devuelve la hora como «…+00:00» y aquí se guarda como «…Z»: se comparan como hora, no como texto
+        if (sameAt(row.updated_at, y.remoteAt)) { if (y.dirty) return cloudPush().then(function () { if (manual) showToast("Sincronizado."); }); if (manual) showToast("Todo está al día."); renderCloud(); return; }
         // Hubo cambios en otro teléfono
+        // Si lo de la nube es igual a lo de este teléfono, no hace falta recargar
+        var rc = JSON.parse(JSON.stringify(row.data || {})); LOCAL_ONLY.forEach(function (k) { delete rc[k]; });
+        if (hashOf(rc) === hashOf(cloudData())) { y.remoteAt = row.updated_at; y.dirty = false; y.hash = hashOf(rc); jset(SYNC, y); renderCloud(); return; }
         if (!y.dirty || Date.parse(row.updated_at) > (y.localAt || 0)) applyRemote(row, "Trajimos los cambios de tu cuenta.");
         else cloudPush().then(function () { if (manual) showToast("Sincronizado."); });
       }).catch(function (e) { busy = false; renderCloud(); if (manual) showToast(cloudErr(e)); });
