@@ -2754,6 +2754,24 @@ main > .panel.fz-today { background: none !important; padding: 0 !important; mar
 .dy-r b { color: var(--ink); font-variant-numeric: tabular-nums; white-space: nowrap; }
 .dy-r.tot { color: var(--ink); font-weight: 600; }
 .dy-r.tot b { color: var(--in); }
+
+/* Asistente financiero con el estilo de Orbe: sin líneas finas, tarjetas suaves y textos centrados */
+.ai-score { border-bottom: 0 !important; padding-bottom: 6px !important; }
+.ai-stats { margin: 14px 0 6px !important; }
+.ai-stat { text-align: center; padding: 0 6px !important; }
+.ai-stat:first-child { padding-left: 6px !important; }
+.ai-stat .l::before { content: ""; display: inline-block; width: 8px; height: 8px; border-radius: 50%; margin-right: 6px; vertical-align: 1px; background: var(--accent); }
+.ai-stat:nth-child(1) .l::before { background: var(--in); }
+.ai-stat:nth-child(2) .l::before { background: var(--out); }
+.ai-grp { margin-top: 20px; }
+.ai-grp-h { justify-content: center; margin: 0 0 10px !important; }
+.ai-items { display: grid; gap: 8px; }
+.ai-item { border-top: 0 !important; border-radius: 18px; background: var(--fill, color-mix(in srgb, var(--ink) 6%, transparent)); padding: 12px 14px !important; }
+.ai-quick { justify-content: center; flex-wrap: wrap; overflow: visible !important; }
+.ai-cloud { border-top: 0 !important; margin-top: 20px !important; padding: 18px 16px !important; border-radius: 22px !important; background: color-mix(in srgb, var(--accent) 8%, transparent) !important; text-align: center; }
+.ai-cloud-top { display: flex !important; flex-direction: column; align-items: center; gap: 8px; }
+.ai-cloud-top > div, .ai-cloud-top p { text-align: center; }
+.ai-cloud ol, .ai-cloud ul { text-align: left; }
 </style>
 </head>
 <body>
