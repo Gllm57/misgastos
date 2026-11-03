@@ -2780,6 +2780,23 @@ main > .panel.fz-today { background: none !important; padding: 0 !important; mar
 .tr-swap { position: relative !important; left: auto !important; top: auto !important; right: auto !important; transform: none !important; margin: 2px auto !important; display: flex !important; }
 .tr-box label { display: block; text-align: center; margin: 0 0 2px !important; padding: 0 !important; }
 .tr-swap { justify-self: center; align-self: center; }
+
+/* Límites: periodo y tipo */
+.lim-opts { display: grid; gap: 8px; margin: 0 0 12px; }
+.lim-opts .seg { display: flex; width: 100%; background: var(--fill, rgba(120,120,128,.12)); padding: 3px; }
+.lim-opts .seg button { flex: 1; }
+.lim-list li { border-top: 0 !important; }
+.lim-list label { display: flex; flex-direction: column; line-height: 1.2; }
+.lim-eq:empty { display: none; }
+.lim-eq { font-weight: 500; color: var(--muted); font-size: .78rem; margin-top: 2px; }
+/* Transferir: las fichas no ensanchan la hoja */
+.tr-pair { grid-template-columns: minmax(0, 1fr) !important; }
+.tr-box { min-width: 0 !important; }
+.tr-box .mv-acc { scroll-snap-type: x proximity; overscroll-behavior-x: contain; -webkit-overflow-scrolling: touch; scroll-padding: 0 20px; }
+.tr-box .mv-acc > * { scroll-snap-align: start; }
+.lim-list label { text-align: center; align-items: center; }
+.lim-eq { display: block; }
+.sav-preview { border-top: 0 !important; padding-top: 4px !important; }
 </style>
 </head>
 <body>
@@ -3505,6 +3522,10 @@ main > .panel.fz-today { background: none !important; padding: 0 !important; mar
   <div class="sheet-backdrop" id="lim-sheet" hidden>
     <section class="panel sheet" role="dialog" aria-modal="true" aria-labelledby="h-lim">
       <div class="sheet-head"><h2 id="h-lim">Límite por categoría</h2><button type="button" class="del" id="lim-close" aria-label="Cerrar">✕</button></div>
+      <div class="lim-opts">
+        <div class="seg" role="group" aria-label="Periodo del límite"><button type="button" data-lper="mes">Mensual</button><button type="button" data-lper="sem">Semanal</button></div>
+        <div class="seg" role="group" aria-label="Tipo de límite"><button type="button" data-lmode="monto">Monto</button><button type="button" data-lmode="pct">% de ingresos</button></div>
+      </div>
       <p class="hint" id="lim-hint" style="margin:0 0 6px"></p>
       <ul class="lim-list" id="lim-list"></ul>
       <div class="sheet-foot"><button type="button" class="primary" id="lim-save">Guardar límites</button></div>
@@ -4197,6 +4218,9 @@ main > .panel.fz-today { background: none !important; padding: 0 !important; mar
         if (d && d.notif) state.notif = true;
         if (d && d.subs && typeof d.subs === "object") state.subs = d.subs;
         if (d && d.limCur && typeof d.limCur === "object") state.limCur = d.limCur;
+        if (d && d.limPct && typeof d.limPct === "object") state.limPct = d.limPct;
+        if (d && d.limPer === "sem") state.limPer = "sem";
+        if (d && d.limMode === "pct") state.limMode = "pct";
         if (d && d.lastAcc !== undefined && d.lastAcc !== null) state.lastAcc = d.lastAcc;
         if (d && d.bn && typeof d.bn === "object") state.bn = { done: d.bn.done || {}, apr: typeof d.bn.apr === "number" ? d.bn.apr : BN_APR, hide: d.bn.v === 2 && !!d.bn.hide, opened: d.bn.opened || {}, v: 2 };
         if (d && typeof d.btcUsd === "number") { state.btcUsd = d.btcUsd; state.btcAt = d.btcAt || 0; }
@@ -4221,7 +4245,7 @@ main > .panel.fz-today { background: none !important; padding: 0 !important; mar
   }
   function save() {
     try {
-      localStorage.setItem(KEY, JSON.stringify({ items: state.items, rate: state.rate, rateDate: state.rateDate, hideSav: state.hideSav, rateManual: state.rateManual, rateAutoAt: state.rateAutoAt, accounts: state.accounts, templates: state.templates, goals: state.goals, payments: state.payments, paySeries: state.paySeries, earn: state.earn, limits: state.limits, rateHist: state.rateHist, rateHistAt: state.rateHistAt, theme: state.theme, pin: state.pin, backupAt: state.backupAt, onb: state.onb, msumSeen: state.msumSeen, country: state.country, ratesOn: !!state.ratesOn, aiHide: !!state.aiHide, cqOff: !!state.cqOff, sgName: state.sgName || "", instSeen: state.instSeen, notif: state.notif, subs: state.subs, limCur: state.limCur, lastAcc: state.lastAcc, bn: state.bn, btcUsd: state.btcUsd, btcAt: state.btcAt, rateEur: state.rateEur, rateEurDate: state.rateEurDate, rateEurManual: state.rateEurManual, rateUsdt: state.rateUsdt, rateUsdtDate: state.rateUsdtDate, rateUsdtManual: state.rateUsdtManual, rateUsdtSrc: state.rateUsdtSrc, collapsed: state.collapsed, disp: state.disp, sav: state.sav, forz: state.forz, dayOn: !!state.dayOn, roundOn: !!state.roundOn }));
+      localStorage.setItem(KEY, JSON.stringify({ items: state.items, rate: state.rate, rateDate: state.rateDate, hideSav: state.hideSav, rateManual: state.rateManual, rateAutoAt: state.rateAutoAt, accounts: state.accounts, templates: state.templates, goals: state.goals, payments: state.payments, paySeries: state.paySeries, earn: state.earn, limits: state.limits, rateHist: state.rateHist, rateHistAt: state.rateHistAt, theme: state.theme, pin: state.pin, backupAt: state.backupAt, onb: state.onb, msumSeen: state.msumSeen, country: state.country, ratesOn: !!state.ratesOn, aiHide: !!state.aiHide, cqOff: !!state.cqOff, sgName: state.sgName || "", instSeen: state.instSeen, notif: state.notif, subs: state.subs, limCur: state.limCur, limPct: state.limPct, limPer: state.limPer, limMode: state.limMode, lastAcc: state.lastAcc, bn: state.bn, btcUsd: state.btcUsd, btcAt: state.btcAt, rateEur: state.rateEur, rateEurDate: state.rateEurDate, rateEurManual: state.rateEurManual, rateUsdt: state.rateUsdt, rateUsdtDate: state.rateUsdtDate, rateUsdtManual: state.rateUsdtManual, rateUsdtSrc: state.rateUsdtSrc, collapsed: state.collapsed, disp: state.disp, sav: state.sav, forz: state.forz, dayOn: !!state.dayOn, roundOn: !!state.roundOn }));
       window.__saveFail = 0;
     } catch (e) {
       if (!window.__saveFail && window.__toast) window.__toast("No se pudo guardar en este teléfono (puede estar sin espacio). Guarda una copia en Archivos desde Ajustes.");
@@ -4476,7 +4500,7 @@ main > .panel.fz-today { background: none !important; padding: 0 !important; mar
     });
   }
   // Montos tipo cajero: los dígitos entran por la derecha y los 2 decimales ya están puestos (1234 → 12,34)
-  function isMoneyInput(el) { return /(^|-)monto$|^acc-saldo$|^ge-meta$|^sgn-meta$|^tr-llega$|^cx-amt$/.test(el.id) || el.hasAttribute("data-lim"); }
+  function isMoneyInput(el) { return /(^|-)monto$|^acc-saldo$|^ge-meta$|^sgn-meta$|^tr-llega$|^cx-amt$/.test(el.id) || el.hasAttribute("data-lim") && !el.hasAttribute("data-pct"); }
   function fmtCents(v) {
     var parts = String(v).split(/([+\-−×xX*/])/), out = "";
     for (var i = 0; i < parts.length; i++) {
@@ -5624,7 +5648,39 @@ main > .panel.fz-today { background: none !important; padding: 0 !important; mar
     });
     return '<svg class="rings" width="' + size + '" height="' + size + '" viewBox="0 0 ' + size + " " + size + '" aria-hidden="true">' + h + "</svg>";
   }
-  function catLimit(c) { var l = state.limits && state.limits[c]; return l > 0 ? conv(l, "USD", state.disp) : null; }
+  function limIncome() {
+    var b = cvData(state.month, "ingreso").tot;
+    return b > 0.004 ? b : cvData(prevMonth(state.month), "ingreso").tot;
+  }
+  function limHas(c) { return state.limMode === "pct" ? (state.limPct && state.limPct[c] > 0) : (state.limits && state.limits[c] > 0); }
+  function limCats() { var o = state.limMode === "pct" ? state.limPct || {} : state.limits || {}; return Object.keys(o).filter(function (c) { return o[c] > 0; }); }
+  function catLimit(c) {
+    if (state.limMode === "pct") {
+      var p = state.limPct && state.limPct[c], inc = limIncome();
+      if (!(p > 0) || !(inc > 0.004)) return null;
+      var m = inc * p / 100;
+      if (state.limPer === "sem") { var y = Number(state.month.slice(0, 4)), mo = Number(state.month.slice(5, 7)); m = m * 7 / new Date(y, mo, 0).getDate(); }
+      return m;
+    }
+    var l = state.limits && state.limits[c]; return l > 0 ? conv(l, "USD", state.disp) : null;
+  }
+  // Semana (lunes a domingo) del mes que se está viendo: la actual o la última del mes
+  function limWeek() {
+    var t = today(), ref = t.slice(0, 7) === state.month ? t : (function () { var y = Number(state.month.slice(0, 4)), mo = Number(state.month.slice(5, 7)); return state.month + "-" + pad2(new Date(y, mo, 0).getDate()); })();
+    var d = new Date(Number(ref.slice(0, 4)), Number(ref.slice(5, 7)) - 1, Number(ref.slice(8, 10))), wd = (d.getDay() + 6) % 7;
+    var a = new Date(d); a.setDate(d.getDate() - wd); var b = new Date(a); b.setDate(a.getDate() + 6);
+    var f = function (x) { return x.getFullYear() + "-" + pad2(x.getMonth() + 1) + "-" + pad2(x.getDate()); };
+    return { a: f(a), b: f(b) };
+  }
+  function weekSpent() {
+    var w = limWeek(), D = state.disp, by = {};
+    state.items.forEach(function (it) {
+      if (it.tipo !== "gasto" || !it.fecha || it.fecha < w.a || it.fecha > w.b) return;
+      var v = conv(it.monto, it.moneda, D); if (v === null) return;
+      by[it.cat] = (by[it.cat] || 0) + v;
+    });
+    return by;
+  }
   function cvSection(tipo) {
     var D = state.disp, isOut = tipo === "gasto", m = state.month, cur = cvData(m, tipo), mName = MESES[Number(m.slice(5, 7)) - 1];
     var cats = Object.keys(cur.by).sort(function (a, b) { return cur.by[b] - cur.by[a]; });
@@ -5642,13 +5698,15 @@ main > .panel.fz-today { background: none !important; padding: 0 !important; mar
     };
     h += '<div class="cv-tot"><span>Total</span><b>' + money(cur.tot, D) + "</b></div>";
     h += '<div class="acc-seg cv-seg" aria-hidden="true">' + cats.map(function (c) { return '<i style="flex:' + (cur.by[c] / cur.tot).toFixed(4) + " 1 0;background:" + col(c) + '"></i>'; }).join("") + "</div>";
-    if (isOut) Object.keys(state.limits || {}).forEach(function (c) { if (state.limits[c] > 0 && cats.indexOf(c) < 0) { cats.push(c); cur.by[c] = 0; } });
+    if (isOut) limCats().forEach(function (c) { if (cats.indexOf(c) < 0) { cats.push(c); cur.by[c] = 0; } });
+    var wk = isOut && state.limPer === "sem" ? weekSpent() : null, per = wk ? " esta semana" : "";
     h += '<ul class="cv-list cv-rest">' + cats.map(function (c) {
       var lim = isOut ? catLimit(c) : null, v = cur.by[c];
       if (lim) {
+        if (wk) v = wk[c] || 0;
         var over = v > lim + 0.004, w = Math.min(100, v / lim * 100);
         return '<li><button type="button" class="cv-row cv-lim' + (over ? " over" : "") + '" data-cv-cat="' + esc(c) + '" style="--c:' + col(c) + '" aria-label="Ver los movimientos de ' + esc(c) + '"><span class="cv-dot">' + catSvg(c) + '</span><span class="cv-mid"><b>' + esc(c) + "</b>" + dlt(c) + '</span><span class="cv-amt"><b>' + money(v, D) + '</b><small> / ' + money(lim, D) + '</small></span>' +
-          '<span class="cv-lbar"><i style="width:' + w.toFixed(1) + '%"></i></span><span class="cv-left">' + (over ? "Te pasaste " + money(v - lim, D) : "Te quedan " + money(lim - v, D)) + "</span></button></li>";
+          '<span class="cv-lbar"><i style="width:' + w.toFixed(1) + '%"></i></span><span class="cv-left">' + (over ? "Te pasaste " + money(v - lim, D) : "Te quedan " + money(lim - v, D)) + per + "</span></button></li>";
       }
       return '<li><button type="button" class="cv-row" data-cv-cat="' + esc(c) + '" style="--c:' + col(c) + '" aria-label="Ver los movimientos de ' + esc(c) + '"><span class="cv-dot">' + catSvg(c) + '</span><span class="cv-mid"><b>' + esc(c) + "</b>" + dlt(c) + '</span><span class="cv-pct">' + pct(v) + '</span><span class="cv-amt"><b>' + money(v, D) + "</b></span></button></li>";
     }).join("") + "</ul>";
@@ -7166,6 +7224,12 @@ main > .panel.fz-today { background: none !important; padding: 0 !important; mar
       var rate = trNeedsRate(), a = trSrc(), b = trDst();
       if ($("tr-from")._draw) $("tr-from")._draw();
       if ($("tr-to")._draw) $("tr-to")._draw();
+      ["tr-from", "tr-to"].forEach(function (id) {
+        var w = $(id).parentNode.querySelector(".mv-acc"), on = w && w.querySelector('[aria-checked="true"]');
+        if (!w || !on) return;
+        var x = on.offsetLeft - (w.clientWidth - on.offsetWidth) / 2;
+        try { w.scrollTo({ left: Math.max(0, x), behavior: "smooth" }); } catch (e) { w.scrollLeft = Math.max(0, x); }
+      });
       $("tr-rate-wrap").style.display = rate ? "" : "none";
       $("tr-rate-hint").style.display = rate ? "" : "none";
       $("tr-llega-wrap").style.display = rate ? "" : "none";
@@ -8478,23 +8542,60 @@ main > .panel.fz-today { background: none !important; padding: 0 !important; mar
       }).join("");
     }
     function closeGs() { $("gs-sheet").hidden = true; }
-    function openLim() {
-      var D = state.disp, cur = { USD: "$", VES: LOC.sym, EUR: "€" }[D] || D;
-      $("lim-hint").textContent = "Cuánto quieres gastar como máximo al mes, en " + (D === "VES" ? LOC.name : D === "EUR" ? "euros" : "dólares") + ". Déjalo vacío para no poner límite.";
+    var limDraft = null;
+    function limRead() {
+      document.querySelectorAll("#lim-list [data-lim]").forEach(function (inp) { limDraft[limDraft.mode][inp.getAttribute("data-lim")] = inp.value; });
+    }
+    function limDraw() {
+      var D = state.disp, cur = { USD: "$", VES: LOC.sym, EUR: "€" }[D] || D, pc = limDraft.mode === "pct", sem = limDraft.per === "sem";
+      document.querySelectorAll("#lim-sheet [data-lper]").forEach(function (b) { b.setAttribute("aria-pressed", String(b.getAttribute("data-lper") === limDraft.per)); });
+      document.querySelectorAll("#lim-sheet [data-lmode]").forEach(function (b) { b.setAttribute("aria-pressed", String(b.getAttribute("data-lmode") === limDraft.mode)); });
+      var inc = limIncome();
+      $("lim-hint").textContent = pc
+        ? (inc > 0.004 ? "Qué parte de tus ingresos del mes (" + money(inc, D) + ") puedes gastar en cada categoría" + (sem ? ", repartida por semana" : "") + "." : "Registra tus ingresos del mes para que los porcentajes se conviertan en montos.")
+        : "Cuánto quieres gastar como máximo " + (sem ? "cada semana" : "al mes") + ", en " + (D === "VES" ? LOC.name : D === "EUR" ? "euros" : "dólares") + ". Déjalo vacío para no poner límite.";
       $("lim-list").innerHTML = CATS.gasto.map(function (c, i) {
+        var v = limDraft[limDraft.mode][c] || "", ex = pc ? limEq(v) : "";
+        return '<li><span class="cv-dot" style="--c:' + colorFor(c) + '">' + catSvg(c) + '</span><label for="lim-' + i + '">' + esc(c) + '<small class="lim-eq">' + ex + "</small>" + '</label><span class="lim-cur">' + (pc ? "%" : cur) + '</span><input type="text" inputmode="decimal" id="lim-' + i + '" data-lim="' + esc(c) + '"' + (pc ? ' data-pct maxlength="5"' : "") + ' placeholder="Sin límite" value="' + esc(v) + '" autocomplete="off"></li>';
+      }).join("");
+    }
+    function limEq(v) {
+      var inc = limIncome(), q = Number(String(v).replace("%", "").replace(",", "."));
+      if (!(inc > 0.004) || !(q > 0)) return "";
+      var m = inc * q / 100;
+      if (limDraft.per === "sem") { var y = Number(state.month.slice(0, 4)), mo = Number(state.month.slice(5, 7)); m = m * 7 / new Date(y, mo, 0).getDate(); }
+      return money(m, state.disp) + (limDraft.per === "sem" ? " por semana" : " al mes");
+    }
+    function openLim() {
+      var D = state.disp, mo = {}, pc = {};
+      CATS.gasto.forEach(function (c) {
         var lv = state.limits && state.limits[c], lc = state.limCur && state.limCur[c];
         var l = lv > 0 ? (lc && lc.cur === D ? lc.v : conv(lv, "USD", D)) : null;
-        return '<li><span class="cv-dot" style="--c:' + colorFor(c) + '">' + catSvg(c) + '</span><label for="lim-' + i + '">' + esc(c) + '</label><span class="lim-cur">' + cur + '</span><input type="text" inputmode="decimal" id="lim-' + i + '" data-lim="' + esc(c) + '" placeholder="Sin límite" value="' + (l ? moneyIn(l) : "") + '" autocomplete="off"></li>';
-      }).join("");
+        if (l) mo[c] = moneyIn(l);
+        var p = state.limPct && state.limPct[c]; if (p > 0) pc[c] = String(p).replace(".", ",");
+      });
+      limDraft = { per: state.limPer === "sem" ? "sem" : "mes", mode: state.limMode === "pct" ? "pct" : "monto", monto: mo, pct: pc };
+      limDraw();
       $("lim-sheet").hidden = false;
     }
+    $("lim-sheet").addEventListener("click", function (e) {
+      var b = e.target.closest("[data-lper],[data-lmode]"); if (!b || !limDraft) return;
+      limRead();
+      if (b.hasAttribute("data-lper")) limDraft.per = b.getAttribute("data-lper"); else limDraft.mode = b.getAttribute("data-lmode");
+      limDraw();
+    });
+    $("lim-list").addEventListener("input", function (e) {
+      if (!limDraft || limDraft.mode !== "pct" || !e.target.matches("[data-lim]")) return;
+      var sm = e.target.closest("li").querySelector(".lim-eq"); if (sm) sm.textContent = limEq(e.target.value);
+    });
     function closeLim() { $("lim-sheet").hidden = true; }
     $("lim-close").addEventListener("click", closeLim);
     $("lim-sheet").addEventListener("click", function (e) { if (e.target === $("lim-sheet")) closeLim(); });
     $("lim-save").addEventListener("click", function () {
-      var out = {}, oc = {}, D = state.disp, old = state.limits || {}, oldC = state.limCur || {};
-      document.querySelectorAll("#lim-list [data-lim]").forEach(function (inp) {
-        var c = inp.getAttribute("data-lim"), raw = inp.value.trim();
+      limRead();
+      var out = {}, oc = {}, D = state.disp, old = state.limits || {}, oldC = state.limCur || {}, pc = {}, bad = false;
+      Object.keys(limDraft.monto).forEach(function (c) {
+        var raw = String(limDraft.monto[c] || "").trim();
         if (!raw) return;
         var v = amtVal(raw);
         if (!(v > 0)) { if (old[c] > 0) { out[c] = old[c]; if (oldC[c]) oc[c] = oldC[c]; } return; }
@@ -8502,8 +8603,15 @@ main > .panel.fz-today { background: none !important; padding: 0 !important; mar
         if (u === null) { if (old[c] > 0) { out[c] = old[c]; if (oldC[c]) oc[c] = oldC[c]; } return; }
         out[c] = u; oc[c] = { v: v, cur: D };
       });
-      state.limits = out; state.limCur = oc; save(); render(); closeLim();
-      showToast(Object.keys(out).length ? "Límites guardados." : "Sin límites.");
+      Object.keys(limDraft.pct).forEach(function (c) {
+        var raw = String(limDraft.pct[c] || "").trim(); if (!raw) return;
+        var v = Number(raw.replace("%", "").replace(",", "."));
+        if (v > 0 && v <= 100) pc[c] = Math.round(v * 10) / 10; else bad = true;
+      });
+      state.limits = out; state.limCur = oc; state.limPct = pc; state.limPer = limDraft.per; state.limMode = limDraft.mode;
+      save(); render(); closeLim();
+      var n = Object.keys(limDraft.mode === "pct" ? pc : out).length;
+      showToast(bad ? "Límites guardados. Los porcentajes deben ir de 1 a 100." : n ? "Límites " + (limDraft.per === "sem" ? "semanales" : "mensuales") + " guardados." : "Sin límites.");
     });
     $("goal-sort").addEventListener("click", function () { renderGs(); $("gs-sheet").hidden = false; });
     $("gs-close").addEventListener("click", closeGs);
