@@ -711,7 +711,7 @@ body.view-set .fab, body.view-set .ai-fab { opacity: 0; pointer-events: none; vi
 .set-group { background: var(--surface); border: 1px solid var(--line); border-radius: 20px; overflow: hidden; }
 .set-row { display: flex; align-items: center; justify-content: space-between; gap: 14px; padding: 13px 16px; min-height: 60px; width: 100%; font: inherit; color: var(--ink); text-align: left; background: none; border: 0; }
 .set-row + .set-row { border-top: 1px solid var(--line); }
-.set-row[hidden] { display: none; }
+.set-group[hidden], .set-h[hidden], .set-row[hidden] { display: none; }
 button.set-row { cursor: pointer; }
 button.set-row:active { background: var(--bg); }
 .set-row .tx { min-width: 0; }
@@ -3113,9 +3113,9 @@ main > .panel.fz-today { background: none !important; padding: 0 !important; mar
         <button type="button" class="switch" id="set-ai" role="switch" aria-checked="true" aria-label="Mostrar el botón del asistente financiero"><span></span></button>
       </div>
     </div>
-    <div class="set-h">Ahorro</div>
-    <div class="set-group">
-      <div class="set-row" id="rd-row">
+    <div class="set-h" hidden>Ahorro</div>
+    <div class="set-group" hidden>
+      <div class="set-row" id="rd-row" hidden>
         <div class="tx"><b>Redondear mis gastos</b><small>Cada gasto se redondea al número entero de arriba y esos centavos van a tu ahorro. Gastas $12,40 → se apartan $0,60.</small></div>
         <button type="button" class="switch" id="set-rd" role="switch" aria-checked="false" aria-label="Redondear mis gastos"><span></span></button>
       </div>
@@ -4239,8 +4239,7 @@ main > .panel.fz-today { background: none !important; padding: 0 !important; mar
         if (d && (d.disp === "USD" || d.disp === "VES" || d.disp === "EUR")) state.disp = d.disp;
         if (d && d.sav && typeof d.sav.pct === "number") state.sav = { on: !!d.sav.on, pct: d.sav.pct };
         if (d && d.forz && typeof d.forz === "object" && typeof d.forz.pct === "number" && typeof d.forz.until === "string") state.forz = d.forz;
-        if (d && typeof d.roundOn === "boolean") state.roundOn = d.roundOn;
-        else if (d && d.forz && d.forz.on && d.forz.round) state.roundOn = true;
+        state.roundOn = false; // «Redondear mis gastos» se quitó
         if (d && typeof d.dayOn === "boolean") state.dayOn = d.dayOn;
         else if (d && d.forz && d.forz.on && d.forz.today !== false) state.dayOn = true;
         if (state.forz && state.forz.on) state.forz.on = false;
@@ -10789,7 +10788,7 @@ main > .panel.fz-today { background: none !important; padding: 0 !important; mar
       { tab: 2, sel: ".pay-tabs", t: "Pagos y cobros", p: "Por pagar es lo que debes, como el alquiler o el internet. Por cobrar es lo que esperas recibir, como tu sueldo." },
       { tab: 2, sel: "#pay-cal", t: "Calendario", p: "Cada punto es un pago. Lo vencido se marca en rojo y te avisamos en el Inicio. Desliza un pago a la izquierda para borrarlo." },
       { tab: 3, sel: "#hist-stats", t: "Historial", p: "Todos tus movimientos del mes. Busca, filtra y desliza uno a la izquierda para borrarlo. Si te equivocas, toca «Deshacer»." },
-      { tab: 0, sel: "#set-open", t: "Ahorra sin pensarlo", p: "En Ajustes → Ahorro activa «Redondear mis gastos»: si gastas $12,40, se apartan $0,60. En Ajustes → Inicio activa «Puedes gastar hoy»: te dice cuánto puedes gastar hoy sin pasarte.", round: true },
+      { tab: 0, sel: "#set-open", t: "Puedes gastar hoy", p: "En Ajustes → Inicio activa «Puedes gastar hoy»: te dice cuánto puedes gastar hoy sin pasarte.", round: true },
       { tab: 0, sel: "#set-open", t: "Ajustes", p: "Tu cuenta, tu clave y Face ID, el país, el asistente ✦, las copias de seguridad y este recorrido cuando quieras repetirlo.", round: true }
     ];
     var tour = { i: -1, t: 0 };
@@ -11526,7 +11525,7 @@ main > .panel.fz-today { background: none !important; padding: 0 !important; mar
     });
     window.__fzOn = fzOn;
     $("set-rd").addEventListener("click", function () {
-      state.roundOn = !state.roundOn; save(); render();
+      state.roundOn = false; save(); render();
       showToast(state.roundOn ? "Listo: cada gasto redondea y aparta los centavos a tu ahorro." : "Ya no se redondean tus gastos.");
     });
     $("set-fz-info").addEventListener("click", function () { fzInfo(); });
