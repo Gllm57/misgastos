@@ -2801,6 +2801,23 @@ main > .panel.fz-today { background: none !important; padding: 0 !important; mar
 .tr-swap { width: 44px !important; height: 44px !important; border: 0 !important; align-items: center !important; justify-content: center !important; background: color-mix(in srgb, var(--accent) 14%, transparent) !important; color: var(--accent) !important; box-shadow: none !important; transition: transform .25s cubic-bezier(.32,.72,0,1), background .2s; }
 .tr-swap:active { transform: scale(.92) !important; }
 .tr-swap svg { width: 20px !important; height: 20px !important; display: block; margin: 0 !important; }
+
+/* Cuenta de ahorro */
+.sav-accs { display: grid; gap: 8px; margin: 0 0 12px; }
+.sav-accs[hidden], .sav-tip[hidden] { display: none !important; }
+.sa-h { text-align: center; font-size: .78rem; color: var(--muted); font-weight: 600; letter-spacing: .02em; }
+.sa-row { display: flex; align-items: center; gap: 12px; width: 100%; padding: 10px 12px; border: 0; border-radius: 18px; background: color-mix(in srgb, var(--c) 9%, var(--surface)); font: inherit; color: var(--ink); cursor: pointer; text-align: left; transition: transform .2s cubic-bezier(.32,.72,0,1); }
+.sa-row:active { transform: scale(.98); }
+.sa-row .acc-av { width: 36px; height: 36px; }
+.sa-row .l { flex: 1; font-weight: 600; }
+.sa-row .l { color: var(--ink) !important; font-size: .95rem !important; }
+.sa-row .v { font-family: var(--display); font-weight: 700; font-size: 1rem !important; color: var(--ink) !important; background: none !important; -webkit-text-fill-color: currentColor; }
+.sav-tip { margin: 0 0 16px; animation: fadeUp .4s cubic-bezier(.32,.72,0,1) backwards; }
+.sav-tip .sg-acts { flex-direction: column; align-items: center; gap: 4px; }
+.sav-tip-no { background: none; border: 0; font: inherit; font-size: .88rem; color: var(--muted); padding: 8px 14px; cursor: pointer; }
+.acc-savrow { display: flex; align-items: center; gap: 12px; margin: 14px 0 4px; padding: 12px 14px; border-radius: 18px; background: var(--fill, rgba(120,120,128,.1)); }
+.acc-savrow .tx { flex: 1; display: grid; gap: 2px; }
+.acc-savrow small { color: var(--muted); font-size: .8rem; line-height: 1.3; }
 </style>
 </head>
 <body>
@@ -2938,6 +2955,7 @@ main > .panel.fz-today { background: none !important; padding: 0 !important; mar
       <div id="b-sav">
       <p class="hint" id="sav-hint">Actívalo y la app aparta un porcentaje de cada ingreso por ti.</p>
       <div class="sav-total">
+        <div class="sav-accs" id="sav-accs" hidden></div>
         <div class="sav-buckets" id="sav-buckets"></div>
         <div class="earn-box" id="earn-box" hidden></div>
         <div class="sav-actions">
@@ -2949,6 +2967,10 @@ main > .panel.fz-today { background: none !important; padding: 0 !important; mar
       </div>
       </div>
     </section>
+    <div class="sav-tip" id="sav-tip" hidden>
+      <div class="sg-empty"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="6" width="18" height="13" rx="3"></rect><path d="M3 10h18M7 15h3"></path></svg><p><b>Ten una cuenta solo para ahorrar.</b> Si tu ahorro está en otra cuenta, no lo gastas sin darte cuenta. Puede ser una cuenta en dólares, Binance o una cuenta del banco que no uses a diario. Solo se ve aquí, no en las cuentas del Inicio.</p></div>
+      <div class="sg-acts"><button type="button" class="sg-act" id="sav-tip-go"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5v14M5 12h14"></path></svg>Crear cuenta de ahorro</button><button type="button" class="sav-tip-no" id="sav-tip-no">Ahora no</button></div>
+    </div>
     <section class="panel fz-box" id="fz-box" aria-label="Bóveda"></section>
     <div class="gv-mrow"><h2 class="gv-h2 gv-mh" id="gv-metas-h">Metas</h2><button type="button" class="gs-btn" id="goal-sort" hidden><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 4v16M3 8l4-4 4 4M17 20V4M13 16l4 4 4-4"></path></svg>Ordenar</button></div>
     <div class="gv-hero" id="gv-hero">
@@ -4051,6 +4073,10 @@ main > .panel.fz-today { background: none !important; padding: 0 !important; mar
           <input type="text" id="acc-saldo" inputmode="decimal" autocomplete="off" placeholder="0,00">
         </div>
       </div>
+      <div class="acc-savrow" id="acc-savrow">
+        <div class="tx"><b>Cuenta de ahorro</b><small>Solo se ve en Ahorro y su dinero cuenta como ahorrado. No sale en las cuentas del Inicio.</small></div>
+        <button type="button" class="switch" id="acc-sav" role="switch" aria-checked="false" aria-label="Cuenta de ahorro"><span></span></button>
+      </div>
       <p class="error" id="acc-err" role="alert"></p>
       <div class="sheet-foot"><button type="button" class="primary" id="acc-save">Guardar cuenta</button></div>
     </section>
@@ -4224,6 +4250,7 @@ main > .panel.fz-today { background: none !important; padding: 0 !important; mar
         if (d && d.limCur && typeof d.limCur === "object") state.limCur = d.limCur;
         if (d && d.limPct && typeof d.limPct === "object") state.limPct = d.limPct;
         if (d && d.limPer === "sem") state.limPer = "sem";
+        if (d && d.savTipOff) state.savTipOff = true;
         if (d && d.limMode === "pct") state.limMode = "pct";
         if (d && d.lastAcc !== undefined && d.lastAcc !== null) state.lastAcc = d.lastAcc;
         if (d && d.bn && typeof d.bn === "object") state.bn = { done: d.bn.done || {}, apr: typeof d.bn.apr === "number" ? d.bn.apr : BN_APR, hide: d.bn.v === 2 && !!d.bn.hide, opened: d.bn.opened || {}, v: 2 };
@@ -4248,7 +4275,7 @@ main > .panel.fz-today { background: none !important; padding: 0 !important; mar
   }
   function save() {
     try {
-      localStorage.setItem(KEY, JSON.stringify({ items: state.items, rate: state.rate, rateDate: state.rateDate, hideSav: state.hideSav, rateManual: state.rateManual, rateAutoAt: state.rateAutoAt, accounts: state.accounts, templates: state.templates, goals: state.goals, payments: state.payments, paySeries: state.paySeries, earn: state.earn, limits: state.limits, rateHist: state.rateHist, rateHistAt: state.rateHistAt, theme: state.theme, pin: state.pin, backupAt: state.backupAt, onb: state.onb, msumSeen: state.msumSeen, country: state.country, ratesOn: !!state.ratesOn, aiHide: !!state.aiHide, cqOff: !!state.cqOff, sgName: state.sgName || "", instSeen: state.instSeen, notif: state.notif, subs: state.subs, limCur: state.limCur, limPct: state.limPct, limPer: state.limPer, limMode: state.limMode, lastAcc: state.lastAcc, bn: state.bn, btcUsd: state.btcUsd, btcAt: state.btcAt, rateEur: state.rateEur, rateEurDate: state.rateEurDate, rateEurManual: state.rateEurManual, rateUsdt: state.rateUsdt, rateUsdtDate: state.rateUsdtDate, rateUsdtManual: state.rateUsdtManual, rateUsdtSrc: state.rateUsdtSrc, collapsed: state.collapsed, disp: state.disp, sav: state.sav, forz: state.forz, dayOn: !!state.dayOn, roundOn: !!state.roundOn }));
+      localStorage.setItem(KEY, JSON.stringify({ items: state.items, rate: state.rate, rateDate: state.rateDate, hideSav: state.hideSav, rateManual: state.rateManual, rateAutoAt: state.rateAutoAt, accounts: state.accounts, templates: state.templates, goals: state.goals, payments: state.payments, paySeries: state.paySeries, earn: state.earn, limits: state.limits, rateHist: state.rateHist, rateHistAt: state.rateHistAt, theme: state.theme, pin: state.pin, backupAt: state.backupAt, onb: state.onb, msumSeen: state.msumSeen, country: state.country, ratesOn: !!state.ratesOn, aiHide: !!state.aiHide, cqOff: !!state.cqOff, sgName: state.sgName || "", instSeen: state.instSeen, notif: state.notif, subs: state.subs, limCur: state.limCur, limPct: state.limPct, savTipOff: !!state.savTipOff, limPer: state.limPer, limMode: state.limMode, lastAcc: state.lastAcc, bn: state.bn, btcUsd: state.btcUsd, btcAt: state.btcAt, rateEur: state.rateEur, rateEurDate: state.rateEurDate, rateEurManual: state.rateEurManual, rateUsdt: state.rateUsdt, rateUsdtDate: state.rateUsdtDate, rateUsdtManual: state.rateUsdtManual, rateUsdtSrc: state.rateUsdtSrc, collapsed: state.collapsed, disp: state.disp, sav: state.sav, forz: state.forz, dayOn: !!state.dayOn, roundOn: !!state.roundOn }));
       window.__saveFail = 0;
     } catch (e) {
       if (!window.__saveFail && window.__toast) window.__toast("No se pudo guardar en este teléfono (puede estar sin espacio). Guarda una copia en Archivos desde Ajustes.");
@@ -4627,8 +4654,8 @@ main > .panel.fz-today { background: none !important; padding: 0 !important; mar
       if (!it.fecha || it.fecha.slice(0, 7) !== m) return;
       var d = Number(it.fecha.slice(8, 10)), v;
       if (it.tipo === "traspaso") {
-        if (isSavK(it.desde.k)) { v = conv(it.desde.monto, it.desde.moneda, D); if (v !== null) delta[d] += v; }
-        if (isSavK(it.hacia.k)) { v = conv(it.hacia.monto, it.hacia.moneda, D); if (v !== null) delta[d] -= v; }
+        if (savEnd(it.desde)) { v = conv(it.desde.monto, it.desde.moneda, D); if (v !== null) delta[d] += v; }
+        if (savEnd(it.hacia)) { v = conv(it.hacia.monto, it.hacia.moneda, D); if (v !== null) delta[d] -= v; }
         return;
       }
       v = conv(it.monto, it.moneda, D);
@@ -4730,8 +4757,8 @@ main > .panel.fz-today { background: none !important; padding: 0 !important; mar
     state.items.forEach(function (it) {
       if (!it.fecha || it.fecha.slice(0, 7) !== mstr) return;
       if (it.tipo === "traspaso") {
-        if (isSavK(it.desde.k)) { var dv = conv(it.desde.monto, it.desde.moneda, D); if (dv === null) r.miss = true; else r.sav -= dv; }
-        if (isSavK(it.hacia.k)) { var hv = conv(it.hacia.monto, it.hacia.moneda, D); if (hv === null) r.miss = true; else r.sav += hv; }
+        if (savEnd(it.desde)) { var dv = conv(it.desde.monto, it.desde.moneda, D); if (dv === null) r.miss = true; else r.sav -= dv; }
+        if (savEnd(it.hacia)) { var hv = conv(it.hacia.monto, it.hacia.moneda, D); if (hv === null) r.miss = true; else r.sav += hv; }
         return;
       }
       var v = conv(it.monto, it.moneda, D);
@@ -4836,6 +4863,9 @@ main > .panel.fz-today { background: none !important; padding: 0 !important; mar
   function setAiKey(v) { try { if (v) localStorage.setItem("gastos-ai-key", v); else localStorage.removeItem("gastos-ai-key"); } catch (e) {} }
 
   function isSavK(k) { return k === "ahorro" || k === "meta"; }
+  function isSavAcc(id) { var a = accById(id); return !!(a && a.ahorro); }
+  // Extremo de una transferencia que cuenta como ahorro: apartado, meta o cuenta de ahorro
+  function savEnd(e) { return !!e && (isSavK(e.k) || (e.k === "cuenta" && isSavAcc(e.id))); }
   function goalMap() {
     var m = {};
     state.items.forEach(function (it) {
@@ -5295,7 +5325,7 @@ main > .panel.fz-today { background: none !important; padding: 0 !important; mar
     if (it.tipo === "ingreso") return "in";
     if (it.tipo === "gasto") return "out";
     if (it.tipo === "ahorro" || it.tipo === "retiro") return "sv";
-    return (isSavK(it.desde.k) || isSavK(it.hacia.k)) ? "sv" : "tr";
+    return (savEnd(it.desde) || savEnd(it.hacia)) ? "sv" : "tr";
   }
   function histGoal(it) {
     if (it.tipo !== "traspaso") return null;
@@ -5725,6 +5755,7 @@ main > .panel.fz-today { background: none !important; padding: 0 !important; mar
   function accOpening(mstr) {
     var D = state.disp, tot = 0, n = 0, byDay = {};
     state.accounts.forEach(function (a) {
+      if (a.ahorro) return;
       var s0 = Number(a.saldo) || 0, c = accCreated(a);
       if (!s0 || c.slice(0, 7) !== mstr) return;
       var v = conv(s0, a.moneda, D);
@@ -5751,11 +5782,11 @@ main > .panel.fz-today { background: none !important; padding: 0 !important; mar
 
     items.forEach(function (it) {
       if (it.tipo === "traspaso") {
-        if (isSavK(it.desde.k)) {
+        if (savEnd(it.desde)) {
           var dv = conv(it.desde.monto, it.desde.moneda, D);
           if (dv === null) missing = true; else tsv -= dv;
         }
-        if (isSavK(it.hacia.k)) {
+        if (savEnd(it.hacia)) {
           var hv = conv(it.hacia.monto, it.hacia.moneda, D);
           if (hv === null) missing = true; else tsv += hv;
         }
@@ -5775,7 +5806,7 @@ main > .panel.fz-today { background: none !important; padding: 0 !important; mar
     var open = accOpening(state.month), bal = Math.round((tin - tout - tsv + open.tot) * 100) / 100;
     // Debajo: el total que hay hoy en todas las cuentas, para no confundirlo con lo del mes
     var bn = $("bal-note"), accTot = 0, accOk = false;
-    state.accounts.forEach(function (a) { var v = conv(accBalance(a), a.moneda, D); if (v !== null) { accTot += v; accOk = true; } });
+    state.accounts.forEach(function (a) { if (a.ahorro) return; var v = conv(accBalance(a), a.moneda, D); if (v !== null) { accTot += v; accOk = true; } });
     $("h-bal").textContent = accOk ? "Saldo total" : "Te queda este mes";
     bn.hidden = true; // Inicio limpio: solo el saldo total, sin la línea «Te queda este mes»
     var curMo = state.month === today().slice(0, 7), mLbl = curMo ? "Te queda este mes" : "Te quedó en " + MESES[Number(state.month.slice(5, 7)) - 1];
@@ -6183,10 +6214,10 @@ main > .panel.fz-today { background: none !important; padding: 0 !important; mar
   }
   function renderAccounts() {
     var list = $("acc-list"), m = savMap(), D = state.disp, tot = 0, miss = false, posUsd = 0;
-    $("acc-empty").style.display = state.accounts.length ? "none" : "";
+    $("acc-empty").style.display = state.accounts.some(function (a) { return !a.ahorro; }) ? "none" : "";
     // La cuenta de la Bóveda (modo ahorro forzoso) no se muestra en el Inicio: se ve en Ahorro
     var vid = window.__fzAccId ? window.__fzAccId() : null;
-    var accs = state.accounts.filter(function (a) { return vid === null || String(a.id) !== String(vid); });
+    var accs = state.accounts.filter(function (a) { return !a.ahorro && (vid === null || String(a.id) !== String(vid)); });
     accs.forEach(function (a) { var u = conv(accBalance(a), a.moneda, "USD"); if (u > 0) posUsd += u; });
     var mName = MESES[Number(state.month.slice(5, 7)) - 1];
     list.innerHTML = accs.map(function (a) {
@@ -6227,8 +6258,10 @@ main > .panel.fz-today { background: none !important; padding: 0 !important; mar
       if (it.tipo === "ahorro") v = conv(it.monto, it.moneda, D);
       else if (it.tipo === "retiro") { v = conv(it.monto, it.moneda, D); if (v !== null) v = -v; }
       else if (it.tipo === "traspaso") {
-        if (it.hacia.k === "ahorro") v = conv(it.hacia.monto, it.hacia.moneda, D);
-        if (it.desde.k === "ahorro") { var o = conv(it.desde.monto, it.desde.moneda, D); if (o !== null) v = (v || 0) - o; }
+        if (it.hacia.k === "ahorro" || (it.hacia.k === "cuenta" && isSavAcc(it.hacia.id))) v = conv(it.hacia.monto, it.hacia.moneda, D);
+        if (it.desde.k === "ahorro" || (it.desde.k === "cuenta" && isSavAcc(it.desde.id))) { var o = conv(it.desde.monto, it.desde.moneda, D); if (o !== null) v = (v || 0) - o; }
+      } else if (it.cuenta && isSavAcc(it.cuenta) && (it.tipo === "ingreso" || it.tipo === "gasto")) {
+        v = conv(it.monto, it.moneda, D); if (v !== null && it.tipo === "gasto") v = -v;
       }
       if (v !== null && Math.abs(v) > 0.004) ev.push([it.fecha, v]);
     });
@@ -6252,7 +6285,13 @@ main > .panel.fz-today { background: none !important; padding: 0 !important; mar
   }
   function renderSavings() {
     var m = savMap(), rows = [], D = state.disp, tot = 0, mon = 0, ym = state.month;
+    var sacc = state.accounts.filter(function (a) { return a.ahorro; });
+    sacc.forEach(function (a) {
+      var v = accBalance(a) + (m["a" + a.id] || 0), c = conv(v, a.moneda, D);
+      if (c !== null) tot += c;
+    });
     state.accounts.forEach(function (a) {
+      if (a.ahorro) return;
       var v = m["a" + a.id] || 0;
       if (Math.abs(v) > 0.004) { rows.push([a, v]); var c = conv(v, a.moneda, D); if (c !== null) tot += c; }
     });
@@ -6262,16 +6301,27 @@ main > .panel.fz-today { background: none !important; padding: 0 !important; mar
       if (it.tipo === "ahorro") v = conv(it.monto, it.moneda, D);
       else if (it.tipo === "retiro") { v = conv(it.monto, it.moneda, D); if (v !== null) v = -v; }
       else if (it.tipo === "traspaso") {
-        if (it.hacia.k === "ahorro") v = conv(it.hacia.monto, it.hacia.moneda, D);
-        if (it.desde.k === "ahorro") { var o = conv(it.desde.monto, it.desde.moneda, D); if (o !== null) v = (v || 0) - o; }
+        var hs = it.hacia.k === "ahorro" || (it.hacia.k === "cuenta" && isSavAcc(it.hacia.id)), ds = it.desde.k === "ahorro" || (it.desde.k === "cuenta" && isSavAcc(it.desde.id));
+        if (hs) v = conv(it.hacia.monto, it.hacia.moneda, D);
+        if (ds) { var o = conv(it.desde.monto, it.desde.moneda, D); if (o !== null) v = (v || 0) - o; }
       }
       if (v !== null) mon += v;
     });
     var dl = Math.abs(mon) > 0.004 ? '<span class="sav-delta ' + (mon >= 0 ? "up" : "down") + '">' + (mon >= 0 ? "▲ " : "▼ ") + mask(money(Math.abs(mon), D)) + " este mes</span>" : "";
     $("sav-hero").innerHTML = '<span class="l">Ahorro libre</span><div class="sav-big fit">' + mask(moneyH(tot, D)) + "</div>" + dl + savChart(D);
+    var sa = $("sav-accs");
+    if (sa) {
+      sa.hidden = !sacc.length;
+      sa.innerHTML = sacc.length ? '<div class="sa-h">' + (sacc.length === 1 ? "Cuenta de ahorro" : "Cuentas de ahorro") + "</div>" + sacc.map(function (a) {
+        var v = accBalance(a) + (m["a" + a.id] || 0);
+        return '<button type="button" class="sa-row" data-acc-open="' + a.id + '" style="--c:' + accColor(a) + '" aria-label="Ver la cuenta ' + esc(a.nombre) + '">' + accAvatar(a) + '<span class="l">' + esc(a.nombre) + '</span><span class="v">' + mask(a.moneda === "USDT" ? "USDT " + num(v) : money(v, a.moneda)) + "</span></button>";
+      }).join("") : "";
+    }
+    var tip = $("sav-tip");
+    if (tip) tip.hidden = !!sacc.length || !!state.savTipOff || !state.accounts.length;
     $("sav-buckets").innerHTML = rows.length ? rows.map(function (r) {
       return '<div class="bk">' + accAvatar(r[0]) + '<span class="l">' + esc(r[0].nombre) + '</span><span class="v">' + mask(money(r[1], r[0].moneda)) + "</span></div>";
-    }).join("") : '<p class="empty" style="grid-column:1/-1">Aún no tienes ahorros. Toca Ahorrar o actívalo al registrar un ingreso.</p>';
+    }).join("") : sacc.length ? "" : '<p class="empty" style="grid-column:1/-1">Aún no tienes ahorros. Toca Ahorrar o actívalo al registrar un ingreso.</p>';
     renderEarn();
     renderEye();
   }
@@ -6742,11 +6792,13 @@ main > .panel.fz-today { background: none !important; padding: 0 !important; mar
       renderFormSav();
     }
     var editAccId = null;
-    function openAccSheet(a) {
+    function openAccSheet(a, sav) {
       editAccId = a ? a.id : null;
+      $("acc-sav").setAttribute("aria-checked", (a ? !!a.ahorro : !!sav) ? "true" : "false");
       $("h-acc-new").textContent = a ? "Editar cuenta" : "Nueva cuenta";
       $("acc-save").textContent = a ? "Guardar cambios" : "Guardar cuenta";
       $("acc-nombre").value = a ? a.nombre : "";
+      $("acc-nombre").placeholder = "Ej: Banco de Venezuela, Binance";
       $("acc-moneda").value = a ? a.moneda : LOC.none ? LOC.base : "VES";
       $("acc-moneda").disabled = !!(a && accUsed(a));
       $("acc-saldo-wrap").style.display = "";
@@ -7025,6 +7077,7 @@ main > .panel.fz-today { background: none !important; padding: 0 !important; mar
         var a = accById(editAccId);
         if (a) {
           a.nombre = nombre; a.icon = accLook.icon || ""; if (accLook.color) a.color = accLook.color;
+          if ($("acc-sav").getAttribute("aria-checked") === "true") a.ahorro = true; else delete a.ahorro;
           if (!isNaN(nuevo)) {
             var actual = accBalance(a);
             a.saldo = Math.round(((Number(a.saldo) || 0) + nuevo - actual) * 100) / 100;
@@ -7033,19 +7086,25 @@ main > .panel.fz-today { background: none !important; padding: 0 !important; mar
         }
       } else {
         var na = { id: Date.now(), nombre: nombre, moneda: $("acc-moneda").value, saldo: isNaN(nuevo) ? 0 : Math.round(nuevo * 100) / 100, creado: today(), icon: accLook.icon || "", color: accLook.color || "" };
+        if ($("acc-sav").getAttribute("aria-checked") === "true") na.ahorro = true;
         state.accounts.push(na);
         state.lastAcc = na.id;
         if (window.__fzAccNew) setTimeout(function () { window.__fzAccNew(na.id); }, 0);
       }
       save(); render();
       closeAccSheet();
-      showToast("Cuenta guardada");
+      var isSv = $("acc-sav").getAttribute("aria-checked") === "true";
+      showToast(isSv ? "Cuenta de ahorro guardada. La verás en Ahorro." : "Cuenta guardada");
       if (window.__accThenMov) { window.__accThenMov = false; setTimeout(function () { openSheet(null); }, 350); }
     });
     function closeMenus() {
       document.querySelectorAll(".menu").forEach(function (m) { m.hidden = true; });
       document.querySelectorAll(".dots").forEach(function (d) { d.setAttribute("aria-expanded", "false"); });
     }
+    $("acc-sav").addEventListener("click", function () { var b = $("acc-sav"); b.setAttribute("aria-checked", b.getAttribute("aria-checked") === "true" ? "false" : "true"); });
+    $("sav-accs").addEventListener("click", function (e) { var b = e.target.closest("[data-acc-open]"); if (b) openAccd(b.getAttribute("data-acc-open")); });
+    $("sav-tip-go").addEventListener("click", function () { openAccSheet(null, true); $("acc-nombre").placeholder = "Ej: Ahorro en dólares, Binance ahorro"; });
+    $("sav-tip-no").addEventListener("click", function () { state.savTipOff = true; save(); $("sav-tip").hidden = true; showToast("Puedes crearla cuando quieras: al agregar una cuenta, activa «Cuenta de ahorro»."); });
     $("acc-sum").addEventListener("click", function (e) {
       var b = e.target.closest("[data-acc-open]");
       if (b) openAccd(b.getAttribute("data-acc-open"));
@@ -7113,7 +7172,7 @@ main > .panel.fz-today { background: none !important; padding: 0 !important; mar
     function dayRowHtml(it) {
       var acc = accById(it.cuenta), amt, cls, sub = "";
       if (it.tipo === "traspaso") {
-        var hid = state.hideSav && (isSavK(it.desde.k) || isSavK(it.hacia.k));
+        var hid = state.hideSav && (savEnd(it.desde) || savEnd(it.hacia));
         amt = hid ? '<span class="masked">••••</span>' : money(it.desde.monto, it.desde.moneda) + " → " + money(it.hacia.monto, it.hacia.moneda);
         cls = "sv";
         sub = it.nota || "";
@@ -7705,6 +7764,7 @@ main > .panel.fz-today { background: none !important; padding: 0 !important; mar
     window.__accd = function () { if (activeView() === "accd") renderAccd(); };
     function openAccd(id) {
       ad.id = id; ad.per = "m"; ad.f = "all"; ad.q = ""; $("ad-q").value = "";
+      var bk = $("ad-back"), sv = isSavAcc(id); if (bk && bk.lastChild && bk.lastChild.nodeType === 3) bk.lastChild.textContent = sv ? "Ahorro" : "Inicio";
       openView("accd");
       renderAccd();
     }
@@ -8779,8 +8839,8 @@ main > .panel.fz-today { background: none !important; padding: 0 !important; mar
       state.items.forEach(function (it) {
         if (!it.fecha || it.fecha.slice(0, 7) !== mm) return;
         if (it.tipo === "traspaso") {
-          if (isSavK(it.desde.k)) { var a = conv(it.desde.monto, it.desde.moneda, D); if (a !== null) r.tsv -= a; }
-          if (isSavK(it.hacia.k)) { var b = conv(it.hacia.monto, it.hacia.moneda, D); if (b !== null) r.tsv += b; }
+          if (savEnd(it.desde)) { var a = conv(it.desde.monto, it.desde.moneda, D); if (a !== null) r.tsv -= a; }
+          if (savEnd(it.hacia)) { var b = conv(it.hacia.monto, it.hacia.moneda, D); if (b !== null) r.tsv += b; }
           return;
         }
         var v = conv(it.monto, it.moneda, D); if (v === null) return;
