@@ -2787,15 +2787,12 @@ main > .panel.fz-today { background: none !important; padding: 0 !important; mar
 .lim-opts .seg button { flex: 1; }
 .lim-list li { border-top: 0 !important; }
 .lim-list label { display: flex; flex-direction: column; line-height: 1.2; }
-.lim-eq:empty { display: none; }
-.lim-eq { font-weight: 500; color: var(--muted); font-size: .78rem; margin-top: 2px; }
 /* Transferir: las fichas no ensanchan la hoja */
 .tr-pair { grid-template-columns: minmax(0, 1fr) !important; }
 .tr-box { min-width: 0 !important; }
 .tr-box .mv-acc { scroll-snap-type: x proximity; overscroll-behavior-x: contain; -webkit-overflow-scrolling: touch; scroll-padding: 0 20px; }
 .tr-box .mv-acc > * { scroll-snap-align: start; }
 .lim-list label { text-align: center; align-items: center; }
-.lim-eq { display: block; }
 .sav-preview { border-top: 0 !important; padding-top: 4px !important; }
 /* Botón invertir: icono centrado, estilo suave */
 .tr-swap { width: 44px !important; height: 44px !important; border: 0 !important; align-items: center !important; justify-content: center !important; background: color-mix(in srgb, var(--accent) 14%, transparent) !important; color: var(--accent) !important; box-shadow: none !important; transition: transform .25s cubic-bezier(.32,.72,0,1), background .2s; }
@@ -3559,7 +3556,6 @@ main > .panel.fz-today { background: none !important; padding: 0 !important; mar
       <div class="sheet-head"><h2 id="h-lim">Límite por categoría</h2><button type="button" class="del" id="lim-close" aria-label="Cerrar">✕</button></div>
       <div class="lim-opts">
         <div class="seg" role="group" aria-label="Periodo del límite"><button type="button" data-lper="mes">Mensual</button><button type="button" data-lper="sem">Semanal</button></div>
-        <div class="seg" role="group" aria-label="Tipo de límite"><button type="button" data-lmode="monto">Monto</button><button type="button" data-lmode="pct">% de ingresos</button></div>
       </div>
       <p class="hint" id="lim-hint" style="margin:0 0 6px"></p>
       <ul class="lim-list" id="lim-list"></ul>
@@ -4260,7 +4256,7 @@ main > .panel.fz-today { background: none !important; padding: 0 !important; mar
         if (d && d.limPct && typeof d.limPct === "object") state.limPct = d.limPct;
         if (d && d.limPer === "sem") state.limPer = "sem";
         if (d && d.savTipOff) state.savTipOff = true;
-        if (d && d.limMode === "pct") state.limMode = "pct";
+        if (d && d.limMode === "pct") state.limMode = "pct"; // antiguo: se convierte a montos en limMigrate()
         if (d && d.lastAcc !== undefined && d.lastAcc !== null) state.lastAcc = d.lastAcc;
         if (d && d.bn && typeof d.bn === "object") state.bn = { done: d.bn.done || {}, apr: typeof d.bn.apr === "number" ? d.bn.apr : BN_APR, hide: d.bn.v === 2 && !!d.bn.hide, opened: d.bn.opened || {}, v: 2 };
         if (d && typeof d.btcUsd === "number") { state.btcUsd = d.btcUsd; state.btcAt = d.btcAt || 0; }
@@ -4284,7 +4280,7 @@ main > .panel.fz-today { background: none !important; padding: 0 !important; mar
   }
   function save() {
     try {
-      localStorage.setItem(KEY, JSON.stringify({ items: state.items, rate: state.rate, rateDate: state.rateDate, hideSav: state.hideSav, rateManual: state.rateManual, rateAutoAt: state.rateAutoAt, accounts: state.accounts, templates: state.templates, goals: state.goals, payments: state.payments, paySeries: state.paySeries, earn: state.earn, limits: state.limits, rateHist: state.rateHist, rateHistAt: state.rateHistAt, theme: state.theme, pin: state.pin, backupAt: state.backupAt, onb: state.onb, msumSeen: state.msumSeen, country: state.country, ratesOn: !!state.ratesOn, aiHide: !!state.aiHide, cqOff: !!state.cqOff, sgName: state.sgName || "", instSeen: state.instSeen, notif: state.notif, subs: state.subs, limCur: state.limCur, limPct: state.limPct, savTipOff: !!state.savTipOff, limPer: state.limPer, limMode: state.limMode, lastAcc: state.lastAcc, bn: state.bn, btcUsd: state.btcUsd, btcAt: state.btcAt, rateEur: state.rateEur, rateEurDate: state.rateEurDate, rateEurManual: state.rateEurManual, rateUsdt: state.rateUsdt, rateUsdtDate: state.rateUsdtDate, rateUsdtManual: state.rateUsdtManual, rateUsdtSrc: state.rateUsdtSrc, collapsed: state.collapsed, disp: state.disp, sav: state.sav, forz: state.forz, dayOn: !!state.dayOn, roundOn: !!state.roundOn }));
+      localStorage.setItem(KEY, JSON.stringify({ items: state.items, rate: state.rate, rateDate: state.rateDate, hideSav: state.hideSav, rateManual: state.rateManual, rateAutoAt: state.rateAutoAt, accounts: state.accounts, templates: state.templates, goals: state.goals, payments: state.payments, paySeries: state.paySeries, earn: state.earn, limits: state.limits, rateHist: state.rateHist, rateHistAt: state.rateHistAt, theme: state.theme, pin: state.pin, backupAt: state.backupAt, onb: state.onb, msumSeen: state.msumSeen, country: state.country, ratesOn: !!state.ratesOn, aiHide: !!state.aiHide, cqOff: !!state.cqOff, sgName: state.sgName || "", instSeen: state.instSeen, notif: state.notif, subs: state.subs, limCur: state.limCur, savTipOff: !!state.savTipOff, limPer: state.limPer, lastAcc: state.lastAcc, bn: state.bn, btcUsd: state.btcUsd, btcAt: state.btcAt, rateEur: state.rateEur, rateEurDate: state.rateEurDate, rateEurManual: state.rateEurManual, rateUsdt: state.rateUsdt, rateUsdtDate: state.rateUsdtDate, rateUsdtManual: state.rateUsdtManual, rateUsdtSrc: state.rateUsdtSrc, collapsed: state.collapsed, disp: state.disp, sav: state.sav, forz: state.forz, dayOn: !!state.dayOn, roundOn: !!state.roundOn }));
       window.__saveFail = 0;
     } catch (e) {
       if (!window.__saveFail && window.__toast) window.__toast("No se pudo guardar en este teléfono (puede estar sin espacio). Guarda una copia en Archivos desde Ajustes.");
@@ -4539,7 +4535,7 @@ main > .panel.fz-today { background: none !important; padding: 0 !important; mar
     });
   }
   // Montos tipo cajero: los dígitos entran por la derecha y los 2 decimales ya están puestos (1234 → 12,34)
-  function isMoneyInput(el) { return /(^|-)monto$|^acc-saldo$|^ge-meta$|^sgn-meta$|^tr-llega$|^cx-amt$/.test(el.id) || el.hasAttribute("data-lim") && !el.hasAttribute("data-pct"); }
+  function isMoneyInput(el) { return /(^|-)monto$|^acc-saldo$|^ge-meta$|^sgn-meta$|^tr-llega$|^cx-amt$/.test(el.id) || el.hasAttribute("data-lim"); }
   function fmtCents(v) {
     var parts = String(v).split(/([+\-−×xX*/])/), out = "";
     for (var i = 0; i < parts.length; i++) {
@@ -5694,14 +5690,25 @@ main > .panel.fz-today { background: none !important; padding: 0 !important; mar
     var b = cvData(state.month, "ingreso").tot;
     return b > 0.004 ? b : cvData(prevMonth(state.month), "ingreso").tot;
   }
-  function limHas(c) { return state.limMode === "pct" ? (state.limPct && state.limPct[c] > 0) : (state.limits && state.limits[c] > 0); }
-  function limCats() { var o = state.limMode === "pct" ? state.limPct || {} : state.limits || {}; return Object.keys(o).filter(function (c) { return o[c] > 0; }); }
-  function catLimit(c) {
+  // Los límites en % de ingresos ya no existen: los que había se pasan una vez a montos
+  function limMigrate() {
+    if (state.limMode !== "pct" && !state.limPct) return;
+    var p = state.limPct || {}, inc = limIncome(), sem = state.limPer === "sem";
     if (state.limMode === "pct") {
-      var p = state.limPct && state.limPct[c], inc = limIncome();
-      if (!(p > 0) || !(inc > 0.004)) return null;
-      return inc * p / 100; // el % es siempre de los ingresos del mes
+      state.limits = {}; state.limCur = {};
+      Object.keys(p).forEach(function (c) {
+        if (!(p[c] > 0) || !(inc > 0.004)) return;
+        var m = inc * p[c] / 100, v = sem ? m * 7 / limDim() : m, u = conv(v, state.disp, "USD");
+        if (u === null || !(u > 0)) return;
+        state.limits[c] = u; state.limCur[c] = { v: Math.round(v * 100) / 100, cur: state.disp };
+      });
     }
+    delete state.limPct; delete state.limMode;
+    save();
+  }
+  function limHas(c) { return !!(state.limits && state.limits[c] > 0); }
+  function limCats() { var o = state.limits || {}; return Object.keys(o).filter(function (c) { return o[c] > 0; }); }
+  function catLimit(c) {
     var l = state.limits && state.limits[c]; if (!(l > 0)) return null;
     var v = conv(l, "USD", state.disp); if (v === null) return null;
     return state.limPer === "sem" ? v * limDim() / 7 : v; // semanal: lo que pusiste por semana, llevado al mes
@@ -5811,6 +5818,7 @@ main > .panel.fz-today { background: none !important; padding: 0 !important; mar
     if (w._h !== html) { w.innerHTML = html; w._h = html; }
   }
   function render() {
+    limMigrate();
     var items = monthItems();
     $("mes-label").textContent = monthLabel(state.month);
     scheduleFit();
@@ -8644,55 +8652,40 @@ main > .panel.fz-today { background: none !important; padding: 0 !important; mar
     function closeGs() { $("gs-sheet").hidden = true; }
     var limDraft = null;
     function limRead() {
-      document.querySelectorAll("#lim-list [data-lim]").forEach(function (inp) { limDraft[limDraft.mode][inp.getAttribute("data-lim")] = inp.value; });
+      document.querySelectorAll("#lim-list [data-lim]").forEach(function (inp) { limDraft.monto[inp.getAttribute("data-lim")] = inp.value; });
     }
     function limDraw() {
-      var D = state.disp, cur = { USD: "$", VES: LOC.sym, EUR: "€" }[D] || D, pc = limDraft.mode === "pct", sem = limDraft.per === "sem";
+      var D = state.disp, cur = { USD: "$", VES: LOC.sym, EUR: "€" }[D] || D, sem = limDraft.per === "sem";
       document.querySelectorAll("#lim-sheet [data-lper]").forEach(function (b) { b.setAttribute("aria-pressed", String(b.getAttribute("data-lper") === limDraft.per)); });
-      document.querySelectorAll("#lim-sheet [data-lmode]").forEach(function (b) { b.setAttribute("aria-pressed", String(b.getAttribute("data-lmode") === limDraft.mode)); });
-      var inc = limIncome();
-      $("lim-hint").textContent = pc
-        ? (inc > 0.004 ? "Qué parte de tus ingresos del mes (" + money(inc, D) + ") puedes gastar en cada categoría. " + (sem ? "Se reparte en las semanas que quedan y se ajusta con lo que ya gastaste." : "Se reparte a lo largo del mes para que veas si vas a buen ritmo.") : "Registra tus ingresos del mes para que los porcentajes se conviertan en montos.")
-        : "Cuánto quieres gastar como máximo " + (sem ? "cada semana" : "al mes") + ", en " + (D === "VES" ? LOC.name : D === "EUR" ? "euros" : "dólares") + ". " + (sem ? "Si una semana gastas más, las siguientes se ajustan solas para no pasarte del mes." : "Se reparte a lo largo del mes para que veas si vas a buen ritmo.");
+      $("lim-hint").textContent = "Cuánto quieres gastar como máximo " + (sem ? "cada semana" : "al mes") + ", en " + (D === "VES" ? LOC.name : D === "EUR" ? "euros" : "dólares") + ". " + (sem ? "Si una semana gastas más, las siguientes se ajustan solas para no pasarte del mes." : "Se reparte a lo largo del mes para que veas si vas a buen ritmo.");
       $("lim-list").innerHTML = CATS.gasto.map(function (c, i) {
-        var v = limDraft[limDraft.mode][c] || "", ex = pc ? limEq(v) : "";
-        return '<li><span class="cv-dot" style="--c:' + colorFor(c) + '">' + catSvg(c) + '</span><label for="lim-' + i + '">' + esc(c) + '<small class="lim-eq">' + ex + "</small>" + '</label><span class="lim-cur">' + (pc ? "%" : cur) + '</span><input type="text" inputmode="decimal" id="lim-' + i + '" data-lim="' + esc(c) + '"' + (pc ? ' data-pct maxlength="5"' : "") + ' placeholder="Sin límite" value="' + esc(v) + '" autocomplete="off"></li>';
+        var v = limDraft.monto[c] || "";
+        return '<li><span class="cv-dot" style="--c:' + colorFor(c) + '">' + catSvg(c) + '</span><label for="lim-' + i + '">' + esc(c) + '</label><span class="lim-cur">' + cur + '</span><input type="text" inputmode="decimal" id="lim-' + i + '" data-lim="' + esc(c) + '" placeholder="Sin límite" value="' + esc(v) + '" autocomplete="off"></li>';
       }).join("");
     }
-    function limEq(v) {
-      var inc = limIncome(), q = Number(String(v).replace("%", "").replace(",", "."));
-      if (!(inc > 0.004) || !(q > 0)) return "";
-      var m = inc * q / 100;
-      return money(m, state.disp) + " al mes" + (limDraft.per === "sem" ? " · ≈ " + money(m * 7 / limDim(), state.disp) + " por semana" : "");
-    }
     function openLim() {
-      var D = state.disp, mo = {}, pc = {};
+      var D = state.disp, mo = {};
       CATS.gasto.forEach(function (c) {
         var lv = state.limits && state.limits[c], lc = state.limCur && state.limCur[c];
         var l = lv > 0 ? (lc && lc.cur === D ? lc.v : conv(lv, "USD", D)) : null;
         if (l) mo[c] = moneyIn(l);
-        var p = state.limPct && state.limPct[c]; if (p > 0) pc[c] = String(p).replace(".", ",");
       });
-      limDraft = { per: state.limPer === "sem" ? "sem" : "mes", mode: state.limMode === "pct" ? "pct" : "monto", monto: mo, pct: pc };
+      limDraft = { per: state.limPer === "sem" ? "sem" : "mes", monto: mo };
       limDraw();
       $("lim-sheet").hidden = false;
     }
     $("lim-sheet").addEventListener("click", function (e) {
-      var b = e.target.closest("[data-lper],[data-lmode]"); if (!b || !limDraft) return;
+      var b = e.target.closest("[data-lper]"); if (!b || !limDraft) return;
       limRead();
-      if (b.hasAttribute("data-lper")) limDraft.per = b.getAttribute("data-lper"); else limDraft.mode = b.getAttribute("data-lmode");
+      limDraft.per = b.getAttribute("data-lper");
       limDraw();
-    });
-    $("lim-list").addEventListener("input", function (e) {
-      if (!limDraft || limDraft.mode !== "pct" || !e.target.matches("[data-lim]")) return;
-      var sm = e.target.closest("li").querySelector(".lim-eq"); if (sm) sm.textContent = limEq(e.target.value);
     });
     function closeLim() { $("lim-sheet").hidden = true; }
     $("lim-close").addEventListener("click", closeLim);
     $("lim-sheet").addEventListener("click", function (e) { if (e.target === $("lim-sheet")) closeLim(); });
     $("lim-save").addEventListener("click", function () {
       limRead();
-      var out = {}, oc = {}, D = state.disp, old = state.limits || {}, oldC = state.limCur || {}, pc = {}, bad = false;
+      var out = {}, oc = {}, D = state.disp, old = state.limits || {}, oldC = state.limCur || {};
       Object.keys(limDraft.monto).forEach(function (c) {
         var raw = String(limDraft.monto[c] || "").trim();
         if (!raw) return;
@@ -8702,15 +8695,10 @@ main > .panel.fz-today { background: none !important; padding: 0 !important; mar
         if (u === null) { if (old[c] > 0) { out[c] = old[c]; if (oldC[c]) oc[c] = oldC[c]; } return; }
         out[c] = u; oc[c] = { v: v, cur: D };
       });
-      Object.keys(limDraft.pct).forEach(function (c) {
-        var raw = String(limDraft.pct[c] || "").trim(); if (!raw) return;
-        var v = Number(raw.replace("%", "").replace(",", "."));
-        if (v > 0 && v <= 100) pc[c] = Math.round(v * 10) / 10; else bad = true;
-      });
-      state.limits = out; state.limCur = oc; state.limPct = pc; state.limPer = limDraft.per; state.limMode = limDraft.mode;
+      state.limits = out; state.limCur = oc; state.limPer = limDraft.per;
       save(); render(); closeLim();
-      var n = Object.keys(limDraft.mode === "pct" ? pc : out).length;
-      showToast(bad ? "Límites guardados. Los porcentajes deben ir de 1 a 100." : n ? "Límites " + (limDraft.per === "sem" ? "semanales" : "mensuales") + " guardados." : "Sin límites.");
+      var n = Object.keys(out).length;
+      showToast(n ? "Límites " + (limDraft.per === "sem" ? "semanales" : "mensuales") + " guardados." : "Sin límites.");
     });
     $("goal-sort").addEventListener("click", function () { renderGs(); $("gs-sheet").hidden = false; });
     $("gs-close").addEventListener("click", closeGs);
