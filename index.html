@@ -2818,6 +2818,15 @@ main > .panel.fz-today { background: none !important; padding: 0 !important; mar
 .acc-savrow { display: flex; align-items: center; gap: 12px; margin: 14px 0 4px; padding: 12px 14px; border-radius: 18px; background: var(--fill, rgba(120,120,128,.1)); }
 .acc-savrow .tx { flex: 1; display: grid; gap: 2px; }
 .acc-savrow small { color: var(--muted); font-size: .8rem; line-height: 1.3; }
+
+/* Límites: ritmo del mes */
+.cv-lbar { position: relative; overflow: visible !important; }
+.cv-lbar i { overflow: hidden; }
+.cv-lbar em { position: absolute; top: -3px; width: 2px; height: 11px; margin-left: -1px; border-radius: 2px; background: var(--ink); opacity: .35; }
+.cv-left { display: flex; justify-content: space-between; gap: 8px; }
+.cv-used { font-variant-numeric: tabular-nums; }
+.cv-sub { grid-column: 1 / -1; font-size: .72rem; color: var(--muted); margin-top: -2px; }
+.cv-lim.fast .cv-sub { color: var(--amber, #c07a00); }
 </style>
 </head>
 <body>
@@ -5691,11 +5700,32 @@ main > .panel.fz-today { background: none !important; padding: 0 !important; mar
     if (state.limMode === "pct") {
       var p = state.limPct && state.limPct[c], inc = limIncome();
       if (!(p > 0) || !(inc > 0.004)) return null;
-      var m = inc * p / 100;
-      if (state.limPer === "sem") { var y = Number(state.month.slice(0, 4)), mo = Number(state.month.slice(5, 7)); m = m * 7 / new Date(y, mo, 0).getDate(); }
-      return m;
+      return inc * p / 100; // el % es siempre de los ingresos del mes
     }
-    var l = state.limits && state.limits[c]; return l > 0 ? conv(l, "USD", state.disp) : null;
+    var l = state.limits && state.limits[c]; if (!(l > 0)) return null;
+    var v = conv(l, "USD", state.disp); if (v === null) return null;
+    return state.limPer === "sem" ? v * limDim() / 7 : v; // semanal: lo que pusiste por semana, llevado al mes
+  }
+  function limDim() { return new Date(Number(state.month.slice(0, 4)), Number(state.month.slice(5, 7)), 0).getDate(); }
+  // Día del mes que se está viendo hasta el que se cuenta (hoy, o el último día si es otro mes)
+  function limDay() { var t = today(); return t.slice(0, 7) === state.month ? Number(t.slice(8, 10)) : state.month < t.slice(0, 7) ? limDim() : 0; }
+  // Cómo va un límite: reparte el presupuesto del mes a lo largo de los días y suma lo ya gastado
+  function limInfo(c, M) {
+    var D = state.disp, dim = limDim(), day = Math.max(1, limDay()), m = state.month, by = { before: 0, week: 0, month: 0 };
+    var w = limWeek(), a = w.a.slice(0, 7) < m ? m + "-01" : w.a, b = w.b.slice(0, 7) > m ? m + "-" + pad2(dim) : w.b;
+    state.items.forEach(function (it) {
+      if (it.tipo !== "gasto" || it.cat !== c || !it.fecha || it.fecha.slice(0, 7) !== m) return;
+      var v = conv(it.monto, it.moneda, D); if (v === null) return;
+      by.month += v;
+      if (it.fecha < a) by.before += v; else if (it.fecha <= b) by.week += v;
+    });
+    if (state.limPer === "sem") {
+      var da = Number(a.slice(8, 10)), db = Number(b.slice(8, 10)), left = dim - da + 1, span = db - da + 1;
+      var allow = Math.max(0, M - by.before) * span / left;
+      var pace = allow * Math.min(span, Math.max(1, day - da + 1)) / span;
+      return { sem: true, lim: allow, spent: by.week, pace: pace, month: by.month, M: M, before: by.before };
+    }
+    return { sem: false, lim: M, spent: by.month, pace: M * Math.min(day, dim) / dim, month: by.month, M: M, daysLeft: Math.max(1, dim - day + 1) };
   }
   // Semana (lunes a domingo) del mes que se está viendo: la actual o la última del mes
   function limWeek() {
@@ -5732,14 +5762,21 @@ main > .panel.fz-today { background: none !important; padding: 0 !important; mar
     h += '<div class="cv-tot"><span>Total</span><b>' + money(cur.tot, D) + "</b></div>";
     h += '<div class="acc-seg cv-seg" aria-hidden="true">' + cats.map(function (c) { return '<i style="flex:' + (cur.by[c] / cur.tot).toFixed(4) + " 1 0;background:" + col(c) + '"></i>'; }).join("") + "</div>";
     if (isOut) limCats().forEach(function (c) { if (cats.indexOf(c) < 0) { cats.push(c); cur.by[c] = 0; } });
-    var wk = isOut && state.limPer === "sem" ? weekSpent() : null, per = wk ? " esta semana" : "";
+
     h += '<ul class="cv-list cv-rest">' + cats.map(function (c) {
       var lim = isOut ? catLimit(c) : null, v = cur.by[c];
       if (lim) {
-        if (wk) v = wk[c] || 0;
-        var over = v > lim + 0.004, w = Math.min(100, v / lim * 100);
-        return '<li><button type="button" class="cv-row cv-lim' + (over ? " over" : "") + '" data-cv-cat="' + esc(c) + '" style="--c:' + col(c) + '" aria-label="Ver los movimientos de ' + esc(c) + '"><span class="cv-dot">' + catSvg(c) + '</span><span class="cv-mid"><b>' + esc(c) + "</b>" + dlt(c) + '</span><span class="cv-amt"><b>' + money(v, D) + '</b><small> / ' + money(lim, D) + '</small></span>' +
-          '<span class="cv-lbar"><i style="width:' + w.toFixed(1) + '%"></i></span><span class="cv-left">' + (over ? "Te pasaste " + money(v - lim, D) : "Te quedan " + money(lim - v, D)) + per + "</span></button></li>";
+        var L = limInfo(c, lim), over = L.spent > L.lim + 0.004, w = L.lim > 0 ? Math.min(100, L.spent / L.lim * 100) : 100;
+        var pk = L.lim > 0 ? Math.min(100, L.pace / L.lim * 100) : 0, fast = !L.sem && !over && L.spent > L.pace * 1.1 + 0.5;
+        var used = L.lim > 0 ? Math.round(L.spent / L.lim * 100) : 100;
+        var txt;
+        if (L.sem) txt = over ? "Te pasaste " + money(L.spent - L.lim, D) + " esta semana" : "Te quedan " + money(L.lim - L.spent, D) + " esta semana";
+        else if (over) txt = "Te pasaste " + money(L.spent - L.lim, D) + " este mes";
+        else txt = "Te quedan " + money(L.lim - L.spent, D) + " · unos " + money((L.lim - L.spent) / L.daysLeft, D) + " por día";
+        var sub = L.sem ? "Mes: " + money(L.month, D) + " de " + money(L.M, D) : (fast ? "Vas más rápido de lo previsto para hoy" : "Vas bien para esta fecha");
+        if (L.sem && L.before > 0.004) sub += " · ya incluye lo gastado antes";
+        return '<li><button type="button" class="cv-row cv-lim' + (over ? " over" : fast ? " fast" : "") + '" data-cv-cat="' + esc(c) + '" style="--c:' + col(c) + '" aria-label="Ver los movimientos de ' + esc(c) + '"><span class="cv-dot">' + catSvg(c) + '</span><span class="cv-mid"><b>' + esc(c) + "</b>" + dlt(c) + '</span><span class="cv-amt"><b>' + money(L.spent, D) + '</b><small> / ' + money(L.lim, D) + (L.sem ? " sem." : "") + '</small></span>' +
+          '<span class="cv-lbar"><i style="width:' + w.toFixed(1) + '%"></i><em style="left:' + pk.toFixed(1) + '%" title="Lo previsto para hoy"></em></span><span class="cv-left">' + txt + '<span class="cv-used">' + used + "%</span></span>" + '<span class="cv-sub">' + sub + "</span></button></li>";
       }
       return '<li><button type="button" class="cv-row" data-cv-cat="' + esc(c) + '" style="--c:' + col(c) + '" aria-label="Ver los movimientos de ' + esc(c) + '"><span class="cv-dot">' + catSvg(c) + '</span><span class="cv-mid"><b>' + esc(c) + "</b>" + dlt(c) + '</span><span class="cv-pct">' + pct(v) + '</span><span class="cv-amt"><b>' + money(v, D) + "</b></span></button></li>";
     }).join("") + "</ul>";
@@ -8615,8 +8652,8 @@ main > .panel.fz-today { background: none !important; padding: 0 !important; mar
       document.querySelectorAll("#lim-sheet [data-lmode]").forEach(function (b) { b.setAttribute("aria-pressed", String(b.getAttribute("data-lmode") === limDraft.mode)); });
       var inc = limIncome();
       $("lim-hint").textContent = pc
-        ? (inc > 0.004 ? "Qué parte de tus ingresos del mes (" + money(inc, D) + ") puedes gastar en cada categoría" + (sem ? ", repartida por semana" : "") + "." : "Registra tus ingresos del mes para que los porcentajes se conviertan en montos.")
-        : "Cuánto quieres gastar como máximo " + (sem ? "cada semana" : "al mes") + ", en " + (D === "VES" ? LOC.name : D === "EUR" ? "euros" : "dólares") + ". Déjalo vacío para no poner límite.";
+        ? (inc > 0.004 ? "Qué parte de tus ingresos del mes (" + money(inc, D) + ") puedes gastar en cada categoría. " + (sem ? "Se reparte en las semanas que quedan y se ajusta con lo que ya gastaste." : "Se reparte a lo largo del mes para que veas si vas a buen ritmo.") : "Registra tus ingresos del mes para que los porcentajes se conviertan en montos.")
+        : "Cuánto quieres gastar como máximo " + (sem ? "cada semana" : "al mes") + ", en " + (D === "VES" ? LOC.name : D === "EUR" ? "euros" : "dólares") + ". " + (sem ? "Si una semana gastas más, las siguientes se ajustan solas para no pasarte del mes." : "Se reparte a lo largo del mes para que veas si vas a buen ritmo.");
       $("lim-list").innerHTML = CATS.gasto.map(function (c, i) {
         var v = limDraft[limDraft.mode][c] || "", ex = pc ? limEq(v) : "";
         return '<li><span class="cv-dot" style="--c:' + colorFor(c) + '">' + catSvg(c) + '</span><label for="lim-' + i + '">' + esc(c) + '<small class="lim-eq">' + ex + "</small>" + '</label><span class="lim-cur">' + (pc ? "%" : cur) + '</span><input type="text" inputmode="decimal" id="lim-' + i + '" data-lim="' + esc(c) + '"' + (pc ? ' data-pct maxlength="5"' : "") + ' placeholder="Sin límite" value="' + esc(v) + '" autocomplete="off"></li>';
@@ -8626,8 +8663,7 @@ main > .panel.fz-today { background: none !important; padding: 0 !important; mar
       var inc = limIncome(), q = Number(String(v).replace("%", "").replace(",", "."));
       if (!(inc > 0.004) || !(q > 0)) return "";
       var m = inc * q / 100;
-      if (limDraft.per === "sem") { var y = Number(state.month.slice(0, 4)), mo = Number(state.month.slice(5, 7)); m = m * 7 / new Date(y, mo, 0).getDate(); }
-      return money(m, state.disp) + (limDraft.per === "sem" ? " por semana" : " al mes");
+      return money(m, state.disp) + " al mes" + (limDraft.per === "sem" ? " · ≈ " + money(m * 7 / limDim(), state.disp) + " por semana" : "");
     }
     function openLim() {
       var D = state.disp, mo = {}, pc = {};
