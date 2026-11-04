@@ -26,7 +26,7 @@ En a-fuego, **Authentication → URL Configuration**: poner la dirección públi
   - Barra de abajo con un ancho máximo, centrada.
   - **+** y ✦ junto al contenido, no en la esquina de la pantalla.
 - **Banderas de países en Windows:** se ven como letras. Se arregla con imágenes propias.
-- **Inicio más limpio:** casi hecho; ver la sección más abajo.
+- **Inicio más limpio:** hecho; ver la sección más abajo.
 
 ## Funciones
 
@@ -38,7 +38,7 @@ En a-fuego, **Authentication → URL Configuration**: poner la dirección públi
 
 Hecho: proyección solo al tocar el gráfico, línea de cada cuenta con solo el «≈ $», aviso de pagos compacto, aviso de cuadrar que nunca sale junto al de pagos y tasas plegadas al abrir.
 
-- **Falta decidir:** quitar las rayitas verticales entre Ingresos, Gastos y Ahorrado, y entre las tasas del día.
+- Las rayitas verticales se quedan: separan bien los montos grandes. Ingresos, Gastos y Ahorrado se pueden tocar y llevan a su detalle.
 
 ## Comisiones automáticas
 
