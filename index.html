@@ -1231,6 +1231,8 @@ main > .panel::before, main > .panel::after, .bal-hero::before, .bal-hero::after
 .flows { gap: 0 !important; }
 .flow { border-left: 1px solid var(--line) !important; padding-left: 12px !important; }
 .flow:first-child { border-left: 0 !important; padding-left: 0 !important; }
+[data-flow-go] { cursor: pointer; -webkit-tap-highlight-color: transparent; transition: opacity .15s ease; }
+[data-flow-go]:active { opacity: .55; }
 .flow .l { order: -1; font-size: 0.76rem; font-weight: 600; }
 .flow .l::before { content: ""; width: 7px; height: 7px; border-radius: 50%; margin-right: 5px; background: var(--accent); flex: none; }
 .flow.in .l::before { background: var(--in); } .flow.out .l::before { background: var(--out); }
@@ -2894,9 +2896,9 @@ main > .panel.fz-today { background: none !important; padding: 0 !important; mar
       <div class="trend-cap"><span class="tk"><i></i>Disponible</span><span class="tk proj" id="trend-proj"><i></i><span id="trend-title"></span></span></div>
     </div>
     <div class="flows">
-      <div class="flow in"><div class="v fit" id="tin">$0,00</div><div class="l">Ingresos</div></div>
-      <div class="flow out"><div class="v fit" id="tout">$0,00</div><div class="l">Gastos</div></div>
-      <div class="flow sv"><div class="v fit" id="tsv">$0,00</div><div class="l">Ahorrado <button type="button" class="eye eye-btn" aria-pressed="false"></button></div></div>
+      <div class="flow in" data-flow-go="ingreso" role="button" tabindex="0" aria-label="Ver tus ingresos"><div class="v fit" id="tin">$0,00</div><div class="l">Ingresos</div></div>
+      <div class="flow out" data-flow-go="gasto" role="button" tabindex="0" aria-label="Ver tus gastos"><div class="v fit" id="tout">$0,00</div><div class="l">Gastos</div></div>
+      <div class="flow sv" data-flow-go="ahorro" role="button" tabindex="0" aria-label="Ver tus ahorros"><div class="v fit" id="tsv">$0,00</div><div class="l">Ahorrado <button type="button" class="eye eye-btn" aria-pressed="false"></button></div></div>
     </div>
   </section>
 
@@ -11045,6 +11047,17 @@ main > .panel.fz-today { background: none !important; padding: 0 !important; mar
         null
       ];
     }
+    // Ingresos, Gastos y Ahorrado del Inicio llevan a su detalle
+    function flowGo(el) {
+      var k = el.getAttribute("data-flow-go");
+      if (k === "ahorro") { var t = document.querySelector('.tab[data-tab="1"]'); if (t) t.click(); return; }
+      state.cvTab = k; renderCv();
+      var pn = document.querySelector('[data-panel="cat"]'); if (pn) pn.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+    document.querySelectorAll("[data-flow-go]").forEach(function (el) {
+      el.addEventListener("click", function (e) { if (e.target.closest(".eye")) return; flowGo(el); });
+      el.addEventListener("keydown", function (e) { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); flowGo(el); } });
+    });
     function setTab(i) {
       tabbar.style.setProperty("--i", i);
       tabBtns.forEach(function (b, k) { b.setAttribute("aria-current", k === i ? "true" : "false"); });
