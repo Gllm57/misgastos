@@ -32,4 +32,11 @@ La clave publicable puede ir en la app: no da acceso a los datos de nadie. Las r
   3. **Authentication → Rate Limits**: subir el límite de correos a unos 100 por hora.
   4. Opcional: correos de confirmación y de recuperar contraseña en español con el estilo de Orbe (**Authentication → Emails → Templates**).
 
-- Borrar la cuenta completa (correo y contraseña) desde la app necesita una función en el servidor (Edge Function). Hoy la app borra los datos de la nube; la cuenta se borra desde el panel de Supabase.
+## Borrar la cuenta (hecho)
+
+- **Ajustes → Tu cuenta → Borrar mi cuenta.** Pide escribir BORRAR y llama a la función `borrar-cuenta` (Edge Function en a-fuego, código en `functions/borrar-cuenta/index.ts`).
+- La función identifica a la persona por su sesión y borra su usuario. Con eso se borran solos `orbe_data`, sus aportes y su lugar en las metas compartidas.
+- Si es líder de una meta compartida, antes de borrar pasa el liderazgo al miembro más antiguo. Si no queda nadie, la meta se borra.
+- Ojo: los usuarios se comparten con la app de a-fuego, así que borrar la cuenta en Orbe también quita el acceso a a-fuego con ese correo.
+- Para volver a desplegarla: `supabase functions deploy borrar-cuenta --no-verify-jwt` (la función revisa la sesión por su cuenta).
+

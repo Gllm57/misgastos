@@ -2581,7 +2581,7 @@ input, textarea, [contenteditable="true"], .hd-rows, .siri-url code { -webkit-us
 .ad-del:active, .hd-btns .hd-del:active, .secondary.danger:active { transform: scale(0.97); }
 .hd-btns .hd-del { width: auto; min-height: 46px; }
 .hd-btns .hd-del.sure { background: var(--out) !important; color: #fff !important; }
-#data-del, #cl-del { margin-top: 22px; }
+#data-del, #cl-del, #cl-acc-del { margin-top: 22px; }
 .del-note { margin: 8px 0 0 !important; font-size: 0.78rem !important; }
 .sheet > p.hint:not([style]), #cl-out > p.hint, #cl-new > p.hint { margin-bottom: 14px; }
 /* Textos informativos (párrafos) centrados en toda la app; las notas de cada campo siguen alineadas al campo */
@@ -3471,6 +3471,8 @@ main > .panel.fz-today { background: none !important; padding: 0 !important; mar
         </div>
         <button type="button" class="ad-del" id="cl-del">Borrar mis datos de la nube</button>
         <p class="hint del-note">No borra lo que tienes en este teléfono.</p>
+        <button type="button" class="ad-del" id="cl-acc-del">Borrar mi cuenta</button>
+        <p class="hint del-note">Borra tu correo, tu contraseña y todo lo guardado en tu cuenta.</p>
       </div>
     </section>
   </div>
@@ -9849,6 +9851,17 @@ main > .panel.fz-today { background: none !important; padding: 0 !important; mar
       openCf({ title: "¿Borrar tus datos de la nube?", text: "Se borran tus movimientos guardados en tu cuenta. Lo que tienes en este teléfono no se toca. Tu cuenta (correo y contraseña) sigue existiendo.", word: "BORRAR", btn: "Borrar de la nube", ok: function () {
         tokenOk().then(function (s) { return api("/rest/v1/orbe_data?user_id=eq." + encodeURIComponent(s.id), { method: "DELETE" }, s.at); })
           .then(function () { jset(SYNC, { remoteAt: "", dirty: false, localAt: 0 }); showToast("Datos de la nube borrados."); renderCloud(); }, function (e) { showToast(cloudErr(e)); });
+      } });
+    });
+    $("cl-acc-del").addEventListener("click", function () {
+      $("cloud-sheet").hidden = true;
+      openCf({ title: "¿Borrar tu cuenta?", text: "Se borran para siempre tu correo, tu contraseña y todo lo guardado en tu cuenta. Sales de las metas compartidas; si eres líder de alguna, pasa al miembro más antiguo. No se puede deshacer.", word: "BORRAR", btn: "Borrar mi cuenta", ok: function () {
+        showToast("Borrando tu cuenta…");
+        tokenOk().then(function (s) { return api("/functions/v1/borrar-cuenta", { method: "POST", body: {} }, s.at); })
+          .then(function () {
+            jset(SES, null); jset(SYNC, null); renderCloud();
+            openCf({ title: "Cuenta borrada", text: "Tu cuenta ya no existe. ¿Quieres borrar también los datos de este teléfono?", btn: "Borrar de este teléfono", ok: function () { try { localStorage.removeItem(KEY); } catch (e) {} location.reload(); }, no: "Dejarlos en el teléfono", noFn: function () { showToast("Cuenta borrada. Tus datos siguen en este teléfono."); } });
+          }, function (e) { showToast(e && e.status === 401 ? "Vuelve a iniciar sesión y prueba otra vez." : cloudErr(e)); });
       } });
     });
     // Enlaces del correo (confirmar cuenta o cambiar contraseña) vuelven con #access_token=...

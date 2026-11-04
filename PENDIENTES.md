@@ -32,7 +32,6 @@ En a-fuego, **Authentication → URL Configuration**: poner la dirección públi
 
 - **Comisiones bancarias automáticas:** ver la sección «Comisiones automáticas» más abajo.
 - **Pagos:** el calendario no deja ir a meses pasados.
-- **Borrar la cuenta completa desde la app:** necesita una función en Supabase (Edge Function).
 - **Avisos con la app cerrada:** necesitan un servidor de notificaciones.
 
 ## Inicio más limpio
