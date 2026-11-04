@@ -26,7 +26,7 @@ En a-fuego, **Authentication → URL Configuration**: poner la dirección públi
   - Barra de abajo con un ancho máximo, centrada.
   - **+** y ✦ junto al contenido, no en la esquina de la pantalla.
 - **Banderas de países en Windows:** se ven como letras. Se arregla con imágenes propias.
-- **Inicio más limpio:** ver la sección «Inicio más limpio» más abajo.
+- **Inicio más limpio:** casi hecho; ver la sección más abajo.
 
 ## Funciones
 
@@ -36,28 +36,9 @@ En a-fuego, **Authentication → URL Configuration**: poner la dirección públi
 
 ## Inicio más limpio
 
-Ideas para que el Inicio muestre menos texto y se lea de un vistazo. Cada una se puede hacer por separado.
+Hecho: proyección solo al tocar el gráfico, línea de cada cuenta con solo el «≈ $», aviso de pagos compacto, aviso de cuadrar que nunca sale junto al de pagos y tasas plegadas al abrir.
 
-1. **Quitar «Si sigues así: $X el 31»** (debajo del gráfico del saldo).
-   - Es la proyección de cómo terminarás el mes.
-   - Opciones:
-     - Quitarla.
-     - Mostrarla solo al tocar el gráfico.
-     - Dejar solo la línea punteada del gráfico, sin el texto.
-2. **Simplificar la línea pequeña de cada cuenta** («3% · ≈ $34,26»).
-   - Hoy se corta en pantallas chicas.
-   - Opciones:
-     - Solo el porcentaje («3%»).
-     - Solo el equivalente en dólares, debajo del saldo de la derecha.
-     - Quitarla y dejar solo nombre y saldo.
-3. **Quitar las rayitas verticales** entre Ingresos, Gastos y Ahorrado, y entre las tasas del día. El espacio en blanco ya separa las cifras.
-4. **Aviso de pagos más pequeño** («Internet venció · $25,00 y 1 más»).
-   - Opciones:
-     - Una sola línea más baja, sin ícono grande.
-     - Un punto rojo con número sobre la pestaña Pagos, sin aviso en el Inicio.
-     - Mostrarlo solo los días que algo vence o venció.
-5. **Aviso de cuadrar la cuenta** (nuevo): que use el mismo tamaño compacto que el de pagos, y que nunca salgan los dos a la vez. Primero va el de pagos.
-6. **Tasas del día plegadas por defecto** para quien no las usa a diario. Se abren con la flecha que ya existe.
+- **Falta decidir:** quitar las rayitas verticales entre Ingresos, Gastos y Ahorrado, y entre las tasas del día.
 
 ## Comisiones automáticas
 
