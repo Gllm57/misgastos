@@ -1790,7 +1790,8 @@ html.sheet-open body::after { opacity: 0; }
 #hist-cats button { display: inline-flex; align-items: center; gap: 5px; }
 .amt-ops { display: flex !important; justify-content: center !important; align-items: center; gap: 8px; }
 .amt-ops .amt-res { min-width: 0 !important; max-width: 0; opacity: 0; overflow: hidden; white-space: nowrap; margin-left: 0; transition: max-width 0.54s cubic-bezier(.2,.8,.2,1), opacity 0.4s ease, margin 0.54s cubic-bezier(.2,.8,.2,1); }
-.amt-ops.has .amt-res { max-width: 180px; opacity: 1; margin-left: 14px; }
+.amt-ops.has .amt-res { max-width: 180px; opacity: 1; margin-left: 0; }
+.amt-ops:not(.has) { margin-top: 0 !important; }
 .dial-item[data-dial="bn"] .ic { background: #f0b90b !important; color: #1a1400 !important; }
 .dial-item[data-dial="bn"] > span:first-child { color: color-mix(in srgb, #f0b90b 72%, var(--ink)); }
 .tpl { grid-template-columns: auto 1fr auto !important; }
@@ -4100,7 +4101,7 @@ main > .panel.fz-today { background: none !important; padding: 0 !important; mar
     <div class="amt-card" id="amt-card">
       <label for="monto" id="monto-label">Monto</label>
       <input type="text" id="monto" inputmode="decimal" autocomplete="off" placeholder="0,00">
-      <div class="amt-ops"><button type="button" data-op="+">+</button><button type="button" data-op="−">−</button><button type="button" data-op="×">×</button><span class="amt-res" id="amt-res"></span></div>
+      <div class="amt-ops"><span class="amt-res" id="amt-res"></span></div>
     </div>
     <div class="grid">
       <div>
@@ -6012,14 +6013,30 @@ main > .panel.fz-today { background: none !important; padding: 0 !important; mar
     }
     return 0;
   }
+  // El euro BCV siempre vale algo más que el dólar BCV (1 € ≈ 1,0–1,3 $). Si llega otra cosa, está mal.
+  function okEur(v, usd) { usd = usd || state.rate; return v > 0 && (!(usd > 0) || (v >= usd * 0.8 && v <= usd * 1.6)); }
+  // Euro calculado con el dólar BCV y el cambio euro/dólar del mundo (si no hay internet, uno aproximado)
+  function eurFromUsd(usd) {
+    return getJSON("https://open.er-api.com/v6/latest/USD", 10000).then(function (j) {
+      var e = j && j.rates && j.rates.EUR; if (!(e > 0.5 && e < 1.5)) throw rateError("dato");
+      return usd / e;
+    }).catch(function () { return usd * EURUSD; });
+  }
   function okUsdt(v) { return v > 0 && (!(state.rate > 0) || (v >= state.rate * 0.5 && v <= state.rate * 3)); }
   function rateFromApi(k) {
-    if (k !== "usdt") {
+    if (k === "usd") {
       return getJSON(RATE_URLS[k], 15000).then(function (j) {
         var v = Number(j && j.promedio);
         if (!(v > 0)) throw rateError("dato");
         return { v: v, src: "bcv" };
       });
+    }
+    if (k === "eur") {
+      var calc = function () { if (!(state.rate > 0)) throw rateError("dato"); return eurFromUsd(state.rate).then(function (v) { return { v: v, src: "calc" }; }); };
+      return getJSON(RATE_URLS.eur, 15000).then(function (j) {
+        var v = Number(j && j.promedio);
+        return okEur(v) ? { v: v, src: "bcv" } : calc();
+      }, calc);
     }
     return getJSON(USDT_URL, 12000).then(function (j) {
       var v = pickPrice(j);
@@ -6076,14 +6093,19 @@ main > .panel.fz-today { background: none !important; padding: 0 !important; mar
     renderRateNote();
     rateFromLocal().then(function (j) { return j; }, function () { return null; })
       .then(function (loc) {
-        return Promise.all(keys.map(function (k) {
+        var one = function (k) {
           var lv = loc ? Number(loc[k]) : 0;
-          if (lv > 0 && (k !== "usdt" || okUsdt(lv))) return Promise.resolve({ k: k, v: lv, src: k === "usdt" ? (loc.usdtSrc || "p2p") : "bcv" });
+          if (lv > 0 && (k === "usd" || (k === "eur" ? okEur(lv) : okUsdt(lv)))) return Promise.resolve({ k: k, v: lv, src: k === "usdt" ? (loc.usdtSrc || "p2p") : "bcv" });
           return rateFromApi(k).then(
             function (r) { return { k: k, v: r.v, src: r.src }; },
             function (e) { return { k: k, err: (e && e.code) || "red" }; }
           );
-        }));
+        };
+        // Primero el dólar: el euro y USDT se revisan contra él
+        var first = keys.indexOf("usd") >= 0 ? one("usd").then(function (o) { if (!o.err) state.rate = Math.round(o.v * 10000) / 10000; return [o]; }) : Promise.resolve([]);
+        return first.then(function (a) {
+          return Promise.all(keys.filter(function (k) { return k !== "usd"; }).map(one)).then(function (b) { return a.concat(b); });
+        });
       })
       .then(function (res) {
         var fail = false;
@@ -6132,6 +6154,7 @@ main > .panel.fz-today { background: none !important; padding: 0 !important; mar
         if (!Array.isArray(arr)) return;
         arr.forEach(function (x) {
           var f = String((x && (x.fecha || x.date)) || "").slice(0, 10), v = Number(x && (x.promedio != null ? x.promedio : x.price));
+          if (k === "eur" && state.rateHist[f] && state.rateHist[f].usd > 0 && !okEur(v, state.rateHist[f].usd)) return;
           if (/^\d{4}-\d{2}-\d{2}$/.test(f) && v > 0) { var h = state.rateHist[f]; if (!h || !(h[k] > 0)) { histPut(f, k, v); any = true; } }
         });
       }, function () {});
@@ -6461,6 +6484,12 @@ main > .panel.fz-today { background: none !important; padding: 0 !important; mar
     $("mes").value = state.month;
     setFecha(today());
     if (!state.rateEur) { state.rateEur = 985.84; state.rateEurDate = "2026-10-08"; save(); }
+    // Reparar un euro mal guardado (por ejemplo, 1 Bs): se recalcula con el dólar y se limpia del historial
+    if (LOC.id === "VE" && state.rate > 0 && !okEur(state.rateEur)) {
+      state.rateEur = Math.round(state.rate * EURUSD * 10000) / 10000; state.rateEurDate = ""; state.rateEurManual = ""; state.rateAutoAt = 0;
+      Object.keys(state.rateHist || {}).forEach(function (d) { var h = state.rateHist[d]; if (h.eur > 0 && h.usd > 0 && !okEur(h.eur, h.usd)) delete h.eur; });
+      save();
+    }
     if (state.rate) $("tasa").value = num(state.rate);
     if (state.rateEur) $("tasa-eur").value = num(state.rateEur);
     if (state.rateUsdt) $("tasa-usdt").value = num(state.rateUsdt);
@@ -6910,7 +6939,7 @@ main > .panel.fz-today { background: none !important; padding: 0 !important; mar
     }
     function renderSplit() {
       var on = splitParts.length > 0, box = $("split");
-      $("split-tog").hidden = !!state.editId || state.type !== "gasto";
+      $("split-tog").hidden = true; // «Dividir entre varias categorías» ya no se ofrece
       $("split-tog").setAttribute("aria-expanded", on ? "true" : "false");
       $("split-tog").classList.toggle("on", on);
       $("split-tog").lastChild.textContent = on ? "Quitar la división" : "Dividir entre varias categorías";
@@ -10738,7 +10767,7 @@ main > .panel.fz-today { background: none !important; padding: 0 !important; mar
     var SVG = function (d) { return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' + d + "</svg>"; };
     var ONB = [
       { art: '<svg class="oa-rings" viewBox="0 0 180 180" aria-hidden="true"><circle cx="90" cy="90" r="80" fill="none" stroke="var(--fill)" stroke-width="13"></circle><circle class="oa-arc" cx="90" cy="90" r="80" fill="none" stroke="var(--accent)" stroke-width="13" stroke-linecap="round" stroke-dasharray="392.1 502.7" style="--len:392.1" transform="rotate(-90 90 90)"></circle><circle cx="90" cy="90" r="60" fill="none" stroke="var(--fill)" stroke-width="13"></circle><circle class="oa-arc" cx="90" cy="90" r="60" fill="none" stroke="var(--in)" stroke-width="13" stroke-linecap="round" stroke-dasharray="218.7 377.0" style="--len:218.7;--d:.12s" transform="rotate(-90 90 90)"></circle><circle cx="90" cy="90" r="40" fill="none" stroke="var(--fill)" stroke-width="13"></circle><circle class="oa-arc" cx="90" cy="90" r="40" fill="none" stroke="#f0a020" stroke-width="13" stroke-linecap="round" stroke-dasharray="216.1 251.3" style="--len:216.1;--d:.24s" transform="rotate(-90 90 90)"></circle></svg><div class="oa-pills"><span>Bs</span><span>$</span><span>€</span><span>USDT</span></div>', t: "Tu dinero, claro y en un solo lugar", p: "Gastos, ingresos, ahorro y pagos en bolívares, dólares, euros y USDT." },
-      { art: '<div class="oa-form"><small>Monto</small><b>12+8,50</b><div class="oa-ops"><i>+</i><i>−</i><i>×</i><em>= 20,50</em></div><div class="oa-cats"><span style="--c:#5b4cff">'+catSvg("Alimentación")+'Alimentación</span><span style="--c:#f0567e">'+catSvg("Restaurantes")+'Restaurantes</span></div></div>', t: "Anota en segundos", p: "Toca + para anotar un gasto o ingreso. Puedes sumar montos mientras escribes, y ahí mismo tienes la calculadora y tus plantillas." },
+      { art: '<div class="oa-form"><small>Monto</small><b>20,50</b><div class="oa-cats"><span style="--c:#5b4cff">'+catSvg("Alimentación")+'Alimentación</span><span style="--c:#f0567e">'+catSvg("Restaurantes")+'Restaurantes</span></div></div>', t: "Anota en segundos", p: "Toca + para anotar un gasto o ingreso. Ahí mismo tienes la calculadora y tus plantillas." },
       { art: '<div class="oa-acc"><div class="oa-ring"><svg viewBox="0 0 104 104" aria-hidden="true"><circle cx="52" cy="52" r="44" fill="none" stroke="var(--fill)" stroke-width="10"></circle><circle class="oa-arc" cx="52" cy="52" r="44" fill="none" stroke="#00994f" stroke-width="10" stroke-linecap="round" stroke-dasharray="153.6 276.5" stroke-dashoffset="-7.5" style="--len:153.6;--d:0s" transform="rotate(-90 52 52)"></circle><circle class="oa-arc" cx="52" cy="52" r="44" fill="none" stroke="#f0a020" stroke-width="10" stroke-linecap="round" stroke-dasharray="62.4 276.5" stroke-dashoffset="-176.1" style="--len:62.4;--d:0.12s" transform="rotate(-90 52 52)"></circle><circle class="oa-arc" cx="52" cy="52" r="44" fill="none" stroke="#0e9aa7" stroke-width="10" stroke-linecap="round" stroke-dasharray="15.4 276.5" stroke-dashoffset="-253.5" style="--len:15.4;--d:0.24s" transform="rotate(-90 52 52)"></circle></svg><div><small>Total</small><b>$429</b></div></div><div class="oa-rows"><div style="--c:#00994f"><i></i><span>Zinli</span><b>$262</b></div><div style="--c:#f0a020"><i></i><span>Binance</span><b>USDT 120</b></div><div style="--c:#0e9aa7"><i></i><span>Banco</span><b>Bs 41.800</b></div><div class="oa-cat" style="--c:#5b4cff"><i></i><span>Alimentación</span><em class="b">▲ 12%</em></div></div></div>', t: "Mira a dónde va tu dinero", p: "Tus cuentas, tus gastos por categoría y lo que cambió desde el mes pasado. Toca una cuenta para ver sus movimientos." },
       { art: '<div class="oa-goal"><svg class="oa-rings" viewBox="0 0 180 180" aria-hidden="true"><circle cx="90" cy="90" r="80" fill="none" stroke="var(--fill)" stroke-width="14"></circle><circle class="oa-arc" cx="90" cy="90" r="80" fill="none" stroke="#8a3ffc" stroke-width="14" stroke-linecap="round" stroke-dasharray="311.6 502.7" style="--len:311.6" transform="rotate(-90 90 90)"></circle><circle cx="90" cy="90" r="58" fill="none" stroke="var(--fill)" stroke-width="14"></circle><circle class="oa-arc" cx="90" cy="90" r="58" fill="none" stroke="var(--accent)" stroke-width="14" stroke-linecap="round" stroke-dasharray="109.3 364.4" style="--len:109.3;--d:.12s" transform="rotate(-90 90 90)"></circle><circle cx="90" cy="90" r="36" fill="none" stroke="var(--fill)" stroke-width="14"></circle><circle class="oa-arc" cx="90" cy="90" r="36" fill="none" stroke="#0e9aa7" stroke-width="14" stroke-linecap="round" stroke-dasharray="181.0 226.2" style="--len:181.0;--d:.24s" transform="rotate(-90 90 90)"></circle></svg><div class="oa-gl"><div style="--c:#8a3ffc"><i></i>Viaje<b>62%</b></div><div style="--c:var(--accent)"><i></i>Celular<b>30%</b></div><div style="--c:#0e9aa7"><i></i>Emergencia<b>80%</b></div></div></div>', t: "Ahorra y cumple tus metas", p: "Aparta parte de cada ingreso, redondea tus gastos para ahorrar los centavos y crea metas, solo o con tus amigos." },
       { art: '<div class="oa-pay"><div class="oa-week"><span class=""><small>L</small>13</span><span class="oa-d"><small>M</small>14</span><span class=""><small>M</small>15</span><span class="oa-d oa-l"><small>J</small>16</span><span class="oa-on"><small>V</small>17</span><span class=""><small>S</small>18</span><span class="oa-d oa-i"><small>D</small>19</span></div><div class="oa-pp late"><i></i><span><b>Internet</b> venció</span><em>$25</em></div><div class="oa-pp"><i></i><span><b>Netflix</b> en 3 días</span><em>$15</em></div><div class="oa-pp in"><i></i><span><b>Cliente</b> por cobrar</span><em>$350</em></div></div>', t: "Que no se te pase ningún pago", p: "Programa pagos y cobros, una vez o cada mes. Orbe te avisa lo que vence." },
