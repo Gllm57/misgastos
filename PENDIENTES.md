@@ -16,6 +16,12 @@ Cosas preparadas o decididas para más adelante.
 
 Ver `supabase/LEEME.md`. Necesario antes de publicar para todo el mundo: registro y recuperación de contraseña.
 
+## Legal y seguridad (te toca a ti)
+
+- **Correo de contacto:** Apple pide uno en la política de privacidad. Cuando tengas el dominio (por ejemplo `soporte@orbeapp.com`), agregarlo en «Política de privacidad» y «Términos de uso».
+- **Contraseñas filtradas:** en Supabase (a-fuego) → Authentication → Policies (o Passwords), activar «Leaked password protection» para que no se puedan usar contraseñas que ya se filtraron.
+- **Revisión de un abogado** antes de publicar para todo el mundo, sobre todo por el enlace de referido de Binance y las metas compartidas.
+
 ## Supabase
 
 En a-fuego, **Authentication → URL Configuration**: poner la dirección pública de Orbe en **Site URL** y **Redirect URLs**.
