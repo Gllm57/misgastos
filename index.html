@@ -2842,6 +2842,15 @@ main > .panel.fz-today { background: none !important; padding: 0 !important; mar
 .priv-cover b { font-size: 1.3rem; letter-spacing: -.01em; }
 .seg.seg-5 button { padding-left: 4px !important; padding-right: 4px !important; font-size: .86rem; white-space: nowrap; }
 #lock-len { margin-top: 4px; }
+/* Ajustes: filas con botones segmentados llevan el ícono junto al título; nota y zona de cuidado */
+.set-row.set-stack:has(> .set-ic) { display: grid; grid-template-columns: auto minmax(0, 1fr); column-gap: 14px; row-gap: 10px; align-items: center; }
+.set-row.set-stack > .set-ic { margin-right: 0; }
+.set-row.set-stack > .seg { grid-column: 1 / -1; }
+.set-pill { display: inline-block; vertical-align: 1px; margin-left: 6px; padding: 2px 8px; border-radius: 99px; font-style: normal; font-size: 0.7rem; font-weight: 700; letter-spacing: .02em; color: var(--out); background: color-mix(in srgb, var(--out) 12%, transparent); }
+.set-note { margin: 8px 6px 0 !important; font-size: 0.78rem !important; line-height: 1.45; text-align: left !important; }
+#data-del.set-row { margin-top: 0 !important; display: flex !important; border-radius: 0 !important; background: none !important; min-height: 60px !important; color: var(--ink) !important; font-weight: 400; text-align: left !important; }
+#data-del.set-row b { color: var(--out); }
+.set-foot { text-align: center; }
 /* Colores «Blanco y negro» (Ajustes → Apariencia): negro, blanco y grises en toda la app */
 html.mono { --bg: #ffffff; --surface: #ffffff; --ink: #0a0a0a; --muted: #6b6b6b; --line: #e6e6e6; --accent: #0a0a0a; --accent-ink: #ffffff; --in: #0a0a0a; --out: #0a0a0a; --focus: #0a0a0a; --fill: #f2f2f2; }
 @media (prefers-color-scheme: dark) { html.mono:not([data-theme="light"]) { --bg: #000000; --surface: #111111; --ink: #f5f5f5; --muted: #9a9a9a; --line: #262626; --accent: #f5f5f5; --accent-ink: #000000; --in: #f5f5f5; --out: #f5f5f5; --focus: #f5f5f5; --fill: #1c1c1c; } }
@@ -3091,35 +3100,17 @@ html.mono body button.primary:not(.btn-danger), html.mono body #add { background
     </div>
     <h1 class="gv-title">Ajustes</h1>
 
-    <div class="set-h">País y moneda</div>
-    <div class="set-group">
-      <button type="button" class="set-row" id="set-rates" hidden><span class="tx"><b>Tasas del día</b><small id="set-rates-v"></small></span><svg class="chev-r" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 5l7 7-7 7"></path></svg></button>
-      <button type="button" class="set-row" id="set-country"><span class="tx"><b>País</b><small id="set-country-v"></small></span><svg class="chev-r" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 5l7 7-7 7"></path></svg></button>
-    </div>
     <div id="cloud-sec" hidden>
       <div class="set-h">Tu cuenta</div>
       <div class="set-group">
         <button type="button" class="set-row" id="cloud-open"><span class="cl-av" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.5 19H8a5 5 0 1 1 1-9.9A6 6 0 0 1 20.5 12 3.5 3.5 0 0 1 17.5 19z"></path></svg></span><span class="tx"><b id="cloud-t">Inicia sesión o crea tu cuenta</b><small id="cloud-s">Guarda tus datos en la nube y úsalos en cualquier teléfono.</small></span><svg class="chev-r" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 5l7 7-7 7"></path></svg></button>
       </div>
     </div>
-    <div class="set-h">Apariencia</div>
+    <div class="set-h">General</div>
     <div class="set-group">
-      <div class="set-row set-stack">
-        <div class="tx"><b>Tema</b><small>«Automático» sigue el modo claro u oscuro de tu teléfono.</small></div>
-        <div class="seg" role="group" aria-label="Tema">
-          <button type="button" data-theme-set="auto" aria-pressed="true">Automático</button>
-          <button type="button" data-theme-set="light" aria-pressed="false">Claro</button>
-          <button type="button" data-theme-set="dark" aria-pressed="false">Oscuro</button>
-        </div>
-      </div>
-      <div class="set-row set-stack">
-        <div class="tx"><b>Colores</b><small>«Blanco y negro» quita los colores de toda la app. Funciona con el tema claro y el oscuro.</small></div>
-        <div class="seg" role="group" aria-label="Colores">
-          <button type="button" data-mono-set="0" aria-pressed="true">Orbe</button>
-          <button type="button" data-mono-set="1" aria-pressed="false">Blanco y negro</button>
-        </div>
-      </div>
-      <div class="set-row set-stack">
+      <button type="button" class="set-row" id="set-country"><span class="tx"><b>País</b><small id="set-country-v"></small></span><svg class="chev-r" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 5l7 7-7 7"></path></svg></button>
+      <button type="button" class="set-row" id="set-rates" hidden><span class="tx"><b>Tasas del día</b><small id="set-rates-v"></small></span><svg class="chev-r" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 5l7 7-7 7"></path></svg></button>
+      <div class="set-row set-stack" id="disp-row">
         <div class="tx"><b>Moneda para mostrar</b><small>En la que ves los totales del Inicio y del Historial.</small></div>
         <div class="seg" role="group" aria-label="Moneda para mostrar">
           <button type="button" data-disp="USD" aria-pressed="true">USD</button>
@@ -3128,7 +3119,24 @@ html.mono body button.primary:not(.btn-danger), html.mono body #add { background
         </div>
       </div>
     </div>
-
+    <div class="set-h">Apariencia</div>
+    <div class="set-group">
+      <div class="set-row set-stack" id="tema-row">
+        <div class="tx"><b>Tema</b><small>«Automático» sigue el modo claro u oscuro de tu teléfono.</small></div>
+        <div class="seg" role="group" aria-label="Tema">
+          <button type="button" data-theme-set="auto" aria-pressed="true">Automático</button>
+          <button type="button" data-theme-set="light" aria-pressed="false">Claro</button>
+          <button type="button" data-theme-set="dark" aria-pressed="false">Oscuro</button>
+        </div>
+      </div>
+      <div class="set-row set-stack" id="color-row">
+        <div class="tx"><b>Colores</b><small>«Blanco y negro» quita los colores de toda la app. Funciona con el tema claro y el oscuro.</small></div>
+        <div class="seg" role="group" aria-label="Colores">
+          <button type="button" data-mono-set="0" aria-pressed="true">Orbe</button>
+          <button type="button" data-mono-set="1" aria-pressed="false">Blanco y negro</button>
+        </div>
+      </div>
+    </div>
     <div class="set-h">Seguridad</div>
     <div class="set-group">
       <div class="set-row" id="pin-row">
@@ -3151,14 +3159,21 @@ html.mono body button.primary:not(.btn-danger), html.mono body #add { background
       </div>
       <button type="button" class="set-row" id="pin-now" hidden><span class="tx"><b>Bloquear ahora</b><small>Cierra Orbe con tu código al instante.</small></span></button>
       <button type="button" class="set-row" id="pin-change" hidden><span class="tx"><b>Cambiar código</b></span><svg class="chev-r" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 5l7 7-7 7"></path></svg></button>
+    </div>
+    <div class="set-h">Inicio y avisos</div>
+    <div class="set-group">
+      <div class="set-row" id="set-fzt-row">
+        <div class="tx"><b>«Puedes gastar hoy»</b><small>Tu presupuesto del día: saldo menos pagos del mes, entre los días que quedan.</small></div>
+        <button type="button" class="switch" id="set-fzt" role="switch" aria-checked="false" aria-label="Mostrar Puedes gastar hoy en el Inicio"><span></span></button>
+      </div>
+      <div class="set-row" id="ai-row">
+        <div class="tx"><b>Botón del asistente</b><small>El botón ✦ sobre el + del Inicio, para pedir un diagnóstico de tu mes con IA.</small></div>
+        <button type="button" class="switch" id="set-ai" role="switch" aria-checked="true" aria-label="Mostrar el botón del asistente financiero"><span></span></button>
+      </div>
       <div class="set-row" id="notif-row">
         <div class="tx"><b>Avisos de pagos</b><small id="notif-sub">Muestra en el ícono de Orbe cuántos pagos vencen hoy o mañana.</small></div>
         <button type="button" class="switch" id="notif-switch" role="switch" aria-checked="false" aria-label="Avisos de pagos"><span></span></button>
       </div>
-    </div>
-
-    <div class="set-h">Cuentas</div>
-    <div class="set-group">
       <div class="set-row" id="cq-row">
         <div class="tx"><b>Recordarme cuadrar con el banco</b><small>Una vez al mes te pregunta si el saldo de cada cuenta coincide con tu banco.</small></div>
         <button type="button" class="switch" id="set-cq" role="switch" aria-checked="true" aria-label="Recordarme cuadrar mis cuentas con el banco"><span></span></button>
@@ -3172,18 +3187,9 @@ html.mono body button.primary:not(.btn-danger), html.mono body #add { background
       <button type="button" class="set-row " id="snap-open"><span class="tx"><b>Copias automáticas</b><small id="snap-sub">Orbe guarda sola una copia cada día en este teléfono, por si necesitas volver atrás.</small></span><svg class="chev-r" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 5l7 7-7 7"></path></svg></button>
       <button type="button" class="set-row " id="ex-all"><span class="tx"><b>Exportar movimientos a Excel</b><small>Un archivo con todos tus movimientos para abrir en Excel o Numbers.</small></span><svg class="chev-r" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 5l7 7-7 7"></path></svg></button>
       <input type="file" id="bk-file" accept=".json,application/json" hidden>
+      <input type="file" id="bk-file" accept=".json,application/json" hidden>
     </div>
-    <p class="hint" style="margin:8px 6px 0;font-size:0.8rem">Tus datos se guardan solo en este teléfono. Si lo pierdes, borras los datos de Safari o cambias de teléfono, solo podrás recuperarlos con una copia. Al guardarla, elige <b>Guardar en Archivos › iCloud Drive</b> o envíatela por correo para tenerla fuera del teléfono.</p>
-    <button type="button" class="ad-del" id="data-del">Borrar todos los datos</button>
-    <p class="hint del-note">Elimina todo lo guardado en este teléfono.</p>
-
-    <div class="set-h">Asistente financiero</div>
-    <div class="set-group">
-      <div class="set-row" id="ai-row">
-        <div class="tx"><b>Botón del asistente</b><small>El botón ✦ sobre el + del Inicio, para pedir un diagnóstico de tu mes con IA.</small></div>
-        <button type="button" class="switch" id="set-ai" role="switch" aria-checked="true" aria-label="Mostrar el botón del asistente financiero"><span></span></button>
-      </div>
-    </div>
+    <p class="hint set-note">Sin cuenta, tus datos se guardan solo en este teléfono: si lo pierdes, borras los datos de Safari o cambias de teléfono, solo podrás recuperarlos con una copia. Con cuenta, también quedan en la nube. Al guardarla, elige <b>Guardar en Archivos › iCloud Drive</b> o envíatela por correo para tenerla fuera del teléfono.</p>
     <div class="set-h" hidden>Ahorro</div>
     <div class="set-group" hidden>
       <div class="set-row" id="rd-row" hidden>
@@ -3196,22 +3202,11 @@ html.mono body button.primary:not(.btn-danger), html.mono body #add { background
       </div>
       <button type="button" class="set-row" id="set-fz-info" hidden><span class="tx"><b>Cómo funciona</b><small>Qué aparta, la Bóveda y cómo sacarlo en una emergencia.</small></span><svg class="chev-r" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 5l7 7-7 7"></path></svg></button>
     </div>
-    <div class="set-h">Inicio</div>
-    <div class="set-group">
-      <div class="set-row" id="set-fzt-row">
-        <div class="tx"><b>«Puedes gastar hoy»</b><small>Tu presupuesto del día: saldo menos pagos del mes, entre los días que quedan.</small></div>
-        <button type="button" class="switch" id="set-fzt" role="switch" aria-checked="false" aria-label="Mostrar Puedes gastar hoy en el Inicio"><span></span></button>
-      </div>
-    </div>
-    <div class="set-h">Binance</div>
-    <div class="set-group">
-      <button type="button" class="set-row " id="set-bn-open"><span class="tx"><b>Abrir la guía</b><small>Paso a paso para poner tu ahorro a generar rendimiento.</small></span><svg class="chev-r" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 5l7 7-7 7"></path></svg></button>
-    </div>
-
     <div class="set-h">Ayuda</div>
     <div class="set-group">
       <button type="button" class="set-row" id="tour-replay"><span class="tx"><b>Recorrido guiado</b><small>Te mostramos cada parte de la app, paso a paso.</small></span><svg class="chev-r" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 5l7 7-7 7"></path></svg></button>
       <button type="button" class="set-row" id="onb-replay"><span class="tx"><b>Ver la introducción</b><small>Las pantallas de bienvenida.</small></span><svg class="chev-r" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 5l7 7-7 7"></path></svg></button>
+      <button type="button" class="set-row " id="set-bn-open"><span class="tx"><b>Guía de Binance</b><small>Paso a paso para poner tu ahorro a generar rendimiento.</small></span><svg class="chev-r" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 5l7 7-7 7"></path></svg></button>
     </div>
 
     <div class="set-h">Información legal</div>
@@ -3220,6 +3215,10 @@ html.mono body button.primary:not(.btn-danger), html.mono body #add { background
       <button type="button" class="set-row " id="lg-priv"><span class="tx"><b>Política de privacidad</b><small>Qué datos se guardan y a quién se conecta la app.</small></span><svg class="chev-r" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 5l7 7-7 7"></path></svg></button>
       <button type="button" class="set-row " id="lg-ref"><span class="tx"><b>Binance y enlaces de referido</b><small>Relación con Binance y comisiones.</small></span><svg class="chev-r" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 5l7 7-7 7"></path></svg></button>
       <button type="button" class="set-row " id="lg-src"><span class="tx"><b>Fuentes de las tasas</b><small>De dónde salen las tasas y los precios.</small></span><svg class="chev-r" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 5l7 7-7 7"></path></svg></button>
+    </div>
+    <div class="set-h">Zona de cuidado</div>
+    <div class="set-group">
+      <button type="button" class="set-row danger" id="data-del"><span class="tx"><b>Borrar todos los datos</b><small>Elimina todo lo guardado en este teléfono. No se puede deshacer.</small></span><svg class="chev-r" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 5l7 7-7 7"></path></svg></button>
     </div>
     <p class="set-foot">Orbe · versión 1.0<br>Orbe no es un banco ni una casa de cambio, y no da asesoría financiera.</p>
   </div>
@@ -6778,6 +6777,20 @@ html.mono body button.primary:not(.btn-danger), html.mono body #add { background
     (function () {
       var I = function (d) { return '<span class="set-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">' + d + "</svg></span>"; };
       var map = {
+        "set-country": '<circle cx="12" cy="12" r="9"></circle><path d="M3 12h18M12 3c2.5 2.7 3.8 5.7 3.8 9s-1.3 6.3-3.8 9c-2.5-2.7-3.8-5.7-3.8-9S9.5 5.7 12 3z"></path>',
+        "set-rates": '<path d="M4 17l5-5 4 4 7-8"></path><path d="M15 8h5v5"></path>',
+        "disp-row": '<circle cx="12" cy="12" r="9"></circle><path d="M14.8 9c-.5-1-1.5-1.5-2.8-1.5-1.6 0-2.8.9-2.8 2.1 0 2.8 5.6 1.5 5.6 4.3 0 1.2-1.2 2.1-2.8 2.1-1.3 0-2.4-.6-2.9-1.6M12 6v1.5M12 16.5V18"></path>',
+        "tema-row": '<circle cx="12" cy="12" r="9"></circle><path d="M12 3a9 9 0 0 0 0 18z" fill="currentColor" stroke="none"></path>',
+        "color-row": '<path d="M12 3a9 9 0 1 0 0 18c1.2 0 1.8-.9 1.8-1.8 0-.5-.2-.9-.5-1.3-.3-.4-.5-.8-.5-1.3 0-1 .8-1.8 1.8-1.8H17a4 4 0 0 0 4-4c0-4.4-4-7.8-9-7.8z"></path><circle cx="7.5" cy="11" r="1"></circle><circle cx="10.5" cy="7.5" r="1"></circle><circle cx="15" cy="8" r="1"></circle>',
+        "pin-when-row": '<circle cx="12" cy="13" r="8"></circle><path d="M12 9v4l2.5 2M9 2h6"></path>',
+        "set-bn-open": '<path d="M12 3l3 3-3 3-3-3zM6 9l3 3-3 3-3-3zM18 9l3 3-3 3-3-3zM12 15l3 3-3 3-3-3z"></path>',
+        "tour-replay": '<circle cx="12" cy="12" r="9"></circle><path d="M15.5 8.5l-2 5-5 2 2-5z"></path>',
+        "onb-replay": '<rect x="6" y="3" width="12" height="18" rx="2.5"></rect><path d="M10 17.5h4"></path><path d="M10 8l4 2.5-4 2.5z"></path>',
+        "lg-terms": '<path d="M7 3h7l4 4v14H7z"></path><path d="M14 3v4h4M10 12h5M10 16h5"></path>',
+        "lg-priv": '<path d="M12 3l7 3v5c0 4.5-3 8.3-7 10-4-1.7-7-5.5-7-10V6z"></path><path d="M9.5 12l1.8 1.8 3.5-3.6"></path>',
+        "lg-ref": '<path d="M10 14a4 4 0 0 0 5.7 0l3-3a4 4 0 0 0-5.7-5.7l-1 1"></path><path d="M14 10a4 4 0 0 0-5.7 0l-3 3a4 4 0 0 0 5.7 5.7l1-1"></path>',
+        "lg-src": '<ellipse cx="12" cy="6" rx="7" ry="3"></ellipse><path d="M5 6v6c0 1.7 3.1 3 7 3s7-1.3 7-3V6M5 12v6c0 1.7 3.1 3 7 3s7-1.3 7-3v-6"></path>',
+        "data-del": '<path d="M4 7h16M9 7V4h6v3M6 7l1 13h10l1-13M10 11v6M14 11v6"></path>',
         "pin-row": '<rect x="5" y="11" width="14" height="10" rx="2"></rect><path d="M8 11V7a4 4 0 0 1 8 0v4"></path>',
         "bio-row": '<path d="M4 8V6a2 2 0 0 1 2-2h2M16 4h2a2 2 0 0 1 2 2v2M20 16v2a2 2 0 0 1-2 2h-2M8 20H6a2 2 0 0 1-2-2v-2M9 9v1.5M15 9v1.5M12 9v4.5h-1M9.5 16a4 4 0 0 0 5 0"></path>',
         "pin-change": '<circle cx="8" cy="15" r="4"></circle><path d="M11 12l9-9M17 6l3 3M15 8l2 2"></path>',
@@ -9450,30 +9463,40 @@ html.mono body button.primary:not(.btn-danger), html.mono body #add { background
       if (a) { var st = a.getAttribute("data-bn-step"); state.bn.opened = state.bn.opened || {}; state.bn.opened[st] = Date.now(); save(); }
     });
     /* ---------- Ajustes ---------- */
-    var LEGAL_DATE = "14 de octubre de 2026";
+    var LEGAL_DATE = "6 de noviembre de 2026";
     var LEGAL = {
       terms: { t: "Términos de uso", b:
         '<p class="upd">Última actualización: ' + LEGAL_DATE + '</p>' +
         '<p>Al usar Orbe aceptas estas condiciones. Si no estás de acuerdo, no uses la app.</p>' +
-        '<h3>Qué es Orbe</h3><p>Una herramienta gratuita para anotar tus ingresos, gastos, ahorros, metas y pagos, y ver resúmenes. Orbe no es un banco, una casa de cambio, un corredor de valores ni un asesor financiero. No guarda, mueve ni administra tu dinero.</p>' +
-        '<h3>Información solo de referencia</h3><ul><li>Las tasas de cambio, los precios de USDT y bitcoin, los cálculos de rendimiento y los análisis son aproximados y pueden estar desactualizados o tener errores.</li><li>Nada de lo que muestra la app es una recomendación de inversión. Antes de tomar decisiones con tu dinero, verifica la información en la fuente oficial.</li><li>Los rendimientos de productos como Binance Earn cambian, no están garantizados y no tienen garantía de depósito. Puedes perder dinero.</li></ul>' +
-        '<h3>Tus datos son tu responsabilidad</h3><p>Todo lo que registras se guarda solo en tu teléfono. Si borras los datos del navegador, desinstalas la app o cambias de teléfono sin una copia, la información se pierde y no hay forma de recuperarla. Te recomendamos guardar una copia con frecuencia desde Ajustes.</p>' +
-        '<h3>Servicios de terceros</h3><p>La app se conecta a servicios de otras empresas para traer tasas y precios, y tiene enlaces a sitios como Binance. Esos servicios tienen sus propias condiciones y Orbe no es responsable de su contenido, disponibilidad ni de lo que hagas en ellos.</p>' +
-        '<h3>Sin garantías</h3><p>La app se ofrece «tal como está», sin garantías de ningún tipo. En la medida en que la ley lo permita, el creador de Orbe no responde por pérdidas o daños causados por el uso de la app, por errores en la información o por la pérdida de datos.</p>' +
-        '<h3>Cambios</h3><p>Estas condiciones pueden cambiar. La fecha de arriba indica la última versión. Si sigues usando la app después de un cambio, aceptas la nueva versión.</p>' },
+        '<h3>Qué es Orbe</h3><p>Una herramienta para anotar tus ingresos, gastos, ahorros, metas y pagos, y ver resúmenes. Orbe no es un banco, una casa de cambio, un corredor de valores ni un asesor financiero. No guarda, mueve ni administra tu dinero: solo registra lo que tú anotas.</p>' +
+        '<h3>Precio</h3><p>Hoy Orbe es gratis. Si en el futuro hay funciones de pago, lo diremos antes y nunca se te cobrará nada sin que lo aceptes.</p>' +
+        '<h3>Información solo de referencia</h3><ul><li>Las tasas de cambio, los precios de USDT y bitcoin, los cálculos de rendimiento, «Puedes gastar hoy», los límites y los análisis son aproximados y pueden estar desactualizados o tener errores.</li><li>Nada de lo que muestra la app es una recomendación de inversión. Antes de tomar decisiones con tu dinero, verifica la información en la fuente oficial.</li><li>Los rendimientos de productos como Binance Earn cambian, no están garantizados y no tienen garantía de depósito. Puedes perder dinero.</li></ul>' +
+        '<h3>Tu cuenta (opcional)</h3><ul><li>Puedes usar Orbe sin cuenta. Si creas una, eres responsable de cuidar tu correo y tu contraseña, y de lo que se haga con ellos.</li><li>Usa un correo que sea tuyo y no crees cuentas a nombre de otras personas.</li><li>Puedes borrar tu cuenta cuando quieras desde Ajustes › Tu cuenta › Borrar mi cuenta.</li><li>Podemos suspender una cuenta que se use para abusar del servicio, atacarlo o molestar a otras personas.</li></ul>' +
+        '<h3>Metas compartidas</h3><p>Las metas compartidas solo llevan la cuenta de lo que cada persona dice que aportó. Orbe no recibe ni guarda ese dinero. Los acuerdos sobre cuánto pone cada uno, cuándo y para qué son entre los miembros, y Orbe no responde por ellos.</p>' +
+        '<h3>Tus datos y tus copias</h3><p>Sin cuenta, todo lo que registras queda solo en tu teléfono: si borras los datos del navegador o cambias de teléfono sin una copia, se pierde. Con cuenta, también se guarda una copia en la nube. Aun así, te recomendamos guardar una copia de vez en cuando desde Ajustes › Tus datos.</p>' +
+        '<h3>Uso correcto</h3><p>No uses Orbe para actividades ilegales, para intentar entrar a datos de otras personas ni para dañar el servicio.</p>' +
+        '<h3>Servicios de terceros</h3><p>La app se conecta a servicios de otras empresas para traer tasas y precios, guardar tu cuenta y, si lo pides, hacer el análisis con IA. También tiene enlaces a sitios como Binance y WhatsApp. Esos servicios tienen sus propias condiciones y Orbe no responde por su contenido, su disponibilidad ni por lo que hagas en ellos.</p>' +
+        '<h3>Sin garantías</h3><p>La app se ofrece «tal como está», sin garantías de ningún tipo. En la medida en que la ley de tu país lo permita, el creador de Orbe no responde por pérdidas o daños causados por el uso de la app, por errores en la información o por la pérdida de datos. Nada de esto limita los derechos que la ley te da como consumidor.</p>' +
+        '<h3>Cambios</h3><p>Estas condiciones pueden cambiar. La fecha de arriba indica la última versión. Si el cambio es importante, te avisaremos en la app. Si sigues usándola después, aceptas la nueva versión.</p>' },
       priv: { t: "Política de privacidad", b:
         '<p class="upd">Última actualización: ' + LEGAL_DATE + '</p>' +
-        '<h3>Lo corto</h3><p>Orbe no tiene cuentas de usuario ni servidores propios. Tus movimientos, cuentas, metas y pagos se guardan solo en tu teléfono, en el almacenamiento del navegador. Nadie más, incluido el creador de la app, puede verlos.</p>' +
-        '<h3>Qué se guarda en tu teléfono</h3><ul><li>Lo que registras: movimientos, cuentas, ahorros, metas, pagos y plantillas.</li><li>Tus preferencias: tema, moneda, tasas del día y el avance de la guía de Binance.</li><li>Si activas el código de bloqueo, una versión cifrada del código (no el código en sí).</li><li>Si configuras el análisis con IA, tu clave de Anthropic.</li></ul>' +
+        '<h3>Lo corto</h3><ul><li><b>Sin cuenta:</b> todo se guarda solo en tu teléfono. Nadie más, ni el creador de la app, puede verlo.</li><li><b>Con cuenta:</b> además se guarda una copia en la nube para que la uses en otros teléfonos. Solo tú puedes leerla.</li><li>No hay publicidad, no hay herramientas de analítica y no vendemos ni compartimos tus datos.</li></ul>' +
+        '<h3>Qué se guarda en tu teléfono</h3><ul><li>Lo que registras: movimientos, cuentas, ahorros, metas, pagos, límites y plantillas.</li><li>Tus preferencias: país, tema, colores, moneda, tasas del día y el avance de las guías.</li><li>Si activas el código de bloqueo, una huella del código (no el código en sí). Si activas Face ID, una llave que no sale del teléfono; Orbe nunca ve tu cara ni tu huella.</li><li>Si configuras el análisis con IA, tu clave de Anthropic.</li></ul>' +
+        '<h3>Si creas una cuenta</h3><ul><li><b>Qué se guarda:</b> tu correo, tu contraseña (protegida con una huella, nadie puede leerla) y una copia de lo que registras.</li><li><b>Qué no viaja:</b> el código de bloqueo, Face ID, los avisos, las tasas del día y la clave de la IA se quedan en el teléfono.</li><li><b>Dónde:</b> en Supabase, el servicio que Orbe usa para las cuentas. La conexión va cifrada y unas reglas en el servidor hacen que cada persona solo pueda leer sus propios datos.</li><li><b>Correos:</b> solo para confirmar tu cuenta y cambiar tu contraseña. No enviamos publicidad.</li></ul>' +
+        '<h3>Metas compartidas</h3><p>Si creas o te unes a una meta compartida, los demás miembros ven el nombre que elegiste para la meta, la meta en sí y lo que aportas. No ven tus cuentas, tus movimientos ni tu correo.</p>' +
         '<h3>A quién se conecta la app</h3><ul>' +
-        '<li><b>Tasas del día:</b> ve.dolarapi.com y pydolarve.org, para el dólar y el euro del BCV y la tasa USDT.</li>' +
+        '<li><b>Tasas del día:</b> ve.dolarapi.com y pydolarve.org en Venezuela; open.er-api.com y api.coingecko.com en otros países o si una tasa falla.</li>' +
         '<li><b>Precio del bitcoin:</b> api.binance.com y, si falla, api.coingecko.com.</li>' +
+        '<li><b>Cuenta y copia en la nube:</b> Supabase, solo si inicias sesión.</li>' +
         '<li><b>Tipografías:</b> Google Fonts.</li>' +
-        '<li><b>Análisis con IA (opcional):</b> solo si tú guardas una clave y pides el análisis, se envían a Anthropic totales por categoría y por mes, sin nombres de cuentas ni notas.</li></ul>' +
-        '<p>En esas consultas no se envían tus movimientos. Como en cualquier conexión a internet, esos servicios pueden ver datos técnicos como tu dirección IP y tu navegador, según sus propias políticas de privacidad.</p>' +
-        '<h3>Enlaces a Binance</h3><p>Si tocas un enlace a Binance, sales de Orbe y aplica la política de privacidad de Binance. Orbe no recibe tus datos de Binance ni puede ver tu saldo.</p>' +
-        '<h3>Sin publicidad ni rastreo</h3><p>La app no usa cookies de publicidad, no tiene herramientas de analítica y no vende ni comparte tus datos.</p>' +
-        '<h3>Tus derechos</h3><p>Como tus datos están en tu teléfono, tú los controlas: puedes descargar una copia, restaurarla o borrar todo desde Ajustes en cualquier momento.</p>' },
+        '<li><b>Análisis con IA (opcional):</b> solo si tú guardas una clave y pides el análisis, se envían a Anthropic totales por categoría y por mes, sin nombres de cuentas, notas ni tu correo.</li></ul>' +
+        '<p>En las consultas de tasas y precios no se envían tus datos. Como en cualquier conexión a internet, esos servicios pueden ver datos técnicos como tu dirección IP y tu navegador, según sus propias políticas.</p>' +
+        '<h3>Enlaces a Binance y WhatsApp</h3><p>Si tocas un enlace a Binance o compartes una meta por WhatsApp, sales de Orbe y aplica la política de privacidad de ese servicio. Orbe no recibe tus datos de Binance ni puede ver tu saldo.</p>' +
+        '<h3>Cuánto tiempo se guardan</h3><p>Lo que está en tu teléfono se queda hasta que lo borras. Lo que está en la nube se queda mientras tengas la cuenta. Al borrar tu cuenta, se borran tu correo, tu contraseña y tus datos de la nube; las copias de seguridad del proveedor se eliminan solas al poco tiempo.</p>' +
+        '<h3>Tus derechos</h3><ul><li><b>Ver y llevarte tus datos:</b> Ajustes › Tus datos › Guardar una copia o Exportar a Excel.</li><li><b>Corregirlos:</b> edita cualquier movimiento, cuenta o meta.</li><li><b>Borrarlos:</b> Ajustes › Zona de cuidado › Borrar todos los datos (teléfono), o Tu cuenta › Borrar mi cuenta (nube).</li></ul>' +
+        '<h3>Edad</h3><p>Orbe no está pensada para menores de 13 años. Si eres menor de edad, úsala con permiso de tus padres o tutores.</p>' +
+        '<h3>Seguridad</h3><p>Usamos conexiones cifradas, reglas para que nadie lea datos ajenos, y el código de bloqueo y Face ID en el teléfono. Ningún sistema es perfecto: usa una contraseña única y activa el código de bloqueo.</p>' +
+        '<h3>Cambios</h3><p>Si esta política cambia, actualizaremos la fecha de arriba y, si el cambio es importante, te avisaremos en la app.</p>' },
       ref: { t: "Binance y enlaces de referido", b:
         '<p class="upd">Última actualización: ' + LEGAL_DATE + '</p>' +
         '<ul><li>Orbe <b>no es parte de Binance</b>, no la representa y no está patrocinada por ella. Binance es una marca de sus respectivos dueños.</li>' +
@@ -9483,8 +9506,9 @@ html.mono body button.primary:not(.btn-danger), html.mono body #add { background
         '<li>La tasa anual que muestra la guía es un promedio de referencia o la que tú escribes. La real la fija Binance y cambia con frecuencia.</li>' +
         '<li>Revisa los términos de Binance y las normas de tu país antes de usar sus servicios. Orbe nunca te pedirá tu contraseña, tus códigos ni tus claves de Binance.</li></ul>' },
       src: { t: "Fuentes de las tasas", b:
-        '<ul><li><b>Dólar y euro BCV:</b> tasa oficial publicada por el Banco Central de Venezuela, consultada a través de ve.dolarapi.com.</li>' +
+        '<ul><li><b>Dólar y euro BCV:</b> tasa oficial publicada por el Banco Central de Venezuela, consultada a través de ve.dolarapi.com. Si la del euro llega con un valor fuera de lo normal, Orbe la calcula con el dólar BCV y el cambio euro/dólar de open.er-api.com.</li>' +
         '<li><b>USDT:</b> precio de referencia de Binance P2P (pydolarve.org) o, si no está disponible, el dólar paralelo de ve.dolarapi.com.</li>' +
+        '<li><b>Otros países:</b> el cambio de tu moneda frente al dólar y al euro sale de open.er-api.com, y USDT de api.coingecko.com.</li>' +
         '<li><b>Bitcoin:</b> precio BTC/USDT de Binance o, si falla, de CoinGecko, multiplicado por la tasa USDT.</li></ul>' +
         '<p>Orbe no está asociada al BCV, a Binance ni a esos servicios. Las tasas pueden tardar en actualizarse o fallar. Si una tasa no se pudo actualizar, la app te lo indica. Puedes escribir tu propia tasa al registrar un cambio.</p>' }
     };
@@ -9573,7 +9597,7 @@ html.mono body button.primary:not(.btn-danger), html.mono body #add { background
         var d = new Date(state.backupAt);
         bs.textContent = "Última copia: " + d.getDate() + " " + MESES_C[d.getMonth()] + " " + d.getFullYear() + (backupDue() ? ". Ya toca guardar otra." : ".");
       } else bs.textContent = state.items.length ? "Aún no has guardado ninguna copia. Guárdala en Archivos (iCloud Drive) para no perderla si cambias de teléfono." : "Un archivo con todos tus movimientos. Guárdalo en Archivos (iCloud Drive).";
-      bs.parentNode.parentNode.querySelector("b").style.color = backupDue() ? "var(--out)" : "";
+      var bt = bs.parentNode.parentNode.querySelector("b"); bt.innerHTML = "Guardar una copia" + (backupDue() ? ' <em class="set-pill">Pendiente</em>' : "");
       renderSetDot();
     }
     $("set-open").addEventListener("click", function () { openView("set"); });
