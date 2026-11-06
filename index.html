@@ -2865,6 +2865,21 @@ main > .panel.fz-today { background: none !important; padding: 0 !important; mar
   .acc3 { grid-template-columns: minmax(0, 1fr) !important; }
   .acc3 .acc-sum { display: none !important; }
 }
+/* Inicio más simple: moneda como chip, límites en una línea, sin botón ✦; funciones extra que se apagan */
+.bal-lrow { display: flex; align-items: center; gap: 8px; }
+.disp-chip { display: inline-flex; align-items: center; gap: 3px; min-height: 26px; padding: 0 8px 0 10px; border: 0; border-radius: 99px; background: var(--fill); color: var(--muted); font: inherit; font-size: 0.78rem; font-weight: 700; cursor: pointer; }
+.disp-chip svg { width: 12px; height: 12px; }
+.disp-chip:active { transform: scale(0.95); }
+.disp-chip[hidden] { display: none !important; }
+.bal-hero .balance-head > .seg { display: none !important; }
+.cv-lim:not(.over):not(.fast) .cv-left, .cv-lim:not(.over):not(.fast) .cv-sub, .cv-lim.over .cv-sub, .cv-lim.fast .cv-left { display: none !important; }
+#ai-btn { display: none !important; }
+html.ai-off #dial-ai { display: none !important; }
+html.fx-no-bn #earn-add, html.fx-no-bn #earn-box, html.fx-no-bn .dial-item[data-dial="bn"], html.fx-no-bn #set-bn-open { display: none !important; }
+html.fx-no-sg #sg-sec { display: none !important; }
+.fx-more { display: flex; align-items: center; gap: 12px; width: 100%; margin: 16px 0 4px; padding: 14px 16px; border: 0; border-radius: 18px; background: color-mix(in srgb, var(--accent) 9%, var(--surface)); color: var(--ink); font: inherit; text-align: left; cursor: pointer; }
+.fx-more[hidden] { display: none !important; }
+.fx-more b { display: block; font-size: 0.95rem; } .fx-more small { display: block; color: var(--muted); font-size: 0.8rem; line-height: 1.35; margin-top: 2px; }
 /* Colores «Blanco y negro» (Ajustes → Apariencia): negro, blanco y grises en toda la app */
 html.mono { --bg: #ffffff; --surface: #ffffff; --ink: #0a0a0a; --muted: #6b6b6b; --line: #e6e6e6; --accent: #0a0a0a; --accent-ink: #ffffff; --in: #0a0a0a; --out: #0a0a0a; --focus: #0a0a0a; --fill: #f2f2f2; }
 @media (prefers-color-scheme: dark) { html.mono:not([data-theme="light"]) { --bg: #000000; --surface: #111111; --ink: #f5f5f5; --muted: #9a9a9a; --line: #262626; --accent: #f5f5f5; --accent-ink: #000000; --in: #f5f5f5; --out: #f5f5f5; --focus: #f5f5f5; --fill: #1c1c1c; } }
@@ -2933,7 +2948,7 @@ html.mono body button.primary:not(.btn-danger), html.mono body #add { background
   <section class="panel bal-hero" aria-labelledby="h-bal">
     <div class="balance-head">
       <div>
-        <div class="balance-label" id="h-bal">Te queda este mes</div>
+        <div class="bal-lrow"><div class="balance-label" id="h-bal">Te queda este mes</div><button type="button" class="disp-chip" id="disp-chip" aria-label="Cambiar la moneda"><span id="disp-chip-t">USD</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"></path></svg></button></div>
         <div class="balance-amount fit" id="balance">$0,00</div>
         <div class="bal-note" id="bal-note" hidden></div>
       </div>
@@ -3066,6 +3081,7 @@ html.mono body button.primary:not(.btn-danger), html.mono body #add { background
       <div class="sg-empty"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6.5 21V4M6.5 4h11l-2 4 2 4H6.5"></path></svg><p><b>Ahorra para lo que quieras.</b> Un viaje, un celular o un fondo de emergencia: Orbe te dice cuánto te falta y cuándo llegas.</p></div>
       <div class="sg-acts"><button type="button" class="sg-act" id="goal-new2"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5v14M5 12h14"></path></svg>Crear meta</button></div>
     </div>
+    <button type="button" class="fx-more" id="fx-more" hidden><span class="set-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"></path></svg></span><span class="tx"><b>¿Quieres más formas de ahorrar?</b><small id="fx-more-s">Activa Binance Earn y las metas compartidas en Ajustes › Funciones.</small></span></button>
     <section class="sg-sec" id="sg-sec" hidden>
       <div class="gv-mrow"><h2 class="gv-h2 gv-mh" id="sg-h">Metas compartidas<span class="sg-n" id="sg-n" hidden></span></h2></div>
       <div id="sg-box"></div>
@@ -3181,16 +3197,28 @@ html.mono body button.primary:not(.btn-danger), html.mono body #add { background
       <button type="button" class="set-row" id="pin-now" hidden><span class="tx"><b>Bloquear ahora</b><small>Cierra Orbe con tu código al instante.</small></span></button>
       <button type="button" class="set-row" id="pin-change" hidden><span class="tx"><b>Cambiar código</b></span><svg class="chev-r" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 5l7 7-7 7"></path></svg></button>
     </div>
-    <div class="set-h">Inicio y avisos</div>
-    <div class="set-group">
+    <div class="set-h">Funciones</div>
+    <div class="set-group" id="fx-group">
+      <div class="set-row" id="ai-row">
+        <div class="tx"><b>Asistente</b><small>Diagnóstico de tu mes y consejos. Se abre desde el menú +.</small></div>
+        <button type="button" class="switch" id="set-ai" role="switch" aria-checked="true" aria-label="Asistente"><span></span></button>
+      </div>
       <div class="set-row" id="set-fzt-row">
-        <div class="tx"><b>«Puedes gastar hoy»</b><small>Tu presupuesto del día: saldo menos pagos del mes, entre los días que quedan.</small></div>
+        <div class="tx"><b>«Puedes gastar hoy»</b><small>Tu presupuesto del día en el Inicio: saldo menos pagos del mes, entre los días que quedan.</small></div>
         <button type="button" class="switch" id="set-fzt" role="switch" aria-checked="false" aria-label="Mostrar Puedes gastar hoy en el Inicio"><span></span></button>
       </div>
-      <div class="set-row" id="ai-row">
-        <div class="tx"><b>Botón del asistente</b><small>El botón ✦ sobre el + del Inicio, para pedir un diagnóstico de tu mes con IA.</small></div>
-        <button type="button" class="switch" id="set-ai" role="switch" aria-checked="true" aria-label="Mostrar el botón del asistente financiero"><span></span></button>
+      <div class="set-row" id="fx-bn-row">
+        <div class="tx"><b>Binance Earn</b><small>Registra lo que tienes generando rendimiento y la guía paso a paso.</small></div>
+        <button type="button" class="switch" id="fx-bn" role="switch" aria-checked="false" aria-label="Binance Earn"><span></span></button>
       </div>
+      <div class="set-row" id="fx-sg-row">
+        <div class="tx"><b>Metas compartidas</b><small>Junten dinero entre amigos. Necesita una cuenta de Orbe.</small></div>
+        <button type="button" class="switch" id="fx-sg" role="switch" aria-checked="false" aria-label="Metas compartidas"><span></span></button>
+      </div>
+    </div>
+    <p class="hint set-note">Orbe empieza simple. Activa solo lo que vas a usar; puedes cambiarlo cuando quieras.</p>
+    <div class="set-h">Avisos</div>
+    <div class="set-group">
       <div class="set-row" id="notif-row">
         <div class="tx"><b>Avisos de pagos</b><small id="notif-sub">Muestra en el ícono de Orbe cuántos pagos vencen hoy o mañana.</small></div>
         <button type="button" class="switch" id="notif-switch" role="switch" aria-checked="false" aria-label="Avisos de pagos"><span></span></button>
@@ -3454,6 +3482,7 @@ html.mono body button.primary:not(.btn-danger), html.mono body #add { background
       <button type="button" class="dial-item" role="menuitem" data-dial="mov"><span>Nuevo movimiento</span><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5v14M5 12h14"></path></svg></span></button>
       <button type="button" class="dial-item" role="menuitem" data-dial="ahorro"><span>Agregar ahorro</span><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 10c.8.3 1.5 1 1.8 2H22v3h-1.5c-.4.8-1 1.5-1.8 2V20h-3v-1.6c-.9.3-1.9.4-2.9.4-1 0-2-.1-2.8-.4V20h-3v-2.4C5 16.5 4 14.8 4 13c0-3.3 3.6-6 8-6 1 0 1.9.1 2.8.4L18 6v4z"></path><path d="M15.5 12h.01"></path><path d="M2 10.5c0 1 .7 1.8 1.6 2"></path></svg></span></button>
       <button type="button" class="dial-item" role="menuitem" data-dial="bn"><span>Gana con Binance</span><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 17l6-6 4 4 8-8"></path><path d="M15 7h6v6"></path></svg></span></button>
+      <button type="button" class="dial-item" role="menuitem" data-dial="ai" id="dial-ai"><span>Asistente</span><span class="ic"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2.5l1.9 5.2 5.2 1.9-5.2 1.9L12 16.7l-1.9-5.2-5.2-1.9 5.2-1.9z"></path><path d="M18.5 14.5l.8 2.2 2.2.8-2.2.8-.8 2.2-.8-2.2-2.2-.8 2.2-.8z"></path></svg></span></button>
       <button type="button" class="dial-item" role="menuitem" data-dial="calc"><span>Calculadora</span><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="2" width="14" height="20" rx="2"></rect><path d="M8 6h8M8 11h.01M12 11h.01M16 11h.01M8 15h.01M12 15h.01M16 15h.01M8 19h.01M12 19h.01M16 19h.01"></path></svg></span></button>
       <button type="button" class="dial-item" role="menuitem" data-dial="plantilla"><span>Plantilla</span><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13 2L4 14h7l-1 8 9-12h-7z"></path></svg></span></button>
     </div>
@@ -4315,6 +4344,9 @@ html.mono body button.primary:not(.btn-danger), html.mono body #add { background
         if (d && typeof d.country === "string") state.country = d.country;
         if (d && typeof d.ratesOn === "boolean") state.ratesOn = d.ratesOn;
         if (d && typeof d.aiHide === "boolean") state.aiHide = d.aiHide;
+        // Funciones extra: quien ya las usaba las mantiene; alguien nuevo empieza con ellas apagadas
+        if (d && d.fx && typeof d.fx === "object") state.fx = { bn: !!d.fx.bn, sg: !!d.fx.sg };
+        else if (d && d.onb) { var bnUsed = (d.earn && d.earn.length) || (d.bn && ((d.bn.done && Object.keys(d.bn.done).length) || (d.bn.opened && Object.keys(d.bn.opened).length))); var sgUsed = false; try { sgUsed = !!localStorage.getItem("orbe-sesion"); } catch (e) {} state.fx = { bn: !!bnUsed, sg: sgUsed }; }
         if (d && typeof d.cqOff === "boolean") state.cqOff = d.cqOff;
         if (d && typeof d.sgName === "string") state.sgName = d.sgName.slice(0, 30);
         if (d && d.instSeen) state.instSeen = true;
@@ -4348,7 +4380,7 @@ html.mono body button.primary:not(.btn-danger), html.mono body #add { background
   }
   function save() {
     try {
-      localStorage.setItem(KEY, JSON.stringify({ items: state.items, rate: state.rate, rateDate: state.rateDate, hideSav: state.hideSav, rateManual: state.rateManual, rateAutoAt: state.rateAutoAt, accounts: state.accounts, templates: state.templates, goals: state.goals, payments: state.payments, paySeries: state.paySeries, earn: state.earn, limits: state.limits, rateHist: state.rateHist, rateHistAt: state.rateHistAt, theme: state.theme, mono: !!state.mono, pin: state.pin, backupAt: state.backupAt, onb: state.onb, msumSeen: state.msumSeen, country: state.country, ratesOn: !!state.ratesOn, aiHide: !!state.aiHide, cqOff: !!state.cqOff, sgName: state.sgName || "", instSeen: state.instSeen, notif: state.notif, subs: state.subs, limCur: state.limCur, savTipOff: !!state.savTipOff, limPer: state.limPer, lastAcc: state.lastAcc, bn: state.bn, btcUsd: state.btcUsd, btcAt: state.btcAt, rateEur: state.rateEur, rateEurDate: state.rateEurDate, rateEurManual: state.rateEurManual, rateUsdt: state.rateUsdt, rateUsdtDate: state.rateUsdtDate, rateUsdtManual: state.rateUsdtManual, rateUsdtSrc: state.rateUsdtSrc, collapsed: state.collapsed, disp: state.disp, sav: state.sav, forz: state.forz, dayOn: !!state.dayOn, roundOn: !!state.roundOn }));
+      localStorage.setItem(KEY, JSON.stringify({ items: state.items, rate: state.rate, rateDate: state.rateDate, hideSav: state.hideSav, rateManual: state.rateManual, rateAutoAt: state.rateAutoAt, accounts: state.accounts, templates: state.templates, goals: state.goals, payments: state.payments, paySeries: state.paySeries, earn: state.earn, limits: state.limits, rateHist: state.rateHist, rateHistAt: state.rateHistAt, theme: state.theme, mono: !!state.mono, pin: state.pin, backupAt: state.backupAt, onb: state.onb, msumSeen: state.msumSeen, country: state.country, ratesOn: !!state.ratesOn, aiHide: !!state.aiHide, fx: state.fx || { bn: false, sg: false }, cqOff: !!state.cqOff, sgName: state.sgName || "", instSeen: state.instSeen, notif: state.notif, subs: state.subs, limCur: state.limCur, savTipOff: !!state.savTipOff, limPer: state.limPer, lastAcc: state.lastAcc, bn: state.bn, btcUsd: state.btcUsd, btcAt: state.btcAt, rateEur: state.rateEur, rateEurDate: state.rateEurDate, rateEurManual: state.rateEurManual, rateUsdt: state.rateUsdt, rateUsdtDate: state.rateUsdtDate, rateUsdtManual: state.rateUsdtManual, rateUsdtSrc: state.rateUsdtSrc, collapsed: state.collapsed, disp: state.disp, sav: state.sav, forz: state.forz, dayOn: !!state.dayOn, roundOn: !!state.roundOn }));
       window.__saveFail = 0;
     } catch (e) {
       if (!window.__saveFail && window.__toast) window.__toast("No se pudo guardar en este teléfono (puede estar sin espacio). Guarda una copia en Archivos desde Ajustes.");
@@ -6798,6 +6830,9 @@ html.mono body button.primary:not(.btn-danger), html.mono body #add { background
     (function () {
       var I = function (d) { return '<span class="set-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">' + d + "</svg></span>"; };
       var map = {
+        "fx-bn-row": '<path d="M12 3l3 3-3 3-3-3zM6 9l3 3-3 3-3-3zM18 9l3 3-3 3-3-3zM12 15l3 3-3 3-3-3z"></path>',
+        "fx-sg-row": '<circle cx="9" cy="8" r="3.5"></circle><path d="M2.5 20a6.5 6.5 0 0 1 13 0M16 4.5a3.5 3.5 0 0 1 0 7M21.5 20a6.5 6.5 0 0 0-4-6"></path>',
+        "fx-more": '<path d="M12 5v14M5 12h14"></path>',
         "set-country": '<circle cx="12" cy="12" r="9"></circle><path d="M3 12h18M12 3c2.5 2.7 3.8 5.7 3.8 9s-1.3 6.3-3.8 9c-2.5-2.7-3.8-5.7-3.8-9S9.5 5.7 12 3z"></path>',
         "set-rates": '<path d="M4 17l5-5 4 4 7-8"></path><path d="M15 8h5v5"></path>',
         "disp-row": '<circle cx="12" cy="12" r="9"></circle><path d="M14.8 9c-.5-1-1.5-1.5-2.8-1.5-1.6 0-2.8.9-2.8 2.1 0 2.8 5.6 1.5 5.6 4.3 0 1.2-1.2 2.1-2.8 2.1-1.3 0-2.4-.6-2.9-1.6M12 6v1.5M12 16.5V18"></path>',
@@ -7161,6 +7196,7 @@ html.mono body button.primary:not(.btn-danger), html.mono body #add { background
       if (a === "mov") openSheet(null);
       else if (a === "ahorro") openSv();
       else if (a === "calc") openCalc();
+      else if (a === "ai") openAi();
       else if (a === "bn") openView("bn");
       else if (a === "plantilla") openTpl();
     });
@@ -8220,7 +8256,7 @@ html.mono body button.primary:not(.btn-danger), html.mono body #add { background
     function renderNudge() {
       var el = $("bk-nudge"), n = state.items.length;
       var due = n >= 5 && (!state.backupAt || Date.now() - state.backupAt > BACKUP_DAYS * 86400000);
-      el.hidden = nudgeOff || !due;
+      el.hidden = true; // la tarjeta ya no sale: avisan el punto rojo de Ajustes y «Pendiente» en Guardar una copia
       if (el.hidden) return;
       var d = state.backupAt ? Math.floor((Date.now() - state.backupAt) / 86400000) : 0;
       el.classList.toggle("ok", !due);
@@ -9001,7 +9037,7 @@ html.mono body button.primary:not(.btn-danger), html.mono body #add { background
     function renderMsum() {
       var el = $("msum"); if (!el) return;
       var t = today(), pm = prevMonth(t.slice(0, 7));
-      var show = Number(t.slice(8, 10)) <= 7 && state.month === t.slice(0, 7) && state.msumSeen !== pm;
+      var show = Number(t.slice(8, 10)) <= 3 && state.month === t.slice(0, 7) && state.msumSeen !== pm;
       var a = show ? monthTot(pm) : null;
       if (show && !(a.tin || a.tout || a.tsv)) show = false;
       el.hidden = !show; if (!show) return;
@@ -9027,6 +9063,20 @@ html.mono body button.primary:not(.btn-danger), html.mono body #add { background
       $("inst-x").addEventListener("click", function () { state.instSeen = true; save(); $("inst").hidden = true; });
     })();
     $("pay-alert").addEventListener("click", function () { openView("pay"); });
+    function dispBtns() { return Array.prototype.filter.call(document.querySelectorAll('.bal-hero [data-disp]'), function (b) { return getComputedStyle(b).display !== "none" && !b.hidden; }); }
+    function renderDispChip() {
+      var t = $("disp-chip-t"); if (!t) return;
+      var bs = dispBtns(), cur = bs.filter(function (b) { return b.getAttribute("data-disp") === state.disp; })[0];
+      t.textContent = cur ? cur.textContent.trim() : state.disp;
+      $("disp-chip").hidden = bs.length < 2;
+    }
+    $("disp-chip").addEventListener("click", function () {
+      var bs = dispBtns(); if (bs.length < 2) return;
+      var i = bs.map(function (b) { return b.getAttribute("data-disp"); }).indexOf(state.disp);
+      bs[(i + 1) % bs.length].click(); renderDispChip();
+    });
+    new MutationObserver(renderDispChip).observe(document.querySelector(".bal-hero"), { subtree: true, attributes: true, attributeFilter: ["aria-pressed", "hidden", "style"] });
+    setTimeout(renderDispChip, 0);
     /* ---------- Pagos programados ---------- */
     var pgId = null, pgRep = "once";
     function renderPgRep() {
@@ -9670,16 +9720,39 @@ html.mono body button.primary:not(.btn-danger), html.mono body #add { background
       renderSetDot();
     }
     if (window.ORBE_OS === "android") { var sn = document.querySelector(".set-note"); if (sn) sn.innerHTML = "Sin cuenta, tus datos se guardan solo en este teléfono: si lo pierdes, borras los datos de Chrome o cambias de teléfono, solo podrás recuperarlos con una copia. Con cuenta, también quedan en la nube. Guarda la copia en <b>Google Drive</b> o envíatela por correo para tenerla fuera del teléfono."; }
+    function fxOn(k) { return !!(state.fx && state.fx[k]); }
+    function applyFx() {
+      var h = document.documentElement;
+      h.classList.toggle("fx-no-bn", !fxOn("bn")); h.classList.toggle("fx-no-sg", !fxOn("sg"));
+      if ($("fx-bn")) $("fx-bn").setAttribute("aria-checked", fxOn("bn") ? "true" : "false");
+      if ($("fx-sg")) $("fx-sg").setAttribute("aria-checked", fxOn("sg") ? "true" : "false");
+      var off = [!fxOn("bn") && "Binance Earn", !fxOn("sg") && "las metas compartidas"].filter(Boolean);
+      if ($("fx-more")) { $("fx-more").hidden = !off.length; $("fx-more-s").textContent = "Activa " + off.join(" y ") + " en Ajustes › Funciones."; }
+    }
+    function fxSet(k, on, name) {
+      state.fx = state.fx || { bn: false, sg: false }; state.fx[k] = on; save(); applyFx();
+      if (k === "sg" && on && window.__sgLoad) try { window.__sgLoad(true); } catch (e) {}
+      showToast(on ? name + " activado. Lo encuentras en Ahorro." : name + " apagado. Tus datos se guardan igual.");
+    }
+    $("fx-bn").addEventListener("click", function () { fxSet("bn", !fxOn("bn"), "Binance Earn"); });
+    $("fx-sg").addEventListener("click", function () { fxSet("sg", !fxOn("sg"), "Metas compartidas"); });
+    function goFunctions() {
+      openView("set");
+      setTimeout(function () { var g = $("fx-group"); if (g) instantScroll(Math.max(0, (window.scrollY || 0) + g.getBoundingClientRect().top - 90)); }, 60);
+    }
+    $("fx-more").addEventListener("click", goFunctions);
+    applyFx();
     $("set-open").addEventListener("click", function () { openView("set"); });
     $("sv2-back").addEventListener("click", function () { closeViews(); setTab(currentTab()); });
     function applyAiHide() {
       document.documentElement.classList.toggle("ai-off", !!state.aiHide);
+      applyFx();
       $("set-ai").setAttribute("aria-checked", state.aiHide ? "false" : "true");
     }
     applyAiHide();
     $("set-ai").addEventListener("click", function () {
       state.aiHide = !state.aiHide; save(); applyAiHide();
-      showToast(state.aiHide ? "El asistente ya no saldrá en el Inicio." : "El asistente vuelve a salir en el Inicio.");
+      showToast(state.aiHide ? "Asistente apagado." : "Listo. El asistente está en el menú +.");
     });
     $("set-bn-open").addEventListener("click", function () { openView("bn"); });
 
@@ -11092,7 +11165,7 @@ html.mono body button.primary:not(.btn-danger), html.mono body #add { background
 
     /* ---------- Recorrido guiado ---------- */
     var TOUR = [
-      { tab: 0, sel: ".rate-card", all: true, t: "Tasas del día", p: "Dólar BCV, euro y USDT. Se actualizan solas y te muestran si subieron ▲ o bajaron ▼." },
+      { tab: 0, sel: ".rate-card", alt: ".top", all: true, t: "Tasas del día", p: "Dólar BCV, euro y USDT. Se actualizan solas y te muestran si subieron ▲ o bajaron ▼." },
       { tab: 0, sel: ".bal-hero", t: "Tu saldo", p: "" },
       { tab: 0, sel: '[data-panel="acc"]', t: "Tus cuentas", p: "Cuánto hay en cada cuenta. Toca una para ver sus movimientos o cuadrarla con tu banco. Con ⇄ transfieres y con + agregas otra." },
       { tab: 0, sel: '[data-panel="cat"]', t: "Tus gastos e ingresos", p: "Tus gastos por categoría, comparados con el mes pasado. En Límites pones un máximo para cada una." },
@@ -11104,14 +11177,15 @@ html.mono body button.primary:not(.btn-danger), html.mono body #add { background
       { tab: 2, sel: ".pay-tabs", t: "Pagos y cobros", p: "Por pagar es lo que debes, como el alquiler o el internet. Por cobrar es lo que esperas recibir, como tu sueldo." },
       { tab: 2, sel: "#pay-cal", t: "Calendario", p: "Cada punto es un pago. Lo vencido se marca en rojo y te avisamos en el Inicio. Desliza un pago a la izquierda para borrarlo." },
       { tab: 3, sel: "#hist-stats", t: "Historial", p: "Todos tus movimientos del mes. Busca, filtra y desliza uno a la izquierda para borrarlo. Si te equivocas, toca «Deshacer»." },
-      { tab: 0, sel: "#set-open", t: "Puedes gastar hoy", p: "En Ajustes → Inicio activa «Puedes gastar hoy»: te dice cuánto puedes gastar hoy sin pasarte.", round: true },
-      { tab: 0, sel: "#set-open", t: "Ajustes", p: "Tu cuenta, tu clave y " + (window.ORBE_OS === "ios" ? "Face ID" : "la huella") + ", el país, el asistente ✦, las copias de seguridad y este recorrido cuando quieras repetirlo.", round: true }
+      { tab: 0, sel: "#set-open", t: "Ajustes", p: "Tu cuenta, tu código y " + (window.ORBE_OS === "ios" ? "Face ID" : "la huella") + ", el país, las copias y este recorrido. También activas funciones extra. Toca Siguiente para verlas.", round: true },
+      { view: "set", sel: "#fx-group", t: "Funciones", p: "Orbe empieza simple. Activa aquí solo lo que vas a usar: el asistente, «Puedes gastar hoy», Binance Earn y las metas compartidas. Puedes cambiarlo cuando quieras." }
     ];
     var tour = { i: -1, t: 0 };
     function tourRect(st, el) {
       if (!st.all) return el.getBoundingClientRect();
       var L = 1e9, T = 1e9, R = -1e9, B = -1e9;
       document.querySelectorAll(st.sel).forEach(function (x) { var r = x.getBoundingClientRect(); if (!r.width) return; L = Math.min(L, r.left); T = Math.min(T, r.top); R = Math.max(R, r.right); B = Math.max(B, r.bottom); });
+      if (R < L) return el.getBoundingClientRect();
       return { left: L, top: T, right: R, bottom: B, width: R - L, height: B - T };
     }
     function tourTarget(st) {
@@ -11138,12 +11212,21 @@ html.mono body button.primary:not(.btn-danger), html.mono body #add { background
       else y = Math.max(12, top - 14 - th);
       tip.style.bottom = ""; tip.style.top = y + "px";
     }
+    // Pasos que no aplican (por ejemplo, metas compartidas apagadas) no se cuentan
+    function tourAvail(st) {
+      var h = document.documentElement.classList;
+      if (st.sel === "#sg-sec" && h.contains("fx-no-sg")) return false;
+      if (st.sel === ".rate-card" && h.contains("loc-norates")) return false;
+      return true;
+    }
+    function tourList() { var L = []; TOUR.forEach(function (st, k) { if (tourAvail(st)) L.push(k); }); return L; }
     function tourFill(st, i) {
-      $("tour-n").textContent = (i + 1) + " de " + TOUR.length;
+      var L = tourList(), n = L.indexOf(i) + 1, tot = L.length;
+      $("tour-n").textContent = n + " de " + tot;
       $("tour-t").textContent = st.t; $("tour-p").textContent = st.p;
-      $("tour-prev").hidden = i === 0;
-      $("tour-next").textContent = i === TOUR.length - 1 ? "Listo" : "Siguiente";
-      $("tour-bar").style.width = ((i + 1) / TOUR.length * 100) + "%";
+      $("tour-prev").hidden = n <= 1;
+      $("tour-next").textContent = n === tot ? "Listo" : "Siguiente";
+      $("tour-bar").style.width = (n / tot * 100) + "%";
     }
     // Durante un momento, si el elemento se mueve (por ejemplo la barra que se achica), el recuadro lo sigue
     function tourFollow(el, tok) {
@@ -11167,15 +11250,17 @@ html.mono body button.primary:not(.btn-danger), html.mono body #add { background
     }
     function tourGo(i) {
       if (i < 0) return;
-      if (i >= TOUR.length) { endTour(); return; }
+      if (i >= TOUR.length) { endTour(true); return; }
+      if (!tourAvail(TOUR[i])) { tourGo(i + (tour.back ? -1 : 1)); return; }
       var first = tour.i < 0, tok = tour.tok = (tour.tok || 0) + 1;
       tour.i = i;
-      var st = TOUR[i], tab = document.querySelector('.tab[data-tab="' + st.tab + '"]');
-      var cur = document.querySelector(".tab[aria-current='true']");
-      var needNav = !cur || cur !== tab || document.body.classList.contains("view-set");
+      var st = TOUR[i], tab = st.view ? null : document.querySelector('.tab[data-tab="' + st.tab + '"]');
+      var cur = document.querySelector(".tab[aria-current='true']"), inSet = document.body.classList.contains("view-set");
+      var needNav = st.view ? !inSet : (!cur || cur !== tab || inSet);
       var body = $("tour-body"), dir = tour.back ? "b" : "f";
       if (first) tourFill(st, i); else body.className = "tt-body out " + dir;
       if (needNav && tab) { $("tour").classList.add("nav"); tab.click(); }
+      if (needNav && st.view === "set") { $("tour").classList.add("nav"); openView("set"); }
       clearTimeout(tour.t);
       tour.t = setTimeout(function () {
         var el = tourTarget(st);
@@ -11195,11 +11280,11 @@ html.mono body button.primary:not(.btn-danger), html.mono body #add { background
           tourPlace(false);
           tourFollow(el, tok);
         });
-      }, needNav ? 40 : 0);
+      }, needNav ? (st.view ? 450 : 40) : 0);
     }
     function startTour() {
-      TOUR[0].p = (LOC.none ? "Euro" : "Dólar" + (LOC.src ? " " + LOC.src : "") + ", euro") + " y USDT. Se actualizan solas y te muestran si subieron ▲ o bajaron ▼.";
-      TOUR[1].p = "Todo el dinero que tienes hoy en tus cuentas. Toca las monedas de al lado para verlo en otra.";
+      TOUR[0].p = (LOC.none ? "Euro" : "Dólar" + (LOC.src ? " " + LOC.src : "") + ", euro") + " y USDT. Se actualizan solas y te muestran si subieron ▲ o bajaron ▼." + (document.querySelector(".top.rates-off") ? " Toca la flecha de arriba para verlas." : "");
+      TOUR[1].p = "Todo el dinero que tienes hoy en tus cuentas. Toca la moneda junto al título para verlo en otra.";
       closeDial();
       document.querySelectorAll(".sheet-backdrop").forEach(function (x) { x.hidden = true; });
       var t = $("tour"), hole = $("tour-hole"); tour.back = false; tour.i = -1;
@@ -11210,18 +11295,21 @@ html.mono body button.primary:not(.btn-danger), html.mono body #add { background
       requestAnimationFrame(function () { requestAnimationFrame(function () { t.classList.remove("track"); t.classList.add("on"); }); });
       tourGo(0);
     }
-    function endTour() {
+    function endTour(done) {
       var t = $("tour"), hole = $("tour-hole"); tour.i = -1; clearTimeout(tour.t);
+      // Al terminar en Funciones, la persona se queda en Ajustes para activar lo que quiera
+      var stay = done === true && TOUR[TOUR.length - 1].view === "set" && document.body.classList.contains("view-set");
       t.classList.remove("track"); t.classList.add("bye");
       hole.style.left = "-40px"; hole.style.top = "-40px"; hole.style.width = (window.innerWidth + 80) + "px"; hole.style.height = (window.innerHeight + 80) + "px"; hole.style.borderRadius = "60px";
       setTimeout(function () { t.classList.remove("on"); }, 260);
       setTimeout(function () { t.hidden = true; t.classList.remove("bye"); document.documentElement.classList.remove("touring"); }, 620);
+      if (stay) return;
       var home = document.querySelector('.tab[data-tab="0"]'); if (home && document.body.className.indexOf("view-") >= 0) home.click();
       window.scrollTo({ top: 0, behavior: "smooth" });
     }
     $("tour-next").addEventListener("click", function () { tour.back = false; tourGo(tour.i + 1); });
     $("tour-prev").addEventListener("click", function () { tour.back = true; tourGo(tour.i - 1); });
-    $("tour-skip").addEventListener("click", endTour);
+    $("tour-skip").addEventListener("click", function () { endTour(false); });
     window.addEventListener("resize", function () { tourPlace(true); });
     var tourScrollT = 0;
     function tourScroll() {
