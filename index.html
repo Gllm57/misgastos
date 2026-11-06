@@ -2955,6 +2955,54 @@ html.mono .cv-row2.fast .cv-bar2 i, html.mono .cvd-card.fast .cvd-bar i { backgr
 .disp-pop .dp-n { font-weight: 600; font-size: 0.97rem; }
 .disp-pop .dp-ok { width: 18px; height: 18px; color: var(--accent); opacity: 0; }
 .disp-pop button.on .dp-ok { opacity: 1; }
+/* Ecosistema minimalista */
+#disp-row { display: none !important; }
+.hrow .menu-wrap, .pay .menu-wrap, #pay-acts, #hist-view .ms-pill, [data-ad="fix"], #ad-del { display: none !important; }
+.ad-acts { grid-template-columns: repeat(3, minmax(0, 1fr)) !important; }
+.ad-mnav { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin: 2px 0 12px; }
+.ad-mnav b { font-size: 1rem; font-weight: 700; text-transform: capitalize; }
+.earn-row { display: grid; grid-template-columns: 36px minmax(0, 1fr) auto 18px; align-items: center; gap: 12px; width: 100%; margin-top: 12px; padding: 12px 14px; border: 0; border-radius: 18px; background: var(--surface); color: var(--ink); font: inherit; text-align: left; cursor: pointer; }
+.earn-row .earn-ic { width: 36px; height: 36px; border-radius: 50%; display: grid; place-items: center; background: #f0b90b; color: #1a1400; font-weight: 800; }
+.earn-row .er-t b { display: block; font-size: 0.95rem; } .earn-row .er-t small { display: block; color: var(--muted); font-size: 0.78rem; }
+.earn-row .er-v { text-align: right; font-family: var(--display); font-weight: 700; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.earn-row .er-v small { display: block; color: var(--in); font-size: 0.78rem; font-weight: 700; }
+.earn-row .er-ch { width: 18px; height: 18px; color: var(--muted); transition: transform 0.3s ease; }
+.earn-row.open .er-ch { transform: rotate(180deg); }
+.earn-row + .earn-card { margin-top: 8px; }
+.earn-card[hidden] { display: none !important; }
+.earn-more { display: block; margin: 10px auto 0; border: 0; background: none; color: var(--accent); font: inherit; font-weight: 600; font-size: 0.88rem; cursor: pointer; }
+.earn-add[hidden] { display: none !important; }
+.sav-tip1 { display: flex !important; align-items: center; gap: 10px; margin: 12px 0 0; padding: 10px 10px 10px 14px; border-radius: 16px; background: color-mix(in srgb, var(--accent) 8%, var(--surface)); font-size: 0.85rem; line-height: 1.35; }
+.sav-tip1[hidden] { display: none !important; }
+.sav-tip1 .st-t { flex: 1; min-width: 0; }
+.sav-tip1 .st-go { border: 0; background: var(--accent); color: var(--accent-ink); font: inherit; font-weight: 700; font-size: 0.82rem; padding: 7px 12px; border-radius: 99px; cursor: pointer; flex: none; }
+.sav-tip1 .st-x { border: 0; background: none; color: var(--muted); font: inherit; width: 30px; height: 30px; cursor: pointer; flex: none; }
+.sg-row1 { display: flex; align-items: center; gap: 12px; width: 100%; padding: 12px 14px; border: 0; border-radius: 18px; background: var(--surface); color: var(--ink); font: inherit; text-align: left; cursor: pointer; }
+.sg-row1 .sg-ri { width: 36px; height: 36px; border-radius: 50%; display: grid; place-items: center; background: var(--fill); color: var(--accent); flex: none; }
+.sg-row1 .sg-ri svg { width: 18px; height: 18px; }
+.sg-row1 .tx { flex: 1; min-width: 0; } .sg-row1 b { display: block; font-size: 0.95rem; } .sg-row1 small { display: block; color: var(--muted); font-size: 0.78rem; }
+.sg-row1 .chev-r { width: 18px; height: 18px; color: var(--muted); flex: none; }
+.cal-more { display: flex; align-items: center; gap: 4px; margin: 6px auto 0; border: 0; background: none; color: var(--accent); font: inherit; font-weight: 600; font-size: 0.86rem; padding: 6px 10px; cursor: pointer; }
+.cal-more svg { width: 14px; height: 14px; }
+.pg-more { display: flex; justify-content: center; gap: 18px; margin: 14px 0 0; }
+.pg-more[hidden] { display: none !important; }
+.pg-more button { border: 0; background: none; font: inherit; font-weight: 600; font-size: 0.9rem; color: var(--ink); padding: 6px 4px; cursor: pointer; }
+.pg-more button[hidden] { display: none !important; }
+.pg-more .danger { color: var(--out); }
+.pg-cur { display: flex; width: 100%; }
+.pg-cur button { flex: 1; }
+.ge-look { display: flex !important; flex-direction: column; align-items: center; gap: 10px !important; }
+.ge-look .acc-pick { width: 100%; }
+.ge-cust { border: 0; background: var(--fill); color: var(--ink); font: inherit; font-weight: 600; font-size: 0.86rem; padding: 8px 16px; border-radius: 99px; cursor: pointer; }
+.ge-cust[hidden] { display: none !important; }
+#ge-pick[hidden] { display: none !important; }
+.tr-fee-w { text-align: center; }
+[data-for="tr-rate"].rate-chips { justify-content: center; }
+#ai-groups:not(.ai-all) .ai-x { display: none !important; }
+.ai-morebtn { display: block; margin: 12px auto 0; border: 0; background: none; color: var(--accent); font: inherit; font-weight: 600; font-size: 0.9rem; padding: 6px 10px; cursor: pointer; }
+.ai-morebtn[hidden], .ai-quick[hidden], .ai-cloud[hidden] { display: none !important; }
+/* «Deshacer» y otras acciones de los avisos se leen también en blanco y negro */
+html.mono .toast .t-act { color: var(--bg) !important; text-decoration: underline; text-underline-offset: 3px; }
 /* Colores «Blanco y negro» (Ajustes → Apariencia): negro, blanco y grises en toda la app */
 html.mono { --bg: #ffffff; --surface: #ffffff; --ink: #0a0a0a; --muted: #6b6b6b; --line: #e6e6e6; --accent: #0a0a0a; --accent-ink: #ffffff; --in: #0a0a0a; --out: #0a0a0a; --focus: #0a0a0a; --fill: #f2f2f2; }
 @media (prefers-color-scheme: dark) { html.mono:not([data-theme="light"]) { --bg: #000000; --surface: #111111; --ink: #f5f5f5; --muted: #9a9a9a; --line: #262626; --accent: #f5f5f5; --accent-ink: #000000; --in: #f5f5f5; --out: #f5f5f5; --focus: #f5f5f5; --fill: #1c1c1c; } }
@@ -3119,9 +3167,10 @@ html.mono body button.primary:not(.btn-danger), html.mono body #add { background
       </div>
       </div>
     </section>
-    <div class="sav-tip" id="sav-tip" hidden>
-      <div class="sg-empty"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="6" width="18" height="13" rx="3"></rect><path d="M3 10h18M7 15h3"></path></svg><p><b>Ten una cuenta solo para ahorrar.</b> Si tu ahorro está en otra cuenta, no lo gastas sin darte cuenta. Puede ser una cuenta en dólares, Binance o una cuenta del banco que no uses a diario. Solo se ve aquí, no en las cuentas del Inicio.</p></div>
-      <div class="sg-acts"><button type="button" class="sg-act" id="sav-tip-go"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5v14M5 12h14"></path></svg>Crear cuenta de ahorro</button><button type="button" class="sav-tip-no" id="sav-tip-no">Ahora no</button></div>
+    <div class="sav-tip sav-tip1" id="sav-tip" hidden>
+      <span class="st-t">Usa una cuenta solo para ahorrar y no lo gastarás sin darte cuenta.</span>
+      <button type="button" class="st-go" id="sav-tip-go">Crear</button>
+      <button type="button" class="st-x" id="sav-tip-no" aria-label="Cerrar">✕</button>
     </div>
     <section class="panel fz-box" id="fz-box" aria-label="Bóveda"></section>
     <div class="gv-mrow"><h2 class="gv-h2 gv-mh" id="gv-metas-h">Metas</h2><button type="button" class="gs-btn" id="goal-sort" hidden><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 4v16M3 8l4-4 4 4M17 20V4M13 16l4 4 4-4"></path></svg>Ordenar</button></div>
@@ -3188,12 +3237,7 @@ html.mono body button.primary:not(.btn-danger), html.mono body #add { background
       <button type="button" data-ad="tr"><span class="i k-tr"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 7h13M16 3l4 4-4 4M17 17H4M8 13l-4 4 4 4"></path></svg></span>Transferir</button>
       <button type="button" data-ad="fix"><span class="i k-fx"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 4v16M6 20h12M5 8h14"></path><path d="M5 8l-3 6a3 3 0 0 0 6 0zM19 8l-3 6a3 3 0 0 0 6 0z"></path></svg></span>Cuadrar</button>
     </div>
-    <div class="seg ad-per" role="group" aria-label="Periodo">
-      <button type="button" data-adp="m" aria-pressed="true">Este mes</button>
-      <button type="button" data-adp="pm" aria-pressed="false">Mes pasado</button>
-      <button type="button" data-adp="3m" aria-pressed="false">3 meses</button>
-      <button type="button" data-adp="all" aria-pressed="false">Todo</button>
-    </div>
+    <div class="ad-mnav"><button type="button" class="cal-nav" id="ad-mprev" aria-label="Mes anterior">‹</button><b id="ad-mlabel"></b><button type="button" class="cal-nav" id="ad-mnext" aria-label="Mes siguiente">›</button></div>
     <div class="ad-stats" id="ad-stats"></div>
     <div class="hist-search ad-search" id="ad-search" hidden><input type="search" id="ad-q" placeholder="Buscar en esta cuenta" autocomplete="off" aria-label="Buscar movimientos de la cuenta"></div>
     <div class="hist-chips" id="ad-chips" role="group" aria-label="Filtrar por tipo">
@@ -3314,7 +3358,7 @@ html.mono body button.primary:not(.btn-danger), html.mono body #add { background
       <input type="file" id="bk-file" accept=".json,application/json" hidden>
       <input type="file" id="bk-file" accept=".json,application/json" hidden>
     </div>
-    <p class="hint set-note">Sin cuenta, tus datos se guardan solo en este teléfono: si lo pierdes, borras los datos de Safari o cambias de teléfono, solo podrás recuperarlos con una copia. Con cuenta, también quedan en la nube. Al guardarla, elige <b>Guardar en Archivos › iCloud Drive</b> o envíatela por correo para tenerla fuera del teléfono.</p>
+    <p class="hint set-note" id="bk-note">Guarda una copia de vez en cuando en iCloud Drive.</p>
     <div class="set-h" hidden>Ahorro</div>
     <div class="set-group" hidden>
       <div class="set-row" id="rd-row" hidden>
@@ -3578,8 +3622,9 @@ html.mono body button.primary:not(.btn-danger), html.mono body #add { background
           <input type="text" id="pg-monto" inputmode="decimal" autocomplete="off" placeholder="0,00">
         </div>
         <div>
-          <label for="pg-moneda">Divisa</label>
-          <select id="pg-moneda"><option value="USD">Dólares ($)</option><option value="VES">Bolívares (Bs)</option><option value="USDT">USDT</option><option value="EUR">Euros (€)</option></select>
+          <label id="pg-cur-l">Moneda</label>
+          <div class="pg-cur seg" id="pg-cur" role="group" aria-labelledby="pg-cur-l"></div>
+          <select id="pg-moneda" hidden aria-hidden="true" tabindex="-1"><option value="USD">Dólares ($)</option><option value="VES">Bolívares (Bs)</option><option value="USDT">USDT</option><option value="EUR">Euros (€)</option></select>
         </div>
         <div class="wide">
           <label for="pg-fecha-btn">Fecha del pago</label>
@@ -3596,6 +3641,7 @@ html.mono body button.primary:not(.btn-danger), html.mono body #add { background
         </div>
       </div>
       <p class="error" id="pg-err" role="alert"></p>
+      <div class="pg-more" id="pg-more" hidden><button type="button" id="pg-stop">Dejar de repetir</button><button type="button" class="danger" id="pg-delx">Eliminar</button></div>
       <div class="sheet-foot"><button type="button" class="primary" id="pg-save">Programar pago</button></div>
     </section>
   </div>
@@ -3773,9 +3819,10 @@ html.mono body button.primary:not(.btn-danger), html.mono body #add { background
           <input type="text" id="ge-nombre" maxlength="30" placeholder="Ej: Viaje, celular nuevo">
         </div>
         <div class="wide">
-          <div class="acc-look">
+          <div class="acc-look ge-look">
             <span class="acc-prev" id="ge-prev"></span>
-            <div class="acc-pick">
+            <button type="button" class="ge-cust" id="ge-cust" aria-expanded="false">Personalizar</button>
+            <div class="acc-pick" id="ge-pick" hidden>
               <div class="acc-pl">Símbolo</div>
               <div class="acc-icons" id="ge-icons" role="radiogroup" aria-label="Símbolo de la meta"></div>
               <div class="acc-pl">Color</div>
@@ -3835,12 +3882,13 @@ html.mono body button.primary:not(.btn-danger), html.mono body #add { background
       <p class="hint" id="ai-sub" hidden></p>
       <div id="ai-groups"></div>
       <ul class="ai-list" id="ai-list" hidden></ul>
-      <div class="ai-quick" id="ai-quick">
+      <button type="button" class="ai-morebtn" id="ai-cloud-tog">Plan personalizado con IA</button>
+      <div class="ai-quick" id="ai-quick" hidden>
         <button type="button" data-aiq="cat"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 6h16M4 12h10M4 18h6"></path></svg>Ver gastos por categoría</button>
         <button type="button" data-aiq="goal"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="8"></circle><circle cx="12" cy="12" r="3"></circle></svg>Crear una meta</button>
         <button type="button" data-aiq="pay"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="3"></rect><path d="M8 3v4M16 3v4M3 10h18"></path></svg>Programar un pago</button>
       </div>
-      <div class="ai-cloud">
+      <div class="ai-cloud" id="ai-cloud" hidden>
         <div class="ai-cloud-top"><span class="ai-spark"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l1.8 4.7L18.5 9.5l-4.7 1.8L12 16l-1.8-4.7L5.5 9.5l4.7-1.8z"></path><path d="M19 15l.8 2.2L22 18l-2.2.8L19 21l-.8-2.2L16 18l2.2-.8z"></path></svg></span><div><div class="ai-cloud-head">Plan personalizado con IA</div><p class="hint" id="ai-key-state"></p></div></div>
         <ol class="ai-steps" id="ai-steps">
           <li>Crea una clave gratis en <b>console.anthropic.com</b> y ponle un límite de gasto.</li>
@@ -4169,6 +4217,7 @@ html.mono body button.primary:not(.btn-danger), html.mono body #add { background
           <div class="rate-chips" data-for="tr-rate"></div>
         </div>
         <p class="hint wide" id="tr-rate-hint">Viene con la tasa del BCV; cámbiala si te hicieron el cambio a otra.</p>
+        <div class="wide tr-fee-w"><button type="button" class="ge-cust" id="tr-fee" style="display:none">+ Agregar comisión</button></div>
         <div class="wide" id="tr-llega-wrap" style="display:none">
           <label for="tr-llega" id="tr-llega-l">¿Cuánto te llegó? (opcional)</label>
           <input type="text" id="tr-llega" inputmode="decimal" autocomplete="off" placeholder="0,00">
@@ -4278,6 +4327,7 @@ html.mono body button.primary:not(.btn-danger), html.mono body #add { background
         <button type="button" class="switch" id="acc-sav" role="switch" aria-checked="false" aria-label="Cuenta de ahorro"><span></span></button>
       </div>
       <p class="error" id="acc-err" role="alert"></p>
+      <div class="pg-more" id="acc-more" hidden><button type="button" id="acc-fix">Cuadrar con el banco</button><button type="button" class="danger" id="acc-delx">Eliminar cuenta</button></div>
       <div class="sheet-foot"><button type="button" class="primary" id="acc-save">Guardar cuenta</button></div>
     </section>
   </div>
@@ -5486,13 +5536,19 @@ html.mono body button.primary:not(.btn-danger), html.mono body #add { background
     var h = '<div class="cal-head"><button type="button" class="cal-nav" id="pay-prev" aria-label="Mes anterior"' + (vm <= curM ? " disabled" : "") + '>‹</button>' +
       '<div class="pay-month">' + MESES[pay.m] + " " + pay.y + '</div><button type="button" class="cal-nav" id="pay-next" aria-label="Mes siguiente">›</button></div>' +
       '<div class="cal-week">' + ["Lu", "Ma", "Mi", "Ju", "Vi", "Sá", "Do"].map(function (d) { return "<span>" + d + "</span>"; }).join("") + '</div><div class="cal-grid">';
-    for (var i = 0; i < first; i++) h += "<span></span>";
+    // Plegado: solo la semana de hoy (o del día elegido); «Ver todo el mes» abre el resto
+    var cells = [];
+    for (var i = 0; i < first; i++) cells.push("<span></span>");
     for (var d = 1; d <= nd; d++) {
       var iso = vm + "-" + pad2(d), o = by[iso];
       var st = o ? (o.pend ? (iso < t ? " over" : " has") : " ok") : "";
-      h += '<button type="button" class="cal-day' + st + (iso === t ? " today" : "") + (iso === pay.sel ? " sel" : "") + '" data-pd="' + iso + '" aria-label="' + d + " de " + mName + '">' + d + "</button>";
+      cells.push('<button type="button" class="cal-day' + st + (iso === t ? " today" : "") + (iso === pay.sel ? " sel" : "") + '" data-pd="' + iso + '" aria-label="' + d + " de " + mName + '">' + d + "</button>");
     }
-    h += '</div><div class="pay-leg"><span><i style="background:var(--accent)"></i>Pendiente</span><span><i style="background:var(--out)"></i>Vencido</span><span><i style="background:var(--in)"></i>Pagado</span></div>';
+    var focus = pay.sel && pay.sel.slice(0, 7) === vm ? pay.sel : vm === t.slice(0, 7) ? t : null;
+    var folded = !pay.calOpen && !!focus;
+    if (folded) { var wk = Math.floor((first + Number(focus.slice(8, 10)) - 1) / 7); cells = cells.slice(wk * 7, wk * 7 + 7); }
+    h += cells.join("");
+    h += '</div>' + (focus ? '<button type="button" class="cal-more" data-cal-more>' + (folded ? "Ver todo el mes" : "Ver solo esta semana") + '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="' + (folded ? "M6 9l6 6 6-6" : "M6 15l6-6 6 6") + '"></path></svg></button>' : "") + (folded ? "" : '<div class="pay-leg"><span><i style="background:var(--accent)"></i>Pendiente</span><span><i style="background:var(--out)"></i>Vencido</span><span><i style="background:var(--in)"></i>Pagado</span></div>');
     var calEl = $("pay-cal");
     if (calEl._h !== h) { calEl.innerHTML = h; calEl._h = h; }
     // listas
@@ -5605,7 +5661,7 @@ html.mono body button.primary:not(.btn-danger), html.mono body #add { background
       var sign = it.tipo === "ahorro" ? "" : (plus ? "+" : "−");
       var other = it.moneda === "VES" || it.moneda === "EUR" || it.moneda === "USDT" ? "USD" : "VES";
       var alt = conv(it.monto, it.moneda, other);
-      amt = sign + money(it.monto, it.moneda) + (alt !== null ? "<small>≈ " + money(alt, other) + "</small>" : "");
+      amt = sign + money(it.monto, it.moneda); void alt;
       cls = it.tipo === "ahorro" ? "sv" : (plus ? "in" : "out");
     }
     if (sv) amt = state.hideSav ? '<span class="sv-val"><span class="masked">••••</span></span>' : '<span class="sv-val">' + amt + "</span>";
@@ -6586,7 +6642,7 @@ html.mono body button.primary:not(.btn-danger), html.mono body #add { background
     if (tip) tip.hidden = !!sacc.length || !!state.savTipOff || !state.accounts.length;
     $("sav-buckets").innerHTML = rows.length ? rows.map(function (r) {
       return '<div class="bk">' + accAvatar(r[0]) + '<span class="l">' + esc(r[0].nombre) + '</span><span class="v">' + mask(money(r[1], r[0].moneda)) + "</span></div>";
-    }).join("") : sacc.length ? "" : '<p class="empty" style="grid-column:1/-1">Aún no tienes ahorros. Toca Ahorrar o actívalo al registrar un ingreso.</p>';
+    }).join("") : sacc.length ? "" : '';
     renderEarn();
     renderEye();
   }
@@ -6596,19 +6652,23 @@ html.mono body button.primary:not(.btn-danger), html.mono body #add { background
     if (e.plazo) days = Math.min(days, e.plazo);
     return { days: days, gain: e.monto * (Math.pow(1 + e.apr / 100 / 365, days) - 1) };
   }
+  var CHEV_D = '<svg class="er-ch" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"></path></svg>';
   function renderEarn() {
     var box = $("earn-box");
     if (!box) return;
     var list = (state.earn || []).filter(function (e) { return accById(e.cuenta); });
     box.hidden = !list.length;
+    if ($("earn-add")) $("earn-add").hidden = !!list.length;
+    window.__earnOpen = window.__earnOpen || {};
     box.innerHTML = list.map(function (e) {
       var g = earnGain(e), end = e.plazo ? addDaysIso(e.fecha, e.plazo) : null, done = end && end <= today();
-      var fin = e.plazo ? e.monto * (Math.pow(1 + e.apr / 100 / 365, e.plazo) - 1) : null;
-      return '<div class="earn-card"><div class="row"><span class="tag">Binance Earn · ' + (e.plazo ? e.plazo + " días" : "Flexible") + '</span><span class="muted">' + num(e.apr) + "% anual</span></div>" +
+      var fin = e.plazo ? e.monto * (Math.pow(1 + e.apr / 100 / 365, e.plazo) - 1) : null, op = !!window.__earnOpen[e.id];
+      return '<button type="button" class="earn-row' + (op ? " open" : "") + '" data-earn-tog="' + e.id + '" aria-expanded="' + op + '"><span class="earn-ic" aria-hidden="true">₮</span><span class="er-t"><b>Binance Earn</b><small>' + (e.plazo ? e.plazo + " días" : "Flexible") + " · " + num(e.apr) + ' % anual</small></span><span class="er-v">' + mask(money(e.monto, "USDT")) + '<small>' + mask("+" + money(g.gain != null ? g.gain : 0, "USDT")) + "</small></span>" + CHEV_D + "</button>" +
+        '<div class="earn-card"' + (op ? "" : " hidden") + '><div class="row"><span class="tag">Binance Earn · ' + (e.plazo ? e.plazo + " días" : "Flexible") + '</span><span class="muted">' + num(e.apr) + "% anual</span></div>" +
         '<div class="row"><div><div class="muted">Suscrito</div><div class="big">' + mask(money(e.monto, "USDT")) + '</div></div><div style="text-align:right"><div class="muted">Ganado aprox.</div><div class="gain">' + mask("+" + money(g.gain, "USDT")) + "</div></div></div>" +
         (e.plazo ? '<div class="bar"><i style="width:' + Math.min(100, g.days / e.plazo * 100).toFixed(1) + '%"></i></div><div class="row muted"><span>Día ' + g.days + " de " + e.plazo + "</span><span>" + (done ? "Venció el " + shortDate(end) : "Vence el " + shortDate(end) + " · +" + money(fin, "USDT")) + "</span></div>"
           : '<div class="muted">Desde el ' + shortDate(e.fecha) + " · " + g.days + (g.days === 1 ? " día" : " días") + ". Puedes sacarlo cuando quieras.</div>") +
-        '<div class="acts"><button type="button" data-earn-end="' + e.id + '">' + (done || !e.plazo ? "Ya lo retiré" : "Retiré antes") + '</button><button type="button" data-earn-apr="' + e.id + '">Cambiar tasa</button></div></div>';
+        '<div class="acts"><button type="button" data-earn-end="' + e.id + '">' + (done || !e.plazo ? "Ya lo retiré" : "Retiré antes") + '</button><button type="button" data-earn-apr="' + e.id + '">Cambiar tasa</button></div><button type="button" class="earn-more" data-earn-more>+ Registrar otro ahorro</button></div>';
     }).join("");
   }
   function setPressed(selector, attr, value) {
@@ -7084,6 +7144,7 @@ html.mono body button.primary:not(.btn-danger), html.mono body #add { background
     var editAccId = null;
     function openAccSheet(a, sav) {
       editAccId = a ? a.id : null;
+      if ($("acc-more")) $("acc-more").hidden = !a || !!sav;
       $("acc-sav").setAttribute("aria-checked", (a ? !!a.ahorro : !!sav) ? "true" : "false");
       $("h-acc-new").textContent = a ? "Editar cuenta" : "Nueva cuenta";
       $("acc-save").textContent = a ? "Guardar cambios" : "Guardar cuenta";
@@ -7585,7 +7646,9 @@ html.mono body button.primary:not(.btn-danger), html.mono body #add { background
       });
       $("tr-rate-wrap").style.display = rate ? "" : "none";
       $("tr-rate-hint").style.display = rate ? "" : "none";
-      $("tr-llega-wrap").style.display = rate ? "" : "none";
+      var feeOn = trFee || !!$("tr-llega").value.trim();
+      $("tr-llega-wrap").style.display = rate && feeOn ? "" : "none";
+      $("tr-fee").style.display = rate && !feeOn ? "" : "none";
       if (rate) $("tr-llega-l").textContent = "¿Cuánto te llegó? (" + curLabel(b.moneda) + ", opcional)";
       if (rate) {
         var info = trRateInfo(a.moneda, b.moneda), pair = a.moneda + ">" + b.moneda;
@@ -7613,8 +7676,10 @@ html.mono body button.primary:not(.btn-danger), html.mono body #add { background
     var trEditId = null;
     function isAccTr(it) { return !!it && it.tipo === "traspaso" && !it.auto && it.desde && it.hacia && it.desde.k === "cuenta" && it.hacia.k === "cuenta"; }
     function editMov(it) { if (isAccTr(it)) openTr(it); else openSheet(it); }
+    var trFee = false;
+    $("tr-fee").addEventListener("click", function () { trFee = true; syncTr(); setTimeout(function () { try { $("tr-llega").focus(); } catch (e) {} }, 50); });
     function openTr(it) {
-      it = isAccTr(it) ? it : null;
+      it = isAccTr(it) ? it : null; trFee = false;
       if (state.accounts.length < 2) { showToast("Necesitas al menos dos cuentas para transferir."); return; }
       trEditId = it ? it.id : null;
       $("h-tr").textContent = it ? "Editar transferencia" : "Transferir entre cuentas";
@@ -7961,6 +8026,7 @@ html.mono body button.primary:not(.btn-danger), html.mono body #add { background
     function adRange() {
       var t = today(), m = t.slice(0, 7), q = m.split("-"), y = Number(q[0]), mo = Number(q[1]);
       function ym(yy, mm) { while (mm < 1) { mm += 12; yy--; } return yy + "-" + pad2(mm); }
+      if (ad.per === "mon" && ad.mo) return [ad.mo + "-01", ad.mo + "-31", ad.mo === m ? "este mes" : MESES[Number(ad.mo.slice(5, 7)) - 1]];
       if (ad.per === "m") return [m + "-01", m + "-31", "este mes"];
       if (ad.per === "pm") { var pm = ym(y, mo - 1); return [pm + "-01", pm + "-31", "el mes pasado"]; }
       if (ad.per === "3m") return [ym(y, mo - 2) + "-01", m + "-31", "los últimos 3 meses"];
@@ -8025,7 +8091,7 @@ html.mono body button.primary:not(.btn-danger), html.mono body #add { background
       $("ad-bal-l").textContent = sv > 0.004 ? "Disponible" : "Saldo actual";
       $("ad-split").innerHTML = sv > 0.004 ? '<div><span>En ahorro</span><b>' + mask(money(sv, a.moneda)) + '</b></div><div><span>Total en la cuenta</span><b>' + mask(money(bal + sv, a.moneda)) + "</b></div>" : "";
       $("ad-spark").innerHTML = rows.length ? adSpark(rows, a) : "";
-      setPressed("[data-adp]", "data-adp", ad.per);
+      if (ad.per === "mon") { $("ad-mlabel").textContent = monthLabel(ad.mo); $("ad-mnext").disabled = ad.mo >= today().slice(0, 7); }
       setPressed("[data-adf]", "data-adf", ad.f);
       var rg = adRange(), inP = rows.filter(function (r) { return r.it.fecha >= rg[0] && r.it.fecha <= rg[1]; });
       var ein = 0, eout = 0;
@@ -8054,14 +8120,18 @@ html.mono body button.primary:not(.btn-danger), html.mono body #add { background
     }
     window.__accd = function () { if (activeView() === "accd") renderAccd(); };
     function openAccd(id) {
-      ad.id = id; ad.per = "m"; ad.f = "all"; ad.q = ""; $("ad-q").value = "";
+      ad.id = id; ad.per = "mon"; ad.mo = today().slice(0, 7); ad.f = "all"; ad.q = ""; $("ad-q").value = "";
       var bk = $("ad-back"), sv = isSavAcc(id); if (bk && bk.lastChild && bk.lastChild.nodeType === 3) bk.lastChild.textContent = sv ? "Ahorro" : "Inicio";
       openView("accd");
       renderAccd();
     }
     $("ad-back").addEventListener("click", function () { closeViews(); setTab(currentTab()); });
     $("ad-edit").addEventListener("click", function () { var a = accById(ad.id); if (a) openAccSheet(a); });
-    document.querySelectorAll("[data-adp]").forEach(function (b) { b.addEventListener("click", function () { ad.per = b.getAttribute("data-adp"); renderAccd(); }); });
+    $("acc-fix").addEventListener("click", function () { var a = accById(editAccId); $("acc-sheet").hidden = true; if (a) openCq(a); });
+    $("acc-delx").addEventListener("click", function () { var id = editAccId; $("acc-sheet").hidden = true; if (id == null) return; ad.id = id; $("ad-del").click(); });
+    function adShift(n) { var q = ad.mo.split("-"), d = new Date(Number(q[0]), Number(q[1]) - 1 + n, 1); var v = d.getFullYear() + "-" + pad2(d.getMonth() + 1); if (v > today().slice(0, 7)) return; ad.mo = v; renderAccd(); }
+    $("ad-mprev").addEventListener("click", function () { adShift(-1); });
+    $("ad-mnext").addEventListener("click", function () { adShift(1); });
     document.querySelectorAll("[data-adf]").forEach(function (b) { b.addEventListener("click", function () { ad.f = b.getAttribute("data-adf"); renderAccd(); }); });
     $("ad-q").addEventListener("input", function (e) { ad.q = e.target.value; renderAccd(); });
     $("ad-del").addEventListener("click", function () {
@@ -8426,6 +8496,9 @@ html.mono body button.primary:not(.btn-danger), html.mono body #add { background
       showToast("Guardado en tus ahorros: " + money(usdt, "USDT") + " en Binance Earn.");
     });
     $("earn-box").addEventListener("click", function (e) {
+      var tg = e.target.closest("[data-earn-tog]");
+      if (tg) { var id = tg.getAttribute("data-earn-tog"); window.__earnOpen[id] = !window.__earnOpen[id]; renderEarn(); return; }
+      if (e.target.closest("[data-earn-more]")) { $("earn-add").click(); return; }
       var b = e.target.closest("[data-earn-end]"), c = e.target.closest("[data-earn-apr]");
       if (c) {
         var ec = state.earn.filter(function (x) { return String(x.id) === c.getAttribute("data-earn-apr"); })[0];
@@ -8593,10 +8666,18 @@ html.mono body button.primary:not(.btn-danger), html.mono body #add { background
             return '<li class="ai-item k-' + o.kind + '" style="animation-delay:' + (k++ * 0.04).toFixed(2) + 's"><span class="b"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' + g[2] + '</svg></span><div><div class="t">' + esc(o.title) + '</div><div class="x">' + esc(o.text) + "</div></div></li>";
           }).join("") + "</ul></div>";
         }).join("");
+        var lis = $("ai-groups").querySelectorAll(".ai-item"), more = lis.length - 3;
+        if (more > 0) {
+          Array.prototype.forEach.call(lis, function (li, i) { if (i >= 3) li.classList.add("ai-x"); });
+          Array.prototype.forEach.call($("ai-groups").querySelectorAll(".ai-grp"), function (g) { if (!g.querySelector(".ai-item:not(.ai-x)")) g.classList.add("ai-x"); });
+          $("ai-groups").insertAdjacentHTML("beforeend", '<button type="button" class="ai-morebtn" id="ai-morebtn">Ver ' + more + (more === 1 ? " dato más" : " datos más") + " del mes</button>");
+        }
       }
       renderAiKeyState();
       scheduleFit();
     }
+    $("ai-groups").addEventListener("click", function (e) { if (e.target.closest("#ai-morebtn")) { $("ai-groups").classList.add("ai-all"); e.target.closest("#ai-morebtn").remove(); } });
+    $("ai-cloud-tog").addEventListener("click", function () { $("ai-cloud").hidden = false; $("ai-cloud-tog").hidden = true; });
     $("ai-prev").addEventListener("click", function () { var p = state.month.split("-"), d = new Date(Number(p[0]), Number(p[1]) - 2, 1); setMonth(d.getFullYear() + "-" + pad2(d.getMonth() + 1)); $("ai-out").innerHTML = ""; renderAi(); });
     $("ai-next").addEventListener("click", function () { var p = state.month.split("-"), d = new Date(Number(p[0]), Number(p[1]), 1); setMonth(d.getFullYear() + "-" + pad2(d.getMonth() + 1)); $("ai-out").innerHTML = ""; renderAi(); });
     $("ai-quick").addEventListener("click", function (e) {
@@ -8809,6 +8890,7 @@ html.mono body button.primary:not(.btn-danger), html.mono body #add { background
     function openGe(g) {
       geId = g ? g.id : null;
       geLook = { icon: g && g.icon && GOAL_SVG[g.icon] ? g.icon : "", color: g && g.color && HEX_RE.test(g.color) ? g.color : "" };
+      $("ge-pick").hidden = true; $("ge-cust").hidden = false; $("ge-cust").setAttribute("aria-expanded", "false");
       $("h-ge").textContent = g ? "Editar meta" : "Nueva meta";
       $("ge-save").textContent = g ? "Guardar cambios" : "Crear meta";
       $("ge-nombre").value = g ? g.nombre : "";
@@ -8820,6 +8902,7 @@ html.mono body button.primary:not(.btn-danger), html.mono body #add { background
       $("ge-sheet").hidden = false;
 
     }
+    $("ge-cust").addEventListener("click", function () { $("ge-pick").hidden = false; $("ge-cust").hidden = true; $("ge-cust").setAttribute("aria-expanded", "true"); });
     function closeGe() { $("ge-sheet").hidden = true; geId = null; }
     $("goal-new").addEventListener("click", function () { openGe(null); });
     $("ge-close").addEventListener("click", closeGe);
@@ -9277,7 +9360,7 @@ html.mono body button.primary:not(.btn-danger), html.mono body #add { background
       var f = $("pg-fecha").value;
       $("pg-rep-hint").textContent = pgRep === "m" && f
         ? "Se repetirá el día " + Number(f.slice(8, 10)) + " de cada mes. Si el mes es más corto, cae el último día."
-        : "Se programa solo para esa fecha.";
+        : "";
     }
     function setPagoFecha(v) { $("pg-fecha").value = v; $("pg-fecha-label").textContent = dateLabel(v); renderPgRep(); }
     document.querySelectorAll("[data-pg-rep]").forEach(function (b) {
@@ -9314,10 +9397,24 @@ html.mono body button.primary:not(.btn-danger), html.mono body #add { background
       pgRep = p && p.serie && seriesById(p.serie) ? "m" : "once";
       setPagoFecha(p ? p.fecha : (pay.sel || (vm === t.slice(0, 7) ? t : vm + "-01")));
       $("pg-err").textContent = "";
+      $("pg-more").hidden = !p; $("pg-stop").hidden = !(p && p.serie && seriesById(p.serie));
+      pgCurDraw();
       $("pg-sheet").hidden = false;
 
     }
     function closePg() { $("pg-sheet").hidden = true; pgId = null; }
+    $("pg-stop").addEventListener("click", function () { var ps = payById(pgId); closePg(); if (ps && ps.serie) { stopSeries(ps.serie, ps.id); save(); render(); showToast("Este pago ya no se repetirá."); } });
+    $("pg-delx").addEventListener("click", function () { var id = pgId; closePg(); if (id != null) payDel(String(id), null); });
+    // 15 Moneda del pago con botones
+    function pgCurDraw() {
+      var w = $("pg-cur"); if (!w) return; var sel = $("pg-moneda");
+      var ORD = ["USD", "VES", "EUR", "USDT"];
+      w.innerHTML = Array.prototype.filter.call(sel.options, function (o) { return !(o.value === "VES" && LOC.none); }).sort(function (x, y) { return ORD.indexOf(x.value) - ORD.indexOf(y.value); }).map(function (o) {
+        var k = o.value, lab = k === "USD" ? "$" : k === "EUR" ? "€" : k === "VES" ? LOC.sym : k;
+        return '<button type="button" data-pgc="' + k + '" aria-pressed="' + (sel.value === k) + '" aria-label="' + esc(o.textContent) + '">' + esc(lab) + "</button>";
+      }).join("");
+    }
+    $("pg-cur").addEventListener("click", function (e) { var b = e.target.closest("[data-pgc]"); if (!b) return; var sel = $("pg-moneda"); sel.value = b.getAttribute("data-pgc"); sel.dispatchEvent(new Event("change", { bubbles: true })); pgCurDraw(); });
     $("pay-new").addEventListener("click", function () { openPg(null); });
     $("pay-new2").addEventListener("click", function () { openPg(null); });
     $("pay-new3").addEventListener("click", function () { openPg(null); });
@@ -9372,6 +9469,7 @@ html.mono body button.primary:not(.btn-danger), html.mono body #add { background
     $("pay-cal").addEventListener("click", function (e) {
       if (e.target.closest("#pay-prev")) { if (pay.m === 0) { pay.m = 11; pay.y--; } else pay.m--; pay.sel = null; renderPay(); return; }
       if (e.target.closest("#pay-next")) { if (pay.m === 11) { pay.m = 0; pay.y++; } else pay.m++; pay.sel = null; renderPay(); return; }
+      if (e.target.closest("[data-cal-more]")) { pay.calOpen = !pay.calOpen; renderPay(); return; }
       var dd = e.target.closest("[data-pd]");
       if (dd) { var iso = dd.getAttribute("data-pd"); pay.sel = pay.sel === iso ? null : iso; renderPay(); }
     });
@@ -9403,6 +9501,7 @@ html.mono body button.primary:not(.btn-danger), html.mono body #add { background
         return;
       }
       if ((b = e.target.closest("[data-pay-edit]"))) { closeMenus(); openPg(payById(b.getAttribute("data-pay-edit"))); return; }
+      if (!e.target.closest(".menu-wrap, [data-pay-toggle]") && (b = e.target.closest(".pay[data-pid]"))) { openPg(payById(b.getAttribute("data-pid"))); return; }
       if ((b = e.target.closest("[data-pay-stop]"))) {
         closeMenus();
         var ps = payById(b.getAttribute("data-pay-stop"));
@@ -9912,7 +10011,7 @@ html.mono body button.primary:not(.btn-danger), html.mono body #add { background
       var bt = bs.parentNode.parentNode.querySelector("b"); bt.innerHTML = "Guardar una copia" + (backupDue() ? ' <em class="set-pill">Pendiente</em>' : "");
       renderSetDot();
     }
-    if (window.ORBE_OS === "android") { var sn = document.querySelector(".set-note"); if (sn) sn.innerHTML = "Sin cuenta, tus datos se guardan solo en este teléfono: si lo pierdes, borras los datos de Chrome o cambias de teléfono, solo podrás recuperarlos con una copia. Con cuenta, también quedan en la nube. Guarda la copia en <b>Google Drive</b> o envíatela por correo para tenerla fuera del teléfono."; }
+    if (window.ORBE_OS === "android") { var sn = document.querySelector(".set-note"); if (sn) sn.textContent = "Guarda una copia de vez en cuando en Google Drive."; }
     function fxOn(k) { return !!(state.fx && state.fx[k]); }
     function applyFx() {
       var h = document.documentElement;
@@ -10574,8 +10673,7 @@ html.mono body button.primary:not(.btn-danger), html.mono body #add { background
       var acts = '<div class="sg-acts"><button type="button" class="sg-act" data-sg-new>' + sgSvg("plus", 2.2) + "Crear meta compartida</button>" +
         '<button type="button" class="sg-act" data-sg-join>' + sgSvg("key") + "Unirme con un código</button></div>";
       if (!has) {
-        box.innerHTML = '<div class="sg-empty">' + sgSvg("users", 1.8) + "<p><b>Junten dinero entre amigos.</b> Un regalo, un viaje o la cuenta de la fiesta: cada uno aporta su parte y el líder la confirma.</p>" +
-          '<button type="button" class="primary" data-sg-login>Inicia sesión para empezar</button><small>Se necesita una cuenta de Orbe para compartir metas.</small></div>';
+        box.innerHTML = '<button type="button" class="sg-row1" data-sg-login><span class="sg-ri" aria-hidden="true">' + sgSvg("users", 1.9) + '</span><span class="tx"><b>Junten dinero entre amigos</b><small>Inicia sesión para empezar</small></span><svg class="chev-r" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 5l7 7-7 7"></path></svg></button>';
         return;
       }
       if (!list.length) {
