@@ -2835,6 +2835,13 @@ main > .panel.fz-today { background: none !important; padding: 0 !important; mar
 .cv-sub { grid-column: 1 / -1; font-size: .72rem; color: var(--muted); margin-top: -2px; }
 .cv-lim.fast .cv-sub { color: var(--amber, #c07a00); }
 
+/* Bloqueo: tapa al salir de la app y selector de tiempo de 5 opciones */
+.priv-cover { position: fixed; inset: 0; z-index: 9998; display: grid; place-content: center; justify-items: center; gap: 10px; background: var(--bg); color: var(--ink); }
+.priv-cover[hidden] { display: none !important; }
+.priv-cover svg { width: 40px; height: 40px; color: var(--muted); }
+.priv-cover b { font-size: 1.3rem; letter-spacing: -.01em; }
+.seg.seg-5 button { padding-left: 4px !important; padding-right: 4px !important; font-size: .86rem; white-space: nowrap; }
+#lock-len { margin-top: 4px; }
 /* Colores «Blanco y negro» (Ajustes → Apariencia): negro, blanco y grises en toda la app */
 html.mono { --bg: #ffffff; --surface: #ffffff; --ink: #0a0a0a; --muted: #6b6b6b; --line: #e6e6e6; --accent: #0a0a0a; --accent-ink: #ffffff; --in: #0a0a0a; --out: #0a0a0a; --focus: #0a0a0a; --fill: #f2f2f2; }
 @media (prefers-color-scheme: dark) { html.mono:not([data-theme="light"]) { --bg: #000000; --surface: #111111; --ink: #f5f5f5; --muted: #9a9a9a; --line: #262626; --accent: #f5f5f5; --accent-ink: #000000; --in: #f5f5f5; --out: #f5f5f5; --focus: #f5f5f5; --fill: #1c1c1c; } }
@@ -3132,6 +3139,17 @@ html.mono body button.primary:not(.btn-danger), html.mono body #add { background
         <div class="tx"><b>Desbloquear con Face ID</b><small>En vez de escribir el código. El código sigue sirviendo si Face ID falla.</small></div>
         <button type="button" class="switch" id="bio-switch" role="switch" aria-checked="false" aria-label="Desbloquear con Face ID"><span></span></button>
       </div>
+      <div class="set-row set-stack" id="pin-when-row" hidden>
+        <div class="tx"><b>Pedir el código</b><small id="pin-when-sub">Cuánto tiempo puede pasar sin usar Orbe antes de volver a pedirlo.</small></div>
+        <div class="seg seg-5" role="group" aria-label="Pedir el código">
+          <button type="button" data-pin-after="0">Al salir</button><button type="button" data-pin-after="1">1 min</button><button type="button" data-pin-after="5">5 min</button><button type="button" data-pin-after="15">15 min</button><button type="button" data-pin-after="60">1 h</button>
+        </div>
+      </div>
+      <div class="set-row" id="pin-hide-row" hidden>
+        <div class="tx"><b>Ocultar al salir</b><small>Tapa tus montos cuando cambias de app, para que no se vean en el selector de apps.</small></div>
+        <button type="button" class="switch" id="pin-hide-switch" role="switch" aria-checked="true" aria-label="Ocultar al salir"><span></span></button>
+      </div>
+      <button type="button" class="set-row" id="pin-now" hidden><span class="tx"><b>Bloquear ahora</b><small>Cierra Orbe con tu código al instante.</small></span></button>
       <button type="button" class="set-row" id="pin-change" hidden><span class="tx"><b>Cambiar código</b></span><svg class="chev-r" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 5l7 7-7 7"></path></svg></button>
       <div class="set-row" id="notif-row">
         <div class="tx"><b>Avisos de pagos</b><small id="notif-sub">Muestra en el ícono de Orbe cuántos pagos vencen hoy o mañana.</small></div>
@@ -3328,8 +3346,10 @@ html.mono body button.primary:not(.btn-danger), html.mono body #add { background
       <button type="button" class="kp-x" id="kp-cancel">Cancelar</button><button type="button" data-k="0">0</button><button type="button" class="kp-x" data-k="del" aria-label="Borrar">⌫</button>
     </div>
     <button type="button" class="lock-bio" id="lock-bio" hidden><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 8V6a2 2 0 0 1 2-2h2M16 4h2a2 2 0 0 1 2 2v2M20 16v2a2 2 0 0 1-2 2h-2M8 20H6a2 2 0 0 1-2-2v-2M9 9v1.5M15 9v1.5M12 9v4.5h-1M9.5 16a4 4 0 0 0 5 0"></path></svg>Usar Face ID</button>
+    <button type="button" class="lock-forgot" id="lock-len" hidden>Usar 6 dígitos</button>
     <button type="button" class="lock-forgot" id="lock-forgot">Olvidé mi código</button>
   </div>
+  <div class="priv-cover" id="priv-cover" hidden aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="11" width="14" height="10" rx="2"></rect><path d="M8 11V7a4 4 0 0 1 8 0v4"></path></svg><b>Orbe</b></div>
   <div class="bn-view" id="bn-view" role="region" aria-label="Ahorro en Binance" aria-hidden="true">
     <div class="gv-head">
       <button type="button" class="gv-back" id="bv-back" aria-label="Volver al inicio"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 5l-7 7 7 7"></path></svg>Inicio</button>
@@ -6761,6 +6781,8 @@ html.mono body button.primary:not(.btn-danger), html.mono body #add { background
         "pin-row": '<rect x="5" y="11" width="14" height="10" rx="2"></rect><path d="M8 11V7a4 4 0 0 1 8 0v4"></path>',
         "bio-row": '<path d="M4 8V6a2 2 0 0 1 2-2h2M16 4h2a2 2 0 0 1 2 2v2M20 16v2a2 2 0 0 1-2 2h-2M8 20H6a2 2 0 0 1-2-2v-2M9 9v1.5M15 9v1.5M12 9v4.5h-1M9.5 16a4 4 0 0 0 5 0"></path>',
         "pin-change": '<circle cx="8" cy="15" r="4"></circle><path d="M11 12l9-9M17 6l3 3M15 8l2 2"></path>',
+        "pin-hide-row": '<path d="M2 12s3.5-7 10-7c2.2 0 4 .8 5.5 1.8M22 12s-3.5 7-10 7c-2.2 0-4-.8-5.5-1.8"></path><path d="M4 20L20 4"></path>',
+        "pin-now": '<rect x="5" y="11" width="14" height="10" rx="2"></rect><path d="M8 11V7a4 4 0 0 1 7.5-2"></path><path d="M12 15v2"></path>',
         "notif-row": '<path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9M10.3 21a1.9 1.9 0 0 0 3.4 0"></path>',
         "bk-save": '<path d="M12 3v12M7 10l5 5 5-5M4 21h16"></path>',
         "bk-load": '<path d="M12 21V9M7 14l5-5 5 5M4 3h16"></path>',
@@ -9538,8 +9560,14 @@ html.mono body button.primary:not(.btn-danger), html.mono body #add { background
       var on = !!(state.pin && state.pin.h);
       $("pin-switch").setAttribute("aria-checked", on ? "true" : "false");
       $("pin-change").hidden = !on;
+      $("pin-when-row").hidden = !on; $("pin-hide-row").hidden = !on; $("pin-now").hidden = !on;
+      if (on) {
+        var af = pinAfter();
+        setPressed("[data-pin-after]", "data-pin-after", String(af));
+        $("pin-hide-switch").setAttribute("aria-checked", state.pin.hide === false ? "false" : "true");
+      }
       renderBio();
-      $("pin-sub").textContent = on ? "Activado. Se pide si pasaron más de 10 minutos desde la última vez que usaste la app." : "Pide un código de 4 dígitos al abrir la app.";
+      $("pin-sub").textContent = on ? "Activado · código de " + ((state.pin && state.pin.n) || 4) + " dígitos." : "Pide un código al abrir la app.";
       var bs = $("bk-sub");
       if (state.backupAt) {
         var d = new Date(state.backupAt);
@@ -10625,7 +10653,8 @@ html.mono body button.primary:not(.btn-danger), html.mono body #add { background
       for (var i = 0; i < 2000; i++) for (var k = 0; k < txt.length; k++) { h ^= txt.charCodeAt(k); h = Math.imul(h, 16777619) >>> 0; }
       return Promise.resolve("f" + h.toString(16));
     }
-    var PIN_LEN = 4;
+    var PIN_LEN = 4, pinLenNew = 4;
+    function pinAfter() { var a = state.pin && state.pin.after; return a === 0 || a === 1 || a === 5 || a === 15 || a === 60 ? a : 5; }
     var lk = { mode: "", buf: "", first: "", onDone: null, fails: 0, until: 0, n: PIN_LEN, onb: false, rounds: 0 };
     try { var lks = JSON.parse(localStorage.getItem("orbe-lk") || "null"); if (lks) { lk.fails = lks.f || 0; lk.until = lks.u || 0; lk.rounds = lks.r || 0; } } catch (e) {}
     function lkSave() { try { localStorage.setItem("orbe-lk", JSON.stringify({ f: lk.fails, u: lk.until, r: lk.rounds })); } catch (e) {} }
@@ -10634,23 +10663,25 @@ html.mono body button.primary:not(.btn-danger), html.mono body #add { background
       if (w.children.length !== lk.n) w.innerHTML = new Array(lk.n + 1).join("<i></i>");
       Array.prototype.forEach.call(w.children, function (d, i) { d.classList.toggle("on", i < lk.buf.length); });
     }
-    function setTitle() { return lk.onb ? "Crea tu clave de acceso" : "Crea un código de " + PIN_LEN + " dígitos"; }
+    function setTitle() { return lk.onb ? "Crea tu clave de acceso" : "Crea un código de " + pinLenNew + " dígitos"; }
     function lockMsg(t, err) { var m = $("lock-msg"); m.textContent = t || ""; m.className = "hint" + (err ? " err" : ""); }
     function shake() { var d = $("pin-dots"); d.classList.remove("shake"); void d.offsetWidth; d.classList.add("shake"); if (navigator.vibrate) try { navigator.vibrate([30, 40, 30]); } catch (e) {} }
     function pinErr() { var d = $("pin-dots"); d.classList.add("err"); clearTimeout(pinErr.t); pinErr.t = setTimeout(function () { d.classList.remove("err"); }, 520); }
     function openLock(mode, onDone, opts) {
       opts = opts || {};
       lk.mode = mode; lk.buf = ""; lk.first = ""; lk.onDone = onDone || null; lk.onb = !!opts.onb;
-      lk.n = mode === "set" ? PIN_LEN : (state.pin && state.pin.n) || 4;
+      if (mode === "set") pinLenNew = 4;
+      lk.n = mode === "set" ? pinLenNew : (state.pin && state.pin.n) || 4;
+      $("lock-len").hidden = mode !== "set"; $("lock-len").textContent = "Usar 6 dígitos";
       $("lock-k").hidden = !lk.onb;
       $("lock-k").textContent = lk.onb ? "Último paso" : "";
       $("lock-t").textContent = mode === "unlock" ? "Escribe tu código" : mode === "verify" ? "Escribe tu código actual" : setTitle();
-      lockMsg(mode === "set" ? (lk.onb ? "Elige " + PIN_LEN + " números. La pediremos cada vez que abras la app para proteger tus datos." : "Lo pediremos cada vez que abras la app.") : "");
+      lockMsg(mode === "set" ? (lk.onb ? "Elige " + pinLenNew + " números. La pediremos cada vez que abras la app para proteger tus datos." : "Lo pediremos cada vez que abras la app.") : opts.why || "");
       $("kp-cancel").style.visibility = mode === "unlock" ? "hidden" : "visible";
       $("kp-cancel").textContent = lk.onb ? "Ahora no" : "Cancelar";
       $("lock-forgot").hidden = mode !== "unlock";
       renderBio();
-      if (mode === "unlock" && bioOk && bioOn()) setTimeout(bioUnlock, 350);
+      if ((mode === "unlock" || mode === "verify") && bioOk && bioOn()) setTimeout(bioUnlock, 350);
       lockDots();
       $("lock").hidden = false;
       document.documentElement.classList.add("locked");
@@ -10677,14 +10708,15 @@ html.mono body button.primary:not(.btn-danger), html.mono body #add { background
       var row = $("bio-row"); if (!row) return;
       row.hidden = !(bioOk && state.pin && state.pin.h);
       $("bio-switch").setAttribute("aria-checked", bioOn() ? "true" : "false");
-      $("lock-bio").hidden = !(bioOk && bioOn() && lk.mode === "unlock");
+      $("lock-bio").hidden = !(bioOk && bioOn() && (lk.mode === "unlock" || lk.mode === "verify"));
     }
     var bioBusy = false;
     function bioUnlock() {
-      if (!bioOn() || lk.mode !== "unlock" || bioBusy) return;
+      if (!bioOn() || (lk.mode !== "unlock" && lk.mode !== "verify") || bioBusy) return;
+      var want = lk.mode;
       bioBusy = true;
       navigator.credentials.get({ publicKey: { challenge: rnd(32), allowCredentials: [{ type: "public-key", id: unb64u(state.pin.wa) }], userVerification: "required", timeout: 60000 } })
-        .then(function (c) { bioBusy = false; if (c && b64u(c.rawId) === state.pin.wa && lk.mode === "unlock") lockOk(); })
+        .then(function (c) { bioBusy = false; if (c && b64u(c.rawId) === state.pin.wa && lk.mode === want) lockOk(); })
         .catch(function () { bioBusy = false; lockMsg("Usa tu código o vuelve a intentar con Face ID."); });
     }
     $("lock-bio").addEventListener("click", bioUnlock);
@@ -10708,7 +10740,8 @@ html.mono body button.primary:not(.btn-danger), html.mono body #add { background
         var salt = Math.random().toString(36).slice(2) + Date.now().toString(36);
         pinHash(pin, salt).then(function (h) {
           var cb = lk.onDone, wasOnb = lk.onb;
-          state.pin = { h: h, s: salt, n: PIN_LEN }; save(); closeLock(); renderSettings();
+          var keep = state.pin || {};
+          state.pin = { h: h, s: salt, n: pinLenNew, after: keep.after != null ? keep.after : 5, hide: keep.hide !== false }; save(); closeLock(); renderSettings();
           if (cb) cb();
           if (!wasOnb) showToast("Código activado. Si lo olvidas, solo podrás entrar borrando los datos.");
         });
@@ -10780,11 +10813,30 @@ html.mono body button.primary:not(.btn-danger), html.mono body #add { background
         cancel: function () { if (state.pin && state.pin.h) openLock("unlock"); }
       });
     });
+    $("lock-len").addEventListener("click", function () {
+      if (lk.mode !== "set") return;
+      pinLenNew = pinLenNew === 4 ? 6 : 4; lk.n = pinLenNew; lk.buf = ""; lk.first = "";
+      $("lock-len").textContent = pinLenNew === 4 ? "Usar 6 dígitos" : "Usar 4 dígitos";
+      $("lock-t").textContent = setTitle(); lockDots();
+    });
+    // Pide el código (o Face ID) antes de una acción delicada; sin código, sigue directo
+    window.__orbeVerify = function (why, cb) {
+      if (!(state.pin && state.pin.h)) { cb(); return; }
+      openLock("verify", cb, { why: why });
+    };
+    $("pin-now").addEventListener("click", function () {
+      try { localStorage.setItem("orbe-act", "1"); } catch (e) {}
+      openLock("unlock");
+    });
+    document.querySelectorAll("[data-pin-after]").forEach(function (b) {
+      b.addEventListener("click", function () { if (!state.pin) return; state.pin.after = Number(b.getAttribute("data-pin-after")); save(); renderSettings(); });
+    });
+    $("pin-hide-switch").addEventListener("click", function () { if (!state.pin) return; state.pin.hide = state.pin.hide === false; save(); renderSettings(); });
     $("pin-switch").addEventListener("click", function () {
       if (state.pin && state.pin.h) openLock("verify", function () { state.pin = null; save(); renderSettings(); showToast("Código desactivado."); });
       else openLock("set");
     });
-    $("pin-change").addEventListener("click", function () { openLock("verify", function () { var wa = state.pin && state.pin.wa; openLock("set", function () { if (wa && state.pin) { state.pin.wa = wa; save(); } renderBio(); }); }); });
+    $("pin-change").addEventListener("click", function () { openLock("verify", function () { var wa = state.pin && state.pin.wa; setTimeout(function () { openLock("set", function () { if (wa && state.pin) { state.pin.wa = wa; save(); } renderBio(); }); }, 420); }); });
     $("bio-switch").addEventListener("click", function () {
       if (!state.pin || !state.pin.h) return;
       if (bioOn()) { delete state.pin.wa; save(); renderBio(); showToast("Face ID desactivado. Se pedirá el código."); return; }
@@ -11080,15 +11132,31 @@ html.mono body button.primary:not(.btn-danger), html.mono body #add { background
     window.addEventListener("scroll", tourScroll, { passive: true });
     document.addEventListener("scroll", tourScroll, { passive: true, capture: true });
     document.addEventListener("keydown", function (e) { if (tour.i >= 0 && e.key === "Escape") endTour(); });
-    // El PIN o Face ID se vuelve a pedir solo si pasaron más de 10 minutos sin usar la app
-    var LOCK_MS = 10 * 60000, hiddenAt = 0;
+    // El código o Face ID se vuelve a pedir según «Pedir el código»: al salir, o tras 1, 5, 15 o 60 minutos sin usar Orbe.
+    // Con la app abierta y sin tocarla, se bloquea pasado ese mismo tiempo (mínimo 2 minutos).
+    var hiddenAt = 0, lastTouch = Date.now();
+    function pinOn() { return !!(state.pin && state.pin.h); }
+    function lockMs() { return pinAfter() * 60000; }
     function markAct() { if ($("lock").hidden) try { localStorage.setItem("orbe-act", String(Date.now())); } catch (e) {} }
-    function lockRecent() { var t = 0; try { t = Number(localStorage.getItem("orbe-act")) || 0; } catch (e) {} var d = Date.now() - t; return t > 0 && d >= 0 && d < LOCK_MS; }
+    function lockRecent() { var t = 0; try { t = Number(localStorage.getItem("orbe-act")) || 0; } catch (e) {} var d = Date.now() - t; return t > 0 && d >= 0 && d < Math.max(lockMs(), 15000); }
+    function privCover(on) { var c = $("priv-cover"); if (c) c.hidden = !(on && pinOn() && state.pin.hide !== false); }
     document.addEventListener("visibilitychange", function () {
-      if (document.hidden) { hiddenAt = Date.now(); markAct(); return; }
-      if (state.pin && state.pin.h && hiddenAt && Date.now() - hiddenAt > LOCK_MS && $("lock").hidden) openLock("unlock");
+      if (document.hidden) { hiddenAt = Date.now(); markAct(); privCover(true); return; }
+      var away = hiddenAt ? Date.now() - hiddenAt : 0;
+      // «Al salir» deja unos segundos de margen para no pedirlo al abrir una foto o el selector de archivos
+      if (pinOn() && hiddenAt && away > Math.max(lockMs(), 15000) && $("lock").hidden) openLock("unlock");
+      lastTouch = Date.now();
+      setTimeout(function () { privCover(false); }, $("lock").hidden ? 0 : 250);
     });
-    window.addEventListener("pagehide", markAct);
+    window.addEventListener("pagehide", function () { markAct(); privCover(true); });
+    window.addEventListener("pageshow", function () { if (!document.hidden) privCover(false); });
+    window.addEventListener("focus", function () { if (!document.hidden) privCover(false); });
+    document.addEventListener("pointerdown", function () { if (!document.hidden) privCover(false); }, true);
+    ["pointerdown", "keydown", "touchstart"].forEach(function (ev) { document.addEventListener(ev, function () { lastTouch = Date.now(); }, { passive: true, capture: true }); });
+    setInterval(function () {
+      if (!pinOn() || document.hidden || !$("lock").hidden || !$("onb").hidden || !state.onb) return;
+      if (Date.now() - lastTouch > Math.max(lockMs(), 120000)) openLock("unlock");
+    }, 20000);
     applyTheme();
     renderSetDot();
     if (!state.onb) startOnb();
@@ -11874,9 +11942,11 @@ html.mono body button.primary:not(.btn-danger), html.mono body #add { background
       if (!(v > 0)) { err.textContent = "Escribe cuánto necesitas."; return; }
       if (v > fzVault(D) + 0.005) { err.textContent = "Es más de lo que tiene tu Bóveda."; return; }
       if (why.length < 3) { err.textContent = "Escribe para qué lo necesitas."; return; }
-      f.ret = { monto: fzR2(v), moneda: D, motivo: why, at: Date.now() };
-      save(); render(); fzRetClose();
-      showToast("Retiro pedido. Podrás sacarlo en 72 horas.");
+      window.__orbeVerify("Confirma que eres tú para pedir el retiro.", function () {
+        f.ret = { monto: fzR2(v), moneda: D, motivo: why, at: Date.now() };
+        save(); render(); fzRetClose();
+        showToast("Retiro pedido. Podrás sacarlo en 72 horas.");
+      });
     });
 
     $("add").addEventListener("click", function () {
