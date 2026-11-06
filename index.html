@@ -18,6 +18,10 @@
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" crossorigin>
 <script>
 (function () {
+  // Sistema del teléfono: cambia textos (Face ID o huella, iCloud o Google Drive) y cómo instalar la app
+  var ua = navigator.userAgent || "";
+  window.ORBE_OS = /iPhone|iPad|iPod/.test(ua) || (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1) ? "ios" : /Android/i.test(ua) ? "android" : "other";
+  document.documentElement.classList.add("os-" + window.ORBE_OS);
   try {
     var d = JSON.parse(localStorage.getItem("gastos-v1") || "{}");
     if (d.theme === "light" || d.theme === "dark") document.documentElement.setAttribute("data-theme", d.theme);
@@ -2851,6 +2855,18 @@ main > .panel.fz-today { background: none !important; padding: 0 !important; mar
 #data-del.set-row { margin-top: 0 !important; display: flex !important; border-radius: 0 !important; background: none !important; min-height: 60px !important; color: var(--ink) !important; font-weight: 400; text-align: left !important; }
 #data-del.set-row b { color: var(--out); }
 .set-foot { text-align: center; }
+/* Teléfonos angostos (Android de 360 px, iPhone SE/mini): anillo más chico para que quepan nombre y saldo de cada cuenta */
+@media (max-width: 400px) {
+  .acc3 { grid-template-columns: 84px minmax(0, 1fr) !important; gap: 10px !important; }
+  .acc3 .acc-sum, .acc3 .acc-sum svg { width: 84px !important; height: 84px !important; }
+  .acc-r { gap: 8px !important; }
+  .acc-r .acc-av { width: 28px !important; height: 28px !important; }
+  .acc-r .ar-v b { font-size: 0.92rem; }
+}
+@media (max-width: 340px) {
+  .acc3 { grid-template-columns: minmax(0, 1fr) !important; }
+  .acc3 .acc-sum { display: none !important; }
+}
 /* Colores «Blanco y negro» (Ajustes → Apariencia): negro, blanco y grises en toda la app */
 html.mono { --bg: #ffffff; --surface: #ffffff; --ink: #0a0a0a; --muted: #6b6b6b; --line: #e6e6e6; --accent: #0a0a0a; --accent-ink: #ffffff; --in: #0a0a0a; --out: #0a0a0a; --focus: #0a0a0a; --fill: #f2f2f2; }
 @media (prefers-color-scheme: dark) { html.mono:not([data-theme="light"]) { --bg: #000000; --surface: #111111; --ink: #f5f5f5; --muted: #9a9a9a; --line: #262626; --accent: #f5f5f5; --accent-ink: #000000; --in: #f5f5f5; --out: #f5f5f5; --focus: #f5f5f5; --fill: #1c1c1c; } }
@@ -4523,17 +4539,17 @@ html.mono body button.primary:not(.btn-danger), html.mono body #add { background
   // y salta lo que está en pantallas ocultas.
   function fitAll() {
     var els = Array.prototype.filter.call(document.querySelectorAll(".fit"), function (el) { return !el.closest('[aria-hidden="true"], [hidden]'); });
-    els.forEach(function (el) { el.style.fontSize = ""; });
+    els.forEach(function (el) { el.style.removeProperty("font-size"); });
     var m = els.map(function (el) { return { el: el, sw: el.scrollWidth, cw: el.clientWidth, fs: parseFloat(getComputedStyle(el).fontSize) }; });
     var todo = [];
     m.forEach(function (o) {
       if (!(o.cw > 0) || o.sw <= o.cw + 1) return;
       o.min = o.fs * 0.32; o.s = Math.max(o.min, Math.floor(o.fs * o.cw / o.sw * 2) / 2);
-      o.el.style.fontSize = o.s + "px"; todo.push(o);
+      o.el.style.setProperty("font-size", o.s + "px", "important"); todo.push(o);
     });
     for (var k = 0; k < 4 && todo.length; k++) {
       todo.forEach(function (o) { o.over = o.el.scrollWidth > o.el.clientWidth + 1; });
-      todo = todo.filter(function (o) { if (!o.over || o.s <= o.min) return false; o.s = Math.max(o.min, o.s - 1); o.el.style.fontSize = o.s + "px"; return true; });
+      todo = todo.filter(function (o) { if (!o.over || o.s <= o.min) return false; o.s = Math.max(o.min, o.s - 1); o.el.style.setProperty("font-size", o.s + "px", "important"); return true; });
     }
   }
   function scheduleFit() {
@@ -7097,7 +7113,7 @@ html.mono body button.primary:not(.btn-danger), html.mono body #add { background
       var m = document.querySelector('meta[name="theme-color"]'); if (!m) return;
       try { m.setAttribute("content", getComputedStyle(document.body).backgroundColor); } catch (e) {}
     }
-    new MutationObserver(syncThemeColor).observe(document.documentElement, { attributes: true, attributeFilter: ["data-theme"] });
+    new MutationObserver(syncThemeColor).observe(document.documentElement, { attributes: true, attributeFilter: ["data-theme", "class"] });
     if (window.matchMedia) { var mqT = matchMedia("(prefers-color-scheme: dark)"); if (mqT.addEventListener) mqT.addEventListener("change", syncThemeColor); }
     setTimeout(syncThemeColor, 0);
     // Al tocar el logo de Inicio, sus anillos se redibujan y giran como en la pantalla de carga
@@ -8204,7 +8220,7 @@ html.mono body button.primary:not(.btn-danger), html.mono body #add { background
       var d = state.backupAt ? Math.floor((Date.now() - state.backupAt) / 86400000) : 0;
       el.classList.toggle("ok", !due);
       $("bk-nudge-s").textContent = due
-        ? (state.backupAt ? "Hace " + d + " días que no guardas una copia de tus " + n + " movimientos." : "Tienes " + n + " movimientos sin copia. Si pierdes el teléfono o borras Safari, se pierden.")
+        ? (state.backupAt ? "Hace " + d + " días que no guardas una copia de tus " + n + " movimientos." : "Tienes " + n + " movimientos sin copia. Si pierdes el teléfono o borras los datos del navegador, se pierden.")
         : (state.backupAt ? "Última copia " + (d === 0 ? "hoy" : d === 1 ? "ayer" : "hace " + d + " días") + ". Guarda otra de vez en cuando." : "Guarda una copia para no perder tus datos si cambias de teléfono.");
     }
     $("bk-nudge-go").addEventListener("click", function () { $("bk-save").click(); setTimeout(renderNudge, 500); });
@@ -8925,7 +8941,7 @@ html.mono body button.primary:not(.btn-danger), html.mono body #add { background
       var standalone = navigator.standalone || (window.matchMedia && matchMedia("(display-mode: standalone)").matches);
       $("notif-sub").textContent = on ? "Activado. El ícono de Orbe muestra cuántos pagos vencen hoy, mañana o ya vencieron."
         : (!window.Notification && /iPhone|iPad/.test(navigator.userAgent) && !standalone) ? "Primero instala Orbe en la pantalla de inicio (Compartir → Agregar a inicio)."
-        : window.Notification && Notification.permission === "denied" ? "Bloqueados. Actívalos en Ajustes del iPhone → Notificaciones → Orbe."
+        : window.Notification && Notification.permission === "denied" ? (window.ORBE_OS === "android" ? "Bloqueados. Actívalos en Ajustes del teléfono → Apps → Orbe → Notificaciones." : "Bloqueados. Actívalos en Ajustes del iPhone → Notificaciones → Orbe.")
         : "Muestra en el ícono de Orbe cuántos pagos vencen hoy o mañana.";
     }
     $("notif-switch").addEventListener("click", function () {
@@ -8988,8 +9004,21 @@ html.mono body button.primary:not(.btn-danger), html.mono body #add { background
       $("msum-x").addEventListener("click", function () { state.msumSeen = pm; save(); renderMsum(); });
     }
     (function () {
-      var ios = /iPhone|iPad|iPod/.test(navigator.userAgent), standalone = navigator.standalone || (window.matchMedia && matchMedia("(display-mode: standalone)").matches);
-      $("inst").hidden = !(ios && !standalone && !state.instSeen);
+      var os = window.ORBE_OS, standalone = navigator.standalone || (window.matchMedia && matchMedia("(display-mode: standalone)").matches);
+      $("inst").hidden = !((os === "ios" || os === "android") && !standalone && !state.instSeen);
+      if (os === "android") {
+        var sm = $("inst").querySelector("small"); if (sm) sm.textContent = "Toca ⋮ (arriba a la derecha) y luego «Instalar app» o «Agregar a la pantalla principal». Se abrirá como una app.";
+        // Chrome ofrece instalar con un toque: el aviso se vuelve un botón
+        window.addEventListener("beforeinstallprompt", function (e) {
+          e.preventDefault(); var ev = e;
+          if (state.instSeen) return;
+          $("inst").hidden = false;
+          var sm2 = $("inst").querySelector("small"); if (sm2) sm2.textContent = "Toca aquí para instalarla. Se abrirá como una app, a pantalla completa.";
+          $("inst").style.cursor = "pointer";
+          $("inst").onclick = function (x) { if (x.target.closest("#inst-x")) return; ev.prompt(); ev.userChoice.then(function (c) { if (c && c.outcome === "accepted") { state.instSeen = true; save(); $("inst").hidden = true; } }).catch(function () {}); };
+        });
+        window.addEventListener("appinstalled", function () { state.instSeen = true; save(); $("inst").hidden = true; });
+      }
       $("inst-x").addEventListener("click", function () { state.instSeen = true; save(); $("inst").hidden = true; });
     })();
     $("pay-alert").addEventListener("click", function () { openView("pay"); });
@@ -9438,6 +9467,41 @@ html.mono body button.primary:not(.btn-danger), html.mono body #add { background
         closeViews();
       }
     }
+    // Botón o gesto «atrás» (Android, y deslizar en Safari): cierra primero lo que está encima
+    // (hoja, menú + o pantalla) en vez de salir de la app. Cada capa abierta deja una entrada en el historial.
+    (function () {
+      if (!window.history || !history.pushState) return;
+      var depth = 0, skip = 0;
+      function openSheets() { return Array.prototype.filter.call(document.querySelectorAll(".sheet-backdrop"), function (el) { return !el.hidden; }); }
+      function layers() { return openSheets().length + (activeView() ? 1 : 0) + ($("dial").hidden ? 0 : 1); }
+      function blocked() { return !$("lock").hidden || !$("onb").hidden || !!document.querySelector(".ctry:not([hidden])") || (!$("tour").hidden && $("tour").classList.contains("on")); }
+      function sync() {
+        var n = layers();
+        if (n > depth) { for (var i = depth; i < n; i++) try { history.pushState({ orbe: i + 1 }, ""); } catch (e) {} depth = n; }
+        else if (n < depth) { var d = depth - n; depth = n; skip += d; try { history.go(-d); } catch (e) { skip = 0; } }
+      }
+      function closeTop() {
+        var sh = openSheets();
+        if (sh.length) {
+          var top = sh.reduce(function (a, b) { return (parseInt(getComputedStyle(b).zIndex, 10) || 0) >= (parseInt(getComputedStyle(a).zIndex, 10) || 0) ? b : a; });
+          var x = top.querySelector(".sheet-head .del, .sheet-head [id$='-close'], [id$='-close']");
+          if (x) x.click(); else top.click();
+          if (!top.hidden) top.hidden = true;
+          return;
+        }
+        if (!$("dial").hidden) { closeDial(); return; }
+        if (activeView()) { closeViews(); setTab(currentTab()); }
+      }
+      window.addEventListener("popstate", function () {
+        if (skip > 0) { skip--; return; }
+        if (blocked()) { try { history.pushState({ orbe: depth }, ""); } catch (e) {} return; }
+        depth = Math.max(0, depth - 1);
+        closeTop();
+        setTimeout(sync, 0);
+      });
+      var t = 0;
+      new MutationObserver(function () { clearTimeout(t); t = setTimeout(sync, 30); }).observe(document.body, { subtree: true, attributes: true, attributeFilter: ["hidden", "class"] });
+    })();
     function showGoals() { openView("goals"); }
     function hideGoals() { closeViews(); }
     function showPay() { openView("pay"); }
@@ -9481,8 +9545,8 @@ html.mono body button.primary:not(.btn-danger), html.mono body #add { background
       priv: { t: "Política de privacidad", b:
         '<p class="upd">Última actualización: ' + LEGAL_DATE + '</p>' +
         '<h3>Lo corto</h3><ul><li><b>Sin cuenta:</b> todo se guarda solo en tu teléfono. Nadie más, ni el creador de la app, puede verlo.</li><li><b>Con cuenta:</b> además se guarda una copia en la nube para que la uses en otros teléfonos. Solo tú puedes leerla.</li><li>No hay publicidad, no hay herramientas de analítica y no vendemos ni compartimos tus datos.</li></ul>' +
-        '<h3>Qué se guarda en tu teléfono</h3><ul><li>Lo que registras: movimientos, cuentas, ahorros, metas, pagos, límites y plantillas.</li><li>Tus preferencias: país, tema, colores, moneda, tasas del día y el avance de las guías.</li><li>Si activas el código de bloqueo, una huella del código (no el código en sí). Si activas Face ID, una llave que no sale del teléfono; Orbe nunca ve tu cara ni tu huella.</li><li>Si configuras el análisis con IA, tu clave de Anthropic.</li></ul>' +
-        '<h3>Si creas una cuenta</h3><ul><li><b>Qué se guarda:</b> tu correo, tu contraseña (protegida con una huella, nadie puede leerla) y una copia de lo que registras.</li><li><b>Qué no viaja:</b> el código de bloqueo, Face ID, los avisos, las tasas del día y la clave de la IA se quedan en el teléfono.</li><li><b>Dónde:</b> en Supabase, el servicio que Orbe usa para las cuentas. La conexión va cifrada y unas reglas en el servidor hacen que cada persona solo pueda leer sus propios datos.</li><li><b>Correos:</b> solo para confirmar tu cuenta y cambiar tu contraseña. No enviamos publicidad.</li></ul>' +
+        '<h3>Qué se guarda en tu teléfono</h3><ul><li>Lo que registras: movimientos, cuentas, ahorros, metas, pagos, límites y plantillas.</li><li>Tus preferencias: país, tema, colores, moneda, tasas del día y el avance de las guías.</li><li>Si activas el código de bloqueo, una huella del código (no el código en sí). Si activas Face ID o la huella, una llave que no sale del teléfono; Orbe nunca ve tu cara ni tu huella.</li><li>Si configuras el análisis con IA, tu clave de Anthropic.</li></ul>' +
+        '<h3>Si creas una cuenta</h3><ul><li><b>Qué se guarda:</b> tu correo, tu contraseña (protegida con una huella, nadie puede leerla) y una copia de lo que registras.</li><li><b>Qué no viaja:</b> el código de bloqueo, Face ID o la huella, los avisos, las tasas del día y la clave de la IA se quedan en el teléfono.</li><li><b>Dónde:</b> en Supabase, el servicio que Orbe usa para las cuentas. La conexión va cifrada y unas reglas en el servidor hacen que cada persona solo pueda leer sus propios datos.</li><li><b>Correos:</b> solo para confirmar tu cuenta y cambiar tu contraseña. No enviamos publicidad.</li></ul>' +
         '<h3>Metas compartidas</h3><p>Si creas o te unes a una meta compartida, los demás miembros ven el nombre que elegiste para la meta, la meta en sí y lo que aportas. No ven tus cuentas, tus movimientos ni tu correo.</p>' +
         '<h3>A quién se conecta la app</h3><ul>' +
         '<li><b>Tasas del día:</b> ve.dolarapi.com y pydolarve.org en Venezuela; open.er-api.com y api.coingecko.com en otros países o si una tasa falla.</li>' +
@@ -9495,7 +9559,7 @@ html.mono body button.primary:not(.btn-danger), html.mono body #add { background
         '<h3>Cuánto tiempo se guardan</h3><p>Lo que está en tu teléfono se queda hasta que lo borras. Lo que está en la nube se queda mientras tengas la cuenta. Al borrar tu cuenta, se borran tu correo, tu contraseña y tus datos de la nube; las copias de seguridad del proveedor se eliminan solas al poco tiempo.</p>' +
         '<h3>Tus derechos</h3><ul><li><b>Ver y llevarte tus datos:</b> Ajustes › Tus datos › Guardar una copia o Exportar a Excel.</li><li><b>Corregirlos:</b> edita cualquier movimiento, cuenta o meta.</li><li><b>Borrarlos:</b> Ajustes › Zona de cuidado › Borrar todos los datos (teléfono), o Tu cuenta › Borrar mi cuenta (nube).</li></ul>' +
         '<h3>Edad</h3><p>Orbe no está pensada para menores de 13 años. Si eres menor de edad, úsala con permiso de tus padres o tutores.</p>' +
-        '<h3>Seguridad</h3><p>Usamos conexiones cifradas, reglas para que nadie lea datos ajenos, y el código de bloqueo y Face ID en el teléfono. Ningún sistema es perfecto: usa una contraseña única y activa el código de bloqueo.</p>' +
+        '<h3>Seguridad</h3><p>Usamos conexiones cifradas, reglas para que nadie lea datos ajenos, y el código de bloqueo con Face ID o huella en el teléfono. Ningún sistema es perfecto: usa una contraseña única y activa el código de bloqueo.</p>' +
         '<h3>Cambios</h3><p>Si esta política cambia, actualizaremos la fecha de arriba y, si el cambio es importante, te avisaremos en la app.</p>' },
       ref: { t: "Binance y enlaces de referido", b:
         '<p class="upd">Última actualización: ' + LEGAL_DATE + '</p>' +
@@ -9596,10 +9660,11 @@ html.mono body button.primary:not(.btn-danger), html.mono body #add { background
       if (state.backupAt) {
         var d = new Date(state.backupAt);
         bs.textContent = "Última copia: " + d.getDate() + " " + MESES_C[d.getMonth()] + " " + d.getFullYear() + (backupDue() ? ". Ya toca guardar otra." : ".");
-      } else bs.textContent = state.items.length ? "Aún no has guardado ninguna copia. Guárdala en Archivos (iCloud Drive) para no perderla si cambias de teléfono." : "Un archivo con todos tus movimientos. Guárdalo en Archivos (iCloud Drive).";
+      } else bs.textContent = state.items.length ? "Aún no has guardado ninguna copia. Guárdala en " + (window.ORBE_OS === "android" ? "Google Drive" : "Archivos (iCloud Drive)") + " para no perderla si cambias de teléfono." : "Un archivo con todos tus movimientos. Guárdalo en " + (window.ORBE_OS === "android" ? "Google Drive" : "Archivos (iCloud Drive)") + ".";
       var bt = bs.parentNode.parentNode.querySelector("b"); bt.innerHTML = "Guardar una copia" + (backupDue() ? ' <em class="set-pill">Pendiente</em>' : "");
       renderSetDot();
     }
+    if (window.ORBE_OS === "android") { var sn = document.querySelector(".set-note"); if (sn) sn.innerHTML = "Sin cuenta, tus datos se guardan solo en este teléfono: si lo pierdes, borras los datos de Chrome o cambias de teléfono, solo podrás recuperarlos con una copia. Con cuenta, también quedan en la nube. Guarda la copia en <b>Google Drive</b> o envíatela por correo para tenerla fuera del teléfono."; }
     $("set-open").addEventListener("click", function () { openView("set"); });
     $("sv2-back").addEventListener("click", function () { closeViews(); setTab(currentTab()); });
     function applyAiHide() {
@@ -9623,7 +9688,7 @@ html.mono body button.primary:not(.btn-danger), html.mono body #add { background
     $("bk-save").addEventListener("click", function () {
       save();
       var json = JSON.stringify(backupData(), null, 1), name = "orbe-copia-" + today() + ".json";
-      var done = function () { state.backupAt = Date.now(); save(); renderSettings(); showToast("Listo. Si elegiste «Guardar en Archivos», la copia queda en iCloud Drive."); };
+      var done = function () { state.backupAt = Date.now(); save(); renderSettings(); showToast(window.ORBE_OS === "android" ? "Listo. La copia quedó en Descargas; súbela a Google Drive para tenerla fuera del teléfono." : "Listo. Si elegiste «Guardar en Archivos», la copia queda en iCloud Drive."); };
       var blob = new Blob([json], { type: "application/json" });
       var file = null;
       try { file = new File([blob], name, { type: "application/json" }); } catch (e) {}
@@ -10722,7 +10787,13 @@ html.mono body button.primary:not(.btn-danger), html.mono body #add { background
     function b64u(buf) { return btoa(String.fromCharCode.apply(null, new Uint8Array(buf))).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, ""); }
     function unb64u(s) { s = s.replace(/-/g, "+").replace(/_/g, "/"); while (s.length % 4) s += "="; var b = atob(s), u = new Uint8Array(b.length); for (var i = 0; i < b.length; i++) u[i] = b.charCodeAt(i); return u; }
     function rnd(n) { var u = new Uint8Array(n); crypto.getRandomValues(u); return u; }
-    var bioOk = false;
+    var bioOk = false, IOS = window.ORBE_OS === "ios", BIO = IOS ? "Face ID" : "tu huella";
+    (function () {
+      if (IOS) return;
+      var row = $("bio-row"); if (row) { row.querySelector("b").textContent = "Desbloquear con huella"; row.querySelector("small").textContent = "En vez de escribir el código. Sirve la huella o el rostro que uses para desbloquear el teléfono. El código sigue sirviendo si falla."; }
+      var sw = $("bio-switch"); if (sw) sw.setAttribute("aria-label", "Desbloquear con huella");
+      var lb = $("lock-bio"); if (lb && lb.lastChild && lb.lastChild.nodeType === 3) lb.lastChild.textContent = "Usar huella";
+    })();
     try {
       if (window.PublicKeyCredential && PublicKeyCredential.isUserVerifyingPlatformAuthenticatorAvailable && (location.protocol === "https:" || location.hostname === "localhost") && !window.__orbeDemo)
         PublicKeyCredential.isUserVerifyingPlatformAuthenticatorAvailable().then(function (ok) { bioOk = !!ok; renderBio(); if (bioOk && bioOn() && lk.mode === "unlock") setTimeout(bioUnlock, 300); }).catch(function () {});
@@ -10741,7 +10812,7 @@ html.mono body button.primary:not(.btn-danger), html.mono body #add { background
       bioBusy = true;
       navigator.credentials.get({ publicKey: { challenge: rnd(32), allowCredentials: [{ type: "public-key", id: unb64u(state.pin.wa) }], userVerification: "required", timeout: 60000 } })
         .then(function (c) { bioBusy = false; if (c && b64u(c.rawId) === state.pin.wa && lk.mode === want) lockOk(); })
-        .catch(function () { bioBusy = false; lockMsg("Usa tu código o vuelve a intentar con Face ID."); });
+        .catch(function () { bioBusy = false; lockMsg("Usa tu código o vuelve a intentar con " + BIO + "."); });
     }
     $("lock-bio").addEventListener("click", bioUnlock);
     function closeLock() {
@@ -10863,7 +10934,7 @@ html.mono body button.primary:not(.btn-danger), html.mono body #add { background
     $("pin-change").addEventListener("click", function () { openLock("verify", function () { var wa = state.pin && state.pin.wa; setTimeout(function () { openLock("set", function () { if (wa && state.pin) { state.pin.wa = wa; save(); } renderBio(); }); }, 420); }); });
     $("bio-switch").addEventListener("click", function () {
       if (!state.pin || !state.pin.h) return;
-      if (bioOn()) { delete state.pin.wa; save(); renderBio(); showToast("Face ID desactivado. Se pedirá el código."); return; }
+      if (bioOn()) { delete state.pin.wa; save(); renderBio(); showToast((IOS ? "Face ID desactivado" : "Huella desactivada") + ". Se pedirá el código."); return; }
       navigator.credentials.create({ publicKey: {
         challenge: rnd(32), rp: { name: "Orbe", id: location.hostname },
         user: { id: rnd(16), name: "orbe", displayName: "Orbe" },
@@ -10872,8 +10943,8 @@ html.mono body button.primary:not(.btn-danger), html.mono body #add { background
         timeout: 60000, attestation: "none"
       } }).then(function (c) {
         if (!c) return;
-        state.pin.wa = b64u(c.rawId); save(); renderBio(); showToast("Listo. Orbe se abrirá con Face ID.");
-      }).catch(function () { showToast("No se activó Face ID. Puedes intentarlo de nuevo."); });
+        state.pin.wa = b64u(c.rawId); save(); renderBio(); showToast("Listo. Orbe se abrirá con " + BIO + ".");
+      }).catch(function () { showToast("No se activó " + (IOS ? "Face ID" : "la huella") + ". Puedes intentarlo de nuevo."); });
     });
     /* ---------- Tutorial ---------- */
     var SVG = function (d) { return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' + d + "</svg>"; };
@@ -11029,7 +11100,7 @@ html.mono body button.primary:not(.btn-danger), html.mono body #add { background
       { tab: 2, sel: "#pay-cal", t: "Calendario", p: "Cada punto es un pago. Lo vencido se marca en rojo y te avisamos en el Inicio. Desliza un pago a la izquierda para borrarlo." },
       { tab: 3, sel: "#hist-stats", t: "Historial", p: "Todos tus movimientos del mes. Busca, filtra y desliza uno a la izquierda para borrarlo. Si te equivocas, toca «Deshacer»." },
       { tab: 0, sel: "#set-open", t: "Puedes gastar hoy", p: "En Ajustes → Inicio activa «Puedes gastar hoy»: te dice cuánto puedes gastar hoy sin pasarte.", round: true },
-      { tab: 0, sel: "#set-open", t: "Ajustes", p: "Tu cuenta, tu clave y Face ID, el país, el asistente ✦, las copias de seguridad y este recorrido cuando quieras repetirlo.", round: true }
+      { tab: 0, sel: "#set-open", t: "Ajustes", p: "Tu cuenta, tu clave y " + (window.ORBE_OS === "ios" ? "Face ID" : "la huella") + ", el país, el asistente ✦, las copias de seguridad y este recorrido cuando quieras repetirlo.", round: true }
     ];
     var tour = { i: -1, t: 0 };
     function tourRect(st, el) {
