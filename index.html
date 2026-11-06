@@ -1319,8 +1319,8 @@ main > .panel::before, main > .panel::after, .bal-hero::before, .bal-hero::after
 .hh-row { border-top: 0 !important; padding-top: 4px !important; grid-template-columns: 1fr 1fr; }
 .hh-row > div + div { border-left: 1px solid var(--line); padding-left: 12px; }
 .hist-month { margin-bottom: 18px !important; }
-.cal-day.today { box-shadow: none !important; background: var(--accent); color: #fff; font-weight: 700; }
-.cal-day.today.has::after, .cal-day.today.over::after, .cal-day.today.ok::after { background: #fff; }
+.cal-day.today { box-shadow: none !important; background: var(--accent); color: var(--accent-ink); font-weight: 700; }
+.cal-day.today.has::after, .cal-day.today.over::after, .cal-day.today.ok::after { background: var(--accent-ink); }
 .cal-day.sel:not(.today) { background: var(--fill2) !important; color: var(--ink) !important; }
 .pay-check { border-width: 2px; }
 .dial-item .ic { border: 0 !important; }
@@ -2871,6 +2871,13 @@ html.mono { --bg: #ffffff; --surface: #ffffff; --ink: #0a0a0a; --muted: #6b6b6b;
 html.mono[data-theme="dark"] { --bg: #000000; --surface: #111111; --ink: #f5f5f5; --muted: #9a9a9a; --line: #262626; --accent: #f5f5f5; --accent-ink: #000000; --in: #f5f5f5; --out: #f5f5f5; --focus: #f5f5f5; --fill: #1c1c1c; }
 /* Lo que tiene color propio (categorías, cuentas, metas, íconos) pasa a grises */
 html.mono body > * { filter: grayscale(1); }
+/* Contraste en blanco y negro: gris de apoyo más oscuro en claro y textos con color propio pasan a negro (o blanco en oscuro) */
+html.mono:not([data-theme="dark"]) { --muted: #575757; }
+@media (prefers-color-scheme: dark) { html.mono:not([data-theme="light"]) { --muted: #a6a6a6; } }
+html.mono[data-theme="dark"] { --muted: #a6a6a6; }
+html.mono .cq, html.mono .cat-chip, html.mono .cat-btn { --c: var(--ink) !important; }
+html.mono .cq.on { background: var(--ink) !important; color: var(--bg) !important; }
+html.mono .dial-item[data-dial="bn"] > span:first-child { color: var(--ink) !important; }
 html.mono body button.primary:not(.btn-danger), html.mono body #add { background: var(--ink) !important; color: var(--bg) !important; box-shadow: none !important; }
 </style>
 </head>
