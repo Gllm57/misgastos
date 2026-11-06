@@ -21,6 +21,7 @@
   try {
     var d = JSON.parse(localStorage.getItem("gastos-v1") || "{}");
     if (d.theme === "light" || d.theme === "dark") document.documentElement.setAttribute("data-theme", d.theme);
+    if (d.mono) document.documentElement.classList.add("mono");
     if ((d.pin && d.pin.h) || !d.onb) document.documentElement.classList.add("locked");
   } catch (e) {}
 })();
@@ -2833,6 +2834,14 @@ main > .panel.fz-today { background: none !important; padding: 0 !important; mar
 .cv-used { font-variant-numeric: tabular-nums; }
 .cv-sub { grid-column: 1 / -1; font-size: .72rem; color: var(--muted); margin-top: -2px; }
 .cv-lim.fast .cv-sub { color: var(--amber, #c07a00); }
+
+/* Colores «Blanco y negro» (Ajustes → Apariencia): negro, blanco y grises en toda la app */
+html.mono { --bg: #ffffff; --surface: #ffffff; --ink: #0a0a0a; --muted: #6b6b6b; --line: #e6e6e6; --accent: #0a0a0a; --accent-ink: #ffffff; --in: #0a0a0a; --out: #0a0a0a; --focus: #0a0a0a; --fill: #f2f2f2; }
+@media (prefers-color-scheme: dark) { html.mono:not([data-theme="light"]) { --bg: #000000; --surface: #111111; --ink: #f5f5f5; --muted: #9a9a9a; --line: #262626; --accent: #f5f5f5; --accent-ink: #000000; --in: #f5f5f5; --out: #f5f5f5; --focus: #f5f5f5; --fill: #1c1c1c; } }
+html.mono[data-theme="dark"] { --bg: #000000; --surface: #111111; --ink: #f5f5f5; --muted: #9a9a9a; --line: #262626; --accent: #f5f5f5; --accent-ink: #000000; --in: #f5f5f5; --out: #f5f5f5; --focus: #f5f5f5; --fill: #1c1c1c; }
+/* Lo que tiene color propio (categorías, cuentas, metas, íconos) pasa a grises */
+html.mono body > * { filter: grayscale(1); }
+html.mono body button.primary:not(.btn-danger), html.mono body #add { background: var(--ink) !important; color: var(--bg) !important; box-shadow: none !important; }
 </style>
 </head>
 <body>
@@ -3094,6 +3103,13 @@ main > .panel.fz-today { background: none !important; padding: 0 !important; mar
           <button type="button" data-theme-set="auto" aria-pressed="true">Automático</button>
           <button type="button" data-theme-set="light" aria-pressed="false">Claro</button>
           <button type="button" data-theme-set="dark" aria-pressed="false">Oscuro</button>
+        </div>
+      </div>
+      <div class="set-row set-stack">
+        <div class="tx"><b>Colores</b><small>«Blanco y negro» quita los colores de toda la app. Funciona con el tema claro y el oscuro.</small></div>
+        <div class="seg" role="group" aria-label="Colores">
+          <button type="button" data-mono-set="0" aria-pressed="true">Orbe</button>
+          <button type="button" data-mono-set="1" aria-pressed="false">Blanco y negro</button>
         </div>
       </div>
       <div class="set-row set-stack">
@@ -4251,6 +4267,7 @@ main > .panel.fz-today { background: none !important; padding: 0 !important; mar
         if (d && d.rateHist && typeof d.rateHist === "object") state.rateHist = d.rateHist;
         if (d && typeof d.rateHistAt === "number") state.rateHistAt = d.rateHistAt;
         if (d && (d.theme === "light" || d.theme === "dark")) state.theme = d.theme;
+        state.mono = !!(d && d.mono);
         if (d && d.pin && typeof d.pin.h === "string") state.pin = d.pin;
         if (d && typeof d.backupAt === "number") state.backupAt = d.backupAt;
         if (d && d.onb) state.onb = true;
@@ -4291,7 +4308,7 @@ main > .panel.fz-today { background: none !important; padding: 0 !important; mar
   }
   function save() {
     try {
-      localStorage.setItem(KEY, JSON.stringify({ items: state.items, rate: state.rate, rateDate: state.rateDate, hideSav: state.hideSav, rateManual: state.rateManual, rateAutoAt: state.rateAutoAt, accounts: state.accounts, templates: state.templates, goals: state.goals, payments: state.payments, paySeries: state.paySeries, earn: state.earn, limits: state.limits, rateHist: state.rateHist, rateHistAt: state.rateHistAt, theme: state.theme, pin: state.pin, backupAt: state.backupAt, onb: state.onb, msumSeen: state.msumSeen, country: state.country, ratesOn: !!state.ratesOn, aiHide: !!state.aiHide, cqOff: !!state.cqOff, sgName: state.sgName || "", instSeen: state.instSeen, notif: state.notif, subs: state.subs, limCur: state.limCur, savTipOff: !!state.savTipOff, limPer: state.limPer, lastAcc: state.lastAcc, bn: state.bn, btcUsd: state.btcUsd, btcAt: state.btcAt, rateEur: state.rateEur, rateEurDate: state.rateEurDate, rateEurManual: state.rateEurManual, rateUsdt: state.rateUsdt, rateUsdtDate: state.rateUsdtDate, rateUsdtManual: state.rateUsdtManual, rateUsdtSrc: state.rateUsdtSrc, collapsed: state.collapsed, disp: state.disp, sav: state.sav, forz: state.forz, dayOn: !!state.dayOn, roundOn: !!state.roundOn }));
+      localStorage.setItem(KEY, JSON.stringify({ items: state.items, rate: state.rate, rateDate: state.rateDate, hideSav: state.hideSav, rateManual: state.rateManual, rateAutoAt: state.rateAutoAt, accounts: state.accounts, templates: state.templates, goals: state.goals, payments: state.payments, paySeries: state.paySeries, earn: state.earn, limits: state.limits, rateHist: state.rateHist, rateHistAt: state.rateHistAt, theme: state.theme, mono: !!state.mono, pin: state.pin, backupAt: state.backupAt, onb: state.onb, msumSeen: state.msumSeen, country: state.country, ratesOn: !!state.ratesOn, aiHide: !!state.aiHide, cqOff: !!state.cqOff, sgName: state.sgName || "", instSeen: state.instSeen, notif: state.notif, subs: state.subs, limCur: state.limCur, savTipOff: !!state.savTipOff, limPer: state.limPer, lastAcc: state.lastAcc, bn: state.bn, btcUsd: state.btcUsd, btcAt: state.btcAt, rateEur: state.rateEur, rateEurDate: state.rateEurDate, rateEurManual: state.rateEurManual, rateUsdt: state.rateUsdt, rateUsdtDate: state.rateUsdtDate, rateUsdtManual: state.rateUsdtManual, rateUsdtSrc: state.rateUsdtSrc, collapsed: state.collapsed, disp: state.disp, sav: state.sav, forz: state.forz, dayOn: !!state.dayOn, roundOn: !!state.roundOn }));
       window.__saveFail = 0;
     } catch (e) {
       if (!window.__saveFail && window.__toast) window.__toast("No se pudo guardar en este teléfono (puede estar sin espacio). Guarda una copia en Archivos desde Ajustes.");
@@ -9493,9 +9510,17 @@ main > .panel.fz-today { background: none !important; padding: 0 !important; mar
 
     function applyTheme() {
       var r = document.documentElement;
+      r.classList.toggle("mono", !!state.mono);
       if (state.theme === "light" || state.theme === "dark") r.setAttribute("data-theme", state.theme);
       else r.removeAttribute("data-theme");
     }
+    document.querySelectorAll("[data-mono-set]").forEach(function (b) {
+      b.addEventListener("click", function () {
+        state.mono = b.getAttribute("data-mono-set") === "1";
+        applyTheme(); save(); renderSettings();
+        try { drawTrend(); } catch (e) {}
+      });
+    });
     document.querySelectorAll("[data-theme-set]").forEach(function (b) {
       b.addEventListener("click", function () {
         state.theme = b.getAttribute("data-theme-set");
@@ -9509,6 +9534,7 @@ main > .panel.fz-today { background: none !important; padding: 0 !important; mar
     function renderSetDot() { $("set-dot").hidden = !backupDue(); }
     function renderSettings() {
       setPressed("[data-theme-set]", "data-theme-set", state.theme === "light" || state.theme === "dark" ? state.theme : "auto");
+      setPressed("[data-mono-set]", "data-mono-set", state.mono ? "1" : "0");
       var on = !!(state.pin && state.pin.h);
       $("pin-switch").setAttribute("aria-checked", on ? "true" : "false");
       $("pin-change").hidden = !on;
