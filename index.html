@@ -1709,10 +1709,16 @@ html.sheet-open body::after { opacity: 0; }
 .cv-dl { font-size: 0.72rem; font-weight: 700; color: var(--muted); white-space: nowrap; }
 .cv-dl.g { color: var(--in); } .cv-dl.b { color: var(--out); }
 .hic.k-goal svg { width: 17px !important; height: 17px !important; }
-.cat-quick { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 8px; }
+.cat-quick { display: grid; grid-template-columns: repeat(var(--n, 3), minmax(0, 1fr)); gap: 6px; margin-bottom: 8px; }
 .cat-quick[hidden] { display: none; }
 .cq { display: inline-flex; align-items: center; gap: 6px; border: 0; font: inherit; font-size: 0.84rem; font-weight: 600; padding: 8px 12px; border-radius: 99px; cursor: pointer; color: var(--c); background: color-mix(in srgb, var(--c) 14%, transparent); }
-.cq svg { width: 15px; height: 15px; }
+.cq svg { width: 15px; height: 15px; flex: none; }
+.cq { flex-direction: column; justify-content: center; gap: 4px !important; min-width: 0; min-height: 58px; padding: 8px 6px !important; border-radius: 16px !important; font-size: 0.78rem !important; line-height: 1.15; }
+.cq svg { width: 18px !important; height: 18px !important; }
+.cq span { max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.cat-btn.more { min-height: 42px; color: var(--muted); font-weight: 500; }
+.cat-btn .cb-ic.cb-more { background: var(--fill); color: var(--muted); }
+.cat-btn .cb-ic.cb-more svg { width: 17px; height: 17px; color: var(--muted); }
 .cq.on { background: var(--c); color: #fff; }
 .amt-ops { margin-top: 8px; }
 .amt-ops button { width: 40px; height: 34px; border-radius: 99px; border: 0; background: var(--fill); color: var(--accent); font: inherit; font-size: 1.1rem; font-weight: 600; cursor: pointer; }
@@ -5568,12 +5574,16 @@ main > .panel.fz-today { background: none !important; padding: 0 !important; mar
       var top = Object.keys(freq).sort(function (a, b) { return freq[b] - freq[a]; }).slice(0, 3);
       cq.innerHTML = top.map(function (c) {
         var col = inc ? colorForIn(c) : colorFor(c);
-        return '<button type="button" class="cq' + (c === cur ? " on" : "") + '" data-cat-pick="' + esc(c) + '" style="--c:' + col + '"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' + (CAT_ICON[c] || "") + "</svg>" + esc(c) + "</button>";
+        return '<button type="button" class="cq' + (c === cur ? " on" : "") + '" data-cat-pick="' + esc(c) + '" style="--c:' + col + '"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' + (CAT_ICON[c] || "") + "</svg><span>" + esc(c) + "</span></button>";
       }).join("");
       cq.hidden = !top.length;
+      cq.style.setProperty("--n", top.length || 1);
     }
+    var inTop = !!(cq && !cq.hidden && cq.querySelector(".cq.on"));
     var cb = $("cat-btn");
-    if (cb) { var cc = inc ? colorForIn(cur) : colorFor(cur); cb.style.setProperty("--c", cc); cb.innerHTML = (cur ? '<b class="cb-ic">' + catSvg(cur) + "</b>" : "<i></i>") + '<span>' + esc(cur || "Elige una categoría") + '</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"></path></svg>'; }
+    if (cb) { var cc = inc ? colorForIn(cur) : colorFor(cur); cb.style.setProperty("--c", cc); cb.classList.toggle("more", inTop);
+      // Si la categoría ya está marcada arriba, el botón no la repite: sirve para elegir otra
+      cb.innerHTML = (inTop ? '<b class="cb-ic cb-more"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="5" cy="12" r="1"></circle><circle cx="12" cy="12" r="1"></circle><circle cx="19" cy="12" r="1"></circle></svg></b>' : cur ? '<b class="cb-ic">' + catSvg(cur) + "</b>" : "<i></i>") + '<span>' + esc(inTop ? "Otra categoría" : cur || "Elige una categoría") + '</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"></path></svg>'; }
   }
 
   var CAT_COL = { "Alimentación": "#5b4cff", "Vivienda": "#e08a00", "Transporte": "#0e9aa7", "Servicios": "#8a3ffc", "Salud": "#e5133f", "Educación": "#00a651", "Ocio": "#6b7b86", "Negocio": "#d6502b", "Otros": "#9a7b00",
