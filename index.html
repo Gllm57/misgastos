@@ -2855,10 +2855,8 @@ main > .panel.fz-today { background: none !important; padding: 0 !important; mar
 #data-del.set-row { margin-top: 0 !important; display: flex !important; border-radius: 0 !important; background: none !important; min-height: 60px !important; color: var(--ink) !important; font-weight: 400; text-align: left !important; }
 #data-del.set-row b { color: var(--out); }
 .set-foot { text-align: center; }
-/* Teléfonos angostos (Android de 360 px, iPhone SE/mini): anillo más chico para que quepan nombre y saldo de cada cuenta */
+/* Teléfonos angostos: el anillo conserva su tamaño; la lista ajusta íconos y montos para que quepan nombre y saldo */
 @media (max-width: 400px) {
-  .acc3 { grid-template-columns: 84px minmax(0, 1fr) !important; gap: 10px !important; }
-  .acc3 .acc-sum, .acc3 .acc-sum svg { width: 84px !important; height: 84px !important; }
   .acc-r { gap: 8px !important; }
   .acc-r .acc-av { width: 28px !important; height: 28px !important; }
   .acc-r .ar-v b { font-size: 0.92rem; }
