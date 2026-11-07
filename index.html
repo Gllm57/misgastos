@@ -26,6 +26,7 @@
     var d = JSON.parse(localStorage.getItem("gastos-v1") || "{}");
     if (d.theme === "light" || d.theme === "dark") document.documentElement.setAttribute("data-theme", d.theme);
     if (d.mono) document.documentElement.classList.add("mono");
+    if (/^(azul|verde|rosa|naranja)$/.test(d.accent || "")) document.documentElement.setAttribute("data-accent", d.accent);
     if ((d.pin && d.pin.h) || !d.onb) document.documentElement.classList.add("locked");
   } catch (e) {}
 })();
@@ -2240,7 +2241,7 @@ html.touring body .goals-view, html.touring body .pay-view, html.touring body .h
   -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2.2' stroke-linecap='round'%3E%3Ccircle cx='11' cy='11' r='6.5'/%3E%3Cpath d='M20 20l-4-4'/%3E%3C/svg%3E") center / contain no-repeat;
   mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2.2' stroke-linecap='round'%3E%3Ccircle cx='11' cy='11' r='6.5'/%3E%3Cpath d='M20 20l-4-4'/%3E%3C/svg%3E") center / contain no-repeat; }
 /* Botón principal con mejor contraste (texto blanco legible) */
-button.primary:not(.btn-danger), #add { background: #6a5cf2 !important; }
+button.primary:not(.btn-danger), #add { background: var(--accent-strong, #6a5cf2) !important; }
 html.touring #inst { display: none !important; }
 /* Bs y montos grandes en pantallas chicas */
 .bal-note b { white-space: nowrap; }
@@ -2849,7 +2850,7 @@ main > .panel.fz-today { background: none !important; padding: 0 !important; mar
 /* Ajustes: filas con botones segmentados llevan el ícono junto al título; nota y zona de cuidado */
 .set-row.set-stack:has(> .set-ic) { display: grid; grid-template-columns: auto minmax(0, 1fr); column-gap: 14px; row-gap: 10px; align-items: center; }
 .set-row.set-stack > .set-ic { margin-right: 0; }
-.set-row.set-stack > .seg { grid-column: 1 / -1; }
+.set-row.set-stack > .seg, .set-row.set-stack > .acc-sw { grid-column: 1 / -1; }
 .set-pill { display: inline-block; vertical-align: 1px; margin-left: 6px; padding: 2px 8px; border-radius: 99px; font-style: normal; font-size: 0.7rem; font-weight: 700; letter-spacing: .02em; color: var(--out); background: color-mix(in srgb, var(--out) 12%, transparent); }
 .set-note { margin: 8px 6px 0 !important; font-size: 0.78rem !important; line-height: 1.45; text-align: left !important; }
 #data-del.set-row { margin-top: 0 !important; display: flex !important; border-radius: 0 !important; background: none !important; min-height: 60px !important; color: var(--ink) !important; font-weight: 400; text-align: left !important; }
@@ -3002,21 +3003,79 @@ html.mono .cv-row2.fast .cv-bar2 i, html.mono .cvd-card.fast .cvd-bar i { backgr
 .ai-morebtn { display: block; margin: 12px auto 0; border: 0; background: none; color: var(--accent); font: inherit; font-weight: 600; font-size: 0.9rem; padding: 6px 10px; cursor: pointer; }
 .ai-morebtn[hidden], .ai-quick[hidden], .ai-cloud[hidden] { display: none !important; }
 /* «Deshacer» y otras acciones de los avisos se leen también en blanco y negro */
+/* Lista del día del calendario: título y monto nunca se montan */
+.dl { align-items: flex-start !important; }
+.dl-main { flex: 1; }
+.dl-t { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.dl-a { white-space: nowrap; }
+.dl-a small { display: block; color: var(--muted); font-weight: 500; font-size: 0.78rem; margin-top: 1px; }
+/* Color de la app (Ajustes → Apariencia) */
+html[data-accent="azul"] { --accent: #3d7bf5; --focus: #3d7bf5; --soft: #3d7bf5; --accent-strong: #2563eb; }
+html[data-accent="verde"] { --accent: #12a37a; --focus: #12a37a; --soft: #12a37a; --accent-strong: #087a58; }
+html[data-accent="rosa"] { --accent: #e8508f; --focus: #e8508f; --soft: #e8508f; --accent-strong: #c02d6a; }
+html[data-accent="naranja"] { --accent: #ee7d16; --focus: #ee7d16; --soft: #ee7d16; --accent-strong: #b35704; }
+@media (prefers-color-scheme: dark) {
+  html[data-accent="azul"]:not([data-theme="light"]) { --accent: #6b9dff; --focus: #6b9dff; --accent-strong: #3d7bf5; }
+  html[data-accent="verde"]:not([data-theme="light"]) { --accent: #34c995; --focus: #34c995; --accent-strong: #12a37a; }
+  html[data-accent="rosa"]:not([data-theme="light"]) { --accent: #f472a8; --focus: #f472a8; --accent-strong: #e8508f; }
+  html[data-accent="naranja"]:not([data-theme="light"]) { --accent: #f7983f; --focus: #f7983f; --accent-strong: #e07a12; }
+}
+html[data-accent="azul"][data-theme="dark"] { --accent: #6b9dff; --focus: #6b9dff; --accent-strong: #3d7bf5; }
+html[data-accent="verde"][data-theme="dark"] { --accent: #34c995; --focus: #34c995; --accent-strong: #12a37a; }
+html[data-accent="rosa"][data-theme="dark"] { --accent: #f472a8; --focus: #f472a8; --accent-strong: #e8508f; }
+html[data-accent="naranja"][data-theme="dark"] { --accent: #f7983f; --focus: #f7983f; --accent-strong: #e07a12; }
+.acc-sw { display: flex; justify-content: space-between; gap: 8px; padding: 2px 2px 4px; }
+.acc-sw button { width: 40px; height: 40px; border-radius: 50%; border: 0; padding: 0; cursor: pointer; background: var(--sw); position: relative; box-shadow: 0 0 0 2px var(--surface), 0 0 0 3.5px transparent; transition: box-shadow 0.2s ease, transform 0.15s ease; }
+.acc-sw button:active { transform: scale(0.92); }
+.acc-sw button[aria-checked="true"] { box-shadow: 0 0 0 3px var(--surface), 0 0 0 5px var(--ink); }
+.acc-sw button[aria-checked="true"]::after { content: ""; position: absolute; left: 50%; top: 50%; width: 12px; height: 7px; border-left: 2.6px solid #fff; border-bottom: 2.6px solid #fff; transform: translate(-50%, -65%) rotate(-45deg); }
+.acc-sw .sw-bn { background: linear-gradient(135deg, #000 50%, #fff 50%); box-shadow: 0 0 0 2px var(--surface), 0 0 0 3px var(--line); }
+.acc-sw .sw-bn[aria-checked="true"]::after { display: none; }
+html.mono .acc-sw button[aria-checked="true"] { box-shadow: none !important; outline: 2.5px solid var(--ink); outline-offset: 3px; }
+/* Colores «Blanco y negro» (Ajustes → Apariencia): solo negro y blanco, sin grises */
+.cur-swap { animation: curSwap 0.32s ease; }
+@keyframes curSwap { from { opacity: 0; transform: translateY(4px); } }
+html.mono { --bg: #fff; --surface: #fff; --ink: #000; --muted: #000; --line: #000; --accent: #000; --accent-ink: #fff; --in: #000; --out: #000; --focus: #000; --fill: #fff; --fill2: #fff; --amber: #000; --mbd: #000; }
+@media (prefers-color-scheme: dark) { html.mono:not([data-theme="light"]) { --bg: #000; --surface: #000; --ink: #fff; --muted: #fff; --line: #fff; --accent: #fff; --accent-ink: #000; --in: #fff; --out: #fff; --focus: #fff; --fill: #000; --fill2: #000; --amber: #fff; --mbd: #fff; } }
+html.mono[data-theme="dark"] { --bg: #000; --surface: #000; --ink: #fff; --muted: #fff; --line: #fff; --accent: #fff; --accent-ink: #000; --in: #fff; --out: #fff; --focus: #fff; --fill: #000; --fill2: #000; --amber: #fff; --mbd: #fff; }
+html.mono [style*="--c"], html.mono [style*="--gc"], html.mono [style*="--g:"] { --c: var(--ink) !important; --gc: var(--ink) !important; --g: var(--ink) !important; }
+html.mono *, html.mono *::before, html.mono *::after { box-shadow: none !important; text-shadow: none !important; }
+html.mono body button.primary:not(.btn-danger), html.mono body #add { background: var(--ink) !important; color: var(--bg) !important; }
+html.mono .toast { background: var(--ink) !important; color: var(--bg) !important; }
 html.mono .toast .t-act { color: var(--bg) !important; text-decoration: underline; text-underline-offset: 3px; }
-/* Colores «Blanco y negro» (Ajustes → Apariencia): negro, blanco y grises en toda la app */
-html.mono { --bg: #ffffff; --surface: #ffffff; --ink: #0a0a0a; --muted: #6b6b6b; --line: #e6e6e6; --accent: #0a0a0a; --accent-ink: #ffffff; --in: #0a0a0a; --out: #0a0a0a; --focus: #0a0a0a; --fill: #f2f2f2; }
-@media (prefers-color-scheme: dark) { html.mono:not([data-theme="light"]) { --bg: #000000; --surface: #111111; --ink: #f5f5f5; --muted: #9a9a9a; --line: #262626; --accent: #f5f5f5; --accent-ink: #000000; --in: #f5f5f5; --out: #f5f5f5; --focus: #f5f5f5; --fill: #1c1c1c; } }
-html.mono[data-theme="dark"] { --bg: #000000; --surface: #111111; --ink: #f5f5f5; --muted: #9a9a9a; --line: #262626; --accent: #f5f5f5; --accent-ink: #000000; --in: #f5f5f5; --out: #f5f5f5; --focus: #f5f5f5; --fill: #1c1c1c; }
-/* Lo que tiene color propio (categorías, cuentas, metas, íconos) pasa a grises */
-html.mono body > * { filter: grayscale(1); }
-/* Contraste en blanco y negro: gris de apoyo más oscuro en claro y textos con color propio pasan a negro (o blanco en oscuro) */
-html.mono:not([data-theme="dark"]) { --muted: #575757; }
-@media (prefers-color-scheme: dark) { html.mono:not([data-theme="light"]) { --muted: #a6a6a6; } }
-html.mono[data-theme="dark"] { --muted: #a6a6a6; }
-html.mono .cq, html.mono .cat-chip, html.mono .cat-btn { --c: var(--ink) !important; }
-html.mono .cq.on { background: var(--ink) !important; color: var(--bg) !important; }
-html.mono .dial-item[data-dial="bn"] > span:first-child { color: var(--ink) !important; }
-html.mono body button.primary:not(.btn-danger), html.mono body #add { background: var(--ink) !important; color: var(--bg) !important; box-shadow: none !important; }
+/* Sin transparencias ni desenfoques: los velos y la barra son sólidos */
+html.mono *, html.mono *::before, html.mono *::after { -webkit-backdrop-filter: none !important; backdrop-filter: none !important; }
+html.mono .sheet-backdrop, html.mono .cal-backdrop { background: transparent !important; }
+html.mono .dial, html.mono .disp-bg { background: var(--bg) !important; }
+html.mono .sheet, html.mono .panel.sheet { background: var(--bg) !important; border: 1.5px solid var(--ink) !important; }
+html.mono .sheet-foot { background: var(--bg) !important; border-top-color: var(--ink) !important; }
+html.mono .tabbar, html.mono #tabbar { background: var(--bg) !important; border: 1.5px solid var(--ink) !important; }
+html.mono .tabbar::after, html.mono .tabbar::before { background: none !important; }
+html.mono .tab, html.mono .tab * { color: var(--ink) !important; opacity: 1 !important; }
+html.mono .disp-pop { border: 1.5px solid var(--ink); }
+/* Fondos suaves de íconos, tarjetas y botones: blanco con borde negro */
+html.mono :is(.cv-dot, .hic, .acc-av, .set-ic, .earn-ic, .sg-ri, .dp-s, .ad-acts .i, .ai-item .b, .tr-swap, .cl-av, .inst-ic, .sv-ic, .pay-check, .cvd-head .cv-dot) { background: var(--bg) !important; color: var(--ink) !important; border: 1.5px solid var(--ink) !important; }
+html.mono :is(.cq, #ge-icons button, #acc-icons button, .mv-acc .ap, .sav-tip1, #inst, .pay-alert, .cq-alert, .msum, .fx-more, .earn-row, .sg-row1, .earn-card, .cvd-card, .cvd-cmp div, .ai-item, .ai-score, .set-group, .cv-all, .ge-cust, .disp-chip, .cal-nav, .del, .gv-add, .eye, .chev, .set-btn, .secondary, .sg-act, .rate-chip, .cvl-chips button, .sub-chip, .cat-chip, .hist-chips button, .seg, .switch, .dial-item > span, .bn-x, .cq-b) { background: var(--bg) !important; border: 1.5px solid var(--ink) !important; }
+html.mono :is(.cvd-bar, .cv-bar2, .cv-lbar, .bar, .gm-bar, .sv-bar) { background: var(--bg) !important; border: 1px solid var(--ink); box-sizing: border-box; }
+html.mono input:not([type="checkbox"]):not([type="radio"]):not([type="range"]), html.mono select, html.mono textarea, html.mono .cat-btn, html.mono .pick { background: var(--bg) !important; border: 1.5px solid var(--ink) !important; color: var(--ink) !important; }
+/* Lo elegido o activo: negro sólido con texto blanco (al revés en oscuro) */
+html.mono :is(.seg button[aria-pressed="true"], .cq.on, .cvl-chips button.on, .mv-acc .ap.on, .mv-acc .ap[aria-checked="true"], #ge-icons button[aria-checked="true"], .cal-day.today, .cal-day.sel, .switch[aria-checked="true"], .disp-pop button.on .dp-s, .dial-item .ic, .tab[aria-current="true"]) { background: var(--ink) !important; color: var(--bg) !important; border-color: var(--ink) !important; }
+html.mono .tab[aria-current="true"] *, html.mono .dial-item .ic * { color: var(--bg) !important; }
+html.mono .switch span { background: var(--ink) !important; }
+html.mono .switch[aria-checked="true"] span { background: var(--bg) !important; }
+html.mono .dial-item[data-dial="bn"] .ic { background: var(--ink) !important; color: var(--bg) !important; }
+html.mono .dial-item > span:first-child { color: var(--ink) !important; }
+html.mono .seg { padding: 2px !important; }
+html.mono .seg button { opacity: 1 !important; color: var(--ink); }
+/* Gráficos: líneas negras, sin rellenos de color ni transparencias */
+html.mono svg * { opacity: 1 !important; }
+html.mono .orbe-mk circle, html.mono .rings circle, html.mono .ring circle, html.mono svg.donut circle { stroke: var(--ink) !important; stroke-opacity: 1 !important; }
+html.mono .rings circle[style*="stroke-opacity:.18"], html.mono .rings circle[style*="stroke-opacity: 0.18"] { stroke-dasharray: 1.5 5 !important; stroke-width: 2px !important; }
+html.mono svg .area, html.mono svg [fill^="url("] { fill: none !important; }
+html.mono svg [stroke]:not([stroke="none"]):not([stroke="currentColor"]) { stroke: var(--ink) !important; }
+html.mono .cal-nav:disabled, html.mono .cal-nav[disabled] { opacity: 1 !important; visibility: hidden; }
+html.mono ::placeholder { color: var(--ink) !important; opacity: 1 !important; }
+html.mono .panel:not(.sheet) { border-color: transparent !important; }
 </style>
 </head>
 <body>
@@ -3287,10 +3346,14 @@ html.mono body button.primary:not(.btn-danger), html.mono body #add { background
         </div>
       </div>
       <div class="set-row set-stack" id="color-row">
-        <div class="tx"><b>Colores</b><small>«Blanco y negro» quita los colores de toda la app. Funciona con el tema claro y el oscuro.</small></div>
-        <div class="seg" role="group" aria-label="Colores">
-          <button type="button" data-mono-set="0" aria-pressed="true">Orbe</button>
-          <button type="button" data-mono-set="1" aria-pressed="false">Blanco y negro</button>
+        <div class="tx"><b>Color de la app</b><small id="accent-name">Orbe</small></div>
+        <div class="acc-sw" role="radiogroup" aria-label="Color de la app">
+          <button type="button" role="radio" data-accent-set="orbe" aria-label="Orbe (morado)" style="--sw:#8f84ff"></button>
+          <button type="button" role="radio" data-accent-set="azul" aria-label="Azul" style="--sw:#3d7bf5"></button>
+          <button type="button" role="radio" data-accent-set="verde" aria-label="Verde" style="--sw:#12a37a"></button>
+          <button type="button" role="radio" data-accent-set="rosa" aria-label="Rosa" style="--sw:#e8508f"></button>
+          <button type="button" role="radio" data-accent-set="naranja" aria-label="Naranja" style="--sw:#ee7d16"></button>
+          <button type="button" role="radio" data-accent-set="bn" aria-label="Blanco y negro" class="sw-bn"></button>
         </div>
       </div>
     </div>
@@ -4486,6 +4549,7 @@ html.mono body button.primary:not(.btn-danger), html.mono body #add { background
         if (d && typeof d.rateHistAt === "number") state.rateHistAt = d.rateHistAt;
         if (d && (d.theme === "light" || d.theme === "dark")) state.theme = d.theme;
         state.mono = !!(d && d.mono);
+        state.accent = d && /^(azul|verde|rosa|naranja)$/.test(d.accent || "") ? d.accent : "orbe";
         if (d && d.pin && typeof d.pin.h === "string") state.pin = d.pin;
         if (d && typeof d.backupAt === "number") state.backupAt = d.backupAt;
         if (d && d.onb) state.onb = true;
@@ -4529,7 +4593,7 @@ html.mono body button.primary:not(.btn-danger), html.mono body #add { background
   }
   function save() {
     try {
-      localStorage.setItem(KEY, JSON.stringify({ items: state.items, rate: state.rate, rateDate: state.rateDate, hideSav: state.hideSav, rateManual: state.rateManual, rateAutoAt: state.rateAutoAt, accounts: state.accounts, templates: state.templates, goals: state.goals, payments: state.payments, paySeries: state.paySeries, earn: state.earn, limits: state.limits, rateHist: state.rateHist, rateHistAt: state.rateHistAt, theme: state.theme, mono: !!state.mono, pin: state.pin, backupAt: state.backupAt, onb: state.onb, msumSeen: state.msumSeen, country: state.country, ratesOn: !!state.ratesOn, aiHide: !!state.aiHide, fx: state.fx || { bn: false, sg: false }, cqOff: !!state.cqOff, sgName: state.sgName || "", instSeen: state.instSeen, notif: state.notif, subs: state.subs, limCur: state.limCur, savTipOff: !!state.savTipOff, limPer: state.limPer, lastAcc: state.lastAcc, bn: state.bn, btcUsd: state.btcUsd, btcAt: state.btcAt, rateEur: state.rateEur, rateEurDate: state.rateEurDate, rateEurManual: state.rateEurManual, rateUsdt: state.rateUsdt, rateUsdtDate: state.rateUsdtDate, rateUsdtManual: state.rateUsdtManual, rateUsdtSrc: state.rateUsdtSrc, collapsed: state.collapsed, disp: state.disp, sav: state.sav, forz: state.forz, dayOn: !!state.dayOn, roundOn: !!state.roundOn }));
+      localStorage.setItem(KEY, JSON.stringify({ items: state.items, rate: state.rate, rateDate: state.rateDate, hideSav: state.hideSav, rateManual: state.rateManual, rateAutoAt: state.rateAutoAt, accounts: state.accounts, templates: state.templates, goals: state.goals, payments: state.payments, paySeries: state.paySeries, earn: state.earn, limits: state.limits, rateHist: state.rateHist, rateHistAt: state.rateHistAt, theme: state.theme, mono: !!state.mono, accent: state.accent || "orbe", pin: state.pin, backupAt: state.backupAt, onb: state.onb, msumSeen: state.msumSeen, country: state.country, ratesOn: !!state.ratesOn, aiHide: !!state.aiHide, fx: state.fx || { bn: false, sg: false }, cqOff: !!state.cqOff, sgName: state.sgName || "", instSeen: state.instSeen, notif: state.notif, subs: state.subs, limCur: state.limCur, savTipOff: !!state.savTipOff, limPer: state.limPer, lastAcc: state.lastAcc, bn: state.bn, btcUsd: state.btcUsd, btcAt: state.btcAt, rateEur: state.rateEur, rateEurDate: state.rateEurDate, rateEurManual: state.rateEurManual, rateUsdt: state.rateUsdt, rateUsdtDate: state.rateUsdtDate, rateUsdtManual: state.rateUsdtManual, rateUsdtSrc: state.rateUsdtSrc, collapsed: state.collapsed, disp: state.disp, sav: state.sav, forz: state.forz, dayOn: !!state.dayOn, roundOn: !!state.roundOn }));
       window.__saveFail = 0;
     } catch (e) {
       if (!window.__saveFail && window.__toast) window.__toast("No se pudo guardar en este teléfono (puede estar sin espacio). Guarda una copia en Archivos desde Ajustes.");
@@ -4705,7 +4769,14 @@ html.mono body button.primary:not(.btn-danger), html.mono body #add { background
 
   var REDUCED = typeof window.matchMedia === "function" && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
   function setMoney(el, value, fmt, key) {
-    var from = (el._v === undefined) ? 0 : el._v;
+    // Al cambiar de moneda el monto aparece con un fundido corto; dentro de la misma moneda, cuenta suave
+    if (el._v !== undefined && el._key !== undefined && el._key !== key) {
+      el._key = key; if (el._raf) { cancelAnimationFrame(el._raf); el._raf = 0; }
+      el._v = value; el.innerHTML = fmt(value); scheduleFit();
+      if (!REDUCED) { el.classList.remove("cur-swap"); void el.offsetWidth; el.classList.add("cur-swap"); }
+      return;
+    }
+    var from = (el._v === undefined) ? 0 : (el._key === key ? el._v : value);
     el._key = key;
     if (el._raf) { cancelAnimationFrame(el._raf); el._raf = 0; }
     if (REDUCED || Math.abs(from - value) < 0.005) { el._v = value; el.innerHTML = fmt(value); scheduleFit(); return; }
@@ -5599,6 +5670,7 @@ html.mono body button.primary:not(.btn-danger), html.mono body #add { background
     if (it._grp || (it.tipo === "ahorro" && it.fz)) return "Redondeo del día";
     if (it.tipo === "ahorro") return "Ahorro automático";
     if (it.tipo === "retiro") return "Retiro de ahorro";
+    if (it.tipo === "traspaso" && it.cat === "Transferencia entre cuentas") return "Transferencia";
     return it.cat;
   }
   // Subcategorías sugeridas; el usuario puede agregar las suyas (state.subs)
@@ -7308,7 +7380,7 @@ html.mono body button.primary:not(.btn-danger), html.mono body #add { background
       var m = document.querySelector('meta[name="theme-color"]'); if (!m) return;
       try { m.setAttribute("content", getComputedStyle(document.body).backgroundColor); } catch (e) {}
     }
-    new MutationObserver(syncThemeColor).observe(document.documentElement, { attributes: true, attributeFilter: ["data-theme", "class"] });
+    new MutationObserver(syncThemeColor).observe(document.documentElement, { attributes: true, attributeFilter: ["data-theme", "class", "data-accent"] });
     if (window.matchMedia) { var mqT = matchMedia("(prefers-color-scheme: dark)"); if (mqT.addEventListener) mqT.addEventListener("change", syncThemeColor); }
     setTimeout(syncThemeColor, 0);
     // Al tocar el logo de Inicio, sus anillos se redibujan y giran como en la pantalla de carga
@@ -7525,7 +7597,8 @@ html.mono body button.primary:not(.btn-danger), html.mono body #add { background
       var acc = accById(it.cuenta), amt, cls, sub = "";
       if (it.tipo === "traspaso") {
         var hid = state.hideSav && (savEnd(it.desde) || savEnd(it.hacia));
-        amt = hid ? '<span class="masked">••••</span>' : money(it.desde.monto, it.desde.moneda) + " → " + money(it.hacia.monto, it.hacia.moneda);
+        var same = it.desde.moneda === it.hacia.moneda && Math.abs(it.desde.monto - it.hacia.monto) < 0.005;
+        amt = hid ? '<span class="masked">••••</span>' : money(it.desde.monto, it.desde.moneda) + (same ? "" : "<small>→ " + money(it.hacia.monto, it.hacia.moneda) + "</small>");
         cls = "sv";
         sub = it.nota || "";
       } else {
@@ -7535,7 +7608,7 @@ html.mono body button.primary:not(.btn-danger), html.mono body #add { background
         cls = sv ? "sv" : (it.tipo === "ingreso" ? "in" : "out");
         sub = (acc ? acc.nombre : "") + (it.nota ? (acc ? " · " : "") + it.nota : "");
       }
-      return '<li class="dl"><div class="dl-main"><div class="dl-t">' + esc(it.cat) + "</div>" + (sub ? '<div class="dl-s">' + esc(sub) + "</div>" : "") +
+      return '<li class="dl"><div class="dl-main"><div class="dl-t">' + esc(it.tipo === "traspaso" && it.cat === "Transferencia entre cuentas" ? "Transferencia" : it.cat) + "</div>" + (sub ? '<div class="dl-s">' + esc(sub) + "</div>" : "") +
         '</div><div class="dl-a ' + cls + '">' + amt + "</div></li>";
     }
     function dayListHtml() {
@@ -9968,13 +10041,16 @@ html.mono body button.primary:not(.btn-danger), html.mono body #add { background
     function applyTheme() {
       var r = document.documentElement;
       r.classList.toggle("mono", !!state.mono);
+      if (state.accent && state.accent !== "orbe") r.setAttribute("data-accent", state.accent); else r.removeAttribute("data-accent");
       if (state.theme === "light" || state.theme === "dark") r.setAttribute("data-theme", state.theme);
       else r.removeAttribute("data-theme");
     }
-    document.querySelectorAll("[data-mono-set]").forEach(function (b) {
+    var ACCENT_NAME = { orbe: "Orbe", azul: "Azul", verde: "Verde", rosa: "Rosa", naranja: "Naranja", bn: "Blanco y negro" };
+    document.querySelectorAll("[data-accent-set]").forEach(function (b) {
       b.addEventListener("click", function () {
-        state.mono = b.getAttribute("data-mono-set") === "1";
-        applyTheme(); save(); renderSettings();
+        var k = b.getAttribute("data-accent-set");
+        if (k === "bn") state.mono = true; else { state.mono = false; state.accent = k; }
+        applyTheme(); save(); renderSettings(); render();
         try { drawTrend(); } catch (e) {}
       });
     });
@@ -9991,7 +10067,9 @@ html.mono body button.primary:not(.btn-danger), html.mono body #add { background
     function renderSetDot() { $("set-dot").hidden = !backupDue(); }
     function renderSettings() {
       setPressed("[data-theme-set]", "data-theme-set", state.theme === "light" || state.theme === "dark" ? state.theme : "auto");
-      setPressed("[data-mono-set]", "data-mono-set", state.mono ? "1" : "0");
+      var ak = state.mono ? "bn" : (state.accent || "orbe");
+      document.querySelectorAll("[data-accent-set]").forEach(function (b) { b.setAttribute("aria-checked", b.getAttribute("data-accent-set") === ak ? "true" : "false"); });
+      if ($("accent-name")) $("accent-name").textContent = ACCENT_NAME[ak] || "Orbe";
       var on = !!(state.pin && state.pin.h);
       $("pin-switch").setAttribute("aria-checked", on ? "true" : "false");
       $("pin-change").hidden = !on;
