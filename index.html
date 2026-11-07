@@ -3032,6 +3032,11 @@ html[data-accent="naranja"][data-theme="dark"] { --accent: #f7983f; --focus: #f7
 .acc-sw .sw-bn { background: linear-gradient(135deg, #000 50%, #fff 50%); box-shadow: 0 0 0 2px var(--surface), 0 0 0 3px var(--line); }
 .acc-sw .sw-bn[aria-checked="true"]::after { display: none; }
 html.mono .acc-sw button[aria-checked="true"] { box-shadow: none !important; outline: 2.5px solid var(--ink); outline-offset: 3px; }
+#fx-group.fx-hl { animation: fxHl 1.6s ease 0.35s; }
+@keyframes fxHl { 0%, 100% { box-shadow: 0 0 0 0 transparent; } 25%, 60% { box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 55%, transparent); } }
+html.mono #fx-group.fx-hl { animation: fxHlM 1.6s ease 0.35s; }
+@keyframes fxHlM { 0%, 100% { outline: 0 solid transparent; } 25%, 60% { outline: 2.5px solid var(--ink); outline-offset: 3px; } }
+@media (prefers-reduced-motion: reduce) { #fx-group.fx-hl { animation: none; } }
 /* Colores «Blanco y negro» (Ajustes → Apariencia): solo negro y blanco, sin grises */
 .cur-swap { animation: curSwap 0.32s ease; }
 @keyframes curSwap { from { opacity: 0; transform: translateY(4px); } }
@@ -5041,24 +5046,25 @@ html.mono .panel:not(.sheet) { border-color: transparent !important; }
       wrap._bound = true;
       var pick = function (clientX) {
         var P = wrap._pts, sv = wrap.querySelector("svg");
-        if (!P || !sv || (!P.bal.length && !P.proj.length)) return;
+        if (!P || !sv || !P.bal.length) return;
         var r = sv.getBoundingClientRect(), x = (clientX - r.left) / r.width * P.W;
-        var day = Math.max(1, Math.min(P.nd, Math.round(x / P.W * (P.nd - 1)) + 1)), v, pr = false;
-        if (day <= P.bal.length) v = P.bal[day - 1];
-        else if (P.proj.length) { v = P.proj[day - P.lastDay]; pr = true; }
-        else return;
+        // Solo los días que ya pasaron: más allá de hoy se queda en el último día con datos
+        var day = Math.max(1, Math.min(P.bal.length, Math.round(x / P.W * (P.nd - 1)) + 1)), v = P.bal[day - 1], pr = false;
         var cx = P.X(day), cy = P.Y(v), cl = sv.querySelector(".cross"), cd = sv.querySelector(".cdot"), tip = wrap.querySelector(".trend-tip");
         cl.setAttribute("x1", cx); cl.setAttribute("x2", cx); cl.setAttribute("visibility", "visible");
         cd.setAttribute("cx", cx); cd.setAttribute("cy", cy); cd.setAttribute("visibility", "visible"); cd.classList.toggle("proj", pr);
         tip.hidden = false;
-        tip.textContent = day + " " + P.mN + " · " + (pr ? "Si sigues así " : "Disponible ") + (v < 0 ? "−" : "") + money(Math.abs(v), P.D);
+        tip.textContent = day + " " + P.mN + " · Disponible " + (v < 0 ? "−" : "") + money(Math.abs(v), P.D);
         tip.style.left = Math.max(70, Math.min(r.width - 70, cx / P.W * r.width)) + "px";
       };
       var end = function () { var sv = wrap.querySelector("svg"), tip = wrap.querySelector(".trend-tip"); if (tip) tip.hidden = true; if (sv) { sv.querySelector(".cross").setAttribute("visibility", "hidden"); sv.querySelector(".cdot").setAttribute("visibility", "hidden"); } };
       wrap.addEventListener("pointermove", function (e) { pick(e.clientX); });
       wrap.addEventListener("pointerdown", function (e) { pick(e.clientX); });
       wrap.addEventListener("pointerleave", end);
-      wrap.addEventListener("pointerup", function (e) { if (e.pointerType !== "mouse") setTimeout(end, 1200); });
+      wrap.addEventListener("pointerup", function (e) { if (e.pointerType !== "mouse") setTimeout(end, 250); });
+      wrap.addEventListener("pointercancel", end);
+      wrap.addEventListener("touchend", function () { setTimeout(end, 250); }, { passive: true });
+      window.addEventListener("scroll", end, { passive: true });
     }
   }
   var CAT_TIPS = {
@@ -10106,9 +10112,13 @@ html.mono .panel:not(.sheet) { border-color: transparent !important; }
     }
     $("fx-bn").addEventListener("click", function () { fxSet("bn", !fxOn("bn"), "Binance Earn"); });
     $("fx-sg").addEventListener("click", function () { fxSet("sg", !fxOn("sg"), "Metas compartidas"); });
+    // Ajustes entra ya colocado en Funciones (sin saltos a mitad de la animación) y la sección se ilumina un momento
     function goFunctions() {
       openView("set");
-      setTimeout(function () { var g = $("fx-group"); if (g) instantScroll(Math.max(0, (window.scrollY || 0) + g.getBoundingClientRect().top - 90)); }, 60);
+      var g = $("fx-group"); if (!g) return;
+      instantScroll(Math.max(0, (window.scrollY || 0) + g.getBoundingClientRect().top - 110));
+      g.classList.remove("fx-hl"); void g.offsetWidth; g.classList.add("fx-hl");
+      setTimeout(function () { g.classList.remove("fx-hl"); }, 1700);
     }
     $("fx-more").addEventListener("click", goFunctions);
     applyFx();
